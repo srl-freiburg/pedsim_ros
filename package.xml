@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<package>
+  <name>simulator</name>
+  <version>0.0.1</version>
+  <description>Not good looking pedsim</description>
+
+  <maintainer email="someguy@somewhere.com">Anonymous</maintainer>
+
+  <license>BSD</license>
+
+  <!-- <url type="website">http://ros.org/wiki/pedsim_core</url> -->
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <build_depend>roscpp</build_depend>
+  <build_depend>rospy</build_depend>
+  <build_depend>pedsim_msgs</build_depend>
+
+  <run_depend>roscpp</run_depend>
+  <run_depend>rospy</run_depend>
+  <run_depend>pedsim_msgs</run_depend>
+
+</package>

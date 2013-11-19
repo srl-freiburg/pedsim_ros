@@ -1,0 +1,29 @@
+<welcome>
+
+  <!-- waypoints - define before the agents! -->
+  <waypoint id="wu" x="0" y="-100" r="50" />
+  <waypoint id="wd" x="0" y=" 100" r="50" />
+  <waypoint id="wl" x="-100" y="0" r="50" />
+  <waypoint id="wr" x=" 100" y="0" r="50" />
+
+  <!-- agents -->
+  <agent x="0" y="0" n="100" dx="90" dy="90">
+	 <addwaypoint id="wu" />
+	 <addwaypoint id="wd" />
+  </agent>
+
+  <agent x="0" y="0" n="100" dx="90" dy="90">
+	 <addwaypoint id="wl" />
+	 <addwaypoint id="wr" />
+  </agent>
+
+  <!-- walls -->
+  <obstacle x1="-110" y1="-110" x2=" 110" y2="-110" />
+  <obstacle x1=" 110" y1="-110" x2=" 110" y2=" 110" />
+  <obstacle x1=" 110" y1=" 110" x2="-110" y2=" 110" />
+  <obstacle x1="-110" y1=" 110" x2="-110" y2="-110" />
+
+  <obstacle x1="-50" y1="0" x2="0" y2="-50" />
+  <obstacle x1="50" y1="0" x2="0" y2="50" />
+
+</welcome>
