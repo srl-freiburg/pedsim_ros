@@ -84,7 +84,6 @@ public:
     double step_size;
 
     std::string config_file;
-    std::string weight_file;
 
 public:
     void readParameters(std::string filename);

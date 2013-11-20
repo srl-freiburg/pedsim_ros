@@ -62,15 +62,12 @@ bool SGDiCoP::initialize(const QStringList& options) {
 
     // load scenario file
     QString scenefile;
-    if(!options.empty() && options.size() >=3 ) {
+    if(!options.empty() && options.size() >=2 ) {
         scenefile = options.first();
 
         QString cf = options[1];
         CONFIG.config_file = cf.toStdString();
         CONFIG.readParameters(CONFIG.config_file);
-
-        QString wf = options[2];
-        CONFIG.weight_file = wf.toStdString();
     }
     else {
         // warn user about missing scenario file
