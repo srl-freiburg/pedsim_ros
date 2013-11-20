@@ -27,7 +27,7 @@ Scene::Scene(QGraphicsScene* guiSceneIn, const ros::NodeHandle& node)
         tree = new Ped::Ttree(this, 0, area.x(), area.y(), area.width(), area.height());
     }
     QObject::connect(&movetimer, SIGNAL(timeout()), this, SLOT(moveAllAgents()));
-    movetimer.setInterval(100);
+    movetimer.setInterval(500);
 
     QObject::connect(&cleanuptimer, SIGNAL(timeout()), this, SLOT(cleanupSlot()));
     cleanuptimer.setInterval(200);
@@ -88,20 +88,21 @@ bool Scene::srvMoveAgentHandler(pedsim_srvs::SetAgentState::Request& req, pedsim
     pedsim_msgs::AgentState state = req.state;
 
     // find and move the agent
-    for (vector<Ped::Tagent*>::const_iterator iter = all_agents_.begin(); iter != all_agents_.end(); ++iter) {
-        Ped::Tagent *a = (*iter);
+    // for (vector<Ped::Tagent*>::const_iterator iter = all_agents_.begin(); iter != all_agents_.end(); ++iter) {
+    //     Ped::Tagent *a = (*iter);
 
-        if (a->getid() == state.id)  {
-            a->setPosition(state.position.x*20.0, state.position.y*20.0, state.position.z*20.0 );
-            // a->setvx(state.velocity.x);
-            // a->setvy(state.velocity.y);
+        if (robot_->getid() == state.id)  {
+            robot_->setPosition(state.position.x*20.0, state.position.y*20.0, state.position.z*20.0 );
+            // robot_->setPosition(state.position.y*20.0, state.position.x*20.0, state.position.z*20.0 );
+            robot_->setvx(state.velocity.x);
+            robot_->setvy(state.velocity.y);
 
             guiScene->addEllipse(robot_->getx(), robot_->gety(), 0.5, 0.5, QPen(Qt::yellow, 0.5, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin), QBrush(Qt::yellow));
 
-            moveAgent(a);
+            moveAgent(robot_);
         }
 
-    }
+    // }
 
     res.finished = true;
 
@@ -143,11 +144,6 @@ void Scene::initializeAll()
     // setup faeture processing
     ficra_ = new CFeatures_ICRA();
 
-    //setup graph search
-    // graph_search_.reset();
-    // graph_search_ = boost::shared_ptr<GraphSearch>(new GraphSearch());
-    // graph_search_->createGraphFromGrid(getGrid());
-
     // initialize metrics
     anisotropics_.towards = 0;
     anisotropics_.orthogonal = 0;
@@ -159,9 +155,6 @@ void Scene::initializeAll()
     proxemics_.publik = 0;
 
     closest_distance_ = 100000.0;
-
-    /// Generate the initial path (and show it, it is not weighted)
-    // generateNewTrajectory(true);
 }
 
 /// =========================================================================
@@ -292,7 +285,7 @@ void Scene::publicAgentStatus()
 {
     pedsim_msgs::AllAgentsState all_status;
     all_status.header.stamp = ros::Time::now();
-    
+
     for (vector<Ped::Tagent*>::const_iterator iter = all_agents_.begin(); iter != all_agents_.end(); ++iter) {
         Ped::Tagent *a = (*iter);
 
