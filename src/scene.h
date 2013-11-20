@@ -61,7 +61,6 @@ public:
     void unpauseUpdates();
     void clear();
     static Grid* getGrid();
-    void initializeAll();
     std::set<const Ped::Tagent*> getNeighbors(double x, double y, double maxDist);
 
     /// service handler for moving agents

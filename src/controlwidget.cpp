@@ -101,10 +101,7 @@ void ControlWidget::showDirection(bool show) {
 
 void ControlWidget::enableTeleop(bool enable)
 {
-    if (enable)
-        CONFIG.drive_mode = TELEOP;
-    else
-        CONFIG.drive_mode = FOLLOW_PATH;
+    std::cout << "WARN: This no longer works, move on" << std::endl; 
 }
 
 
@@ -133,13 +130,10 @@ void ControlWidget::updatePauseButton() {
 
 void ControlWidget::controlRobotSpeed(int value)
 {
-    CONFIG.robot_speed = value;
-    label_robot_speed->setText(QString("Robot Speed (%1)").arg(CONFIG.robot_speed));
+    std::cout << "WARN: This no longer works, move on" << std::endl; 
 }
 
 void ControlWidget::controlRobotDirection(int value)
 {
-    CONFIG.robot_direction = value;
-    label_robot_direction->setText(QString("Robot Direction (%1)").arg(CONFIG.robot_direction));
-    CONFIG.updated = true;
+   std::cout << "WARN: This no longer works, move on" << std::endl; 
 }

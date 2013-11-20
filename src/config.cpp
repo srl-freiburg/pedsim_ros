@@ -20,18 +20,12 @@ Config::Config() {
     guiShowWaypoints = false;
     simWallForce = 10;
     simPedForce = 10;
-    // simPedForce = 2.1;
     simSpeed = 1000.0/30;
     mlLookAhead = true;
     showForces = false;
     showDirection = true;
     simh = 0.1;
-    // simh = 0.5;
 
-    fmax = 0.0;
-    fmin = 10000.0;
-    dmin = 10000.0;
-    dmax = 0.0;
     obstacle_positions.clear();
 
     /// setup the feature thresholds
@@ -74,28 +68,6 @@ void Config::readParameters(std::string filename)
     boost::property_tree::ptree pt;
     boost::property_tree::ini_parser::read_ini(filename, pt);
 
-    robot_speed = pt.get<double>("Robot.speed");
-    robot_direction = pt.get<double>("Robot.direction");
-
-    int dm = pt.get<int>("Robot.drive_mode");
-    switch(dm) {
-    case 0:
-        drive_mode = FOLLOW_PATH;
-        break;
-    case 1:
-        drive_mode = LOCAL_PLANNER;
-        break;
-    case 2:
-        drive_mode = FOLLOW_POLICY;
-        break;
-    case 3:
-        drive_mode = TELEOP;
-        break;
-    default:
-        drive_mode = TELEOP;
-        break;
-    }
-
     step_size = pt.get<double>("Robot.step_size");
     touch_radius = pt.get<double>("Robot.reach_radius");
 
@@ -112,11 +84,6 @@ void Config::readParameters(std::string filename)
     else show_visualization = false;
 
     sensor_horizon = pt.get<double>("CostMap.sensor_radius");
-
-    intimate = pt.get<double>("Proxemics.intimate");
-    personal = pt.get<double>("Proxemics.personal");
-    social = pt.get<double>("Proxemics.social");
-    publik = pt.get<double>("Proxemics.public");
 
     width = pt.get<double>("Grid.width") * (20);    // converting metres to grid units
     height = pt.get<double>("Grid.height") * (20);

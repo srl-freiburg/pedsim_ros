@@ -101,24 +101,7 @@ public:
     bool showDirection;
     double simh;
 
-    // robot controls
-    bool updated;
-    double robot_speed;
-    double robot_direction;
-    Tdrive drive_mode;
-
-    double fmax;
-    double fmin;
-    double dmin;
-    double dmax;
-
     std::vector<TLoc> obstacle_positions;
-
-    // proxemics
-    double intimate;
-    double personal;
-    double social;
-    double publik;      // NOTE this is not a spelling mistake if you think about it carefully
 
 public:
     /// additional running parameters

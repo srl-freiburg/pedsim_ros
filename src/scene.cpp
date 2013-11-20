@@ -47,7 +47,6 @@ Scene::Scene(QGraphicsScene* guiSceneIn, const ros::NodeHandle& node)
     srv_move_agent_ = nh_.advertiseService("SetAgentState", &Scene::srvMoveAgentHandler, this);
 
     // additional initialization in separat methods to keep constructor clean
-    initializeAll();
     unpauseUpdates();
 }
 
@@ -76,15 +75,6 @@ bool Scene::srvMoveAgentHandler(pedsim_srvs::SetAgentState::Request& req, pedsim
     return true;
 }
 
-
-void Scene::initializeAll()
-{
-    // mark obstacle cells
-    for (size_t i = 0; i < CONFIG.obstacle_positions.size(); i++) {
-        TLoc l = CONFIG.obstacle_positions[i];
-        getGrid()->setOccupied(l.x, l.y);
-    }
-}
 
 bool Scene::isPaused() const
 {

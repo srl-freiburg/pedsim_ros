@@ -2,9 +2,9 @@
 <package>
   <name>simulator</name>
   <version>0.0.1</version>
-  <description>Not good looking pedsim</description>
+  <description>Not good looking pedsim ros version</description>
 
-  <maintainer email="someguy@somewhere.com">Anonymous</maintainer>
+  <maintainer email="okal@cs.uni-freiburg.de">Anonymous</maintainer>
 
   <license>BSD</license>
 

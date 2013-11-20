@@ -1,5 +1,4 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
-
 PROJECT(simulator)
 
 # Hide CMake variables
@@ -33,14 +32,11 @@ ELSE(SHALL_DEBUG)
 	ADD_DEFINITIONS(-Os)
 ENDIF(SHALL_DEBUG)
 
-#--------------- End Compiler Flags ----------------#
-
-
 
 # add qt4 to the project
 # enable additional qt modules:
 SET(QT_USE_QTOPENGL TRUE)
-
+FIND_PACKAGE(Boost REQUIRED)
 FIND_PACKAGE(Qt4 REQUIRED)
 INCLUDE(${QT_USE_FILE})
 
@@ -51,8 +47,6 @@ file(GLOB_RECURSE QT_MOC RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} FOLLOW_SYMLINKS *.
 QT4_ADD_RESOURCES(QT_RESOURCES_CPP ${QT_RESOURCES})
 QT4_WRAP_CPP(QT_MOC_HPP ${QT_MOC})
 QT4_WRAP_UI(QT_FORMS_HPP ${QT_FORMS})
-
-
 
 
 # add PedSim to the application
@@ -69,18 +63,10 @@ INCLUDE_DIRECTORIES(${PEDSIM_INCLUDE_DIR})
 INCLUDE_DIRECTORIES(${CMAKE_BINARY_DIR})
 INCLUDE_DIRECTORIES(${CMAKE_BINARY_DIR}/3rdparty/)
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
-
-
-# search library
-find_package(Boost REQUIRED)
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/src)
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 SET(CMAKE_MODULE_PATH  ${CMAKE_CURRENT_SOURCE_DIR})     # for using additional FindX.cmake files
-FIND_PACKAGE(Qwt REQUIRED)
-find_package(OpenCV REQUIRED)
-
-
 
 file(GLOB_RECURSE QT_SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} FOLLOW_SYMLINKS *.cpp)
 
@@ -93,10 +79,7 @@ set( PEDSIM_CORE_DEPENDENCIES
 )
 
 ## Find catkin macros and libraries
-find_package(catkin REQUIRED COMPONENTS
-  ${PEDSIM_CORE_DEPENDENCIES}
-)
-
+find_package(catkin REQUIRED COMPONENTS ${PEDSIM_CORE_DEPENDENCIES})
 
 catkin_package(
  INCLUDE_DIRS include
@@ -116,13 +99,7 @@ IF(SHALL_PROFILE)
     SET_TARGET_PROPERTIES(simulator PROPERTIES COMPILE_FLAGS -pg LINK_FLAGS -pg)
 ENDIF(SHALL_PROFILE)
 
-#------------------- Installation ------------------#
-
 INSTALL(TARGETS simulator
     RUNTIME DESTINATION bin
     LIBRARY DESTINATION lib
 )
-
-# Resources (scenarios etc.)
-INSTALL(DIRECTORY resources/ DESTINATION resources)
-#---------------- End Installation -----------------#
