@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--This scenario file was created by SGDiCoP on 2013-09-19T15:49:44-->
+<scenario>
+    <!--Obstacles-->
+    <obstacle x1="0" y1="0" x2="820" y2="0"/>
+    <obstacle x1="0" y1="0" x2="0" y2="820"/>
+    <obstacle x1="820" y1="0" x2="820" y2="820"/>
+    <obstacle x1="820" y1="820" x2="0" y2="820"/>
+    <!--Waypoints-->
+    <waypoint id="lower_right" x="720" y="100" r="1"/>
+    <waypoint id="upper_left" x="100" y="720" r="1"/>
+    <!--WaitingQueues-->
+    <!--Agents-->
+    <agent x="100" y="100" n="1" dx="0" dy="0" type="0">
+        <addwaypoint id="lower_right" />
+    </agent>
+
+    <!-- <agent x="400" y="100" n="100" dx="400" dy="50" type="0">
+        <addwaypoint id="lower_right" />
+    </agent> -->
+
+    <agent x="720" y="720" n="1" dx="0" dy="0" type="2">
+        <addwaypoint id="upper_left" />
+    </agent>
+
+    <!--AgentClusters-->
+</scenario>

@@ -60,38 +60,50 @@ bool SGDiCoP::initialize(const QStringList& options) {
     mainwindow = QSharedPointer<MainWindow>(new MainWindow());
     mainwindow->show();
 
-    // load scenario file
-    QString scenefile;
-    if(!options.empty() && options.size() >=2 ) {
-        scenefile = options.first();
-
-        QString cf = options[1];
-        CONFIG.config_file = cf.toStdString();
-        CONFIG.readParameters(CONFIG.config_file);
-    }
-    else {
-        // warn user about missing scenario file
-        QMessageBox::StandardButton buttonPressed = QMessageBox::question(mainwindow.data(),
-               tr("No input file, config file and weight file specified"),
-               tr("There hasn't been a input file specified. Do you want to open a file now?"),
-               QMessageBox::Open|QMessageBox::No,
-               QMessageBox::Open);
-
-        if(buttonPressed == QMessageBox::Open) {
-            scenefile = mainwindow->showOpenScenarioDialog();
-        }
-        else {
-            // start with an empty environment
-            INFO_LOG("No scenario file defined, using an empty one.");
-        }
-    }
-
-    // create pedsim scene
     
+    // create pedsim scene
     ros::init(dummy_argc, dummy_argv, "simulator");
     ros::NodeHandle node;
-
     scene = QSharedPointer<Scene>(new Scene(mainwindow->graphicsscene, node));
+
+    // load parameters
+    std::string scene_file_param;
+    node.getParam("/simulator/scene_file", scene_file_param);
+
+    double cell_size;
+    node.getParam("/simulator/cell_size", cell_size);
+    CONFIG.width = cell_size;
+    CONFIG.height = cell_size;
+
+
+    ROS_INFO("Read parameters (%s) (%f)", scene_file_param.c_str(), cell_size);
+
+    // load scenario file
+    QString scenefile = QString::fromStdString(scene_file_param);
+    // if(!options.empty() && options.size() >=2 ) {
+    //     scenefile = options.first();
+
+    //     QString cf = options[1];
+    //     CONFIG.config_file = cf.toStdString();
+    //     CONFIG.readParameters(CONFIG.config_file);
+    // }
+    // else {
+    //     // warn user about missing scenario file
+    //     QMessageBox::StandardButton buttonPressed = QMessageBox::question(mainwindow.data(),
+    //            tr("No input file, config file and weight file specified"),
+    //            tr("There hasn't been a input file specified. Do you want to open a file now?"),
+    //            QMessageBox::Open|QMessageBox::No,
+    //            QMessageBox::Open);
+
+    //     if(buttonPressed == QMessageBox::Open) {
+    //         scenefile = mainwindow->showOpenScenarioDialog();
+    //     }
+    //     else {
+    //         // start with an empty environment
+    //         INFO_LOG("No scenario file defined, using an empty one.");
+    //     }
+    // }
+
 
     // load scenario from file
     if(!scenefile.isEmpty())

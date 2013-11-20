@@ -79,9 +79,9 @@ public:
 
 public:
     /// additional running parameters
-    double sensor_horizon;
-    double touch_radius;
-    double step_size;
+    // double sensor_horizon;
+    // double touch_radius;
+    // double step_size;
 
     std::string config_file;
 
