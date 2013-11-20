@@ -40,16 +40,17 @@
 
 // ros and big guys
 #include <ros/ros.h>
+#include <ros/console.h>
 #include <boost/shared_ptr.hpp>
 
 // messages and services
 #include <pedsim_msgs/AgentState.h>
 #include <pedsim_msgs/AllAgentsState.h>
 
-// #include <pedsim_msgs/SetAgentState.h>
-// #include <pedsim_msgs/SetAllAgentsState.h>
-// #include <pedsim_msgs/GetAgentState.h>
-// #include <pedsim_msgs/GetAllAgentsState.h>
+#include <pedsim_srvs/SetAgentState.h>
+#include <pedsim_srvs/SetAllAgentsState.h>
+#include <pedsim_srvs/GetAgentState.h>
+#include <pedsim_srvs/GetAllAgentsState.h>
 
 
 // #define FLIP
@@ -187,6 +188,9 @@ private:
     GenericSearchGraphDescriptor<GNode,double> *sgraph_;
 
 
+    /// service handler for moving agents
+    bool srvMoveAgentHandler(pedsim_srvs::SetAgentState::Request&, pedsim_srvs::SetAgentState::Response& );
+
 
 private:
 
@@ -196,6 +200,8 @@ private:
     ros::Publisher pub_all_agents_;
 
     void publicAgentStatus();
+
+    ros::ServiceServer srv_move_agent_;
 
 };
 

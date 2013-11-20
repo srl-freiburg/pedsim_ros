@@ -89,6 +89,7 @@ set( PEDSIM_CORE_DEPENDENCIES
     roscpp
     rospy
     pedsim_msgs
+    pedsim_srvs
 )
 
 ## Find catkin macros and libraries

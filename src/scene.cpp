@@ -27,7 +27,7 @@ Scene::Scene(QGraphicsScene* guiSceneIn, const ros::NodeHandle& node)
         tree = new Ped::Ttree(this, 0, area.x(), area.y(), area.width(), area.height());
     }
     QObject::connect(&movetimer, SIGNAL(timeout()), this, SLOT(moveAllAgents()));
-    movetimer.setInterval(50);
+    movetimer.setInterval(100);
 
     QObject::connect(&cleanuptimer, SIGNAL(timeout()), this, SLOT(cleanupSlot()));
     cleanuptimer.setInterval(200);
@@ -59,7 +59,11 @@ Scene::Scene(QGraphicsScene* guiSceneIn, const ros::NodeHandle& node)
     all_agents_ = getAllAgents();
 
 
+    // setup services and publishers
+
     pub_all_agents_ = nh_.advertise<pedsim_msgs::AllAgentsState>("AllAgentsStatus", 1);
+    srv_move_agent_ = nh_.advertiseService("SetAgentState", &Scene::srvMoveAgentHandler, this);
+
 
     // additional initialization in separat methods to keep constructor clean
     initializeAll();
@@ -70,6 +74,39 @@ Scene::Scene(QGraphicsScene* guiSceneIn, const ros::NodeHandle& node)
 
 Scene::~Scene() { clear(); }
 Grid* Scene::getGrid() { return grid_; }
+
+
+
+
+
+bool Scene::srvMoveAgentHandler(pedsim_srvs::SetAgentState::Request& req, pedsim_srvs::SetAgentState::Response& res)
+{
+    ROS_INFO("[Simulator] Received a service call");
+
+    pedsim_msgs::AgentState state = req.state;
+
+    // find and move the agent
+    for (vector<Ped::Tagent*>::const_iterator iter = all_agents_.begin(); iter != all_agents_.end(); ++iter) {
+        Ped::Tagent *a = (*iter);
+
+        if (a->getid() == state.id)  {
+            a->setPosition(state.position.x, state.position.y, state.position.z );
+            a->setvx(state.velocity.x);
+            a->setvy(state.velocity.y);
+
+            moveAgent(a);
+        }
+
+    }
+
+    res.finished = true;
+
+    return res.finished;
+}
+
+
+
+
 
 
 void Scene::initializeAll()
