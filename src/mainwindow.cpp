@@ -171,13 +171,14 @@ bool MainWindow::verifyQuitting() {
 	if(isMinimized())
 		setWindowState(windowState() & ~Qt::WindowMinimized);
 
-	QMessageBox::StandardButton buttonPressed = QMessageBox::question(this,
-		tr("Quit?"),
-		tr("Do you really want to quit this application?"),
-		QMessageBox::Yes|QMessageBox::Cancel,
-		QMessageBox::Cancel);
+	// QMessageBox::StandardButton buttonPressed = QMessageBox::question(this,
+	// 	tr("Quit?"),
+	// 	tr("Do you really want to quit this application?"),
+	// 	QMessageBox::Yes|QMessageBox::Cancel,
+	// 	QMessageBox::Cancel);
 
-	return (buttonPressed == QMessageBox::Yes);
+	// return (buttonPressed == QMessageBox::Yes);
+	return true;
 }
 
 void MainWindow::about() {
