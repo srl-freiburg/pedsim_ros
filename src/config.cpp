@@ -70,32 +70,10 @@ void Config::readParameters(std::string filename)
 
     step_size = pt.get<double>("Robot.step_size");
     touch_radius = pt.get<double>("Robot.reach_radius");
-
-    double ut = pt.get<double>("CostMap.update_type");
-    if (ut == 0.0) update_type = LOCAL;
-    else update_type = ORACLE;
-
-    double algo = pt.get<double>("CostMap.algorithm");
-    if (algo == 1.0) run_algorithm = ASTAR;
-    else run_algorithm = DIJKSTRA;
-
-    double vis = pt.get<double>("CostMap.visualize");
-    if (vis == 1.0) show_visualization = true;
-    else show_visualization = false;
-
     sensor_horizon = pt.get<double>("CostMap.sensor_radius");
-
+    
     width = pt.get<double>("Grid.width") * (20);    // converting metres to grid units
     height = pt.get<double>("Grid.height") * (20);
-    maxh = pt.get<double>("Grid.max_horizontal") * (20);
-    maxv = pt.get<double>("Grid.max_vertical") * (20);
-
-
-    double sn = pt.get<double>("Scenario.sceneid");
-    if (sn == 1.0) scenario = HALLWAY;
-    else scenario = AIRPORT;
-
-    feature_set = pt.get<double>("FeatureSet.feature_set");
 
     pt.clear();
 }

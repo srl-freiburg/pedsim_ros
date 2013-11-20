@@ -19,7 +19,6 @@
 #include <boost/property_tree/ini_parser.hpp>
 
 
-// TODO - clean these typedefs
 typedef struct Location {
     float x;
     float y;
@@ -32,33 +31,6 @@ typedef struct Location {
     }
 
 } TLoc;
-
-typedef enum DriveMove
-{
-    FOLLOW_PATH,
-    LOCAL_PLANNER,
-    FOLLOW_POLICY,
-    TELEOP
-} Tdrive;
-
-
-typedef enum CostMapUpdateType
-{
-    LOCAL,
-    ORACLE
-} UpdateType;
-
-typedef enum RunAlgorithm
-{
-    ASTAR,
-    DIJKSTRA
-} RAlgorithm;
-
-enum ExperimentScenario
-{
-    AIRPORT,
-    HALLWAY
-};
 
 
 class Config : public QObject {
@@ -100,6 +72,8 @@ public:
     bool showForces;
     bool showDirection;
     double simh;
+    double width;
+    double height;
 
     std::vector<TLoc> obstacle_positions;
 
@@ -109,16 +83,8 @@ public:
     double touch_radius;
     double step_size;
 
-    UpdateType update_type;
-    bool show_visualization;
-    RunAlgorithm run_algorithm;
-
     std::string config_file;
     std::string weight_file;
-
-    double width, height, maxh, maxv;
-    ExperimentScenario scenario;
-    double feature_set;
 
 public:
     void readParameters(std::string filename);

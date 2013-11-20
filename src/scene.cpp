@@ -10,22 +10,13 @@ Scene::Scene(QGraphicsScene* guiSceneIn, const ros::NodeHandle& node)
 {
     guiScene = guiSceneIn;
 
-    if (CONFIG.scenario == AIRPORT) {
-        // QRect area(0, 0, 200+CONFIG.width, 200+CONFIG.height); // grid test
-         QRect area(0, 0, 820, 820); // grid test large
-//        QRect area(0, 0, 820, 200); // grid test hard
+    QRect area(0, 0, 820, 820); // grid test large
+//  QRect area(0, 0, 820, 200); // grid test hard
 
-        Scene::grid_ = new Grid(area.x(), area.y(), area.width(), area.height(), guiScene);
-        tree = new Ped::Ttree(this, 0, area.x(), area.y(), area.width(), area.height());
+    Scene::grid_ = new Grid(area.x(), area.y(), area.width(), area.height(), guiScene);
+    tree = new Ped::Ttree(this, 0, area.x(), area.y(), area.width(), area.height());
 
-        // QRect area(0, 0, 300+CONFIG.width, 150+CONFIG.height); // airport gate
-        // Scene::grid_ = new Grid(area.x(), area.y(), area.width(), area.height(), guiScene);
-        // tree = new Ped::Ttree(this, 0, area.x(), area.y(), area.width(), area.height());
-    } else {
-        QRect area(0, 0, 300, 100); // henri experiment
-        Scene::grid_ = new Grid(area.x(), area.y(), area.width(), area.height(), guiScene);
-        tree = new Ped::Ttree(this, 0, area.x(), area.y(), area.width(), area.height());
-    }
+       
     QObject::connect(&movetimer, SIGNAL(timeout()), this, SLOT(moveAllAgents()));
     movetimer.setInterval(500);
 
