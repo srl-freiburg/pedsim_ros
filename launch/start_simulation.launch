@@ -1,0 +1,5 @@
+<launch>
+  <param name="/simulator/scene_file" value="test/scene.xml" type="string"/>
+  <param name="/simulator/cell_size" value="1.0" type="double"/>
+  <node name="simulator" pkg="simulator" type="simulator"/>
+</launch>
