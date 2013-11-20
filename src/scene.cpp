@@ -81,9 +81,9 @@ Grid* Scene::getGrid() { return grid_; }
 
 bool Scene::srvMoveAgentHandler(pedsim_srvs::SetAgentState::Request& req, pedsim_srvs::SetAgentState::Response& res)
 {
-    std::cout << "[Simulator] Received a service call" << std::endl;
+    // std::cout << "[Simulator] Received a service call" << std::endl;
 
-    ROS_INFO("[Simulator] Received a service call");
+    // ROS_INFO("[Simulator] Received a service call");
 
     pedsim_msgs::AgentState state = req.state;
 
@@ -92,9 +92,11 @@ bool Scene::srvMoveAgentHandler(pedsim_srvs::SetAgentState::Request& req, pedsim
         Ped::Tagent *a = (*iter);
 
         if (a->getid() == state.id)  {
-            a->setPosition(state.position.x, state.position.y, state.position.z );
-            a->setvx(state.velocity.x);
-            a->setvy(state.velocity.y);
+            a->setPosition(state.position.x*20.0, state.position.y*20.0, state.position.z*20.0 );
+            // a->setvx(state.velocity.x);
+            // a->setvy(state.velocity.y);
+
+            guiScene->addEllipse(robot_->getx(), robot_->gety(), 0.5, 0.5, QPen(Qt::yellow, 0.5, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin), QBrush(Qt::yellow));
 
             moveAgent(a);
         }
@@ -245,7 +247,7 @@ void Scene::moveAllAgents() {
     for (vector<Ped::Tagent*>::const_iterator iter = all_agents_.begin(); iter != all_agents_.end(); ++iter) {
         Ped::Tagent *a = (*iter);
 
-        if (a->gettype() == 1)  {
+        if (a->gettype() == 2)  {
             robot_ = a;
         }
 
@@ -278,6 +280,7 @@ void Scene::moveAllAgents() {
     //    if (eDist(robot_->getx(), robot_->gety(), 200, 60) < 1.0) exit(0);
 
     timestep++;
+    ros::spinOnce();
 
     // move the agents by social force
     Ped::Tscene::moveAgents(CONFIG.simh);
@@ -288,11 +291,14 @@ void Scene::moveAllAgents() {
 void Scene::publicAgentStatus()
 {
     pedsim_msgs::AllAgentsState all_status;
+    all_status.header.stamp = ros::Time::now();
     
     for (vector<Ped::Tagent*>::const_iterator iter = all_agents_.begin(); iter != all_agents_.end(); ++iter) {
         Ped::Tagent *a = (*iter);
 
         pedsim_msgs::AgentState state;
+
+        state.header.stamp = ros::Time::now();
         state.id = a->getid();
         state.position.x = a->getx() * (1/20.0);
         state.position.y = a->gety() * (1/20.0);
