@@ -34,8 +34,6 @@ Config::Config() {
     dmax = 0.0;
     obstacle_positions.clear();
 
-    costmatrix.reset(new CostMap(100, 100));
-
     /// setup the feature thresholds
     densities = new double[3];
     densities[0] = 0.0; densities[1] = 2.0; densities[2] = 5.0;
@@ -124,11 +122,6 @@ void Config::readParameters(std::string filename)
     height = pt.get<double>("Grid.height") * (20);
     maxh = pt.get<double>("Grid.max_horizontal") * (20);
     maxv = pt.get<double>("Grid.max_vertical") * (20);
-
-    // setup the costmap
-    int cellsX = maxh / width;
-    int cellsY = maxv / height;
-    costmatrix.reset(new CostMap(cellsX, cellsY));
 
 
     double sn = pt.get<double>("Scenario.sceneid");

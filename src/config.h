@@ -18,8 +18,6 @@
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/ini_parser.hpp>
 
-#include <features/costmap.h>
-
 
 // TODO - clean these typedefs
 typedef struct Location {
@@ -108,9 +106,6 @@ public:
     double robot_speed;
     double robot_direction;
     Tdrive drive_mode;
-
-    CostMapPtr costmatrix;
-
 
     double fmax;
     double fmin;
