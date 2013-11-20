@@ -91,7 +91,7 @@ bool SGDiCoP::initialize(const QStringList& options) {
 
     // create pedsim scene
     
-    ros::init(dummy_argc, dummy_argv, "pedsim_core");
+    ros::init(dummy_argc, dummy_argv, "simulator");
     ros::NodeHandle node;
 
     scene = QSharedPointer<Scene>(new Scene(mainwindow->graphicsscene, node));
@@ -152,7 +152,7 @@ bool SGDiCoP::clearScene() {
     //      support cleaning
     // 	delete scene;
     // scene = QSharedPointer<Scene>(new Scene(mainwindow->graphicsscene));
-    ros::init(dummy_argc, dummy_argv, "pedsim_core");
+    ros::init(dummy_argc, dummy_argv, "simulator");
     ros::NodeHandle node;
 
     scene = QSharedPointer<Scene>(new Scene(mainwindow->graphicsscene, node));

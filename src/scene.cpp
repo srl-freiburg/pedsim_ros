@@ -81,6 +81,8 @@ Grid* Scene::getGrid() { return grid_; }
 
 bool Scene::srvMoveAgentHandler(pedsim_srvs::SetAgentState::Request& req, pedsim_srvs::SetAgentState::Response& res)
 {
+    std::cout << "[Simulator] Received a service call" << std::endl;
+
     ROS_INFO("[Simulator] Received a service call");
 
     pedsim_msgs::AgentState state = req.state;
@@ -101,7 +103,7 @@ bool Scene::srvMoveAgentHandler(pedsim_srvs::SetAgentState::Request& req, pedsim
 
     res.finished = true;
 
-    return res.finished;
+    return true;
 }
 
 
