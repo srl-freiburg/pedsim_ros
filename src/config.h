@@ -33,10 +33,8 @@ typedef struct Location {
 } TLoc;
 
 
-class Config : public QObject {
-    Q_OBJECT
-
-    // Constructor and Destructor
+class Config
+{
 protected:
     Config();
 
@@ -49,12 +47,12 @@ public:
 
 
 
-    // Slots
-public slots:
-    void setGuiShowWaypoints(bool value);
-    void setSimWallForce(double value);
-    void setSimPedForce(double value);
-    void setSimSpeed(int value);
+//    // Slots
+//public slots:
+//    void setGuiShowWaypoints(bool value);
+//    void setSimWallForce(double value);
+//    void setSimPedForce(double value);
+//    void setSimSpeed(int value);
 
 
     // Attributes

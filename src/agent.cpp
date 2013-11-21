@@ -21,10 +21,9 @@
 #include <QSettings>
 
 
-Agent::Agent(const QWeakPointer<Scene>& sceneIn, double xIn, double yIn)
+Agent::Agent(double xIn, double yIn)
+    : Ped::Tagent()
 {
-    scene = sceneIn;
-
     // initialize Ped::Tagent
     Ped::Tagent::setType(0);
 };

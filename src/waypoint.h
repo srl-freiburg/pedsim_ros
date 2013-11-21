@@ -13,9 +13,8 @@
 // Includes
 // → PedSim
 #include "ped_waypoint.h"
-// → Qt
-#include <QWeakPointer>
-
+#include <QtCore>
+#include <boost/shared_ptr.hpp>
 
 // Forward Declarations
 class Scene;
@@ -24,7 +23,7 @@ class Waypoint : public Ped::Twaypoint
 {
 	// Constructor and Destructor
 public:
-	Waypoint(const QWeakPointer<Scene>& sceneIn, const QString& idIn, double x = 0, double y = 0, double r = 1);
+    Waypoint(const QString& idIn, double x = 0, double y = 0, double r = 1);
     virtual ~Waypoint();
 
 
@@ -49,8 +48,6 @@ public:
 public:
 	const QString id;
 
-private:
-	QWeakPointer<Scene> scene;
 };
 
 #endif

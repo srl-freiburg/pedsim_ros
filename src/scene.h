@@ -9,6 +9,7 @@
 #include <QKeyEvent>
 #include <QFile>
 #include <QXmlStreamReader>
+#include <QRect>
 
 
 #include <boost/bind.hpp>
@@ -52,9 +53,6 @@ public:
     // Scene( double left, double up, double width, double height, const ros::NodeHandle& node );
     ~Scene() { clear(); }
 
-    bool isPaused() const;
-    void pauseUpdates();
-    void unpauseUpdates();
     void clear();
     Grid* getGrid() { return grid_; }
     std::set<const Ped::Tagent*> getNeighbors(double x, double y, double maxDist);
@@ -79,10 +77,12 @@ public:
     Grid* grid_;
     size_t timestep;
 
-private:
-    QTimer movetimer;
-    QTimer cleanuptimer;
+    inline bool readFromFile(const QString& filename);
+    inline void processData(QByteArray& data);
 
+    void runSimulation();
+
+private:
     // robot and agents
     Ped::Tagent* robot_;
     std::vector<Ped::Tagent*> all_agents_;
@@ -95,9 +95,6 @@ private:
 
     QXmlStreamReader xmlReader;
     QList<Agent*> currentAgents;
-    inline bool readFromFile(const QString& filename);
-    inline void processData(QByteArray& data);
-
 
 
     double eDist(double x1, double y1, double x2, double y2)
@@ -108,6 +105,13 @@ private:
         return sqrt( pow(dx, 2.0) + pow(dy, 2.0) );    // distance in metres
     }
 };
+
+
+
+/// helpful typedefs
+typedef boost::shared_ptr<Scene> ScenePtr;
+typedef boost::shared_ptr<Scene const> SceneConstPtr;
+
 
 
 

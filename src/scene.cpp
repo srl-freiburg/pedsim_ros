@@ -8,33 +8,21 @@
 Scene::Scene(const ros::NodeHandle& node)  
     : Ped::Tscene(), nh_(node)
 {
-    QRect area(0, 0, 820, 820); // grid test large
-//  QRect area(0, 0, 820, 200); // grid test hard
-
-    Scene::grid_ = new Grid(area.x(), area.y(), area.width(), area.height());
-    tree = new Ped::Ttree(this, 0, area.x(), area.y(), area.width(), area.height());
-
-       
-    // QObject::connect(&movetimer, SIGNAL(timeout()), this, SLOT(moveAllAgents()));
-    // movetimer.setInterval(500);
-
-    // QObject::connect(&cleanuptimer, SIGNAL(timeout()), this, SLOT(cleanupSlot()));
-    // cleanuptimer.setInterval(200);
+//    QRect area(0, 0, 820, 820); // grid test large
+//    grid_ = new Grid(area.x(), area.y(), area.width(), area.height());
+//    tree = new Ped::Ttree(this, 0, area.x(), area.y(), area.width(), area.height());
 
     // start the time steps
     timestep = 0;
 
     /// setup the list of all agents and the robot agent
     all_agents_.clear();
-    all_agents_ = getAllAgents();
+//    all_agents_ = getAllAgents();
 
 
     // setup services and publishers
     pub_all_agents_ = nh_.advertise<pedsim_msgs::AllAgentsState>("AllAgentsStatus", 1);
     srv_move_agent_ = nh_.advertiseService("SetAgentState", &Scene::srvMoveAgentHandler, this);
-
-    // additional initialization in separat methods to keep constructor clean
-    unpauseUpdates();
 }
 
 // Scene::Scene(double left, double up, double width, double height, const ros::NodeHandle& node)  
@@ -87,23 +75,6 @@ bool Scene::srvMoveAgentHandler(pedsim_srvs::SetAgentState::Request& req, pedsim
 }
 
 
-bool Scene::isPaused() const
-{
-    return !movetimer.isActive();
-}
-
-void Scene::pauseUpdates()
-{
-    movetimer.stop();
-    cleanuptimer.stop();
-}
-
-void Scene::unpauseUpdates()
-{
-    movetimer.start();
-    cleanuptimer.start();
-}
-
 
 void Scene::cleanupSlot() {
     cleanup();
@@ -124,27 +95,45 @@ void Scene::clear() {
     obstacles.clear();
 }
 
+void Scene::runSimulation() {
+    while (ros::ok())
+    {
+        moveAllAgents();
+
+        publicAgentStatus();
+
+
+        ros::spinOnce();
+    }
+}
+
 
 void Scene::moveAllAgents() {
-    if(!movetimer.isActive()) return;
+//    if(!movetimer.isActive()) return;
 
     all_agents_ = getAllAgents();
 
-    for (vector<Ped::Tagent*>::const_iterator iter = all_agents_.begin(); iter != all_agents_.end(); ++iter) 
+    ROS_INFO("stepping agents ...");
+
+    for (vector<Ped::Tagent*>::const_iterator iter = all_agents_.begin(); iter != all_agents_.end(); ++iter)
     {
         Ped::Tagent *a = (*iter);
 
-        if (a->gettype() == 2) 
+        if (a->gettype() == 2)
             robot_ = a;
     }
 
-    publicAgentStatus();
 
-    /// NOTE Test Termination criterion for the robot
-    if (eDist(robot_->getx(), robot_->gety(), 100, 720) < 1.0) exit(0);
+//    /// NOTE Test Termination criterion for the robot
+//    if (eDist(robot_->getx(), robot_->gety(), 100, 720) < 1.0) exit(0);
 
     timestep++;
-    ros::spinOnce();
+//    ros::spin();
+
+//    while(ros::ok())
+//    {
+//        ros::spinOnce();
+//    }
 
     // move the agents by social force
     Ped::Tscene::moveAgents(CONFIG.simh);
@@ -244,7 +233,7 @@ void Scene::processData(QByteArray& data) {
                 double y1 = xmlReader.attributes().value("y1").toString().toDouble();
                 double x2 = xmlReader.attributes().value("x2").toString().toDouble();
                 double y2 = xmlReader.attributes().value("y2").toString().toDouble();
-                Obstacle* obs = new Obstacle(this, x1, y1, x2, y2);
+                Obstacle* obs = new Obstacle(x1, y1, x2, y2);
                 this->addObstacle(obs);
                 // drawObstacles(x1, y1, x2, y2);
             }
@@ -255,7 +244,7 @@ void Scene::processData(QByteArray& data) {
                 double y = xmlReader.attributes().value("y").toString().toDouble();
                 double r = xmlReader.attributes().value("r").toString().toDouble();
 
-                Waypoint* w = new Waypoint(this, id, x, y, r);
+                Waypoint* w = new Waypoint(id, x, y, r);
 
                 // if (boost::starts_with(id, "start")) {
                 //     w->setType(Ped::Twaypoint::TYPE_BIRTH);
@@ -279,7 +268,7 @@ void Scene::processData(QByteArray& data) {
                 double type = xmlReader.attributes().value("type").toString().toInt();
                 //TODO: keep agent group and expand later!?
                 for (int i=0; i<n; i++) {
-                    Agent* a = new Agent(this);
+                    Agent* a = new Agent();
                     double randomizedX = x;
                     double randomizedY = y;
                     // handle dx=0 or dy=0 cases
@@ -316,14 +305,40 @@ void Scene::processData(QByteArray& data) {
 
 
 
-int main(int argc, char** argv) {
+int main(int argc, char** argv)
+{
     // initialize resources
     ros::init(argc, argv, "simulator");
 
+    ROS_INFO("node initialized");
+
     ros::NodeHandle node;
 
-    QSharedPointer<Scene> scene = QSharedPointer<Scene>(new Scene(node));
+    Scene sim_scene(node);
 
+    ROS_INFO("Simulation scene started");
+
+    // load parameters
+    std::string scene_file_param;
+    node.getParam("/simulator/scene_file", scene_file_param);
+
+    double cell_size;
+    node.getParam("/simulator/cell_size", cell_size);
+    CONFIG.width = cell_size;
+    CONFIG.height = cell_size;
+
+//    ROS_INFO("Read parameters (%s) (%f)", scene_file_param.c_str(), cell_size);
+
+    // load scenario file
+    QString scenefile = QString::fromStdString(scene_file_param);
+
+    if (!sim_scene.readFromFile(scenefile)) {
+        ROS_WARN("Could not load the scene file, check paths");
+    }
+
+
+    ROS_INFO("loaded parameters");
+    sim_scene.runSimulation();
 
     // ScenarioReader scenarioReader(scene);
 

@@ -47,21 +47,21 @@ Config& Config::getInstance() {
     return *instance;
 }
 
-void Config::setGuiShowWaypoints(bool value) {
-    guiShowWaypoints = value;
-}
+//void Config::setGuiShowWaypoints(bool value) {
+//    guiShowWaypoints = value;
+//}
 
-void Config::setSimWallForce(double value) {
-    simWallForce = value;
-}
+//void Config::setSimWallForce(double value) {
+//    simWallForce = value;
+//}
 
-void Config::setSimPedForce(double value) {
-    simPedForce = value;
-}
+//void Config::setSimPedForce(double value) {
+//    simPedForce = value;
+//}
 
-void Config::setSimSpeed(int value) {
-    simSpeed = value;
-}
+//void Config::setSimSpeed(int value) {
+//    simSpeed = value;
+//}
 
 void Config::readParameters(std::string filename)
 {

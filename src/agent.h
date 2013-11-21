@@ -14,8 +14,8 @@
 // → PedSim
 #include "ped_agent.h"
 #include "ped_vector.h"
-// → Qt
-#include <QWeakPointer>
+#include <QList>
+#include <boost/shared_ptr.hpp>
 
 // Forward Declarations
 class Scene;
@@ -26,7 +26,7 @@ class Agent : public Ped::Tagent
 {
     // Constructor and Destructor
 public:
-    Agent(const QWeakPointer<Scene>& sceneIn, double xIn = 0, double yIn = 0);
+    Agent(double xIn = 0, double yIn = 0);
     virtual ~Agent();
 
 
@@ -56,12 +56,6 @@ public:
 
     // → QGraphicsItem Overrides
     virtual int type() const { Ped::Tagent::gettype(); }
-
-
-    // Attributes
-public:
-    // → reference to the scene
-    QWeakPointer<Scene> scene;
 
 
     // → waypoints

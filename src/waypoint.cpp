@@ -17,11 +17,9 @@
 
 
 /// Description: set intial values
-Waypoint::Waypoint(const QWeakPointer<Scene>& sceneIn, const QString& idIn, double px, double py, double pr)
+Waypoint::Waypoint(const QString& idIn, double px, double py, double pr)
 	: Twaypoint(px, py, pr), id(idIn) 
 {
-	scene = sceneIn;
-
 };
 
 Waypoint::~Waypoint() {

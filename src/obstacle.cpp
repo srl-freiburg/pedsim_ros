@@ -18,9 +18,8 @@
 #include <QGraphicsScene>
 
 
-Obstacle::Obstacle(const QWeakPointer<Scene>& sceneIn, double pax, double pay, double pbx, double pby)
+Obstacle::Obstacle(double pax, double pay, double pbx, double pby)
 {
-    scene = sceneIn;
 };
 
 Obstacle::~Obstacle() {

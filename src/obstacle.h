@@ -13,9 +13,7 @@
 // Includes
 // → PedSim
 #include "ped_obstacle.h"
-// → Qt
-#include <QWeakPointer>
-
+#include <boost/shared_ptr.hpp>
 
 // Forward Declarations
 class Scene;
@@ -29,7 +27,7 @@ public:
 
 	// Constructor and Destructor
 public:
-	Obstacle(const QWeakPointer<Scene>& sceneIn, double ax = 0, double ay = 0, double bx = 1, double by = 1);
+    Obstacle( double ax = 0, double ay = 0, double bx = 1, double by = 1);
 	virtual ~Obstacle();
 
 
@@ -45,10 +43,6 @@ public:
 public:
 	void updateLookOnSelection(bool selectedIn);
 
-
-	// Attributes
-protected:
-	QWeakPointer<Scene> scene;
 };
 
 #endif
