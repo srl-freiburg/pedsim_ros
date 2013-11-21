@@ -67,6 +67,17 @@ void Scene::clear() {
 
 void Scene::runSimulation() {
 
+    /// setup the agents and the robot
+    all_agents_ = getAllAgents();
+
+    for (vector<Ped::Tagent*>::const_iterator iter = all_agents_.begin(); iter != all_agents_.end(); ++iter)
+    {
+        Ped::Tagent *a = (*iter);
+
+        if (a->gettype() == 2)
+            robot_ = a;
+    }
+
     ros::Rate r(20);
 
     while (ros::ok())
@@ -86,16 +97,6 @@ void Scene::runSimulation() {
 
 void Scene::moveAllAgents()
 {
-    all_agents_ = getAllAgents();
-
-    for (vector<Ped::Tagent*>::const_iterator iter = all_agents_.begin(); iter != all_agents_.end(); ++iter)
-    {
-        Ped::Tagent *a = (*iter);
-
-        if (a->gettype() == 2)
-            robot_ = a;
-    }
-
     timestep++;
 
     // move the agents by social force
@@ -233,7 +234,6 @@ bool Scene::readFromFile(const QString& filename) {
 
 
 /// Called for each line in the file
-/// \date    2012-02-03
 void Scene::processData(QByteArray& data) {
     xmlReader.addData(data);
     CONFIG.obstacle_positions.clear();
