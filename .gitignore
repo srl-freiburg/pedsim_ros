@@ -1,3 +1,9 @@
 build
 *.log
+<<<<<<< HEAD
 CMakelists.txt.user
+=======
+*.o
+*.so
+CMakeLists.txt.user
+>>>>>>> rvizui

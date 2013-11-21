@@ -22,21 +22,11 @@
 
 
 
-Grid::Grid(double x, double y, double w, double h, QGraphicsScene* gs) {
-    graphicsscene = gs;
+Grid::Grid(double x, double y, double w, double h) {
     minx = x;
     miny = y;
     width = w;
     height = h;
-
-    // graphical representation
-    QSettings settings;
-    QColor color = settings.value("Colors/Grid", QColor(0, 88, 0)).value<QColor>();
-    QPen pen(color, 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
-    pen.setCosmetic(true);
-    rect = graphicsscene->addRect(x, y, w, h, pen);
-    rect->setVisible(true);
-    rect->setZValue(-200);
 
     cells.resize(qCeil(w/CONFIG.width));
     int i = 0;
@@ -44,7 +34,7 @@ Grid::Grid(double x, double y, double w, double h, QGraphicsScene* gs) {
         QVector<Cell*>& row = cells[i];
         for (double yy = y; yy < (y+h); yy += CONFIG.height) {
             // Add an element (cell) to the row
-            row.push_back(new Cell(xx, yy, CONFIG.width, CONFIG.height, gs));
+            row.push_back(new Cell(xx, yy, CONFIG.width, CONFIG.height));
         }
         ++i;
     }
@@ -53,7 +43,6 @@ Grid::Grid(double x, double y, double w, double h, QGraphicsScene* gs) {
 Grid::~Grid() {
     // clean up
     // → remove graphical representation
-    graphicsscene->removeItem(rect);
     delete rect;
 
     // → remove cells

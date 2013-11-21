@@ -15,7 +15,8 @@
 Config* Config::Config::instance = NULL;
 
 
-Config::Config() {
+Config::Config() 
+{
     // make sure this reflects what is set as default in the suer interface!  --chgloor 2012-01-13
     guiShowWaypoints = false;
     simWallForce = 10;
@@ -46,22 +47,21 @@ Config& Config::getInstance() {
     return *instance;
 }
 
-void Config::setGuiShowWaypoints(bool value) {
-    guiShowWaypoints = value;
-    emit waypointVisibilityChanged(value);
-}
+//void Config::setGuiShowWaypoints(bool value) {
+//    guiShowWaypoints = value;
+//}
 
-void Config::setSimWallForce(double value) {
-    simWallForce = value;
-}
+//void Config::setSimWallForce(double value) {
+//    simWallForce = value;
+//}
 
-void Config::setSimPedForce(double value) {
-    simPedForce = value;
-}
+//void Config::setSimPedForce(double value) {
+//    simPedForce = value;
+//}
 
-void Config::setSimSpeed(int value) {
-    simSpeed = value;
-}
+//void Config::setSimSpeed(int value) {
+//    simSpeed = value;
+//}
 
 void Config::readParameters(std::string filename)
 {

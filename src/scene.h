@@ -1,5 +1,5 @@
-#ifndef SCENE_TEST_H
-#define SCENE_TEST_H
+#ifndef SCENE_H
+#define SCENE_H
 
 #include <ped_scene.h>
 #include <ped_tree.h>
@@ -7,19 +7,19 @@
 #include <QMap>
 #include <QTimer>
 #include <QKeyEvent>
-#include <QGraphicsScene>
+#include <QFile>
+#include <QXmlStreamReader>
+#include <QRect>
+
 
 #include <boost/bind.hpp>
 
-#include <qwt/qwt_color_map.h>
-#include <qwt/qwt_interval.h>
-
-#include <logging.h>
 #include <config.h>
 #include <grid.h>
 #include <agent.h>
 #include <obstacle.h>
 #include <waypoint.h>
+// #include <scenarioreader.h>
 
 #include <boost/foreach.hpp>
 #include <boost/lexical_cast.hpp>
@@ -39,53 +39,52 @@
 #include <pedsim_srvs/GetAgentState.h>
 #include <pedsim_srvs/GetAllAgentsState.h>
 
-
-class QGraphicsScene;
-class Agent;
-class Grid;
-class Obstacle;
-class Waypoint;
-class GNode;
+#include <visualization_msgs/Marker.h>
 
 
+// class Agent;
+// class Grid;
+// class Obstacle;
+// class Waypoint;
 
-class Scene : public QObject, public Ped::Tscene
+
+class Scene : public Ped::Tscene
 {
-    Q_OBJECT
 public:
-    Scene(QGraphicsScene* guiSceneIn, const ros::NodeHandle& node);
-    virtual ~Scene();
+    Scene(const ros::NodeHandle& node);
+    ~Scene() { clear(); }
 
-    bool isPaused() const;
-    void pauseUpdates();
-    void unpauseUpdates();
     void clear();
-    static Grid* getGrid();
+    Grid* getGrid() { return grid_; }
     std::set<const Ped::Tagent*> getNeighbors(double x, double y, double maxDist);
+
+    // overriding methods
+    void addAgent(Ped::Tagent *a) { Ped::Tscene::addAgent(a); }
+    void addObstacle(Ped::Tobstacle *o) { Ped::Tscene::addObstacle(o); }
+    void cleanup() { Ped::Tscene::cleanup(); }
+    void moveAgents(double h) { Ped::Tscene::moveAgents(h); }
 
     /// service handler for moving agents
     bool srvMoveAgentHandler(pedsim_srvs::SetAgentState::Request&, pedsim_srvs::SetAgentState::Response& );
     void publicAgentStatus();
+    void publishAgentVisuals();
 
-public slots:
-    void updateWaypointVisibility(bool visible);
-
-protected slots:
     void moveAllAgents();
     void cleanupSlot();
 
-public:
-    QGraphicsScene* guiScene;
+    inline bool readFromFile(const QString& filename);
+    inline void processData(QByteArray& data);
+
+    void runSimulation();
+
     QList<Agent*> agents;
     QList<Obstacle*> obstacles;
     QMap<QString, Waypoint*> waypoints;
-    static Grid* grid_;
+    Grid* grid_;
     size_t timestep;
 
-private:
-    QTimer movetimer;
-    QTimer cleanuptimer;
 
+private:
     // robot and agents
     Ped::Tagent* robot_;
     std::vector<Ped::Tagent*> all_agents_;
@@ -94,7 +93,14 @@ private:
 
     // publishers
     ros::Publisher pub_all_agents_;
+    ros::Publisher pub_agent_visuals_;
+
+    // service servers
     ros::ServiceServer srv_move_agent_;
+
+    QXmlStreamReader xmlReader;
+    QList<Agent*> currentAgents;
+
 
     double eDist(double x1, double y1, double x2, double y2)
     {
@@ -104,6 +110,13 @@ private:
         return sqrt( pow(dx, 2.0) + pow(dy, 2.0) );    // distance in metres
     }
 };
+
+
+
+/// helpful typedefs
+typedef boost::shared_ptr<Scene> ScenePtr;
+typedef boost::shared_ptr<Scene const> SceneConstPtr;
+
 
 
 

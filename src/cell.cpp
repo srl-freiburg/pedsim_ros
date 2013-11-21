@@ -11,23 +11,12 @@
 
 // Includes
 // → Qt
-#include <QGraphicsScene>
 #include <QGraphicsItem>
 #include <QPen>
 #include <QSettings>
 
 
-Cell::Cell(double x, double y, double w, double h, QGraphicsScene* gs) {
-    graphicsscene = gs;
-
-    // graphical representation
-    QSettings settings;
-    QColor color = settings.value("Colors/Cell", QColor(55,55,55)).value<QColor>();
-    QPen pen(color, 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
-    pen.setCosmetic(true);
-    rect = graphicsscene->addRect(x, y, w, h, pen);
-    rect->setVisible(true);
-    rect->setZValue(-200);
+Cell::Cell(double x, double y, double w, double h) {
 
     values.reserve(2);
 //    double v = 1;
@@ -46,6 +35,5 @@ Cell::Cell(double x, double y, double w, double h, QGraphicsScene* gs) {
 Cell::~Cell() {
     // clean up
     // → remove graphical representation
-    graphicsscene->removeItem(rect);
     delete rect;
 }

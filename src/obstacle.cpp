@@ -18,19 +18,8 @@
 #include <QGraphicsScene>
 
 
-Obstacle::Obstacle(const QWeakPointer<Scene>& sceneIn, double pax, double pay, double pbx, double pby)
-    : Tobstacle(pax, pay, pbx, pby), QGraphicsLineItem(pax, pay, pbx, pby) {
-    scene = sceneIn;
-
-    // add graphical representation
-    QSettings settings;
-    QColor color = settings.value("Colors/Obstacle", Qt::blue).value<QColor>();
-    QPen pen(color, 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
-    setPen(pen);
-    scene.data()->guiScene->addItem(this);
-
-    // make obstacle selectable
-    setFlags(QGraphicsItem::ItemIsSelectable);
+Obstacle::Obstacle(double pax, double pay, double pbx, double pby)
+{
 };
 
 Obstacle::~Obstacle() {
@@ -41,12 +30,7 @@ Obstacle::~Obstacle() {
 /// \date    2012-01-07
 void Obstacle::setPosition(double pax, double pay, double pbx, double pby) {
     Tobstacle::setPosition(pax, pay, pbx, pby);
-    setLine(pax, pay, pbx, pby);
 };
-
-void Obstacle::setPosition(const QPointF& startIn, const QPointF& endIn) {
-    setPosition(startIn.x(), startIn.y(), endIn.x(), endIn.y());
-}
 
 void Obstacle::setX1(double xIn) {
     //HACK: there's no way to access ax etc. directly
@@ -69,23 +53,5 @@ void Obstacle::setY2(double yIn) {
 }
 
 void Obstacle::updateLookOnSelection(bool selectedIn) {
-    QPen newPen = pen();
-
-    // use a dotted pattern, when selected, and a solid pattern otherwise.
-    if(selectedIn)
-        newPen.setStyle(Qt::DotLine);
-    else
-        newPen.setStyle(Qt::SolidLine);
-
-    setPen(newPen);
-}
-
-QString Obstacle::toString() const {
-    //HACK: libPedSim doesn't use const keyword for getax() etc.
-    //      hence, we need to circumvent constness problems
-    Obstacle* nonConstThis = const_cast<Obstacle*>(this);
-
-    return tr("Obstacle (%1,%2 - %3,%4)")
-            .arg(nonConstThis->getax()).arg(nonConstThis->getay())
-            .arg(nonConstThis->getbx()).arg(nonConstThis->getby());
+    
 }

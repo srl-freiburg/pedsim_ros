@@ -33,9 +33,9 @@ Ped::Tagent::Tagent() {
     birth_waypoint = NULL;
     death_waypoint = NULL;
     follow = -1;
-    // vmax = 1.5 + 1.5*(double)rand()/(double)RAND_MAX; // in m/s between 2.0 and 4.0
-    // vmax = 0.5 + 2.0*(double)rand()/(double)RAND_MAX; // in m/s between 2.0 and 4.0
-    vmax = 1.0; // For verification tests
+    // vmax = 1.5 + 1.5*(double)rand()/(double)RAND_MAX; // in m/s 
+    vmax = 0.5 + 0.7*(double)rand()/(double)RAND_MAX; // in m/s 
+    // vmax = 1.0; // For verification tests
 
     mlLookAhead = false;
 
@@ -211,6 +211,13 @@ Ped::Tvector Ped::Tagent::obstacleForce() const {
 /// \return  Tvector: the calculated force
 Ped::Tvector Ped::Tagent::desiredForce() {
     Ped::Tvector e;
+    if ( gettype() == 2) {
+      bool reached;
+      Twaypoint d( p.x + v.x, p.y + v.y, 1E-6 );
+      d.setType(Ped::Twaypoint::TYPE_POINT);
+      e = d.getForce(p.x, p.y, 0, 0, &reached);
+      return e;
+    }
 
     if (follow >= 0) {
         bool reached;
@@ -342,7 +349,7 @@ void Ped::Tagent::move(double h) {
     a.y = factorsocialforce * socialforce.y + factordesiredforce * desiredforce.y + factorobstacleforce * obstacleforce.y + factorlookaheadforce * lookaheadforce.y + myforce.y;
     a.z = factorsocialforce * socialforce.z + factordesiredforce * desiredforce.z + factorobstacleforce * obstacleforce.z + factorlookaheadforce * lookaheadforce.z + myforce.z;
 
-    if (gettype() == 2) {
+    if ( gettype() == 2) {
         // do nothing
     } else {
         // calculate the new velocity based on v0 and the acceleration

@@ -11,32 +11,22 @@
 #ifndef _agent_h_
 #define _agent_h_
 
-// Includes
-// → SGDiCoP
-#include "scenarioelement.h"
 // → PedSim
 #include "ped_agent.h"
 #include "ped_vector.h"
-// → Qt
-#include <QWeakPointer>
-#include <QGraphicsRectItem>
-
+#include <QList>
+#include <boost/shared_ptr.hpp>
 
 // Forward Declarations
 class Scene;
 class Waypoint;
 
 
-class Agent : public Ped::Tagent, public ScenarioElement, public QGraphicsRectItem {
-    // Define Type
-    // Needed by QGraphicsItem::type()
-public:
-    enum { Type = UserType + 1 };
-
-
+class Agent : public Ped::Tagent 
+{
     // Constructor and Destructor
 public:
-    Agent(const QWeakPointer<Scene>& sceneIn, double xIn = 0, double yIn = 0);
+    Agent(double xIn = 0, double yIn = 0);
     virtual ~Agent();
 
 
@@ -56,7 +46,6 @@ protected:
 public:
     void addWaypoint(Waypoint* waypointIn);
     void setPosition(double px, double py);
-    void setPosition(const QPointF& posIn);
     void setX(double xIn);
     void setY(double yIn);
     void setType(int t);
@@ -64,26 +53,10 @@ public:
     // → ScenarioElement Overrides/Overloads
 public:
     void updateLookOnSelection(bool selectedIn);
-    QString toString() const;
 
     // → QGraphicsItem Overrides
-    virtual int type() const { return Type; }
+    virtual int type() const { Ped::Tagent::gettype(); }
 
-
-    // Attributes
-public:
-    // → reference to the scene
-    QWeakPointer<Scene> scene;
-
-    // → graphical representation
-protected:
-    //TODO: give them meaningful names
-    QGraphicsLineItem* lineVelocity;
-    QGraphicsLineItem* lineDesire;
-    QGraphicsLineItem* lineObstacle;
-    QGraphicsLineItem* lineSocial;
-    QGraphicsLineItem* lineLookahead;
-    QGraphicsLineItem* lineGroup;
 
     // → waypoints
     //HACK: we need to save them here again, because Ped::Tagent doesn't give

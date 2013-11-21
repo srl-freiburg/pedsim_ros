@@ -33,10 +33,8 @@ typedef struct Location {
 } TLoc;
 
 
-class Config : public QObject {
-    Q_OBJECT
-
-    // Constructor and Destructor
+class Config
+{
 protected:
     Config();
 
@@ -48,18 +46,13 @@ public:
     static Config& getInstance();
 
 
-    // Signals
-signals:
-    // → Waypoints
-    void waypointVisibilityChanged(bool show);
 
-
-    // Slots
-public slots:
-    void setGuiShowWaypoints(bool value);
-    void setSimWallForce(double value);
-    void setSimPedForce(double value);
-    void setSimSpeed(int value);
+//    // Slots
+//public slots:
+//    void setGuiShowWaypoints(bool value);
+//    void setSimWallForce(double value);
+//    void setSimPedForce(double value);
+//    void setSimSpeed(int value);
 
 
     // Attributes
@@ -76,21 +69,12 @@ public:
     double height;
 
     std::vector<TLoc> obstacle_positions;
-
-public:
-    /// additional running parameters
-    // double sensor_horizon;
-    // double touch_radius;
-    // double step_size;
-
     std::string config_file;
 
-public:
     void readParameters(std::string filename);
 
 
-/// feature thresholds
-public:
+    /// feature thresholds
     double *angles;
     double *densities;
     double *velocities;
