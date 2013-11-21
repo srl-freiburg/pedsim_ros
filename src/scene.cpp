@@ -22,37 +22,11 @@ Scene::Scene(const ros::NodeHandle& node)
 
     // setup services and publishers
     pub_all_agents_ = nh_.advertise<pedsim_msgs::AllAgentsState>("AllAgentsStatus", 1);
+//    pub_agent_visuals_ = nh_.advertise<>
+
     srv_move_agent_ = nh_.advertiseService("SetAgentState", &Scene::srvMoveAgentHandler, this);
 }
 
-// Scene::Scene(double left, double up, double width, double height, const ros::NodeHandle& node)  
-//     : Ped::Tscene(left, up, width, height), nh_(node)
-// {
-//     QRect area(left, up, width, height); 
-//     Scene::grid_ = new Grid(area.x(), area.y(), area.width(), area.height());
-//     tree = new Ped::Ttree(this, 0, area.x(), area.y(), area.width(), area.height());
-
-//     QObject::connect(&movetimer, SIGNAL(timeout()), this, SLOT(moveAllAgents()));
-//     movetimer.setInterval(500);
-
-//     QObject::connect(&cleanuptimer, SIGNAL(timeout()), this, SLOT(cleanupSlot()));
-//     cleanuptimer.setInterval(200);
-
-//     // start the time steps
-//     timestep = 0;
-
-//     /// setup the list of all agents and the robot agent
-//     all_agents_.clear();
-//     all_agents_ = getAllAgents();
-
-
-//     // setup services and publishers
-//     pub_all_agents_ = nh_.advertise<pedsim_msgs::AllAgentsState>("AllAgentsStatus", 1);
-//     srv_move_agent_ = nh_.advertiseService("SetAgentState", &Scene::srvMoveAgentHandler, this);
-
-//     // additional initialization in separat methods to keep constructor clean
-//     unpauseUpdates();
-// }
 
 
 

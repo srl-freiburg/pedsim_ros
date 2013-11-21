@@ -70,17 +70,17 @@ public:
     void moveAllAgents();
     void cleanupSlot();
 
-public:
+    inline bool readFromFile(const QString& filename);
+    inline void processData(QByteArray& data);
+
+    void runSimulation();
+
     QList<Agent*> agents;
     QList<Obstacle*> obstacles;
     QMap<QString, Waypoint*> waypoints;
     Grid* grid_;
     size_t timestep;
 
-    inline bool readFromFile(const QString& filename);
-    inline void processData(QByteArray& data);
-
-    void runSimulation();
 
 private:
     // robot and agents
@@ -91,6 +91,9 @@ private:
 
     // publishers
     ros::Publisher pub_all_agents_;
+    ros::Publisher pub_agent_visuals_;
+
+    // service servers
     ros::ServiceServer srv_move_agent_;
 
     QXmlStreamReader xmlReader;
