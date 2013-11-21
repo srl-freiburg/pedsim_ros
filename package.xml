@@ -16,10 +16,12 @@
   <build_depend>rospy</build_depend>
   <build_depend>pedsim_msgs</build_depend>
   <build_depend>pedsim_srvs</build_depend>
+  <build_depend>visualization_msgs</build_depend>
 
   <run_depend>roscpp</run_depend>
   <run_depend>rospy</run_depend>
   <run_depend>pedsim_msgs</run_depend>
   <run_depend>pedsim_srvs</run_depend>
+  <run_depend>visualization_msgs</run_depend>
 
 </package>

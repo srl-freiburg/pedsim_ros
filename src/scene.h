@@ -39,6 +39,8 @@
 #include <pedsim_srvs/GetAgentState.h>
 #include <pedsim_srvs/GetAllAgentsState.h>
 
+#include <visualization_msgs/Marker.h>
+
 
 // class Agent;
 // class Grid;
@@ -66,6 +68,7 @@ public:
     /// service handler for moving agents
     bool srvMoveAgentHandler(pedsim_srvs::SetAgentState::Request&, pedsim_srvs::SetAgentState::Response& );
     void publicAgentStatus();
+    void publishAgentVisuals();
 
     void moveAllAgents();
     void cleanupSlot();

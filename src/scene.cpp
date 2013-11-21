@@ -21,8 +21,8 @@ Scene::Scene(const ros::NodeHandle& node)
 
 
     // setup services and publishers
-    pub_all_agents_ = nh_.advertise<pedsim_msgs::AllAgentsState>("AllAgentsStatus", 1);
-//    pub_agent_visuals_ = nh_.advertise<>
+    pub_all_agents_ = nh_.advertise<pedsim_msgs::AllAgentsState>("AllAgentsStatus", 0);
+    pub_agent_visuals_ = nh_.advertise<visualization_msgs::Marker>( "visualization_marker", 0 );
 
     srv_move_agent_ = nh_.advertiseService("SetAgentState", &Scene::srvMoveAgentHandler, this);
 }
@@ -75,6 +75,7 @@ void Scene::runSimulation() {
         moveAllAgents();
 
         publicAgentStatus();
+        publishAgentVisuals();
 
 
         ros::spinOnce();
@@ -82,32 +83,19 @@ void Scene::runSimulation() {
 }
 
 
-void Scene::moveAllAgents() {
-//    if(!movetimer.isActive()) return;
-
+void Scene::moveAllAgents()
+{
     all_agents_ = getAllAgents();
-
-    ROS_INFO("stepping agents ...");
 
     for (vector<Ped::Tagent*>::const_iterator iter = all_agents_.begin(); iter != all_agents_.end(); ++iter)
     {
         Ped::Tagent *a = (*iter);
 
-        if (a->gettype() == 2)
+        if (a->gettype() == 1)
             robot_ = a;
     }
 
-
-//    /// NOTE Test Termination criterion for the robot
-//    if (eDist(robot_->getx(), robot_->gety(), 100, 720) < 1.0) exit(0);
-
     timestep++;
-//    ros::spin();
-
-//    while(ros::ok())
-//    {
-//        ros::spinOnce();
-//    }
 
     // move the agents by social force
     Ped::Tscene::moveAgents(CONFIG.simh);
@@ -142,6 +130,63 @@ void Scene::publicAgentStatus()
     pub_all_agents_.publish(all_status);
 }
 
+
+void Scene::publishAgentVisuals()
+{
+
+    for (vector<Ped::Tagent*>::const_iterator iter = all_agents_.begin(); iter != all_agents_.end(); ++iter)
+    {
+        Ped::Tagent *a = (*iter);
+
+        visualization_msgs::Marker marker;
+        marker.header.frame_id = "pedsim_base";
+        marker.header.stamp = ros::Time();
+        marker.ns = "pedsim";
+        marker.id = a->getid();
+        marker.type = visualization_msgs::Marker::CUBE;
+        marker.action = 0;
+
+        if (std::isnan(a->getx() ) || std::isnan(a->getx() ) || std::isnan(a->getx() )) {
+            ROS_WARN("NAN values");
+//            continue;
+        }
+
+
+        marker.pose.position.x = a->getx() * (1/20.0);
+        marker.pose.position.y = a->gety() * (1/20.0);
+        marker.pose.position.z = 0;
+
+//        marker.pose.position.x = a->getid();
+//        marker.pose.position.y = a->getid();
+//        marker.pose.position.z = 0;
+
+        marker.pose.orientation.x = 0.0;
+        marker.pose.orientation.y = 0.0;
+        marker.pose.orientation.z = 0.0;
+        marker.pose.orientation.w = 1.0;
+        marker.scale.x = 1;
+        marker.scale.y = 1;
+        marker.scale.z = 1;
+
+        if (a->gettype() == robot_->gettype())
+        {
+            marker.color.a = 1.0;
+            marker.color.r = 0.0;
+            marker.color.g = 0.0;
+            marker.color.b = 1.0;
+        }
+        else {
+            marker.color.a = 1.0;
+            marker.color.r = 0.0;
+            marker.color.g = 1.0;
+            marker.color.b = 0.0;
+        }
+        //only if using a MESH_RESOURCE marker type:
+        //    marker.mesh_resource = "package://pr2_description/meshes/base_v0/base.dae";
+        pub_agent_visuals_.publish( marker );
+
+    }
+}
 
 
 std::set<const Ped::Tagent*> Scene::getNeighbors(double x, double y, double maxDist)

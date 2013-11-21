@@ -19,7 +19,7 @@
         <addwaypoint id="lower_right" />
     </agent> -->
 
-    <agent x="720" y="720" n="1" dx="0" dy="0" type="2">
+    <agent x="720" y="720" n="1" dx="0" dy="0" type="1">
         <addwaypoint id="upper_left" />
     </agent>
 
