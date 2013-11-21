@@ -2,11 +2,11 @@
 #include <scene.h>
 
 /// global to keep persistence over instances of scene
-Grid* Scene::grid_ = NULL;
+// Grid* Scene::grid_ = NULL;
 
 
 Scene::Scene(const ros::NodeHandle& node)  
-    : nh_(node)
+    : Ped::Tscene(), nh_(node)
 {
     QRect area(0, 0, 820, 820); // grid test large
 //  QRect area(0, 0, 820, 200); // grid test hard
@@ -15,11 +15,11 @@ Scene::Scene(const ros::NodeHandle& node)
     tree = new Ped::Ttree(this, 0, area.x(), area.y(), area.width(), area.height());
 
        
-    QObject::connect(&movetimer, SIGNAL(timeout()), this, SLOT(moveAllAgents()));
-    movetimer.setInterval(500);
+    // QObject::connect(&movetimer, SIGNAL(timeout()), this, SLOT(moveAllAgents()));
+    // movetimer.setInterval(500);
 
-    QObject::connect(&cleanuptimer, SIGNAL(timeout()), this, SLOT(cleanupSlot()));
-    cleanuptimer.setInterval(200);
+    // QObject::connect(&cleanuptimer, SIGNAL(timeout()), this, SLOT(cleanupSlot()));
+    // cleanuptimer.setInterval(200);
 
     // start the time steps
     timestep = 0;
@@ -37,9 +37,35 @@ Scene::Scene(const ros::NodeHandle& node)
     unpauseUpdates();
 }
 
+// Scene::Scene(double left, double up, double width, double height, const ros::NodeHandle& node)  
+//     : Ped::Tscene(left, up, width, height), nh_(node)
+// {
+//     QRect area(left, up, width, height); 
+//     Scene::grid_ = new Grid(area.x(), area.y(), area.width(), area.height());
+//     tree = new Ped::Ttree(this, 0, area.x(), area.y(), area.width(), area.height());
 
-Scene::~Scene() { clear(); }
-Grid* Scene::getGrid() { return grid_; }
+//     QObject::connect(&movetimer, SIGNAL(timeout()), this, SLOT(moveAllAgents()));
+//     movetimer.setInterval(500);
+
+//     QObject::connect(&cleanuptimer, SIGNAL(timeout()), this, SLOT(cleanupSlot()));
+//     cleanuptimer.setInterval(200);
+
+//     // start the time steps
+//     timestep = 0;
+
+//     /// setup the list of all agents and the robot agent
+//     all_agents_.clear();
+//     all_agents_ = getAllAgents();
+
+
+//     // setup services and publishers
+//     pub_all_agents_ = nh_.advertise<pedsim_msgs::AllAgentsState>("AllAgentsStatus", 1);
+//     srv_move_agent_ = nh_.advertiseService("SetAgentState", &Scene::srvMoveAgentHandler, this);
+
+//     // additional initialization in separat methods to keep constructor clean
+//     unpauseUpdates();
+// }
+
 
 
 bool Scene::srvMoveAgentHandler(pedsim_srvs::SetAgentState::Request& req, pedsim_srvs::SetAgentState::Response& res)
@@ -299,7 +325,7 @@ int main(int argc, char** argv) {
     QSharedPointer<Scene> scene = QSharedPointer<Scene>(new Scene(node));
 
 
-    ScenarioReader scenarioReader(scene);
+    // ScenarioReader scenarioReader(scene);
 
     return 0;    
 }

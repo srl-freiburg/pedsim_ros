@@ -60,7 +60,7 @@ public:
     virtual void moveAgents(double h);
 
     set<const Ped::Tagent*> getNeighbors(double x, double y, double dist) const;
-    const vector<Tagent*>& getAllAgents() const { return agent; };
+    const vector<Tagent*>& getAllAgents() { return agent; };
 
     void moveAgent(const Ped::Tagent *a);
     void killAgent(const Ped::Tagent *a);

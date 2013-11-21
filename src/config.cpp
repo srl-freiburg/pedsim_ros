@@ -15,7 +15,8 @@
 Config* Config::Config::instance = NULL;
 
 
-Config::Config() {
+Config::Config() 
+{
     // make sure this reflects what is set as default in the suer interface!  --chgloor 2012-01-13
     guiShowWaypoints = false;
     simWallForce = 10;

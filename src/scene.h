@@ -18,7 +18,7 @@
 #include <agent.h>
 #include <obstacle.h>
 #include <waypoint.h>
-#include <scenarioreader.h>
+// #include <scenarioreader.h>
 
 #include <boost/foreach.hpp>
 #include <boost/lexical_cast.hpp>
@@ -39,31 +39,36 @@
 #include <pedsim_srvs/GetAllAgentsState.h>
 
 
-class Agent;
-class Grid;
-class Obstacle;
-class Waypoint;
+// class Agent;
+// class Grid;
+// class Obstacle;
+// class Waypoint;
 
 
-class Scene : public QObject, public Ped::Tscene
+class Scene : public Ped::Tscene
 {
-    Q_OBJECT
 public:
     Scene( const ros::NodeHandle& node);
-    virtual ~Scene();
+    // Scene( double left, double up, double width, double height, const ros::NodeHandle& node );
+    ~Scene() { clear(); }
 
     bool isPaused() const;
     void pauseUpdates();
     void unpauseUpdates();
     void clear();
-    static Grid* getGrid();
+    Grid* getGrid() { return grid_; }
     std::set<const Ped::Tagent*> getNeighbors(double x, double y, double maxDist);
+
+    // overriding methods
+    void addAgent(Ped::Tagent *a) { Ped::Tscene::addAgent(a); }
+    void addObstacle(Ped::Tobstacle *o) { Ped::Tscene::addObstacle(o); }
+    void cleanup() { Ped::Tscene::cleanup(); }
+    void moveAgents(double h) { Ped::Tscene::moveAgents(h); }
 
     /// service handler for moving agents
     bool srvMoveAgentHandler(pedsim_srvs::SetAgentState::Request&, pedsim_srvs::SetAgentState::Response& );
     void publicAgentStatus();
 
-protected slots:
     void moveAllAgents();
     void cleanupSlot();
 
@@ -71,7 +76,7 @@ public:
     QList<Agent*> agents;
     QList<Obstacle*> obstacles;
     QMap<QString, Waypoint*> waypoints;
-    static Grid* grid_;
+    Grid* grid_;
     size_t timestep;
 
 private:

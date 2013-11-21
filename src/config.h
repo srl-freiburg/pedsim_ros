@@ -71,21 +71,12 @@ public:
     double height;
 
     std::vector<TLoc> obstacle_positions;
-
-public:
-    /// additional running parameters
-    // double sensor_horizon;
-    // double touch_radius;
-    // double step_size;
-
     std::string config_file;
 
-public:
     void readParameters(std::string filename);
 
 
-/// feature thresholds
-public:
+    /// feature thresholds
     double *angles;
     double *densities;
     double *velocities;
