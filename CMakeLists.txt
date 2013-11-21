@@ -21,7 +21,7 @@ SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
 
 
 #----------------- Compiler Flags ------------------#
-ADD_DEFINITIONS(-std=c++0x -pipe)  # suppress the noise of unused variables
+ADD_DEFINITIONS(-std=c++0x -pipe -fpermissive)  # suppress the noise of unused variables
 
 #debugging
 IF(SHALL_DEBUG)
