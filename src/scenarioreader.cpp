@@ -13,7 +13,6 @@
 #include "agent.h"
 #include "obstacle.h"
 #include "waypoint.h"
-#include "logging.h"
 // → Qt
 #include <QFile>
 
@@ -24,12 +23,12 @@ ScenarioReader::ScenarioReader(const QSharedPointer<Scene>& sceneIn) {
 
 
 bool ScenarioReader::readFromFile(const QString& filename) {
-    INFO_LOG("Loading scenario file '%1'.", filename);
+    // ROS_INFO("Loading scenario file '%s'.", filename.toStdString);
 
     // open file
     QFile file(filename);
     if(!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        ERROR_LOG("Couldn't open scenario file!");
+        // ERROR_LOG("Couldn't open scenario file!");
         return false;
     }
 
@@ -75,15 +74,15 @@ void ScenarioReader::processData(QByteArray& data) {
 
                 Waypoint* w = new Waypoint(scene, id, x, y, r);
 
-                if (boost::starts_with(id, "start")) {
-                    w->setType(Ped::Twaypoint::TYPE_BIRTH);
-                    std::cout << "adding a birth waypoint" << std::endl;
-                }
+                // if (boost::starts_with(id, "start")) {
+                //     w->setType(Ped::Twaypoint::TYPE_BIRTH);
+                //     std::cout << "adding a birth waypoint" << std::endl;
+                // }
 
-                if (boost::starts_with(id, "stop")) {
-                    w->setType(Ped::Twaypoint::TYPE_DEATH);
-                    std::cout << "adding a death waypoint" << std::endl;
-                }
+                // if (boost::starts_with(id, "stop")) {
+                //     w->setType(Ped::Twaypoint::TYPE_DEATH);
+                //     std::cout << "adding a death waypoint" << std::endl;
+                // }
 
 
                 scene->waypoints[id] = w;
@@ -120,7 +119,7 @@ void ScenarioReader::processData(QByteArray& data) {
             }
             else {
                 // inform the user about invalid elements
-                ERROR_LOG("Unknown element: <%1>", xmlReader.name().toString());
+                // ROS_WARN("Unknown element: %s", xmlReader.name().toString());
             }
         }
         else if(xmlReader.isEndElement()) {

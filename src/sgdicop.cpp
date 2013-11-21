@@ -7,7 +7,6 @@
 // → SGDiCoP
 #include "logging.h"
 #include "scenarioreader.h"
-#include "scenariowriter.h"
 #include "scene.h"
 #include "agent.h"
 #include "obstacle.h"
@@ -194,21 +193,6 @@ bool SGDiCoP::loadScene(const QString& scenarioFile) {
     // update name of scenario file
     scenarioFileName = scenarioFile;
     emit scenarioLoaded();
-
-    return true;
-}
-
-bool SGDiCoP::writeScene(const QString& scenarioFile) {
-    ScenarioWriter writer(scene);
-    bool writeResult = writer.writeToFile(scenarioFile);
-    if(writeResult == false) {
-        ERROR_LOG("Failed to write output to file '%1'", scenarioFile);
-        return false;
-    }
-
-    // update name of scenario file
-    emit scenarioSaved();
-    scenarioFileName = scenarioFile;
 
     return true;
 }

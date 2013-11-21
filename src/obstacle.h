@@ -11,12 +11,9 @@
 #define _obstacle_h_
 
 // Includes
-// → SGDiCoP
-#include "scenarioelement.h"
 // → PedSim
 #include "ped_obstacle.h"
 // → Qt
-#include <QGraphicsLineItem>
 #include <QWeakPointer>
 
 
@@ -24,12 +21,11 @@
 class Scene;
 
 
-class Obstacle : public Ped::Tobstacle, public ScenarioElement, public QGraphicsLineItem {
+class Obstacle : public Ped::Tobstacle 
+{
 	// Define Type
 	// Needed by QGraphicsItem::type()
 public:
-	enum { Type = UserType + 2 };
-
 
 	// Constructor and Destructor
 public:
@@ -40,7 +36,6 @@ public:
 	// Methods
 public:
 	void setPosition(double ax, double ay, double bx, double by);
-	void setPosition(const QPointF& startIn, const QPointF& endIn);
 	void setX1(double xIn);
 	void setY1(double yIn);
 	void setX2(double xIn);
@@ -49,10 +44,6 @@ public:
 	// → ScenarioElement Overrides/Overloads
 public:
 	void updateLookOnSelection(bool selectedIn);
-	QString toString() const;
-
-	// → QGraphicsItem Overrides
-	virtual int type() const { return Type; }
 
 
 	// Attributes

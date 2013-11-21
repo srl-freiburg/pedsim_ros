@@ -11,25 +11,17 @@
 #define _waypoint_h_
 
 // Includes
-// → SGDiCoP
-#include "scenarioelement.h"
 // → PedSim
 #include "ped_waypoint.h"
 // → Qt
-#include <QGraphicsEllipseItem>
 #include <QWeakPointer>
 
 
 // Forward Declarations
 class Scene;
 
-class Waypoint : public Ped::Twaypoint, public ScenarioElement, public QGraphicsEllipseItem {
-	// Define Type
-	// Needed by QGraphicsItem::type()
-public:
-	enum { Type = UserType + 1 };
-
-
+class Waypoint : public Ped::Twaypoint
+{
 	// Constructor and Destructor
 public:
 	Waypoint(const QWeakPointer<Scene>& sceneIn, const QString& idIn, double x = 0, double y = 0, double r = 1);
@@ -39,7 +31,6 @@ public:
 	// Methods
 public:
 	void setPosition(double xIn, double yIn);
-	void setPosition(const QPointF& posIn);
 
 	// → Ped::Twaypoint Overrides
 	void setx(double xIn);
@@ -51,16 +42,8 @@ public:
 
 	// → ScenarioElement Overrides/Overloads
 public:
-	void updateLookOnSelection(bool selectedIn);
-	QString toString() const;
-
 	// → QGraphicsItem Overrides
-	virtual int type() const { return Type; }
-
-	// → Making QGraphicsEllipseItem partially public
-public:
-	using QGraphicsEllipseItem::setVisible;
-
+	virtual int type() const { return Ped::Twaypoint::gettype(); }
 
 	// Attributes
 public:

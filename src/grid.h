@@ -21,14 +21,13 @@
 
 
 // Forward Declarations
-class QGraphicsScene;
 class QGraphicsRectItem;
 
 
 class Grid {
     // Constructor and Destructor
 public:
-    Grid(double x, double y, double w, double h, QGraphicsScene* l);
+    Grid(double x, double y, double w, double h);
     virtual ~Grid();
 
     QVariant getValue(double x, double y, int value);
@@ -49,7 +48,6 @@ public:
 
 public:
 
-    QGraphicsScene* graphicsscene;
     QGraphicsRectItem* rect;
     double width;
     double height;

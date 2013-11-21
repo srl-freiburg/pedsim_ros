@@ -16,7 +16,6 @@
 #include <QVariant>
 
 // Forward Declarations
-class QGraphicsScene;
 class QGraphicsRectItem;
 
 
@@ -24,7 +23,7 @@ class Cell {
 	// Constructor and Destructor
 public:
 	//TODO: use QRectF?
-	Cell(double x, double y, double w, double h, QGraphicsScene* l);
+	Cell(double x, double y, double w, double h);
 	virtual ~Cell();
 
 
@@ -34,7 +33,6 @@ public:
 
 	// Attributes
 public:
-	QGraphicsScene* graphicsscene;
 	QGraphicsRectItem* rect;
 
 	QList<QVariant> values;

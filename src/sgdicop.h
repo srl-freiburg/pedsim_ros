@@ -61,7 +61,6 @@ public:
 	bool clearScene();
 	bool newScene();
 	bool loadScene(const QString& scenarioFile);
-	bool writeScene(const QString& scenarioFile);
 
 
 	// Attributes

@@ -48,7 +48,6 @@ Config& Config::getInstance() {
 
 void Config::setGuiShowWaypoints(bool value) {
     guiShowWaypoints = value;
-    emit waypointVisibilityChanged(value);
 }
 
 void Config::setSimWallForce(double value) {

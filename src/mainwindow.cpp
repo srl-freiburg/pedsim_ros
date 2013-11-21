@@ -375,7 +375,7 @@ bool MainWindow::saveScenario() {
 	settings.setValue("RecentOutputFile", sceneOutputFilename);
 	
 	// write scenario to file
-	bool writeResult = SGDICOP.writeScene(sceneOutputFilename);
+	bool writeResult = false;
 
 	return writeResult;
 }

@@ -48,11 +48,6 @@ public:
     static Config& getInstance();
 
 
-    // Signals
-signals:
-    // → Waypoints
-    void waypointVisibilityChanged(bool show);
-
 
     // Slots
 public slots:
