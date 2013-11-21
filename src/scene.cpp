@@ -8,17 +8,11 @@
 Scene::Scene(const ros::NodeHandle& node)  
     : Ped::Tscene(), nh_(node)
 {
-//    QRect area(0, 0, 820, 820); // grid test large
-//    grid_ = new Grid(area.x(), area.y(), area.width(), area.height());
-//    tree = new Ped::Ttree(this, 0, area.x(), area.y(), area.width(), area.height());
-
     // start the time steps
     timestep = 0;
 
     /// setup the list of all agents and the robot agent
     all_agents_.clear();
-//    all_agents_ = getAllAgents();
-
 
     // setup services and publishers
     pub_all_agents_ = nh_.advertise<pedsim_msgs::AllAgentsState>("AllAgentsStatus", 0);
@@ -150,46 +144,43 @@ void Scene::publishAgentVisuals()
         marker.header.stamp = ros::Time();
         marker.ns = "pedsim";
         marker.id = a->getid();
-        marker.type = visualization_msgs::Marker::CUBE;
-        marker.action = 0;
 
-        if (std::isnan(a->getx() ) || std::isnan(a->getx() ) || std::isnan(a->getx() )) {
-            ROS_WARN("NAN values");
-//            continue;
-        }
-
-
-        marker.pose.position.x = a->getx() * (1/20.0);
-        marker.pose.position.y = a->gety() * (1/20.0);
-        marker.pose.position.z = 0;
-
-//        marker.pose.position.x = a->getid();
-//        marker.pose.position.y = a->getid();
-//        marker.pose.position.z = 0;
-
-        marker.pose.orientation.x = 0.0;
-        marker.pose.orientation.y = 0.0;
-        marker.pose.orientation.z = 0.0;
-        marker.pose.orientation.w = 1.0;
-        marker.scale.x = 1;
-        marker.scale.y = 1;
-        marker.scale.z = 1;
-
-        if (a->gettype() == robot_->gettype())
+        if (a->gettype() == robot_->gettype()) 
         {
+            // marker.type = visualization_msgs::Marker::CUBE;
+            marker.type = visualization_msgs::Marker::MESH_RESOURCE;
+            marker.mesh_resource = "package://simulator/images/darylbot.dae";
             marker.color.a = 1.0;
-            marker.color.r = 0.0;
-            marker.color.g = 0.0;
+            marker.color.r = 1.0;
+            marker.color.g = 1.0;
             marker.color.b = 1.0;
+
+            marker.scale.x = 0.5;
+            marker.scale.y = 0.5;
+            marker.scale.z = 0.5;
         }
-        else {
+        else
+        {
+            marker.type = visualization_msgs::Marker::CYLINDER;
             marker.color.a = 1.0;
             marker.color.r = 0.0;
             marker.color.g = 1.0;
             marker.color.b = 0.0;
+
+            marker.scale.x = 0.2;
+            marker.scale.y = 0.2;
+            marker.scale.z = 1;
         }
-        //only if using a MESH_RESOURCE marker type:
-        //    marker.mesh_resource = "package://pr2_description/meshes/base_v0/base.dae";
+
+        marker.action = 0;  // add or modify
+        marker.pose.position.x = a->getx() * (1/20.0);
+        marker.pose.position.y = a->gety() * (1/20.0);
+        marker.pose.position.z = 0;
+        marker.pose.orientation.x = 0.0;
+        marker.pose.orientation.y = 0.0;
+        marker.pose.orientation.z = 0.0;
+        marker.pose.orientation.w = 1.0;
+
         pub_agent_visuals_.publish( marker );
 
     }
@@ -353,8 +344,6 @@ int main(int argc, char** argv)
     node.getParam("/simulator/cell_size", cell_size);
     CONFIG.width = cell_size;
     CONFIG.height = cell_size;
-
-//    ROS_INFO("Read parameters (%s) (%f)", scene_file_param.c_str(), cell_size);
 
     // load scenario file
     QString scenefile = QString::fromStdString(scene_file_param);

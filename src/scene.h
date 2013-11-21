@@ -51,8 +51,7 @@
 class Scene : public Ped::Tscene
 {
 public:
-    Scene( const ros::NodeHandle& node);
-    // Scene( double left, double up, double width, double height, const ros::NodeHandle& node );
+    Scene(const ros::NodeHandle& node);
     ~Scene() { clear(); }
 
     void clear();
