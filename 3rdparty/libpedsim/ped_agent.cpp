@@ -211,6 +211,13 @@ Ped::Tvector Ped::Tagent::obstacleForce() const {
 /// \return  Tvector: the calculated force
 Ped::Tvector Ped::Tagent::desiredForce() {
     Ped::Tvector e;
+    if ( gettype() == 2) {
+      bool reached;
+      Twaypoint d( p.x + v.x, p.y + v.y, 1E-6 );
+      d.setType(Ped::Twaypoint::TYPE_POINT);
+      e = d.getForce(p.x, p.y, 0, 0, &reached);
+      return e;
+    }
 
     if (follow >= 0) {
         bool reached;
