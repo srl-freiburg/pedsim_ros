@@ -349,32 +349,28 @@ void Ped::Tagent::move(double h) {
     a.y = factorsocialforce * socialforce.y + factordesiredforce * desiredforce.y + factorobstacleforce * obstacleforce.y + factorlookaheadforce * lookaheadforce.y + myforce.y;
     a.z = factorsocialforce * socialforce.z + factordesiredforce * desiredforce.z + factorobstacleforce * obstacleforce.z + factorlookaheadforce * lookaheadforce.z + myforce.z;
 
-    if ( gettype() == 2) {
-        // do nothing
-    } else {
-        // calculate the new velocity based on v0 and the acceleration
-        /// \todo Make momentum factor (0.75) settable by the user
-        v.x = 0.75 * v.x + a.x;
-        v.y = 0.75 * v.y + a.y; /// \note Is the momentum factor (0.75) dependent of h?? think so   --chgloor 2012-01-15
-        v.z = 0.75 * v.z + a.z;
+    // calculate the new velocity based on v0 and the acceleration
+    /// \todo Make momentum factor (0.75) settable by the user
+    v.x = 0.75 * v.x + a.x;
+    v.y = 0.75 * v.y + a.y; /// \note Is the momentum factor (0.75) dependent of h?? think so   --chgloor 2012-01-15
+    v.z = 0.75 * v.z + a.z;
 
-        double currvmax = vmax;
-        double speed = (sqrt(v.x*v.x + v.y*v.y + v.z*v.z));
+    double currvmax = vmax;
+    double speed = (sqrt(v.x*v.x + v.y*v.y + v.z*v.z));
 
-        if (speed > currvmax) {
-            v.x = (v.x / speed) * currvmax;
-            v.y = (v.y / speed) * currvmax;
-            v.z = (v.z / speed) * currvmax;
-        }
-
-        // internal position update == actual move
-        p.x = p.x + h * v.x; // x = x0 + v*t
-        p.y = p.y + h * v.y;
-        p.z = 0; // p.z + h * v.z; // 2D  --chgloor 2012-01-04
-
-        // notice scene of movement
-        scene->moveAgent(this);
+    if (speed > currvmax && speed > 0 ) {
+        v.x = (v.x / speed) * currvmax;
+        v.y = (v.y / speed) * currvmax;
+        v.z = (v.z / speed) * currvmax;
     }
+
+    // internal position update == actual move
+    p.x = p.x + h * v.x; // x = x0 + v*t
+    p.y = p.y + h * v.y;
+    p.z = 0; // p.z + h * v.z; // 2D  --chgloor 2012-01-04
+
+    // notice scene of movement
+    scene->moveAgent(this);
 
     timestep++; // local agent tiemstep since creation
 }

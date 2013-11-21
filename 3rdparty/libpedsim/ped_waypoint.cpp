@@ -6,6 +6,7 @@
 #include "math.h"
 
 #include "ped_waypoint.h"
+#include <iostream>
 
 #include <vector>
 
@@ -112,6 +113,13 @@ Ped::Tvector Ped::Twaypoint::getForce(double myx, double myy, double fromx, doub
         double distancey = y - myy;
         double dist2 = (distancex * distancex + distancey * distancey);  // dist2 = distanz im quadrat
         double dist = sqrt(dist2);
+
+        if ( dist <= 0 ) {
+          f.x = 0;
+          f.y = 0;
+          return f;
+        }
+
         f.x = distancex / dist;
         f.y = distancey / dist;
         if (dist < r) { *reached = true; } else { *reached = false; };
