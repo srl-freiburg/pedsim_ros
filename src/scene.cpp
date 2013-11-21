@@ -34,6 +34,8 @@ bool Scene::srvMoveAgentHandler(pedsim_srvs::SetAgentState::Request& req, pedsim
 {
     pedsim_msgs::AgentState state = req.state;
 
+    ROS_INFO("Rceived (%f) (%f)", state.position.x, state.position.y);
+
     if (robot_->getid() == state.id)  {
         robot_->setPosition(state.position.x*20.0, state.position.y*20.0, state.position.z*20.0 );
         // robot_->setPosition(state.position.y*20.0, state.position.x*20.0, state.position.z*20.0 );
@@ -70,6 +72,9 @@ void Scene::clear() {
 }
 
 void Scene::runSimulation() {
+
+    ros::Rate r(20);
+
     while (ros::ok())
     {
         moveAllAgents();
@@ -79,6 +84,8 @@ void Scene::runSimulation() {
 
 
         ros::spinOnce();
+
+        r.sleep();
     }
 }
 
@@ -91,7 +98,7 @@ void Scene::moveAllAgents()
     {
         Ped::Tagent *a = (*iter);
 
-        if (a->gettype() == 1)
+        if (a->gettype() == 2)
             robot_ = a;
     }
 
