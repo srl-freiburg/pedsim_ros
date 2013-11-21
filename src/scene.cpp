@@ -7,6 +7,9 @@ Scene::Scene(const ros::NodeHandle& node)
     // start the time steps
     timestep = 0;
 
+    // useful for keeping track of agents in the cleaning process
+    tree = new Ped::Ttree(this, 0, 0, 0, 5000, 5000);
+
     /// setup the list of all agents and the robot agent
     all_agents_.clear();
 
