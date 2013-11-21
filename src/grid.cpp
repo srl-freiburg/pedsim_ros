@@ -4,8 +4,8 @@
 // Forked from: PedSim's demo application (version 2.2).
 // (http://pedsim.silmaril.org/)
 // Copyright text:
-// 		pedsim - A microscopic pedestrian simulation system.
-// 		Copyright (c) 2003 - 2012 by Christian Gloor
+//      pedsim - A microscopic pedestrian simulation system.
+//      Copyright (c) 2003 - 2012 by Christian Gloor
 
 // Includes
 #include "grid.h"
@@ -38,6 +38,8 @@ Grid::Grid(double x, double y, double w, double h) {
         }
         ++i;
     }
+
+    // std::cerr << "created the grid" << std::endl;
 }
 
 Grid::~Grid() {
@@ -46,9 +48,12 @@ Grid::~Grid() {
     delete rect;
 
     // → remove cells
-    foreach(auto& row, cells) {
-        foreach(Cell* cell, row)
+    BOOST_FOREACH(QVector<Cell*>& row, cells)
+    {
+        BOOST_FOREACH(Cell* cell, row)
+        {
             delete cell;
+        }
     }
 }
 
@@ -140,10 +145,11 @@ void Grid::setValue(double x, double y, int index, int value) {
 
 void Grid::clearObstacles()
 {
-    // TODO - remove c++11 features as ROS does not allow them
-    // this applies to the whole pedsim project (needs re-write)
-    foreach(auto& row, cells) {
-        foreach(Cell* cell, row)
+    BOOST_FOREACH(QVector<Cell*>& row, cells)
+    {
+        BOOST_FOREACH(Cell* cell, row)
+        {
             cell->occupied = false;
+        }
     }
 }
