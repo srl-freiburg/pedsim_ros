@@ -11,15 +11,10 @@
 #include <QXmlStreamReader>
 #include <QRect>
 
-
-#include <boost/bind.hpp>
-
 #include <config.h>
-#include <grid.h>
 #include <agent.h>
 #include <obstacle.h>
 #include <waypoint.h>
-// #include <scenarioreader.h>
 
 #include <boost/foreach.hpp>
 #include <boost/lexical_cast.hpp>
@@ -42,12 +37,6 @@
 #include <visualization_msgs/Marker.h>
 
 
-// class Agent;
-// class Grid;
-// class Obstacle;
-// class Waypoint;
-
-
 class Scene : public Ped::Tscene
 {
 public:
@@ -55,7 +44,6 @@ public:
     ~Scene() { clear(); }
 
     void clear();
-    Grid* getGrid() { return grid_; }
     std::set<const Ped::Tagent*> getNeighbors(double x, double y, double maxDist);
 
     // overriding methods
@@ -70,19 +58,12 @@ public:
     void publishAgentVisuals();
 
     void moveAllAgents();
-    void cleanupSlot();
+    void cleanupItems();
 
     inline bool readFromFile(const QString& filename);
     inline void processData(QByteArray& data);
 
     void runSimulation();
-
-    QList<Agent*> agents;
-    QList<Obstacle*> obstacles;
-    QMap<QString, Waypoint*> waypoints;
-    Grid* grid_;
-    size_t timestep;
-
 
 private:
     // robot and agents
@@ -100,24 +81,15 @@ private:
 
     QXmlStreamReader xmlReader;
     QList<Agent*> currentAgents;
-
-
-    double eDist(double x1, double y1, double x2, double y2)
-    {
-        double dx = (x2-x1) * (1/20.0);
-        double dy = (y2-y1) * (1/20.0);
-
-        return sqrt( pow(dx, 2.0) + pow(dy, 2.0) );    // distance in metres
-    }
+    QList<Obstacle*> obstacles;
+    QMap<QString, Waypoint*> waypoints;
+    size_t timestep;
 };
-
 
 
 /// helpful typedefs
 typedef boost::shared_ptr<Scene> ScenePtr;
 typedef boost::shared_ptr<Scene const> SceneConstPtr;
-
-
 
 
 #endif // SCENE_ICRA14_H

@@ -1,10 +1,6 @@
 
 #include <scene.h>
 
-/// global to keep persistence over instances of scene
-// Grid* Scene::grid_ = NULL;
-
-
 Scene::Scene(const ros::NodeHandle& node)  
     : Ped::Tscene(), nh_(node)
 {
@@ -32,7 +28,6 @@ bool Scene::srvMoveAgentHandler(pedsim_srvs::SetAgentState::Request& req, pedsim
 
     if (robot_->getid() == state.id)  {
         robot_->setPosition(state.position.x*20.0, state.position.y*20.0, state.position.z*20.0 );
-        // robot_->setPosition(state.position.y*20.0, state.position.x*20.0, state.position.z*20.0 );
         robot_->setvx(state.velocity.x);
         robot_->setvy(state.velocity.y);
 
@@ -46,14 +41,11 @@ bool Scene::srvMoveAgentHandler(pedsim_srvs::SetAgentState::Request& req, pedsim
 
 
 
-void Scene::cleanupSlot() {
+void Scene::cleanupItems() {
     cleanup();
 }
 
 void Scene::clear() {
-    foreach(Agent* agent, agents)
-        delete agent;
-    agents.clear();
     all_agents_.clear();
 
     foreach(Waypoint* waypoint, waypoints)
@@ -76,6 +68,8 @@ void Scene::runSimulation() {
         publicAgentStatus();
         publishAgentVisuals();
 
+        // helps to make things faster
+        cleanupItems();
 
         ros::spinOnce();
 
