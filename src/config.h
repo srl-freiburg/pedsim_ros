@@ -4,8 +4,8 @@
 // Forked from: PedSim's demo application (version 2.2).
 // (http://pedsim.silmaril.org/)
 // Copyright text:
-// 		pedsim - A microscopic pedestrian simulation system.
-// 		Copyright (c) 2011 by Christian Gloor
+//      pedsim - A microscopic pedestrian simulation system.
+//      Copyright (c) 2011 by Christian Gloor
 
 #ifndef _config_h_
 #define _config_h_
@@ -15,6 +15,7 @@
 #include <QObject>
 #include <map>
 #include <vector>
+#include <cmath>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/ini_parser.hpp>
 
@@ -44,15 +45,6 @@ protected:
     static Config* instance;
 public:
     static Config& getInstance();
-
-
-
-//    // Slots
-//public slots:
-//    void setGuiShowWaypoints(bool value);
-//    void setSimWallForce(double value);
-//    void setSimPedForce(double value);
-//    void setSimSpeed(int value);
 
 
     // Attributes

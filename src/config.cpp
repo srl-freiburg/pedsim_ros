@@ -4,8 +4,8 @@
 // Forked from: PedSim's demo application (version 2.2).
 // (http://pedsim.silmaril.org/)
 // Copyright text:
-// 		pedsim - A microscopic pedestrian simulation system.
-// 		Copyright (c) 2011 by Christian Gloor
+//      pedsim - A microscopic pedestrian simulation system.
+//      Copyright (c) 2011 by Christian Gloor
 
 // Includes
 #include "config.h"

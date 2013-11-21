@@ -1,24 +1,14 @@
 
-#include <scene.h>
-
-/// global to keep persistence over instances of scene
-// Grid* Scene::grid_ = NULL;
-
+#include "scene.h"
 
 Scene::Scene(const ros::NodeHandle& node)  
     : Ped::Tscene(), nh_(node)
 {
-//    QRect area(0, 0, 820, 820); // grid test large
-//    grid_ = new Grid(area.x(), area.y(), area.width(), area.height());
-//    tree = new Ped::Ttree(this, 0, area.x(), area.y(), area.width(), area.height());
-
     // start the time steps
     timestep = 0;
 
     /// setup the list of all agents and the robot agent
     all_agents_.clear();
-//    all_agents_ = getAllAgents();
-
 
     // setup services and publishers
     pub_all_agents_ = nh_.advertise<pedsim_msgs::AllAgentsState>("AllAgentsStatus", 0);
@@ -37,12 +27,8 @@ bool Scene::srvMoveAgentHandler(pedsim_srvs::SetAgentState::Request& req, pedsim
     ROS_INFO("Rceived (%f) (%f)", state.position.x, state.position.y);
 
     if (robot_->getid() == state.id)  {
-        //robot_->setPosition(state.position.x*20.0, state.position.y*20.0, state.position.z*20.0 );
-        // robot_->setPosition(state.position.y*20.0, state.position.x*20.0, state.position.z*20.0 );
         robot_->setvx(state.velocity.x);
         robot_->setvy(state.velocity.y);
-
-        //moveAgent(robot_);
     }
 
     res.finished = true;
@@ -52,14 +38,11 @@ bool Scene::srvMoveAgentHandler(pedsim_srvs::SetAgentState::Request& req, pedsim
 
 
 
-void Scene::cleanupSlot() {
+void Scene::cleanupItems() {
     cleanup();
 }
 
 void Scene::clear() {
-    foreach(Agent* agent, agents)
-        delete agent;
-    agents.clear();
     all_agents_.clear();
 
     foreach(Waypoint* waypoint, waypoints)
@@ -82,6 +65,8 @@ void Scene::runSimulation() {
         publicAgentStatus();
         publishAgentVisuals();
 
+        // helps to make things faster
+        cleanupItems();
 
         ros::spinOnce();
 
@@ -150,46 +135,43 @@ void Scene::publishAgentVisuals()
         marker.header.stamp = ros::Time();
         marker.ns = "pedsim";
         marker.id = a->getid();
-        marker.type = visualization_msgs::Marker::CUBE;
-        marker.action = 0;
 
-        if (std::isnan(a->getx() ) || std::isnan(a->getx() ) || std::isnan(a->getx() )) {
-            ROS_WARN("NAN values");
-//            continue;
-        }
-
-
-        marker.pose.position.x = a->getx() * (1/20.0);
-        marker.pose.position.y = a->gety() * (1/20.0);
-        marker.pose.position.z = 0;
-
-//        marker.pose.position.x = a->getid();
-//        marker.pose.position.y = a->getid();
-//        marker.pose.position.z = 0;
-
-        marker.pose.orientation.x = 0.0;
-        marker.pose.orientation.y = 0.0;
-        marker.pose.orientation.z = 0.0;
-        marker.pose.orientation.w = 1.0;
-        marker.scale.x = 1;
-        marker.scale.y = 1;
-        marker.scale.z = 1;
-
-        if (a->gettype() == robot_->gettype())
+        if (a->gettype() == robot_->gettype()) 
         {
+            // marker.type = visualization_msgs::Marker::CUBE;
+            marker.type = visualization_msgs::Marker::MESH_RESOURCE;
+            marker.mesh_resource = "package://simulator/images/darylbot.dae";
             marker.color.a = 1.0;
-            marker.color.r = 0.0;
-            marker.color.g = 0.0;
+            marker.color.r = 1.0;
+            marker.color.g = 1.0;
             marker.color.b = 1.0;
+
+            marker.scale.x = 0.5;
+            marker.scale.y = 0.5;
+            marker.scale.z = 0.5;
         }
-        else {
+        else
+        {
+            marker.type = visualization_msgs::Marker::CYLINDER;
             marker.color.a = 1.0;
             marker.color.r = 0.0;
             marker.color.g = 1.0;
             marker.color.b = 0.0;
+
+            marker.scale.x = 0.2;
+            marker.scale.y = 0.2;
+            marker.scale.z = 1;
         }
-        //only if using a MESH_RESOURCE marker type:
-        //    marker.mesh_resource = "package://pr2_description/meshes/base_v0/base.dae";
+
+        marker.action = 0;  // add or modify
+        marker.pose.position.x = a->getx() * (1/20.0);
+        marker.pose.position.y = a->gety() * (1/20.0);
+        marker.pose.position.z = 0;
+        marker.pose.orientation.x = 0.0;
+        marker.pose.orientation.y = 0.0;
+        marker.pose.orientation.z = 0.0;
+        marker.pose.orientation.w = 1.0;
+
         pub_agent_visuals_.publish( marker );
 
     }
@@ -201,7 +183,7 @@ std::set<const Ped::Tagent*> Scene::getNeighbors(double x, double y, double maxD
     std::set<const Ped::Tagent*> potentialNeighbours = Ped::Tscene::getNeighbors(x, y, maxDist);
 
     // filter according to euclidean distance
-    auto agentIter = potentialNeighbours.begin();
+    std::set<const Ped::Tagent*>::const_iterator agentIter = potentialNeighbours.begin();
     while(agentIter != potentialNeighbours.end())
     {
         double aX = (*agentIter)->getx();
@@ -272,16 +254,15 @@ void Scene::processData(QByteArray& data) {
 
                 Waypoint* w = new Waypoint(id, x, y, r);
 
-                // if (boost::starts_with(id, "start")) {
-                //     w->setType(Ped::Twaypoint::TYPE_BIRTH);
-                //     std::cout << "adding a birth waypoint" << std::endl;
-                // }
+                if (boost::starts_with(id, "start")) {
+                    w->setType(Ped::Twaypoint::TYPE_BIRTH);
+                    std::cout << "adding a birth waypoint" << std::endl;
+                }
 
-                // if (boost::starts_with(id, "stop")) {
-                //     w->setType(Ped::Twaypoint::TYPE_DEATH);
-                //     std::cout << "adding a death waypoint" << std::endl;
-                // }
-
+                if (boost::starts_with(id, "stop")) {
+                    w->setType(Ped::Twaypoint::TYPE_DEATH);
+                    std::cout << "adding a death waypoint" << std::endl;
+                }
 
                 this->waypoints[id] = w;
             }
@@ -299,11 +280,10 @@ void Scene::processData(QByteArray& data) {
                     double randomizedX = x;
                     double randomizedY = y;
                     // handle dx=0 or dy=0 cases
-                    //TODO: qrand() actually needs to be seeded to create different runs
                     if(dx != 0)
-                        randomizedX += qrand()/(double)RAND_MAX * dx - dx/2;
+                        randomizedX += rand()/(double)RAND_MAX * dx - dx/2;
                     if(dy != 0)
-                        randomizedY += qrand()/(double)RAND_MAX * dy - dy/2;
+                        randomizedY += rand()/(double)RAND_MAX * dy - dy/2;
                     a->setPosition(randomizedX, randomizedY);
                     a->setType(type);
                     this->addAgent(a);
@@ -331,6 +311,55 @@ void Scene::processData(QByteArray& data) {
 }
 
 
+void Scene::drawObstacles(float x1, float y1, float x2, float y2)
+{
+    // Modified Bresenham's line algorithm (addding a buffer around obstacles)
+    const bool steep = (fabs(y2 - y1) > fabs(x2 - x1));
+    if(steep)
+    {
+        std::swap(x1, y1);
+        std::swap(x2, y2);
+    }
+
+    if(x1 > x2)
+    {
+        std::swap(x1, x2);
+        std::swap(y1, y2);
+    }
+
+    const float dx = x2 - x1;
+    const float dy = fabs(y2 - y1);
+
+    float error = dx / 8.0f;
+    const int ystep = (y1 < y2) ? 1 : -1;
+    int y = (int)y1;
+
+    const int maxX = (int)x2;
+
+    for(int x=(int)x1; x<maxX; x++)
+    {
+        if(steep)
+        {
+            CONFIG.obstacle_positions.push_back(TLoc(y,x));
+            CONFIG.obstacle_positions.push_back(TLoc(y+CONFIG.height,x+CONFIG.width));
+            CONFIG.obstacle_positions.push_back(TLoc(y-CONFIG.height,x-CONFIG.width));
+        }
+        else
+        {
+            CONFIG.obstacle_positions.push_back(TLoc(x,y));
+            CONFIG.obstacle_positions.push_back(TLoc(x+CONFIG.width,y+CONFIG.height));
+            CONFIG.obstacle_positions.push_back(TLoc(x-CONFIG.width,y-CONFIG.height));
+        }
+
+        error -= dy;
+        if(error < 0)
+        {
+            y += ystep;
+            error += dx;
+        }
+    }
+}
+
 
 int main(int argc, char** argv)
 {
@@ -353,8 +382,6 @@ int main(int argc, char** argv)
     node.getParam("/simulator/cell_size", cell_size);
     CONFIG.width = cell_size;
     CONFIG.height = cell_size;
-
-//    ROS_INFO("Read parameters (%s) (%f)", scene_file_param.c_str(), cell_size);
 
     // load scenario file
     QString scenefile = QString::fromStdString(scene_file_param);

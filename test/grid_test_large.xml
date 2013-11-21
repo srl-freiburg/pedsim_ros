@@ -25,5 +25,10 @@
         <addwaypoint id="lower_right" />
     </agent>
 
+    <agent x="100" y="200" n="5" dx="50" dy="50" type="0">
+        <addwaypoint id="lower_right" />
+        <addwaypoint id="upper_left" />
+    </agent>
+
     <!--AgentClusters-->
 </scenario>

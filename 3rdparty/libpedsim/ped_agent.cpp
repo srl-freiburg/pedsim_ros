@@ -33,9 +33,9 @@ Ped::Tagent::Tagent() {
     birth_waypoint = NULL;
     death_waypoint = NULL;
     follow = -1;
-    // vmax = 1.5 + 1.5*(double)rand()/(double)RAND_MAX; // in m/s between 2.0 and 4.0
-    // vmax = 0.5 + 2.0*(double)rand()/(double)RAND_MAX; // in m/s between 2.0 and 4.0
-    vmax = 1.0; // For verification tests
+    // vmax = 1.5 + 1.5*(double)rand()/(double)RAND_MAX; // in m/s 
+    vmax = 0.5 + 0.7*(double)rand()/(double)RAND_MAX; // in m/s 
+    // vmax = 1.0; // For verification tests
 
     mlLookAhead = false;
 
