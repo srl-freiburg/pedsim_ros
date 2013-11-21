@@ -342,7 +342,7 @@ void Ped::Tagent::move(double h) {
     a.y = factorsocialforce * socialforce.y + factordesiredforce * desiredforce.y + factorobstacleforce * obstacleforce.y + factorlookaheadforce * lookaheadforce.y + myforce.y;
     a.z = factorsocialforce * socialforce.z + factordesiredforce * desiredforce.z + factorobstacleforce * obstacleforce.z + factorlookaheadforce * lookaheadforce.z + myforce.z;
 
-    if ( true || gettype() == 2) {
+    if ( gettype() == 2) {
         // do nothing
     } else {
         // calculate the new velocity based on v0 and the acceleration

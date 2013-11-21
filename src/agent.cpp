@@ -12,7 +12,6 @@
 #include "agent.h"
 // → SGDiCoP
 #include "config.h"
-#include "logging.h"
 #include "scene.h"
 #include "waypoint.h"
 // → Qt

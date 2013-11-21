@@ -288,6 +288,7 @@ void Scene::processData(QByteArray& data) {
                 //TODO: keep agent group and expand later!?
                 for (int i=0; i<n; i++) {
                     Agent* a = new Agent();
+
                     double randomizedX = x;
                     double randomizedY = y;
                     // handle dx=0 or dy=0 cases
