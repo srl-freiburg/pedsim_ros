@@ -72,7 +72,7 @@ Ped::Tvector Ped::Twaypoint::normalpoint(double p1, double p2, double oc11, doub
 Ped::Tvector Ped::Twaypoint::getForce(double myx, double myy, double fromx, double fromy, bool *reached) const {
     Ped::Tvector f;
 
-    if ( type != Ped::Twaypoint::TYPE_POINT ||  type == Ped::Twaypoint::TYPE_NORMAL || 
+    if ( type == Ped::Twaypoint::TYPE_NORMAL || 
         type == Ped::Twaypoint::TYPE_BIRTH || 
         type == Ped::Twaypoint::TYPE_DEATH) 
     {
