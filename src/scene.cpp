@@ -1,5 +1,5 @@
 
-#include <scene.h>
+#include "scene.h"
 
 Scene::Scene(const ros::NodeHandle& node)  
     : Ped::Tscene(), nh_(node)
@@ -186,7 +186,7 @@ std::set<const Ped::Tagent*> Scene::getNeighbors(double x, double y, double maxD
     std::set<const Ped::Tagent*> potentialNeighbours = Ped::Tscene::getNeighbors(x, y, maxDist);
 
     // filter according to euclidean distance
-    auto agentIter = potentialNeighbours.begin();
+    std::set<const Ped::Tagent*>::const_iterator agentIter = potentialNeighbours.begin();
     while(agentIter != potentialNeighbours.end())
     {
         double aX = (*agentIter)->getx();
@@ -257,16 +257,15 @@ void Scene::processData(QByteArray& data) {
 
                 Waypoint* w = new Waypoint(id, x, y, r);
 
-                // if (boost::starts_with(id, "start")) {
-                //     w->setType(Ped::Twaypoint::TYPE_BIRTH);
-                //     std::cout << "adding a birth waypoint" << std::endl;
-                // }
+                if (boost::starts_with(id, "start")) {
+                    w->setType(Ped::Twaypoint::TYPE_BIRTH);
+                    std::cout << "adding a birth waypoint" << std::endl;
+                }
 
-                // if (boost::starts_with(id, "stop")) {
-                //     w->setType(Ped::Twaypoint::TYPE_DEATH);
-                //     std::cout << "adding a death waypoint" << std::endl;
-                // }
-
+                if (boost::starts_with(id, "stop")) {
+                    w->setType(Ped::Twaypoint::TYPE_DEATH);
+                    std::cout << "adding a death waypoint" << std::endl;
+                }
 
                 this->waypoints[id] = w;
             }
@@ -284,11 +283,10 @@ void Scene::processData(QByteArray& data) {
                     double randomizedX = x;
                     double randomizedY = y;
                     // handle dx=0 or dy=0 cases
-                    //TODO: qrand() actually needs to be seeded to create different runs
                     if(dx != 0)
-                        randomizedX += qrand()/(double)RAND_MAX * dx - dx/2;
+                        randomizedX += rand()/(double)RAND_MAX * dx - dx/2;
                     if(dy != 0)
-                        randomizedY += qrand()/(double)RAND_MAX * dy - dy/2;
+                        randomizedY += rand()/(double)RAND_MAX * dy - dy/2;
                     a->setPosition(randomizedX, randomizedY);
                     a->setType(type);
                     this->addAgent(a);
@@ -315,6 +313,55 @@ void Scene::processData(QByteArray& data) {
 
 }
 
+
+void Scene::drawObstacles(float x1, float y1, float x2, float y2)
+{
+    // Modified Bresenham's line algorithm (addding a buffer around obstacles)
+    const bool steep = (fabs(y2 - y1) > fabs(x2 - x1));
+    if(steep)
+    {
+        std::swap(x1, y1);
+        std::swap(x2, y2);
+    }
+
+    if(x1 > x2)
+    {
+        std::swap(x1, x2);
+        std::swap(y1, y2);
+    }
+
+    const float dx = x2 - x1;
+    const float dy = fabs(y2 - y1);
+
+    float error = dx / 8.0f;
+    const int ystep = (y1 < y2) ? 1 : -1;
+    int y = (int)y1;
+
+    const int maxX = (int)x2;
+
+    for(int x=(int)x1; x<maxX; x++)
+    {
+        if(steep)
+        {
+            CONFIG.obstacle_positions.push_back(TLoc(y,x));
+            CONFIG.obstacle_positions.push_back(TLoc(y+CONFIG.height,x+CONFIG.width));
+            CONFIG.obstacle_positions.push_back(TLoc(y-CONFIG.height,x-CONFIG.width));
+        }
+        else
+        {
+            CONFIG.obstacle_positions.push_back(TLoc(x,y));
+            CONFIG.obstacle_positions.push_back(TLoc(x+CONFIG.width,y+CONFIG.height));
+            CONFIG.obstacle_positions.push_back(TLoc(x-CONFIG.width,y-CONFIG.height));
+        }
+
+        error -= dy;
+        if(error < 0)
+        {
+            y += ystep;
+            error += dx;
+        }
+    }
+}
 
 
 int main(int argc, char** argv)

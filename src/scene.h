@@ -11,13 +11,14 @@
 #include <QXmlStreamReader>
 #include <QRect>
 
-#include <config.h>
-#include <agent.h>
-#include <obstacle.h>
-#include <waypoint.h>
+#include "config.h"
+#include "agent.h"
+#include "obstacle.h"
+#include "waypoint.h"
 
 #include <boost/foreach.hpp>
 #include <boost/lexical_cast.hpp>
+#include <boost/algorithm/string/predicate.hpp>
 
 
 // ros and big guys
@@ -62,6 +63,7 @@ public:
 
     inline bool readFromFile(const QString& filename);
     inline void processData(QByteArray& data);
+    inline void drawObstacles(float x1, float y1, float x2, float y2);
 
     void runSimulation();
 

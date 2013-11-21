@@ -4,8 +4,8 @@
 // Forked from: PedSim's demo application (version 2.2).
 // (http://pedsim.silmaril.org/)
 // Copyright text:
-// 		pedsim - A microscopic pedestrian simulation system.
-// 		Copyright (c) 2003 - 2012 by Christian Gloor
+//      pedsim - A microscopic pedestrian simulation system.
+//      Copyright (c) 2003 - 2012 by Christian Gloor
 
 #ifndef _grid_h_
 #define _grid_h_
@@ -18,6 +18,8 @@
 #include <QVector>
 #include <QPen>
 #include <QBrush>
+
+#include <boost/foreach.hpp>
 
 
 // Forward Declarations
