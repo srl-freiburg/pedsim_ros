@@ -29,9 +29,13 @@ bool Scene::srvMoveAgentHandler(pedsim_srvs::SetAgentState::Request& req, pedsim
 
     ROS_INFO("Rceived (%f) (%f)", state.position.x, state.position.y);
 
+    double vx = state.velocity.x;
+    double vy = state.velocity.y;
+
     if (robot_->getid() == state.id)  {
-        robot_->setvx(state.velocity.x);
-        robot_->setvy(state.velocity.y);
+        robot_->setvx( vx );
+        robot_->setvy( vy );
+        robot_->setVmax( sqrt( vx * vx + vy * vy ) );
     }
 
     res.finished = true;

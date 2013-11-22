@@ -331,9 +331,9 @@ Ped::Tvector Ped::Tagent::myForce(Ped::Tvector e) const {
 /// which is applied to the agents velocity, and then to its position. 
 /// \date    2003-12-29
 /// \param   h This tells the simulation how far the agent should proceed (also known as Tau in literature). 1 = 1 unit.
-void Ped::Tagent::move(double h) {
+void Ped::Tagent::move( double h ) {
     int update = 1/h;
-    if (timestep % update == 0) {
+    if (timestep % update == 0 || gettype() == 2 ) {
         desiredforce = desiredForce();
         neighbors = scene->getNeighbors(p.x, p.y, 20);  // 20 = 0.5m which seems rather too low???
         lookaheadforce = lookaheadForce(desiredforce);
@@ -344,6 +344,9 @@ void Ped::Tagent::move(double h) {
 
 
     //  sum of all forces --> acceleration
+    if ( gettype() == 2 ) {
+      factordesiredforce = 10;
+    }
     Ped::Tvector a;
     a.x = factorsocialforce * socialforce.x + factordesiredforce * desiredforce.x + factorobstacleforce * obstacleforce.x + factorlookaheadforce * lookaheadforce.x + myforce.x;
     a.y = factorsocialforce * socialforce.y + factordesiredforce * desiredforce.y + factorobstacleforce * obstacleforce.y + factorlookaheadforce * lookaheadforce.y + myforce.y;
@@ -359,9 +362,9 @@ void Ped::Tagent::move(double h) {
     double speed = (sqrt(v.x*v.x + v.y*v.y + v.z*v.z));
 
     if (speed > currvmax && speed > 0 ) {
-        v.x = (v.x / speed) * currvmax;
-        v.y = (v.y / speed) * currvmax;
-        v.z = (v.z / speed) * currvmax;
+      v.x = (v.x / speed) * currvmax;
+      v.y = (v.y / speed) * currvmax;
+      v.z = (v.z / speed) * currvmax;
     }
 
     // internal position update == actual move
