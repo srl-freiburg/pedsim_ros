@@ -111,9 +111,9 @@ void Scene::publicAgentStatus()
 
         state.header.stamp = ros::Time::now();
         state.id = a->getid();
-        state.position.x = a->getx() * (1/20.0);
-        state.position.y = a->gety() * (1/20.0);
-        state.position.z = a->getz() * (1/20.0);
+        state.position.x = a->getx();
+        state.position.y = a->gety();
+        state.position.z = a->getz();
 
         state.velocity.x = a->getvx();
         state.velocity.y = a->getvy();
@@ -168,8 +168,8 @@ void Scene::publishAgentVisuals()
         }
 
         marker.action = 0;  // add or modify
-        marker.pose.position.x = a->getx() * (1/20.0);
-        marker.pose.position.y = a->gety() * (1/20.0);
+        marker.pose.position.x = a->getx();
+        marker.pose.position.y = a->gety();
         marker.pose.position.z = 0;
         marker.pose.orientation.x = 0.0;
         marker.pose.orientation.y = 0.0;

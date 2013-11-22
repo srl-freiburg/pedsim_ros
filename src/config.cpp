@@ -21,7 +21,8 @@ Config::Config()
     guiShowWaypoints = false;
     simWallForce = 10;
     simPedForce = 10;
-    simSpeed = 1000.0/30;
+    // simSpeed = 1000.0/30;
+    simSpeed = 0.05;
     mlLookAhead = true;
     showForces = false;
     showDirection = true;
@@ -65,15 +66,5 @@ Config& Config::getInstance() {
 
 void Config::readParameters(std::string filename)
 {
-    boost::property_tree::ptree pt;
-    boost::property_tree::ini_parser::read_ini(filename, pt);
-
-    // step_size = pt.get<double>("Robot.step_size");
-    // touch_radius = pt.get<double>("Robot.reach_radius");
-    // sensor_horizon = pt.get<double>("CostMap.sensor_radius");
-    
-    // width = pt.get<double>("Grid.width") * (20);    // converting metres to grid units
-    // height = pt.get<double>("Grid.height") * (20);
-
-    pt.clear();
+   // TODO - more clean
 }
