@@ -8,7 +8,7 @@ Scene::Scene(const ros::NodeHandle& node)
     timestep = 0;
 
     // useful for keeping track of agents in the cleaning process
-    tree = new Ped::Ttree(this, 0, 0, 0, 5000, 5000);
+    tree = new Ped::Ttree(this, 0, 0, 0, 1000, 1000);
 
     /// setup the list of all agents and the robot agent
     all_agents_.clear();
@@ -20,7 +20,24 @@ Scene::Scene(const ros::NodeHandle& node)
     srv_move_agent_ = nh_.advertiseService("SetAgentState", &Scene::srvMoveAgentHandler, this);
 }
 
+Scene::Scene( double left, double up, double width, double height, const ros::NodeHandle& node )
+    : Ped::Tscene(left, up, width, height), nh_(node)
+{
+    // start the time steps
+    timestep = 0;
 
+    // useful for keeping track of agents in the cleaning process
+    tree = new Ped::Ttree(this, 0, 0, 0, 1000, 1000);
+
+    /// setup the list of all agents and the robot agent
+    all_agents_.clear();
+
+    // setup services and publishers
+    pub_all_agents_ = nh_.advertise<pedsim_msgs::AllAgentsState>("AllAgentsStatus", 0);
+    pub_agent_visuals_ = nh_.advertise<visualization_msgs::Marker>( "visualization_marker", 0 );
+
+    srv_move_agent_ = nh_.advertiseService("SetAgentState", &Scene::srvMoveAgentHandler, this);
+}
 
 
 bool Scene::srvMoveAgentHandler(pedsim_srvs::SetAgentState::Request& req, pedsim_srvs::SetAgentState::Response& res)
@@ -74,7 +91,7 @@ void Scene::runSimulation() {
             robot_ = a;
     }
 
-    ros::Rate r(20);
+    ros::Rate r( 1 /  CONFIG.simh );
 
     while (ros::ok())
     {
@@ -380,7 +397,9 @@ int main(int argc, char** argv)
 
     ros::NodeHandle node;
 
-    Scene sim_scene(node);
+    // Scene sim_scene(node);
+    // TOOD - read scene params automatically from scene file
+    Scene sim_scene(0, 0, 50, 50, node);
 
     ROS_INFO("Simulation scene started");
 
