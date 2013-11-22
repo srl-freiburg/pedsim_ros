@@ -37,6 +37,8 @@
 
 #include <visualization_msgs/Marker.h>
 
+#include <std_msgs/Header.h>
+
 
 class Scene : public Ped::Tscene
 {

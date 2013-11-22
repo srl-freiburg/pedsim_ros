@@ -106,14 +106,18 @@ void Scene::moveAllAgents()
 void Scene::publicAgentStatus()
 {
     pedsim_msgs::AllAgentsState all_status;
-    all_status.header.stamp = ros::Time::now();
+    std_msgs::Header all_header;
+    all_header.stamp = ros::Time::now();
+    all_status.header = all_header;
 
     for (vector<Ped::Tagent*>::const_iterator iter = all_agents_.begin(); iter != all_agents_.end(); ++iter) {
         Ped::Tagent *a = (*iter);
 
         pedsim_msgs::AgentState state;
 
-        state.header.stamp = ros::Time::now();
+        std_msgs::Header agent_header;
+        agent_header.stamp = ros::Time::now();
+        state.header = agent_header;
         state.id = a->getid();
         state.position.x = a->getx();
         state.position.y = a->gety();
@@ -124,7 +128,6 @@ void Scene::publicAgentStatus()
         state.velocity.z = a->getvz();
 
         all_status.agent_states.push_back(state);
-
     }
 
     pub_all_agents_.publish(all_status);

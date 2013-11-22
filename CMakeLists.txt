@@ -4,6 +4,7 @@ PROJECT(simulator)
 set( PEDSIM_CORE_DEPENDENCIES
     roscpp
     rospy
+    std_msgs
     pedsim_msgs
     pedsim_srvs
     visualization_msgs
