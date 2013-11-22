@@ -31,7 +31,7 @@ include_directories(
 
 # file(GLOB_RECURSE QT_SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} FOLLOW_SYMLINKS *.cpp)
 set(SOURCES 
-    src/scene.cpp src/cell.cpp src/agent.cpp src/obstacle.cpp src/waypoint.cpp src/grid.cpp src/config.cpp
+    src/scene.cpp src/cell.cpp src/agent.cpp src/obstacle.cpp src/waypoint.cpp src/config.cpp
 ) 
 
 add_executable(simulator ${SOURCES} ${QT_RESOURCES_CPP} ${QT_FORMS_HPP} ${QT_MOC_HPP})
