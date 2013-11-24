@@ -4,39 +4,15 @@
 Scene::Scene(const ros::NodeHandle& node)  
     : Ped::Tscene(), nh_(node)
 {
-    // start the time steps
-    timestep = 0;
-
     // useful for keeping track of agents in the cleaning process
     tree = new Ped::Ttree(this, 0, 0, 0, 1000, 1000);
-
-    /// setup the list of all agents and the robot agent
-    all_agents_.clear();
-
-    // setup services and publishers
-    pub_all_agents_ = nh_.advertise<pedsim_msgs::AllAgentsState>("AllAgentsStatus", 0);
-    pub_agent_visuals_ = nh_.advertise<visualization_msgs::Marker>( "visualization_marker", 0 );
-
-    srv_move_agent_ = nh_.advertiseService("SetAgentState", &Scene::srvMoveAgentHandler, this);
 }
 
 Scene::Scene( double left, double up, double width, double height, const ros::NodeHandle& node )
     : Ped::Tscene(left, up, width, height), nh_(node)
 {
-    // start the time steps
-    timestep = 0;
-
     // useful for keeping track of agents in the cleaning process
     tree = new Ped::Ttree(this, 0, 0, 0, 1000, 1000);
-
-    /// setup the list of all agents and the robot agent
-    all_agents_.clear();
-
-    // setup services and publishers
-    pub_all_agents_ = nh_.advertise<pedsim_msgs::AllAgentsState>("AllAgentsStatus", 0);
-    pub_agent_visuals_ = nh_.advertise<visualization_msgs::Marker>( "visualization_marker", 0 );
-
-    srv_move_agent_ = nh_.advertiseService("SetAgentState", &Scene::srvMoveAgentHandler, this);
 }
 
 
@@ -97,8 +73,9 @@ void Scene::runSimulation() {
     {
         moveAllAgents();
 
-        publicAgentStatus();
+        publishAgentStatus();
         publishAgentVisuals();
+        publishObstacles();
 
         // helps to make things faster
         cleanupItems();
@@ -111,6 +88,21 @@ void Scene::runSimulation() {
 
 bool Scene::initialize()
 {
+    // start the time steps
+    timestep = 0;
+
+    /// setup the list of all agents and the robot agent
+    all_agents_.clear();
+
+    // setup publishers
+    pub_all_agents_ = nh_.advertise<pedsim_msgs::AllAgentsState>("AllAgentsStatus", 0);
+    pub_agent_visuals_ = nh_.advertise<visualization_msgs::Marker>( "agents_markers", 0 );
+    pub_obstacles_ = nh_.advertise<nav_msgs::GridCells>( "static_obstacles", 0 );
+
+    // services hooks
+    srv_move_agent_ = nh_.advertiseService("SetAgentState", &Scene::srvMoveAgentHandler, this);
+
+
     // load parameters
     std::string scene_file_param;
     nh_.getParam("/simulator/scene_file", scene_file_param);
@@ -140,21 +132,15 @@ void Scene::moveAllAgents()
 
 
 
-void Scene::publicAgentStatus()
+void Scene::publishAgentStatus()
 {
     pedsim_msgs::AllAgentsState all_status;
-    std_msgs::Header all_header;
-    all_header.stamp = ros::Time::now();
-    all_status.header = all_header;
 
     for (vector<Ped::Tagent*>::const_iterator iter = all_agents_.begin(); iter != all_agents_.end(); ++iter) {
         Ped::Tagent *a = (*iter);
 
         pedsim_msgs::AgentState state;
 
-        std_msgs::Header agent_header;
-        agent_header.stamp = ros::Time::now();
-        state.header = agent_header;
         state.id = a->getid();
         state.position.x = a->getx();
         state.position.y = a->gety();
@@ -179,7 +165,7 @@ void Scene::publishAgentVisuals()
         Ped::Tagent *a = (*iter);
 
         visualization_msgs::Marker marker;
-        marker.header.frame_id = "pedsim_base";
+        marker.header.frame_id = "world";
         marker.header.stamp = ros::Time();
         marker.ns = "pedsim";
         marker.id = a->getid();
@@ -223,6 +209,28 @@ void Scene::publishAgentVisuals()
         pub_agent_visuals_.publish( marker );
 
     }
+}
+
+
+void Scene::publishObstacles()
+{
+    // ROS_INFO("publishing (%d) obstacles", (int)obstacle_cells_.size());
+
+    nav_msgs::GridCells obstacles;
+    obstacles.header.frame_id = "world";
+    obstacles.cell_width = CONFIG.width;
+    obstacles.cell_height = CONFIG.height;
+
+    BOOST_FOREACH(TLoc loc, obstacle_cells_)
+    {
+        geometry_msgs::Point p;
+        p.x = loc.x;
+        p.y = loc.y;
+        p.z = 0.0;
+        obstacles.cells.push_back(p);
+    }
+
+    pub_obstacles_.publish(obstacles);
 }
 
 
@@ -396,6 +404,7 @@ void Scene::drawObstacles(float x1, float y1, float x2, float y2)
         }
         else
         {
+            obstacle_cells_.push_back(TLoc(y,x));
             obstacle_cells_.push_back(TLoc(x,y));
             obstacle_cells_.push_back(TLoc(x+CONFIG.width,y+CONFIG.height));
             obstacle_cells_.push_back(TLoc(x-CONFIG.width,y-CONFIG.height));

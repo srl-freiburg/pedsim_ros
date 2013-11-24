@@ -38,8 +38,9 @@
 #include <pedsim_srvs/GetAllAgentsState.h>
 
 #include <visualization_msgs/Marker.h>
-
 #include <std_msgs/Header.h>
+#include <nav_msgs/GridCells.h>
+#include <geometry_msgs/Point.h>
 
 
 class Scene : public Ped::Tscene
@@ -60,18 +61,22 @@ public:
 
     /// service handler for moving agents
     bool srvMoveAgentHandler(pedsim_srvs::SetAgentState::Request&, pedsim_srvs::SetAgentState::Response& );
-    void publicAgentStatus();
+
+    /// publisher helpers
+    void publishAgentStatus();
     void publishAgentVisuals();
+    void publishObstacles();
 
-    void moveAllAgents();
-    void cleanupItems();
-
+    /// helpers related to parsing scene files
     inline bool readFromFile(const QString& filename);
     inline void processData(QByteArray& data);
     inline void drawObstacles(float x1, float y1, float x2, float y2);
 
+    /// simulaition management
     bool initialize();
     void runSimulation();
+    void moveAllAgents();
+    void cleanupItems();
 
 private:
     // robot and agents
@@ -83,6 +88,7 @@ private:
     // publishers
     ros::Publisher pub_all_agents_;
     ros::Publisher pub_agent_visuals_;
+    ros::Publisher pub_obstacles_;
 
     // service servers
     ros::ServiceServer srv_move_agent_;

@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--This scenario file was created by SGDiCoP on 2013-09-19T15:49:44-->
 <scenario>
     <!--Obstacles-->
     <obstacle x1="0" y1="0" x2="41" y2="0"/>
@@ -16,10 +15,6 @@
         <addwaypoint id="upper_left" />
     </agent>
 
-    <!-- <agent x="400" y="5" n="5" dx="400" dy="50" type="0">
-        <addwaypoint id="lower_right" />
-    </agent> -->
-
     <agent x="36" y="36" n="1" dx="0" dy="0" type="2">
         <addwaypoint id="upper_left" />
         <addwaypoint id="lower_right" />
@@ -29,6 +24,4 @@
         <addwaypoint id="lower_right" />
         <addwaypoint id="upper_left" />
     </agent>
-
-    <!--AgentClusters-->
 </scenario>

@@ -8,6 +8,8 @@ set( PEDSIM_CORE_DEPENDENCIES
     pedsim_msgs
     pedsim_srvs
     visualization_msgs
+    nav_msgs
+    geometry_msgs
 )
 
 ## Find catkin macros and libraries
