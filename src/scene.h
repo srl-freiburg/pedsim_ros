@@ -1,6 +1,8 @@
 #ifndef SCENE_H
 #define SCENE_H
 
+#include <cstdlib>
+
 #include <ped_scene.h>
 #include <ped_tree.h>
 
@@ -68,6 +70,7 @@ public:
     inline void processData(QByteArray& data);
     inline void drawObstacles(float x1, float y1, float x2, float y2);
 
+    bool initialize();
     void runSimulation();
 
 private:
@@ -89,6 +92,9 @@ private:
     QList<Obstacle*> obstacles;
     QMap<QString, Waypoint*> waypoints;
     size_t timestep;
+
+    // obstacle cell locations
+    std::vector<TLoc> obstacle_cells_;
 };
 
 

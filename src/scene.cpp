@@ -109,6 +109,26 @@ void Scene::runSimulation() {
     }
 }
 
+bool Scene::initialize()
+{
+    // load parameters
+    std::string scene_file_param;
+    nh_.getParam("/simulator/scene_file", scene_file_param);
+    double cell_size;
+    nh_.getParam("/simulator/cell_size", cell_size);
+    CONFIG.width = cell_size;
+    CONFIG.height = cell_size;
+
+    // load scenario file
+    QString scenefile = QString::fromStdString(scene_file_param);
+    if (!readFromFile(scenefile)) {
+        ROS_WARN("Could not load the scene file, check paths");
+        return false;
+    }
+
+    return true;
+}
+
 
 void Scene::moveAllAgents()
 {
@@ -252,15 +272,17 @@ bool Scene::readFromFile(const QString& filename) {
 
 
 /// Called for each line in the file
-void Scene::processData(QByteArray& data) {
+void Scene::processData(QByteArray& data) 
+{
+    // TODO - switch to tinyxml for reading in the scene files
+
     xmlReader.addData(data);
-    CONFIG.obstacle_positions.clear();
+    obstacle_cells_.clear();
 
     while(!xmlReader.atEnd()) {
         xmlReader.readNext();
         if(xmlReader.isStartElement()) {
-            if((xmlReader.name() == "scenario")
-                    || (xmlReader.name() == "welcome")) {
+            if((xmlReader.name() == "scenario") || (xmlReader.name() == "welcome")) {
                 // nothing to do
             }
             else if(xmlReader.name() == "obstacle") {
@@ -270,7 +292,9 @@ void Scene::processData(QByteArray& data) {
                 double y2 = xmlReader.attributes().value("y2").toString().toDouble();
                 Obstacle* obs = new Obstacle(x1, y1, x2, y2);
                 this->addObstacle(obs);
-                // drawObstacles(x1, y1, x2, y2);
+
+                // fill the obstacle cells
+                drawObstacles(x1, y1, x2, y2);
             }
             else if(xmlReader.name() == "waypoint") {
                 // TODO - add an explicit waypoint type
@@ -283,12 +307,12 @@ void Scene::processData(QByteArray& data) {
 
                 if (boost::starts_with(id, "start")) {
                     w->setType(Ped::Twaypoint::TYPE_BIRTH);
-                    std::cout << "adding a birth waypoint" << std::endl;
+                    ROS_INFO("adding a birth waypoint");
                 }
 
                 if (boost::starts_with(id, "stop")) {
                     w->setType(Ped::Twaypoint::TYPE_DEATH);
-                    std::cout << "adding a death waypoint" << std::endl;
+                    ROS_INFO("adding a death waypoint");
                 }
 
                 this->waypoints[id] = w;
@@ -300,7 +324,6 @@ void Scene::processData(QByteArray& data) {
                 double dx = xmlReader.attributes().value("dx").toString().toDouble();
                 double dy = xmlReader.attributes().value("dy").toString().toDouble();
                 double type = xmlReader.attributes().value("type").toString().toInt();
-                //TODO: keep agent group and expand later!?
                 for (int i=0; i<n; i++) {
                     Agent* a = new Agent();
 
@@ -367,15 +390,15 @@ void Scene::drawObstacles(float x1, float y1, float x2, float y2)
     {
         if(steep)
         {
-            CONFIG.obstacle_positions.push_back(TLoc(y,x));
-            CONFIG.obstacle_positions.push_back(TLoc(y+CONFIG.height,x+CONFIG.width));
-            CONFIG.obstacle_positions.push_back(TLoc(y-CONFIG.height,x-CONFIG.width));
+            obstacle_cells_.push_back(TLoc(y,x));
+            obstacle_cells_.push_back(TLoc(y+CONFIG.height,x+CONFIG.width));
+            obstacle_cells_.push_back(TLoc(y-CONFIG.height,x-CONFIG.width));
         }
         else
         {
-            CONFIG.obstacle_positions.push_back(TLoc(x,y));
-            CONFIG.obstacle_positions.push_back(TLoc(x+CONFIG.width,y+CONFIG.height));
-            CONFIG.obstacle_positions.push_back(TLoc(x-CONFIG.width,y-CONFIG.height));
+            obstacle_cells_.push_back(TLoc(x,y));
+            obstacle_cells_.push_back(TLoc(x+CONFIG.width,y+CONFIG.height));
+            obstacle_cells_.push_back(TLoc(x-CONFIG.width,y-CONFIG.height));
         }
 
         error -= dy;
@@ -397,33 +420,16 @@ int main(int argc, char** argv)
 
     ros::NodeHandle node;
 
-    // Scene sim_scene(node);
-    // TOOD - read scene params automatically from scene file
+    // TOOD - read scene params automatically from launch file
     Scene sim_scene(0, 0, 50, 50, node);
 
-    ROS_INFO("Simulation scene started");
-
-    // load parameters
-    std::string scene_file_param;
-    node.getParam("/simulator/scene_file", scene_file_param);
-
-    double cell_size;
-    node.getParam("/simulator/cell_size", cell_size);
-    CONFIG.width = cell_size;
-    CONFIG.height = cell_size;
-
-    // load scenario file
-    QString scenefile = QString::fromStdString(scene_file_param);
-
-    if (!sim_scene.readFromFile(scenefile)) {
-        ROS_WARN("Could not load the scene file, check paths");
+    if (sim_scene.initialize()) 
+    {
+        ROS_INFO("loaded parameters, starting simulation...");
+        sim_scene.runSimulation();
     }
+    else
+        return EXIT_FAILURE;
 
-
-    ROS_INFO("loaded parameters");
-    sim_scene.runSimulation();
-
-    // ScenarioReader scenarioReader(scene);
-
-    return 0;    
+    return EXIT_SUCCESS;    
 }

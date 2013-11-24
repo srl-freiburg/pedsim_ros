@@ -20,13 +20,15 @@
 #include <boost/property_tree/ini_parser.hpp>
 
 
-typedef struct Location {
+typedef struct Location 
+{
     float x;
     float y;
 
     Location(float xx, float yy) : x(xx), y(yy) {}
 
-    bool operator ==(Location a) {
+    bool operator ==(Location a) 
+    {
         if (x == a.x && y == a.y) return true;
         else return false;
     }
@@ -49,29 +51,13 @@ public:
 
     // Attributes
 public:
-    bool guiShowWaypoints;
     double simWallForce;
     double simPedForce;
     int simSpeed;
     bool mlLookAhead;
-    bool showForces;
-    bool showDirection;
     double simh;
     double width;
     double height;
-
-    std::vector<TLoc> obstacle_positions;
-    std::string config_file;
-
-    void readParameters(std::string filename);
-
-
-    /// feature thresholds
-    double *angles;
-    double *densities;
-    double *velocities;
-
-
 };
 
 
