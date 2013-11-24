@@ -135,11 +135,17 @@ void Scene::moveAllAgents()
 void Scene::publishAgentStatus()
 {
     pedsim_msgs::AllAgentsState all_status;
+    std_msgs::Header all_header;
+    all_header.stamp = ros::Time::now();
+    all_status.header = all_header;
 
     for (vector<Ped::Tagent*>::const_iterator iter = all_agents_.begin(); iter != all_agents_.end(); ++iter) {
         Ped::Tagent *a = (*iter);
 
         pedsim_msgs::AgentState state;
+        std_msgs::Header agent_header;
+        agent_header.stamp = ros::Time::now();
+        state.header = agent_header;
 
         state.id = a->getid();
         state.position.x = a->getx();
@@ -405,7 +411,6 @@ void Scene::drawObstacles(float x1, float y1, float x2, float y2)
         else
         {
             obstacle_cells_.push_back(TLoc(y,x));
-            obstacle_cells_.push_back(TLoc(x,y));
             obstacle_cells_.push_back(TLoc(x+CONFIG.width,y+CONFIG.height));
             obstacle_cells_.push_back(TLoc(x-CONFIG.width,y-CONFIG.height));
         }
