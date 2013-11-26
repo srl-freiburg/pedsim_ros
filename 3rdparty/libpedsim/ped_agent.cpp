@@ -346,6 +346,7 @@ void Ped::Tagent::move( double h ) {
     //  sum of all forces --> acceleration
     if ( gettype() == 2 ) {
       factordesiredforce = 10;
+      factorobstacleforce = 10;
     }
     Ped::Tvector a;
     a.x = factorsocialforce * socialforce.x + factordesiredforce * desiredforce.x + factorobstacleforce * obstacleforce.x + factorlookaheadforce * lookaheadforce.x + myforce.x;

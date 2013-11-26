@@ -13,7 +13,6 @@
 // Includes
 // → PedSim
 #include "ped_obstacle.h"
-#include <boost/shared_ptr.hpp>
 
 // Forward Declarations
 class Scene;

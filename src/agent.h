@@ -15,7 +15,6 @@
 #include "ped_agent.h"
 #include "ped_vector.h"
 #include <QList>
-#include <boost/shared_ptr.hpp>
 
 // Forward Declarations
 class Scene;

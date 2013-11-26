@@ -23,7 +23,8 @@ bool Scene::srvMoveAgentHandler(pedsim_srvs::SetAgentState::Request& req, pedsim
     double vx = state.velocity.x;
     double vy = state.velocity.y;
 
-    if (robot_->getid() == state.id)  {
+    if (robot_->getid() == state.id)  
+    {
         robot_->setvx( vx );
         robot_->setvy( vy );
         robot_->setVmax( sqrt( vx * vx + vy * vy ) );
@@ -36,23 +37,26 @@ bool Scene::srvMoveAgentHandler(pedsim_srvs::SetAgentState::Request& req, pedsim
 
 
 
-void Scene::cleanupItems() {
+void Scene::cleanupItems() 
+{
     cleanup();
 }
 
-void Scene::clear() {
+void Scene::clear() 
+{
     all_agents_.clear();
 
-    foreach(Waypoint* waypoint, waypoints)
+    BOOST_FOREACH(Waypoint* waypoint, waypoints)
         delete waypoint;
     waypoints.clear();
 
-    foreach(Obstacle* obs, obstacles)
+    BOOST_FOREACH(Obstacle* obs, obstacles)
         delete obs;
     obstacles.clear();
 }
 
-void Scene::runSimulation() {
+void Scene::runSimulation() 
+{
 
     /// setup the agents and the robot
     all_agents_ = getAllAgents();
@@ -117,7 +121,8 @@ bool Scene::initialize()
 
     // load scenario file
     QString scenefile = QString::fromStdString(scene_file_param);
-    if (!readFromFile(scenefile)) {
+    if (!readFromFile(scenefile)) 
+    {
         ROS_WARN("Could not load the scene file, check paths");
         return false;
     }
@@ -143,7 +148,8 @@ void Scene::publishAgentStatus()
     all_header.stamp = ros::Time::now();
     all_status.header = all_header;
 
-    for (vector<Ped::Tagent*>::const_iterator iter = all_agents_.begin(); iter != all_agents_.end(); ++iter) {
+    for (vector<Ped::Tagent*>::const_iterator iter = all_agents_.begin(); iter != all_agents_.end(); ++iter) 
+    {
         Ped::Tagent *a = (*iter);
 
         pedsim_msgs::AgentState state;
@@ -211,11 +217,25 @@ void Scene::publishAgentVisuals()
         marker.pose.position.x = a->getx();
         marker.pose.position.y = a->gety();
         marker.pose.position.z = 0;
-        marker.pose.orientation.x = 0.0;
-        marker.pose.orientation.y = 0.0;
-        marker.pose.orientation.z = 0.0;
-        marker.pose.orientation.w = 1.0;
 
+        if (a->getvx() != 0.0) 
+        {
+            // construct the orientation quaternion
+            double theta = atan2(a->getvy(), a->getvx());
+            double* q = angleToQuaternion(theta);
+
+            marker.pose.orientation.x = q[0];
+            marker.pose.orientation.y = q[1];
+            marker.pose.orientation.z = q[2];
+            marker.pose.orientation.w = q[3];
+        }
+        else
+        {
+            marker.pose.orientation.x = 0.0;
+            marker.pose.orientation.y = 0.0;
+            marker.pose.orientation.z = 0.0;
+            marker.pose.orientation.w = 1.0;
+        }
         pub_agent_visuals_.publish( marker );
 
     }
@@ -262,9 +282,12 @@ std::set<const Ped::Tagent*> Scene::getNeighbors(double x, double y, double maxD
         double distance = sqrt((x-aX)*(x-aX) + (y-aY)*(y-aY));
 
         // remove distant neighbors
-        if(distance > maxDist) {
+        if(distance > maxDist) 
+        {
             potentialNeighbours.erase(agentIter++);
-        } else {
+        } 
+        else 
+        {
             ++agentIter;
         }
     }
@@ -273,18 +296,19 @@ std::set<const Ped::Tagent*> Scene::getNeighbors(double x, double y, double maxD
 }
 
 
-bool Scene::readFromFile(const QString& filename) {
-    // ROS_INFO("Loading scenario file '%s'.", filename.toStdString);
-
+bool Scene::readFromFile(const QString& filename) 
+{
     // open file
     QFile file(filename);
-    if(!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+    if(!file.open(QIODevice::ReadOnly | QIODevice::Text)) 
+    {
         ROS_WARN("Couldn't open scenario file!");
         return false;
     }
 
     // read input
-    while(!file.atEnd()) {
+    while(!file.atEnd()) 
+    {
         QByteArray line = file.readLine();
         processData(line);
     }
@@ -301,13 +325,19 @@ void Scene::processData(QByteArray& data)
 
     xmlReader.addData(data);
 
-    while(!xmlReader.atEnd()) {
+    while(!xmlReader.atEnd()) 
+    {
         xmlReader.readNext();
-        if(xmlReader.isStartElement()) {
-            if((xmlReader.name() == "scenario") || (xmlReader.name() == "welcome")) {
+        if(xmlReader.isStartElement()) 
+        {
+            // start reading elements
+            if ((xmlReader.name() == "scenario") || (xmlReader.name() == "welcome")) 
+            {
                 // nothing to do
+                ROS_INFO("Starting to read elements");
             }
-            else if(xmlReader.name() == "obstacle") {
+            else if (xmlReader.name() == "obstacle") 
+            {
                 double x1 = xmlReader.attributes().value("x1").toString().toDouble();
                 double y1 = xmlReader.attributes().value("y1").toString().toDouble();
                 double x2 = xmlReader.attributes().value("x2").toString().toDouble();
@@ -318,7 +348,8 @@ void Scene::processData(QByteArray& data)
                 // fill the obstacle cells
                 drawObstacles(x1, y1, x2, y2);
             }
-            else if(xmlReader.name() == "waypoint") {
+            else if (xmlReader.name() == "waypoint") 
+            {
                 // TODO - add an explicit waypoint type
                 QString id = xmlReader.attributes().value("id").toString();
                 double x = xmlReader.attributes().value("x").toString().toDouble();
@@ -327,26 +358,30 @@ void Scene::processData(QByteArray& data)
 
                 Waypoint* w = new Waypoint(id, x, y, r);
 
-                if (boost::starts_with(id, "start")) {
+                if (boost::starts_with(id, "start")) 
+                {
                     w->setType(Ped::Twaypoint::TYPE_BIRTH);
                     ROS_INFO("adding a birth waypoint");
                 }
 
-                if (boost::starts_with(id, "stop")) {
+                if (boost::starts_with(id, "stop")) 
+                {
                     w->setType(Ped::Twaypoint::TYPE_DEATH);
                     ROS_INFO("adding a death waypoint");
                 }
 
                 this->waypoints[id] = w;
             }
-            else if(xmlReader.name() == "agent") {
+            else if (xmlReader.name() == "agent") 
+            {
                 double x = xmlReader.attributes().value("x").toString().toDouble();
                 double y = xmlReader.attributes().value("y").toString().toDouble();
                 int n = xmlReader.attributes().value("n").toString().toDouble();
                 double dx = xmlReader.attributes().value("dx").toString().toDouble();
                 double dy = xmlReader.attributes().value("dy").toString().toDouble();
                 double type = xmlReader.attributes().value("type").toString().toInt();
-                for (int i=0; i<n; i++) {
+                for (int i=0; i<n; i++) 
+                {
                     Agent* a = new Agent();
 
                     double randomizedX = x;
@@ -362,19 +397,25 @@ void Scene::processData(QByteArray& data)
                     currentAgents.append(a);
                 }
             }
-            else if(xmlReader.name() == "addwaypoint") {
+            else if (xmlReader.name() == "addwaypoint") 
+            {
                 QString id = xmlReader.attributes().value("id").toString();
                 // add waypoints to current agents, not just those of the current <agent> element
-                foreach(Agent* a, currentAgents)
+                BOOST_FOREACH(Agent* a, currentAgents)
+                {
                     a->addWaypoint(this->waypoints[id]);
+                }
             }
-            else {
+            else 
+            {
                 // inform the user about invalid elements
-                // ROS_WARN("Unknown element: %s", xmlReader.name().toString());
+                ROS_WARN("Unknown element");
             }
         }
-        else if(xmlReader.isEndElement()) {
-            if (xmlReader.name() == "agent") {
+        else if(xmlReader.isEndElement()) 
+        {
+            if (xmlReader.name() == "agent") 
+            {
                 currentAgents.clear();
             }
         }
@@ -399,16 +440,25 @@ void Scene::drawObstacles(float x1, float y1, float x2, float y2)
     unit_y=1;
     // POINT (y1, x1);  // first point
     // NB the last point can't be here, because of its previous point (which has to be verified)
-    if (dy < 0){
+    if (dy < 0)
+    {
         ystep = -unit_y;
         dy = -dy;
-    }else
+    }
+    else
+    {
         ystep = unit_y;
-    if (dx < 0){
+    }
+    if (dx < 0)
+    {
         xstep = -unit_x;
         dx = -dx;
-    }else
+    }
+    else
+    {
         xstep = unit_x;
+    }
+
     ddy = 2 * dy;  // work with double values for full precision
     ddx = 2 * dx;
     
@@ -454,7 +504,8 @@ void Scene::drawObstacles(float x1, float y1, float x2, float y2)
         {
             y += ystep;
             error += ddx;
-            if (error > ddy){
+            if (error > ddy)
+            {
                 x += xstep;
                 error -= ddy;
                 if (error + errorprev < ddy)
@@ -479,6 +530,63 @@ void Scene::drawObstacles(float x1, float y1, float x2, float y2)
 
     ROS_INFO("loaded %d obstacle cells", (int)obstacle_cells_.size());
 }
+
+
+double* Scene::angleToQuaternion(double theta)
+{
+    double* q = new double[4];
+    q[0] = 0.0;
+    q[1] = 0.0;
+    q[2] = 0.0;
+    q[3] = 1.0;
+
+
+    // using namespace boost::numeric::ublas;
+    // matrix<double> m (3, 3);
+    // m(0,0) = cos(theta); m(0,1) = -sin(theta); m(0,2) = 0.0;
+    // m(1,0) = sin(theta); m(1,1) = cos(theta); m(1,2) = 0.0;
+    // m(2,0) = 0.0; m(2,1) = 0.0; m(2,2) = 1.0;
+
+    // float trace = m(0,0) + m(1,1) + m(2,2); 
+    // if( trace > 0 ) 
+    // {
+    //     float s = 0.5f / sqrtf(trace+ 1.0f);
+    //     q[3] = 0.25f / s;
+    //     q[2] = ( m(2,1) - m(1,2) ) * s;
+    //     q[1] = ( m(0,2) - m(2,0) ) * s;
+    //     q[0] = ( m(1,0) - m(0,1) ) * s;
+    // } 
+    // else 
+    // {
+    //     if ( m(0,0) > m(1,1) && m(0,0) > m(2,2) ) 
+    //     {
+    //         float s = 2.0f * sqrtf( 1.0f + m(0,0) - m(1,1) - m(2,2));
+    //         q[3] = (m(2,1) - m(1,2) ) / s;
+    //         q[2] = 0.25f * s;
+    //         q[1] = (m(0,1) + m(1,0) ) / s;
+    //         q[0] = (m(0,2) + m(2,0) ) / s;
+    //     } 
+    //     else if (m(1,1) > m(2,2)) 
+    //     {
+    //         float s = 2.0f * sqrtf( 1.0f + m(1,1) - m(0,0) - m(2,2));
+    //         q[3] = (m(0,2) - m(2,0) ) / s;
+    //         q[2] = (m(0,1) + m(1,0) ) / s;
+    //         q[1] = 0.25f * s;
+    //         q[0] = (m(1,2) + m(2,1) ) / s;
+    //     } 
+    //     else 
+    //     {
+    //         float s = 2.0f * sqrtf( 1.0f + m(2,2) - m(0,0) - m(1,1) );
+    //         q[3] = (m(1,0) - m(0,1) ) / s;
+    //         q[2] = (m(0,2) + m(2,0) ) / s;
+    //         q[1] = (m(1,2) + m(2,1) ) / s;
+    //         q[0] = 0.25f * s;
+    //     }
+    // }
+
+    return q;
+}
+
 
 
 

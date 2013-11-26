@@ -18,15 +18,18 @@
 #include "obstacle.h"
 #include "waypoint.h"
 
+// #include <boost/signal.hpp>
+// #include <tf/transform_broadcaster.h>
+
 #include <boost/foreach.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string/predicate.hpp>
-
+#include <boost/numeric/ublas/matrix.hpp>
+#include <boost/shared_ptr.hpp>
 
 // ros and big guys
 #include <ros/ros.h>
 #include <ros/console.h>
-#include <boost/shared_ptr.hpp>
 
 // messages and services
 #include <pedsim_msgs/AgentState.h>
@@ -101,6 +104,9 @@ private:
 
     // obstacle cell locations
     std::vector<TLoc> obstacle_cells_;
+
+
+    inline double* angleToQuaternion(double theta);
 };
 
 

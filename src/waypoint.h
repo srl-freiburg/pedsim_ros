@@ -14,7 +14,6 @@
 // → PedSim
 #include "ped_waypoint.h"
 #include <QtCore>
-#include <boost/shared_ptr.hpp>
 
 // Forward Declarations
 class Scene;

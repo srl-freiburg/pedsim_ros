@@ -12,12 +12,8 @@
 #include "agent.h"
 // → SGDiCoP
 #include "config.h"
-#include "scene.h"
 #include "waypoint.h"
-// → Qt
-#include <QPen>
-#include <QGraphicsScene>
-#include <QSettings>
+
 
 
 Agent::Agent(double xIn, double yIn)

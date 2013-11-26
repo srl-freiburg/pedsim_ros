@@ -10,9 +10,7 @@
 
 // Includes
 #include "waypoint.h"
-// → SGDiCoP
 #include "config.h"
-#include "scene.h"
 
 
 

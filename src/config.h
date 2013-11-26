@@ -12,12 +12,10 @@
 
 // Includes
 // → Qt
-#include <QObject>
 #include <map>
 #include <vector>
 #include <cmath>
-#include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/ini_parser.hpp>
+#include <cstring>
 
 
 typedef struct Location 

@@ -9,13 +9,6 @@
 
 // Includes
 #include "obstacle.h"
-// → SGDiCoP
-#include "scene.h"
-// → Qt
-#include <QSettings>
-#include <QPen>
-#include <QGraphicsLineItem>
-#include <QGraphicsScene>
 
 
 Obstacle::Obstacle(double pax, double pay, double pbx, double pby)
