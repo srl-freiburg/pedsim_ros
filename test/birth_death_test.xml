@@ -28,20 +28,28 @@
     <waypoint id="stop_top" x="280" y="45" r="10"/>
  
 
-    <agent x="100" y="15" n="200" dx="150" dy="5" type="1">
+    <agent x="100" y="15" n="1" dx="150" dy="5" type="1">
         <addwaypoint id="m1_bottom"/>
         <addwaypoint id="stop_bottom"/>
         <addwaypoint id="m1_bottom"/>
         <addwaypoint id="start_bottom"/>
     </agent>
-    <agent x="180" y="45" n="200" dx="150" dy="5" type="0">
-        <addwaypoint id="m1_top"/>
-        <addwaypoint id="start_top"/>
-        <addwaypoint id="m1_top"/>
-        <addwaypoint id="stop_top"/>
-    </agent>
     <agent x="20" y="90" n="1" dx="0" dy="0" type="2">
         <addwaypoint id="stop_top"/>
         <addwaypoint id="start_top"/>
     </agent>
+
+    <agent x="100" y="15" n="50" dx="150" dy="5" type="1">
+        <addwaypoint id="m1_bottom"/>
+        <addwaypoint id="stop_bottom"/>
+        <addwaypoint id="m1_bottom"/>
+        <addwaypoint id="start_bottom"/>
+    </agent>
+    <agent x="180" y="45" n="50" dx="150" dy="5" type="0">
+        <addwaypoint id="m1_top"/>
+        <addwaypoint id="start_top"/>
+        <addwaypoint id="m1_top"/>
+        <addwaypoint id="stop_top"/>
+    </agent>
+    
 </scenario>

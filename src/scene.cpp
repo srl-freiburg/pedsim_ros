@@ -73,7 +73,10 @@ void Scene::runSimulation() {
 
         publishAgentStatus();
         publishAgentVisuals();
-        publishObstacles();
+
+        // only publish the obstacles in the beginning
+        if (timestep < 50)
+            publishObstacles();
 
         // helps to make things faster
         cleanupItems();
@@ -489,7 +492,8 @@ int main(int argc, char** argv)
     ros::NodeHandle node;
 
     // TOOD - read scene params automatically from launch file
-    Scene sim_scene(0, 0, 50, 50, node);
+    // Scene sim_scene(0, 0, 50, 50, node);
+    Scene sim_scene(0, 0, 300, 100, node);
 
     if (sim_scene.initialize()) 
     {
