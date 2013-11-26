@@ -20,8 +20,6 @@ bool Scene::srvMoveAgentHandler(pedsim_srvs::SetAgentState::Request& req, pedsim
 {
     pedsim_msgs::AgentState state = req.state;
 
-    ROS_INFO("Rceived (%f) (%f)", state.position.x, state.position.y);
-
     double vx = state.velocity.x;
     double vy = state.velocity.y;
 
@@ -93,6 +91,7 @@ bool Scene::initialize()
 
     /// setup the list of all agents and the robot agent
     all_agents_.clear();
+    obstacle_cells_.clear();
 
     // setup publishers
     pub_all_agents_ = nh_.advertise<pedsim_msgs::AllAgentsState>("AllAgentsStatus", 0);
@@ -110,6 +109,8 @@ bool Scene::initialize()
     nh_.getParam("/simulator/cell_size", cell_size);
     CONFIG.width = cell_size;
     CONFIG.height = cell_size;
+
+    ROS_INFO("Loading from %s scene file", scene_file_param.c_str());
 
     // load scenario file
     QString scenefile = QString::fromStdString(scene_file_param);
@@ -220,20 +221,25 @@ void Scene::publishAgentVisuals()
 
 void Scene::publishObstacles()
 {
-    // ROS_INFO("publishing (%d) obstacles", (int)obstacle_cells_.size());
-
     nav_msgs::GridCells obstacles;
     obstacles.header.frame_id = "world";
     obstacles.cell_width = CONFIG.width;
     obstacles.cell_height = CONFIG.height;
 
-    BOOST_FOREACH(TLoc loc, obstacle_cells_)
+    double cell_size;
+    nh_.getParam("/simulator/cell_size", cell_size);
+
+    std::vector<TLoc>::const_iterator it = obstacle_cells_.begin();
+    while( it != obstacle_cells_.end())
     {
         geometry_msgs::Point p;
-        p.x = loc.x;
-        p.y = loc.y;
+        TLoc loc = (*it);
+        p.x = loc.x + (cell_size/2.0f);
+        p.y = loc.y + (cell_size/2.0f);
         p.z = 0.0;
         obstacles.cells.push_back(p);
+
+        it++;
     }
 
     pub_obstacles_.publish(obstacles);
@@ -270,7 +276,7 @@ bool Scene::readFromFile(const QString& filename) {
     // open file
     QFile file(filename);
     if(!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        // ERROR_LOG("Couldn't open scenario file!");
+        ROS_WARN("Couldn't open scenario file!");
         return false;
     }
 
@@ -291,7 +297,6 @@ void Scene::processData(QByteArray& data)
     // TODO - switch to tinyxml for reading in the scene files
 
     xmlReader.addData(data);
-    obstacle_cells_.clear();
 
     while(!xmlReader.atEnd()) {
         xmlReader.readNext();
@@ -375,54 +380,103 @@ void Scene::processData(QByteArray& data)
 }
 
 
+
 void Scene::drawObstacles(float x1, float y1, float x2, float y2)
 {
-    // Modified Bresenham's line algorithm (addding a buffer around obstacles)
-    const bool steep = (fabs(y2 - y1) > fabs(x2 - x1));
-    if(steep)
-    {
-        std::swap(x1, y1);
-        std::swap(x2, y2);
-    }
+    int i;               // loop counter
+    int ystep, xstep;    // the step on y and x axis
+    int error;           // the error accumulated during the increment
+    int errorprev;       // *vision the previous value of the error variable
+    int y = y1, x = x1;  // the line points
+    int ddy, ddx;        // compulsory variables: the double values of dy and dx
+    int dx = x2 - x1;
+    int dy = y2 - y1;
+    double unit_x,unit_y;
+    unit_x=1;
+    unit_y=1;
+    // POINT (y1, x1);  // first point
+    // NB the last point can't be here, because of its previous point (which has to be verified)
+    if (dy < 0){
+        ystep = -unit_y;
+        dy = -dy;
+    }else
+        ystep = unit_y;
+    if (dx < 0){
+        xstep = -unit_x;
+        dx = -dx;
+    }else
+        xstep = unit_x;
+    ddy = 2 * dy;  // work with double values for full precision
+    ddx = 2 * dx;
+    
+    obstacle_cells_.push_back(TLoc(x1,y1));
 
-    if(x1 > x2)
-    {
-        std::swap(x1, x2);
-        std::swap(y1, y2);
-    }
+    if (ddx >= ddy)
+    {  // first octant (0 <= slope <= 1)
+        // compulsory initialization (even for errorprev, needed when dx==dy)
+        errorprev = error = dx;  // start in the middle of the square
+        for (i=0 ; i < dx ; i++)
+        {  // do not use the first point (already done)
+            x += xstep;
+            error += ddy;
+            if (error > ddx)
+            {  // increment y if AFTER the middle ( > )
+                y += ystep;
+                error -= ddx;
+                // three cases (octant == right->right-top for directions below):
+                if (error + errorprev < ddx)
+                {  // bottom square also
+                    obstacle_cells_.push_back(TLoc(x,y-ystep));
+                }
+                else if (error + errorprev > ddx)
+                {
+                    // left square also
+                    obstacle_cells_.push_back(TLoc(x-xstep,y));
+                }
+                else
+                {  // corner: bottom and left squares also
+                    obstacle_cells_.push_back(TLoc(x,y-ystep));
+                    obstacle_cells_.push_back(TLoc(x-xstep,y));
 
-    const float dx = x2 - x1;
-    const float dy = fabs(y2 - y1);
-
-    float error = dx / 8.0f;
-    const int ystep = (y1 < y2) ? 1 : -1;
-    int y = (int)y1;
-
-    const int maxX = (int)x2;
-
-    for(int x=(int)x1; x<maxX; x++)
-    {
-        if(steep)
-        {
-            obstacle_cells_.push_back(TLoc(y,x));
-            obstacle_cells_.push_back(TLoc(y+CONFIG.height,x+CONFIG.width));
-            obstacle_cells_.push_back(TLoc(y-CONFIG.height,x-CONFIG.width));
+                }
+            }
+            obstacle_cells_.push_back(TLoc(x,y));
+            errorprev = error;
         }
-        else
-        {
-            obstacle_cells_.push_back(TLoc(y,x));
-            obstacle_cells_.push_back(TLoc(x+CONFIG.width,y+CONFIG.height));
-            obstacle_cells_.push_back(TLoc(x-CONFIG.width,y-CONFIG.height));
-        }
-
-        error -= dy;
-        if(error < 0)
+    }
+    else
+    {  // the same as above
+        errorprev = error = dy;
+        for (i=0 ; i < dy ; i++)
         {
             y += ystep;
-            error += dx;
+            error += ddx;
+            if (error > ddy){
+                x += xstep;
+                error -= ddy;
+                if (error + errorprev < ddy)
+                {
+                    obstacle_cells_.push_back(TLoc(x-xstep,y));
+                }
+                else if (error + errorprev > ddy)
+                {
+                    obstacle_cells_.push_back(TLoc(x,y-ystep));
+                }
+                else
+                {
+                    obstacle_cells_.push_back(TLoc(x-xstep,y));
+                    obstacle_cells_.push_back(TLoc(x,y-ystep));
+                }
+            }
+
+            obstacle_cells_.push_back(TLoc(x,y));
+            errorprev = error;
         }
     }
+
+    ROS_INFO("loaded %d obstacle cells", (int)obstacle_cells_.size());
 }
+
 
 
 int main(int argc, char** argv)

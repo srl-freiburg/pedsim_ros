@@ -24,4 +24,8 @@
         <addwaypoint id="lower_right" />
         <addwaypoint id="upper_left" />
     </agent>
+
+
+    <!-- other obstacles -->
+    <obstacle x1="21" y1="21" x2="0" y2="41"/>
 </scenario>
