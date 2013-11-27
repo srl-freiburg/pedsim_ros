@@ -22,10 +22,10 @@
     <!--Waypoints (incl. WaitingQueues)-->
     <waypoint id="m1_bottom" x="180" y="15" r="15"/>
     <waypoint id="m1_top" x="100" y="45" r="15"/>
-    <waypoint id="start_bottom" x="20" y="15" r="10"/>
-    <waypoint id="start_top" x="20" y="45" r="10"/>
-    <waypoint id="stop_bottom" x="280" y="15" r="10"/>
-    <waypoint id="stop_top" x="280" y="45" r="10"/>
+    <waypoint id="start_bottom" x="20" y="15" r="20"/>
+    <waypoint id="start_top" x="20" y="45" r="20"/>
+    <waypoint id="stop_bottom" x="280" y="15" r="20"/>
+    <waypoint id="stop_top" x="280" y="45" r="20"/>
  
 
     <agent x="100" y="15" n="1" dx="150" dy="5" type="1">

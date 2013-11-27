@@ -78,6 +78,7 @@ void Scene::runSimulation()
     while (ros::ok())
     {
         moveAllAgents();
+        spawnKillAgents();
 
         publishAgentStatus();
         publishAgentVisuals();
@@ -272,6 +273,72 @@ void Scene::publishObstacles()
     pub_obstacles_.publish(obstacles);
 }
 
+
+void Scene::spawnKillAgents() 
+{
+    for (vector<Ped::Tagent*>::const_iterator iter = all_agents_.begin(); iter != all_agents_.end(); ++iter) 
+    {
+        Ped::Tagent *a = (*iter);
+        double ax = a->getx();
+        double ay = a->gety();
+
+  
+        if (a->gettype() != 2 && timestep > 10) 
+        {
+            if (a->destination->gettype() == Ped::Twaypoint::TYPE_DEATH)
+            {
+                // get the agents first ever waypoint and move it there to start over
+                Ped::Twaypoint* wp = a->birth_waypoint;
+                Ped::Twaypoint* wc = a->death_waypoint;
+
+                double wx = wc->getx();
+                double wy = wc->gety();
+
+                if (sqrt( pow(ax-wx, 2.0) + pow(ay-wy, 2.0) )  <= ((wc->getr())) ) 
+                {
+                // if (a->hasreacheddestination) {
+                    double randomizedX = wp->getx();
+                    double randomizedY = wp->gety();
+                    double dx = wp->getr();
+                    double dy = wp->getr();
+
+                    randomizedX += qrand()/(double)RAND_MAX * dx - dx/2;
+                    randomizedY += qrand()/(double)RAND_MAX * dy - dy/2;
+
+                    a->setPosition(randomizedX, randomizedY, 0);
+                    moveAgent(a);
+                }
+            }
+
+            if (a->destination->gettype() == Ped::Twaypoint::TYPE_BIRTH)
+            {
+                // get the agents first ever waypoint and move it there to start over
+                Ped::Twaypoint* wp = a->death_waypoint;
+                Ped::Twaypoint* wc = a->birth_waypoint;
+
+                double wx = wc->getx();
+                double wy = wc->gety();
+                
+                if (sqrt( pow(ax-wx, 2.0) + pow(ay-wy, 2.0) ) <= ((wc->getr()))) 
+                {
+                // if (a->hasreacheddestination) {
+                    double randomizedX = wp->getx();
+                    double randomizedY = wp->gety();
+                    double dx = wp->getr();
+                    double dy = wp->getr();
+
+                    randomizedX += qrand()/(double)RAND_MAX * dx - dx/2;
+                    randomizedY += qrand()/(double)RAND_MAX * dy - dy/2;
+
+                    a->setPosition(randomizedX, randomizedY, 0);
+                    moveAgent(a);
+                }
+            }
+
+        }   
+  
+    }
+}
 
 std::set<const Ped::Tagent*> Scene::getNeighbors(double x, double y, double maxDist)
 {

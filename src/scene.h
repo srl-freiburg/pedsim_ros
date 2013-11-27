@@ -61,6 +61,7 @@ public:
     void addObstacle(Ped::Tobstacle *o) { Ped::Tscene::addObstacle(o); }
     void cleanup() { Ped::Tscene::cleanup(); }
     void moveAgents(double h) { Ped::Tscene::moveAgents(h); }
+    void spawnKillAgents();
 
     /// service handler for moving agents
     bool srvMoveAgentHandler(pedsim_srvs::SetAgentState::Request&, pedsim_srvs::SetAgentState::Response& );
