@@ -35,7 +35,7 @@
         <addwaypoint id="start_bottom"/>
     </agent>
     <!-- robot -->
-    <agent x="20" y="20" n="1" dx="0" dy="0" type="2">
+    <agent x="10" y="10" n="1" dx="0" dy="0" type="2">
         <addwaypoint id="stop_top"/>
         <addwaypoint id="start_top"/>
     </agent>

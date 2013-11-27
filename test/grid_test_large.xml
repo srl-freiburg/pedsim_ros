@@ -6,11 +6,11 @@
     <obstacle x1="41" y1="0" x2="41" y2="41"/>
     <obstacle x1="41" y1="41" x2="0" y2="41"/>
     <!--Waypoints-->
-    <waypoint id="lower_right" x="36" y="5" r="1"/>
-    <waypoint id="upper_left" x="5" y="36" r="1"/>
+    <waypoint id="lower_right" x="30" y="15" r="1"/>
+    <waypoint id="upper_left" x="15" y="30" r="1"/>
     <!--WaitingQueues-->
     <!--Agents-->
-    <agent x="5" y="5" n="1" dx="0" dy="0" type="0">
+    <agent x="15" y="25" n="1" dx="0" dy="0" type="0">
         <addwaypoint id="lower_right" />
         <addwaypoint id="upper_left" />
     </agent>
@@ -20,12 +20,18 @@
         <addwaypoint id="lower_right" />
     </agent>
 
-    <agent x="5" y="10" n="5" dx="1" dy="1" type="0">
+    <agent x="10" y="10" n="10" dx="10" dy="10" type="0">
         <addwaypoint id="lower_right" />
         <addwaypoint id="upper_left" />
     </agent>
 
+    <agent x="30" y="30" n="10" dx="10" dy="10" type="0">
+        <addwaypoint id="upper_left" />
+        <addwaypoint id="lower_right" />
+    </agent>
+
 
     <!-- other obstacles -->
-    <obstacle x1="21" y1="21" x2="0" y2="41"/>
+    <obstacle x1="35" y1="25" x2="0" y2="41"/>
+    <obstacle x1="15" y1="20" x2="41" y2="10"/>
 </scenario>

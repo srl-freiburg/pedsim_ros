@@ -29,10 +29,14 @@ bool Scene::srvMoveAgentHandler(pedsim_srvs::SetAgentState::Request& req, pedsim
         robot_->setvy( vy );
         robot_->setVmax( sqrt( vx * vx + vy * vy ) );
     }
+    else
+    {
+        res.finished = false;
+    }
 
     res.finished = true;
 
-    return true;
+    return res.finished;
 }
 
 
@@ -600,7 +604,7 @@ int main(int argc, char** argv)
     ros::NodeHandle node;
 
     // TOOD - read scene params automatically from launch file
-    // Scene sim_scene(0, 0, 50, 50, node);
+    // Scene sim_scene(0, 0, 45, 45, node);
     Scene sim_scene(0, 0, 300, 100, node);
 
     if (sim_scene.initialize()) 
