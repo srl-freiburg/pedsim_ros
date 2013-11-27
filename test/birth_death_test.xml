@@ -34,7 +34,8 @@
         <addwaypoint id="m1_bottom"/>
         <addwaypoint id="start_bottom"/>
     </agent>
-    <agent x="20" y="90" n="1" dx="0" dy="0" type="2">
+    <!-- robot -->
+    <agent x="20" y="20" n="1" dx="0" dy="0" type="2">
         <addwaypoint id="stop_top"/>
         <addwaypoint id="start_top"/>
     </agent>
@@ -45,8 +46,8 @@
         <addwaypoint id="m1_bottom"/>
         <addwaypoint id="start_bottom"/>
     </agent>
-    <agent x="180" y="45" n="50" dx="150" dy="5" type="0">
-        <addwaypoint id="m1_top"/>
+    <agent x="120" y="45" n="50" dx="150" dy="5" type="0">
+        <!-- <addwaypoint id="m1_top"/> -->
         <addwaypoint id="start_top"/>
         <addwaypoint id="m1_top"/>
         <addwaypoint id="stop_top"/>

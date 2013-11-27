@@ -11,8 +11,8 @@ Config* Config::Config::instance = NULL;
 Config::Config() 
 {
     simWallForce = 10;
-    simPedForce = 5;
-    simSpeed = 1000.0/30;
+    simPedForce = 10;
+    simSpeed = 0.05;
     mlLookAhead = true;
     simh = 0.1;
 }
