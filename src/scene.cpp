@@ -211,17 +211,17 @@ void Scene::publishAgentVisuals()
             marker.color.a = 1.0;
             marker.color.r = 0.0;
             marker.color.g = 1.0;
-            marker.color.b = 0.0;
+            marker.color.b = 1.0;
 
-            marker.scale.x = 0.2;
-            marker.scale.y = 0.2;
-            marker.scale.z = 1;
+            marker.scale.x = 0.3;
+            marker.scale.y = 0.3;
+            marker.scale.z = 1.5;
         }
 
         marker.action = 0;  // add or modify
         marker.pose.position.x = a->getx();
         marker.pose.position.y = a->gety();
-        marker.pose.position.z = 0;
+        marker.pose.position.z = 0.75;
 
         if (a->getvx() != 0.0) 
         {

@@ -14,7 +14,7 @@ Config::Config()
     simPedForce = 10;
     simSpeed = 0.05;
     mlLookAhead = true;
-    simh = 0.1;
+    simh = 0.2;
 }
 
 Config& Config::getInstance() {
