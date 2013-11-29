@@ -110,6 +110,9 @@ bool Scene::initialize()
     pub_agent_visuals_ = nh_.advertise<visualization_msgs::Marker>( "agents_markers", 0 );
     pub_obstacles_ = nh_.advertise<nav_msgs::GridCells>( "static_obstacles", 0 );
 
+    // subscribers
+    sub_robot_state_ = nh_.subscribe("robot_state", 1, &Scene::callbackRobotState, this);
+
     // services hooks
     srv_move_agent_ = nh_.advertiseService("SetAgentState", &Scene::srvMoveAgentHandler, this);
 
@@ -118,7 +121,7 @@ bool Scene::initialize()
     std::string scene_file_param;
     nh_.getParam("/simulator/scene_file", scene_file_param);
     double cell_size;
-    nh_.getParam("/simulator/cell_size", cell_size);
+    nh_.getParam("/irl_features/cell_size", cell_size);
     CONFIG.width = cell_size;
     CONFIG.height = cell_size;
 
@@ -144,6 +147,20 @@ void Scene::moveAllAgents()
     Ped::Tscene::moveAgents(CONFIG.simh);
 }
 
+
+
+void Scene::callbackRobotState(const pedsim_msgs::AgentState::ConstPtr& msg)
+{
+    double vx = msg->velocity.x;
+    double vy = msg->velocity.y;
+
+    if (robot_->getid() == msg->id)  
+    {
+        robot_->setvx( vx );
+        robot_->setvy( vy );
+        robot_->setVmax( sqrt( vx * vx + vy * vy ) );
+    }
+}
 
 
 void Scene::publishAgentStatus()

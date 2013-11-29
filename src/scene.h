@@ -71,6 +71,9 @@ public:
     void publishAgentVisuals();
     void publishObstacles();
 
+    /// subscriber helpers
+    void callbackRobotState(const pedsim_msgs::AgentState::ConstPtr& msg);
+
     /// helpers related to parsing scene files
     inline bool readFromFile(const QString& filename);
     inline void processData(QByteArray& data);
@@ -93,6 +96,9 @@ private:
     ros::Publisher pub_all_agents_;
     ros::Publisher pub_agent_visuals_;
     ros::Publisher pub_obstacles_;
+
+    // subscribers
+    ros::Subscriber sub_robot_state_;
 
     // service servers
     ros::ServiceServer srv_move_agent_;
