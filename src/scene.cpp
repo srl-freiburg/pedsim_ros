@@ -279,8 +279,10 @@ void Scene::publishObstacles()
     {
         geometry_msgs::Point p;
         TLoc loc = (*it);
-        p.x = loc.x + (cell_size/2.0f);
-        p.y = loc.y + (cell_size/2.0f);
+        // p.x = loc.x + (cell_size/2.0f);
+        // p.y = loc.y + (cell_size/2.0f);
+        p.x = loc.x;
+        p.y = loc.y;
         p.z = 0.0;
         obstacles.cells.push_back(p);
 
@@ -687,9 +689,15 @@ int main(int argc, char** argv)
 
     ros::NodeHandle node;
 
-    // TOOD - read scene params automatically from launch file
+    double x1,x2, y1,y2;
+    node.getParam("/irl_features/x1", x1);
+    node.getParam("/irl_features/x2", x2);
+    node.getParam("/irl_features/y1", y1);
+    node.getParam("/irl_features/y2", y2);
+
     // Scene sim_scene(0, 0, 45, 45, node);
-    Scene sim_scene(0, 0, 300, 100, node);
+    // Scene sim_scene(0, 0, 300, 100, node);
+    Scene sim_scene(x1, y1, x2, y2, node);
 
     if (sim_scene.initialize()) 
     {
