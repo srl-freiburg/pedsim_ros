@@ -20,36 +20,28 @@
     <obstacle x1="290" y1="60" x2="300" y2="50"/>
     
     <!--Waypoints (incl. WaitingQueues)-->
-    <waypoint id="m1_bottom" x="180" y="15" r="15"/>
-    <waypoint id="m1_top" x="100" y="45" r="15"/>
-    <waypoint id="start_bottom" x="20" y="15" r="20"/>
-    <waypoint id="start_top" x="20" y="45" r="20"/>
+    <waypoint id="start_bottom" x="0" y="15" r="5"/>
+    <waypoint id="start_top" x="0" y="45" r="5"/>
     <waypoint id="stop_bottom" x="280" y="15" r="20"/>
     <waypoint id="stop_top" x="280" y="45" r="20"/>
  
-
     <agent x="100" y="15" n="1" dx="150" dy="5" type="1">
-        <!-- <addwaypoint id="m1_bottom"/> -->
         <addwaypoint id="stop_bottom"/>
-        <!-- <addwaypoint id="m1_bottom"/> -->
         <addwaypoint id="start_bottom"/>
     </agent>
+
     <!-- robot -->
-    <agent x="10" y="70" n="1" dx="0" dy="0" type="2">
+    <agent x="20" y="70" n="1" dx="0" dy="0" type="2">
         <addwaypoint id="stop_top"/>
         <addwaypoint id="start_top"/>
     </agent>
 
     <agent x="100" y="20" n="80" dx="150" dy="5" type="1">
-        <!-- <addwaypoint id="m1_bottom"/> -->
         <addwaypoint id="stop_bottom"/>
-        <!-- <addwaypoint id="m1_bottom"/> -->
         <addwaypoint id="start_bottom"/>
     </agent>
     <agent x="120" y="50" n="100" dx="150" dy="5" type="0">
-        <!-- <addwaypoint id="m1_top"/> -->
         <addwaypoint id="start_top"/>
-        <!-- <addwaypoint id="m1_top"/> -->
         <addwaypoint id="stop_top"/>
     </agent>
     
