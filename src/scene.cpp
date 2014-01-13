@@ -74,6 +74,7 @@ void Scene::runSimulation()
     }
 
     ros::Rate r( 1 /  CONFIG.simh );
+    // ros::Rate r( 10 );
 
     while (ros::ok())
     {
@@ -618,7 +619,7 @@ void Scene::drawObstacles(float x1, float y1, float x2, float y2)
         }
     }
 
-    ROS_INFO("loaded %d obstacle cells", (int)obstacle_cells_.size());
+    // ROS_INFO("loaded %d obstacle cells", (int)obstacle_cells_.size());
 }
 
 

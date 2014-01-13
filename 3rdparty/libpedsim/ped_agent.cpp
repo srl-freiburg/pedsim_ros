@@ -35,14 +35,14 @@ Ped::Tagent::Tagent() {
     follow = -1;
     // vmax = 1.5 + 1.5*(double)rand()/(double)RAND_MAX; // in m/s 
     // vmax = 1.0 + 0.7*(double)rand()/(double)RAND_MAX; // in m/s 
-    vmax = 2.0 + 0.7*(double)rand()/(double)RAND_MAX; // in m/s 
-    // vmax = 1.0; // For verification tests
+    vmax = 1.34 + 0.7*(double)rand()/(double)RAND_MAX; // in m/s 
+    // vmax = 1.34; // For verification tests
 
     mlLookAhead = false;
 
     factorsocialforce = 2.1f;
     factorobstacleforce = 10.0f;
-    factordesiredforce = 1.0f;
+    factordesiredforce = 5.0f;
     factorlookaheadforce = 1.0f;
 
     timestep = 0;
@@ -347,8 +347,8 @@ void Ped::Tagent::move( double h ) {
     //  sum of all forces --> acceleration
     if ( gettype() == 2 ) {
       factordesiredforce = 20;
-      factorobstacleforce = 10;
-      factorsocialforce = 5;
+      factorobstacleforce = 50;
+      factorsocialforce = 2.1;
     }
     Ped::Tvector a;
     a.x = factorsocialforce * socialforce.x + factordesiredforce * desiredforce.x + factorobstacleforce * obstacleforce.x + factorlookaheadforce * lookaheadforce.x + myforce.x;

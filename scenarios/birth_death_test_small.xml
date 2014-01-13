@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--This scenario file was created by SGDiCoP on 2014-01-13T18:39:16-->
+<scenario>
+    <!--Obstacles-->
+    <obstacle x1="10" y1="0" x2="90" y2="0"/>
+    <obstacle x1="30" y1="35" x2="60" y2="35"/>
+    <obstacle x1="0" y1="10" x2="0" y2="60"/>
+    <obstacle x1="100" y1="10" x2="100" y2="25"/>
+    <obstacle x1="75" y1="35" x2="90" y2="35"/>
+    <obstacle x1="75" y1="60" x2="75" y2="35"/>
+    <obstacle x1="60" y1="35" x2="60" y2="60"/>
+    <obstacle x1="30" y1="35" x2="20" y2="45"/>
+    <obstacle x1="20" y1="45" x2="20" y2="60"/>
+    <obstacle x1="0" y1="60" x2="20" y2="60"/>
+    <obstacle x1="0" y1="10" x2="10" y2="0"/>
+    <obstacle x1="90" y1="0" x2="100" y2="10"/>
+    <obstacle x1="60" y1="60" x2="75" y2="60"/>
+    <obstacle x1="90" y1="35" x2="100" y2="25"/>
+    <!--Waypoints (incl. WaitingQueues)-->
+    <waypoint id="start_bottom" x="10" y="10" r="5"/>
+    <waypoint id="start_top" x="10" y="25" r="5"/>
+    <waypoint id="stop_bottom" x="80" y="10" r="5"/>
+    <waypoint id="stop_top" x="80" y="25" r="5"/>
+    <!--Attractions-->
+    <!--Agents-->
+    <!--AgentClusters-->
+    <agent x="35" y="10" n="1" dx="10" dy="5" type="0">
+        <addwaypoint id="stop_bottom"/>
+        <addwaypoint id="start_bottom"/>
+    </agent>
+    <!-- robot -->
+    <agent x="10" y="50" n="1" dx="0" dy="0" type="2">
+        <addwaypoint id="stop_top"/>
+        <addwaypoint id="stop_bottom"/>
+    </agent>
+
+    <agent x="35" y="10" n="50" dx="50" dy="5" type="1">
+        <addwaypoint id="stop_bottom"/>
+        <addwaypoint id="start_bottom"/>
+    </agent>
+    <agent x="60" y="30" n="50" dx="50" dy="5" type="0">
+        <addwaypoint id="start_top"/>
+        <addwaypoint id="stop_top"/>
+    </agent>
+</scenario>

@@ -10,11 +10,11 @@ Config* Config::Config::instance = NULL;
 
 Config::Config() 
 {
-    simWallForce = 4.0;
-    simPedForce = 5.1;
+    simWallForce = 10.0;
+    simPedForce = 2.1;
     simSpeed = 0.05;
     mlLookAhead = true;
-    simh = 0.2;
+    simh = 0.1;
 }
 
 Config& Config::getInstance() {
