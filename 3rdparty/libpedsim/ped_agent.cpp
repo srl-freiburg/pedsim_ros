@@ -42,7 +42,7 @@ Ped::Tagent::Tagent() {
 
     factorsocialforce = 2.1f;
     factorobstacleforce = 10.0f;
-    factordesiredforce = 5.0f;
+    factordesiredforce = 10.0f;
     factorlookaheadforce = 1.0f;
 
     timestep = 0;

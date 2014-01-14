@@ -79,7 +79,7 @@ void Scene::runSimulation()
     while (ros::ok())
     {
         moveAllAgents();
-        spawnKillAgents();
+        // spawnKillAgents();
 
         publishAgentStatus();
         publishAgentVisuals();
@@ -146,6 +146,11 @@ void Scene::moveAllAgents()
 
     // move the agents by social force
     Ped::Tscene::moveAgents(CONFIG.simh);
+
+    if (timestep >= 1000)
+    {
+        nh_.setParam("irl_features/robot_state", 1.0);
+    }
 }
 
 
@@ -155,11 +160,27 @@ void Scene::callbackRobotState(const pedsim_msgs::AgentState::ConstPtr& msg)
     double vx = msg->velocity.x;
     double vy = msg->velocity.y;
 
-    if (robot_->getid() == msg->id)  
+    double robot_state;
+    nh_.getParam("/irl_features/robot_state", robot_state);
+    
+    if (robot_state == 1.0)
     {
-        robot_->setvx( vx );
-        robot_->setvy( vy );
-        robot_->setVmax( sqrt( vx * vx + vy * vy ) );
+
+        if (robot_->getid() == msg->id)  
+        {
+            robot_->setvx( vx );
+            robot_->setvy( vy );
+            robot_->setVmax( sqrt( vx * vx + vy * vy ) );
+        }
+
+    } else
+    {
+        if (robot_->getid() == msg->id)  
+        {
+            robot_->setvx( vx );
+            robot_->setvy( vy );
+            robot_->setVmax( 0.0 );
+        }
     }
 }
 
