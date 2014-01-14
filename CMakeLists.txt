@@ -39,14 +39,17 @@ set(SOURCES
 ) 
 
 add_executable(simulator ${SOURCES} ${QT_RESOURCES_CPP} ${QT_FORMS_HPP} ${QT_MOC_HPP})
+add_executable(teleop src/robot_teleop.cpp)
 
 TARGET_LINK_LIBRARIES(simulator 
     ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY} ${QT_QTOPENGL_LIBRARY} ${QWT_LIBRARIES} pedsim 
     ${BOOST_LIBRARIES} ${OpenCV_LIBS} ${catkin_LIBRARIES}
 )
 
+TARGET_LINK_LIBRARIES(teleop ${BOOST_LIBRARIES} ${catkin_LIBRARIES})
 
-INSTALL(TARGETS simulator
+
+INSTALL(TARGETS simulator teleop
     RUNTIME DESTINATION bin
     LIBRARY DESTINATION lib
 )

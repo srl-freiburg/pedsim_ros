@@ -147,9 +147,9 @@ void Scene::moveAllAgents()
     // move the agents by social force
     Ped::Tscene::moveAgents(CONFIG.simh);
 
-    if (timestep >= 1000)
+    if (timestep >= 100)
     {
-        nh_.setParam("irl_features/robot_state", 1.0);
+        nh_.setParam("irl_features/move_robot", 1.0);
     }
 }
 
@@ -161,7 +161,7 @@ void Scene::callbackRobotState(const pedsim_msgs::AgentState::ConstPtr& msg)
     double vy = msg->velocity.y;
 
     double robot_state;
-    nh_.getParam("/irl_features/robot_state", robot_state);
+    nh_.getParam("/irl_features/move_robot", robot_state);
     
     if (robot_state == 1.0)
     {
