@@ -3,6 +3,7 @@
 #include <ros/ros.h>
 #include <termios.h>
 #include <pedsim_msgs/AgentState.h>
+#include <std_msgs/Header.h>
 
 
 #define KEYCODE_R 0x43 
@@ -22,6 +23,7 @@ private:
     ros::NodeHandle nh_;
     double linear_, angular_, l_scale_, a_scale_;
     double rot_angle_;
+    double robot_speed;
     ros::Publisher vel_pub_;
 };
 
@@ -30,7 +32,8 @@ Teleop::Teleop():
   angular_(0),
   l_scale_(2.0),
   a_scale_(2.0),
-  rot_angle_(0.0)
+  rot_angle_(0.0),
+  robot_speed(1.2)
 {
   nh_.param("scale_angular", a_scale_, a_scale_);
   nh_.param("scale_linear", l_scale_, l_scale_);
@@ -81,10 +84,11 @@ void Teleop::keyLoop()
 
   puts("Reading from keyboard");
   puts("---------------------------");
-  puts("Use arrow keys to move the turtle.");
+  puts("Use arrow keys to move the robot.");
 
 
-  for(;;)
+  // for(;;)
+  while(true)
   {
     // get the next event from the keyboard  
     if(read(kfd, &c, 1) < 0)
@@ -102,23 +106,25 @@ void Teleop::keyLoop()
         ROS_DEBUG("LEFT");
         angular_ = 1.0;
         dirty = true;
-        rot_angle_ -= 10.0;
+        rot_angle_ += 30.0;
         break;
       case KEYCODE_R:
         ROS_DEBUG("RIGHT");
         angular_ = -1.0;
         dirty = true;
-        rot_angle_ += 10.0;
+        rot_angle_ -= 30.0;
         break;
       case KEYCODE_U:
         ROS_DEBUG("UP");
         linear_ = 1.0;
         dirty = true;
+        robot_speed += 0.1;
         break;
       case KEYCODE_D:
         ROS_DEBUG("DOWN");
         linear_ = -1.0;
         dirty = true;
+        robot_speed -= 0.1;
         break;
     }
    
@@ -130,14 +136,14 @@ void Teleop::keyLoop()
     // double dr = (vlin + vang) / baseline;
 
     // pedsim_msgs::AgentState astate;
-    // astate.id = 2;
-    // // astate.velocity.x = vlin * cos(vang);
-    // // astate.velocity.y = vlin * sin(vang);
+    // astate.id = 1;
+    // astate.velocity.x = vlin * cos(vang);
+    // astate.velocity.y = vlin * sin(vang);
 
     // astate.velocity.x = (1.0 * dx) + (dr * baseline / 2.0);
     // astate.velocity.y = (1.0 * dx) - (dr * baseline / 2.0);
 
-    // ROS_INFO("Linear, angular %f, %f", vlin, vang);
+    ROS_INFO("Speed, Angle %f, %f", robot_speed, rot_angle_);
 
 
 
@@ -145,25 +151,26 @@ void Teleop::keyLoop()
     double angle = rot_angle_;
     double vx = cos(angle * M_PI/180.0);
     double vy = sin(angle * M_PI/180.0);
-    double robot_speed = 3.0;
 
     double stepx = robot_speed * vx;
     double stepy = robot_speed * vy;
 
-    ROS_INFO("VX, VY %f, %f", stepx, stepy);
-
     pedsim_msgs::AgentState astate;
-    astate.id = 2;
+
+    std_msgs::Header header_;
+    header_.stamp = ros::Time::now();
+    astate.header = header_;
+
+    astate.id = 1;
     astate.velocity.x = stepx;
     astate.velocity.y = stepy;
 
-    vel_pub_.publish(astate);    
 
-    // if(dirty ==true)
-    // {
-    //   vel_pub_.publish(astate);    
-    //   dirty=false;
-    // }
+    if(dirty ==true)
+    {
+      vel_pub_.publish(astate);    
+      dirty=false;
+    }
   }
 
 

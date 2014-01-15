@@ -346,7 +346,7 @@ void Ped::Tagent::move( double h ) {
 
 
     //  sum of all forces --> acceleration
-    if ( gettype() == 2 && getteleop() == false) {
+    if ( gettype() == 2) {
       factordesiredforce = 20;
       factorobstacleforce = 50;
       factorsocialforce = 2.1;
@@ -358,9 +358,13 @@ void Ped::Tagent::move( double h ) {
 
     // calculate the new velocity based on v0 and the acceleration
     /// \todo Make momentum factor (0.75) settable by the user
-    v.x = 0.75 * v.x + a.x;
-    v.y = 0.75 * v.y + a.y; /// \note Is the momentum factor (0.75) dependent of h?? think so   --chgloor 2012-01-15
-    v.z = 0.75 * v.z + a.z;
+    
+    if (getteleop() == false) 
+    {
+        v.x = 0.75 * v.x + a.x;
+        v.y = 0.75 * v.y + a.y; /// \note Is the momentum factor (0.75) dependent of h?? think so   --chgloor 2012-01-15
+        v.z = 0.75 * v.z + a.z;
+    }
 
     double currvmax = vmax;
     double speed = (sqrt(v.x*v.x + v.y*v.y + v.z*v.z));
@@ -371,16 +375,14 @@ void Ped::Tagent::move( double h ) {
       v.z = (v.z / speed) * currvmax;
     }
 
-    if (getteleop() == false) 
-    {
-        // internal position update == actual move
-        p.x = p.x + h * v.x; // x = x0 + v*t
-        p.y = p.y + h * v.y;
-        p.z = 0; // p.z + h * v.z; // 2D  --chgloor 2012-01-04
 
-        // notice scene of movement
-        scene->moveAgent(this);
-    }
+    // internal position update == actual move
+    p.x = p.x + h * v.x; // x = x0 + v*t
+    p.y = p.y + h * v.y;
+    p.z = 0; // p.z + h * v.z; // 2D  --chgloor 2012-01-04
+
+    // notice scene of movement
+    scene->moveAgent(this);
 
     timestep++; // local agent tiemstep since creation
 }

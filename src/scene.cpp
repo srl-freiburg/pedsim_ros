@@ -93,7 +93,7 @@ void Scene::runSimulation()
         publishAgentVisuals();
 
         // only publish the obstacles in the beginning
-        if (timestep < 50)
+        if (timestep < 200)
             publishObstacles();
 
         // helps to make things faster
@@ -155,7 +155,7 @@ void Scene::moveAllAgents()
     // move the agents by social force
     Ped::Tscene::moveAgents(CONFIG.simh);
 
-    if (timestep >= 100)
+    if (timestep >= 10)
     {
         nh_.setParam("irl_features/move_robot", 1.0);
     }
@@ -171,14 +171,29 @@ void Scene::callbackRobotState(const pedsim_msgs::AgentState::ConstPtr& msg)
     double robot_state;
     nh_.getParam("/irl_features/move_robot", robot_state);
     
+    double teleop_state;
+    nh_.getParam("/irl_features/teleop_state", teleop_state);
+    
     if (robot_state == 1.0)
     {
-
         if (robot_->getid() == msg->id)  
         {
-            robot_->setvx( vx );
-            robot_->setvy( vy );
-            robot_->setVmax( sqrt( vx * vx + vy * vy ) );
+
+            if (teleop_state == 0.0)
+            {
+                robot_->setvx( vx );
+                robot_->setvy( vy );
+                robot_->setVmax( sqrt( vx * vx + vy * vy ) );
+            } 
+            else 
+            {
+                robot_->setvx( vx );
+                robot_->setvy( vy );
+                robot_->setVmax( sqrt( vx * vx + vy * vy ) );
+                // robot_->setVmax( 1.0 );
+            }
+
+            ROS_INFO("(rx, ry), (%f, %f)", robot_->getx(), robot_->gety());
         }
 
     } else
