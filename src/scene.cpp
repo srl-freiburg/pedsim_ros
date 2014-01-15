@@ -71,6 +71,14 @@ void Scene::runSimulation()
 
         if (a->gettype() == 2)
             robot_ = a;
+
+        // setup for teleoperation
+        double teleop_state;
+        nh_.getParam("/irl_features/teleop_state", teleop_state);
+        if (teleop_state == 0.0)
+            robot_->setteleop(false);
+        else
+            robot_->setteleop(true);
     }
 
     ros::Rate r( 1 /  CONFIG.simh );

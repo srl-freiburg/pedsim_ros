@@ -27,6 +27,7 @@ Ped::Tagent::Tagent() {
     v.x = 0;
     v.y = 0;
     v.z = 0;
+    teleop = false;
     hasreacheddestination = true;
     destination = NULL;
     lastdestination = NULL;
@@ -345,7 +346,7 @@ void Ped::Tagent::move( double h ) {
 
 
     //  sum of all forces --> acceleration
-    if ( gettype() == 2 ) {
+    if ( gettype() == 2 && getteleop() == false) {
       factordesiredforce = 20;
       factorobstacleforce = 50;
       factorsocialforce = 2.1;
@@ -370,13 +371,16 @@ void Ped::Tagent::move( double h ) {
       v.z = (v.z / speed) * currvmax;
     }
 
-    // internal position update == actual move
-    p.x = p.x + h * v.x; // x = x0 + v*t
-    p.y = p.y + h * v.y;
-    p.z = 0; // p.z + h * v.z; // 2D  --chgloor 2012-01-04
+    if (getteleop() == false) 
+    {
+        // internal position update == actual move
+        p.x = p.x + h * v.x; // x = x0 + v*t
+        p.y = p.y + h * v.y;
+        p.z = 0; // p.z + h * v.z; // 2D  --chgloor 2012-01-04
 
-    // notice scene of movement
-    scene->moveAgent(this);
+        // notice scene of movement
+        scene->moveAgent(this);
+    }
 
     timestep++; // local agent tiemstep since creation
 }

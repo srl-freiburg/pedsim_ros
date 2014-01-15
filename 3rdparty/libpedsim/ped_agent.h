@@ -60,6 +60,7 @@ public:
 
     int getid() const { return id; };
     int gettype() const { return type; };
+    bool getteleop() { return teleop; }
 
     // these getter should replace the ones later (returning the individual vector values)
     const Tvector& getPosition() const { return p; }
@@ -79,6 +80,7 @@ public:
     void setvx(const double vx) {v.x = vx;}
     void setvy(const double vy) {v.y = vy;}
     void setvel(const double vel) {cvel = vel;}
+    void setteleop(bool val) { teleop = val; }
 
     void setfactorsocialforce(double f);
     void setfactorobstacleforce(double f);
@@ -97,6 +99,7 @@ public:
     double vmax;                                      ///< individual max velocity per agent
     double cvel;                                       /// constant velocity for agents
     int follow;
+    bool teleop;
 
     Ped::Tscene *scene; // not const. scene is modified e.g. in agent::move()
 
