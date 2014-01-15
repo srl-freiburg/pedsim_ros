@@ -93,7 +93,7 @@ void Scene::runSimulation()
         publishAgentVisuals();
 
         // only publish the obstacles in the beginning
-        if (timestep < 200)
+        if (timestep_ < 200)
             publishObstacles();
 
         // helps to make things faster
@@ -108,7 +108,7 @@ void Scene::runSimulation()
 bool Scene::initialize()
 {
     // start the time steps
-    timestep = 0;
+    timestep_ = 0;
 
     /// setup the list of all agents and the robot agent
     all_agents_.clear();
@@ -150,15 +150,10 @@ bool Scene::initialize()
 
 void Scene::moveAllAgents()
 {
-    timestep++;
+    timestep_++;
 
     // move the agents by social force
     Ped::Tscene::moveAgents(CONFIG.simh);
-
-    if (timestep >= 500)
-    {
-        nh_.setParam("irl_features/move_robot", 1.0);
-    }
 }
 
 
@@ -174,7 +169,7 @@ void Scene::callbackRobotState(const pedsim_msgs::AgentState::ConstPtr& msg)
     double teleop_state;
     nh_.getParam("/irl_features/teleop_state", teleop_state);
     
-    if (robot_state == 1.0)
+    if (timestep_ >= robot_state)
     {
         if (robot_->getid() == msg->id)  
         {
@@ -356,7 +351,7 @@ void Scene::spawnKillAgents()
         double ay = a->gety();
 
   
-        if (a->gettype() != 2 && timestep > 10) 
+        if (a->gettype() != 2 && timestep_ > 10) 
         {
             if (a->destination->gettype() == Ped::Twaypoint::TYPE_DEATH)
             {
