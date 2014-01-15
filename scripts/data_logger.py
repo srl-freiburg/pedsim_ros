@@ -55,7 +55,7 @@ def run(args):
     try:
         rospy.spin()
     except KeyboardInterrupt:
-        print "Shutting down ROS Image feature detector module"
+        print "Shutting down trajectory data logger node"
 
 
 if __name__ == '__main__':

@@ -188,7 +188,7 @@ void Scene::callbackRobotState(const pedsim_msgs::AgentState::ConstPtr& msg)
                 robot_->setVmax( 1.5 );
             }
 
-            ROS_INFO("(rx, ry), (%f, %f)", robot_->getx(), robot_->gety());
+            // ROS_DEBUG("(rx, ry), (%f, %f)", robot_->getx(), robot_->gety());
         }
 
     } else
