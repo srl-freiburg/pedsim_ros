@@ -51,12 +51,13 @@ def diffangle(a1, a2):
     return delta
 
 def agent_distance(robot, agent):
-    return math.sqrt((robot[0]-agent[0]) + (robot[1]-agent[1]))
+    return math.sqrt((robot[0]-agent[0])**2 + (robot[1]-agent[1])**2)
 
 def count_agents_in_range(robot, agents, radius):
     count = 0
-    for agent in agents:
-        distance = agent_distance((robot[2], robot[3]), (agent[2], agent[3]))
+    rows, cols = agents.shape
+    for row in range(rows):
+        distance = agent_distance((robot[0, 2], robot[0, 3]), (agents[row, 2], agents[row, 3]))
         if distance <= radius:
             count = count + 1
 
@@ -77,6 +78,7 @@ class MetricsLogger(object):
                          self.callback_goal_status)
     
     def callback_agent_status(self, data):
+        step_data = np.array([0, 0, 0, 0, 0, 0], dtype=np.float64)
         for a in data.agent_states:
             v = np.array([rospy.get_rostime().to_sec(), a.id,
                           a.position.x, a.position.y,
@@ -84,9 +86,16 @@ class MetricsLogger(object):
                          dtype=np.float64)
 
             if self.GOAL_REACHED is False:
-                # do something with the data
-                robot = self._get_robot_data(v)
-                intimate = count_agents_in_range(robot, v, 1.2)
+                step_data =  np.vstack((step_data, v))
+            
+        robot = self._get_robot_data(step_data)
+        intimate = count_agents_in_range(robot, step_data, 1.2)
+        personal = count_agents_in_range(robot, step_data, 3.2)
+        social = count_agents_in_range(robot, step_data, 5.2)
+        public = count_agents_in_range(robot, step_data, 7.2)
+
+        rospy.loginfo("P_i, P_p, P_s, P_k : (%d, %d, %d, %d)" % (intimate, personal, social, public))
+
 
     def callback_goal_status(self, data):
         if data.data == 'Arrived':
@@ -96,7 +105,7 @@ class MetricsLogger(object):
 
 
     def _get_robot_data(self, step_data):
-        return step_data[step_data[:,1] == 1]
+        return step_data[step_data[:, 1] == 1]
 
 
 def run(args):
