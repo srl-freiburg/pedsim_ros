@@ -81,8 +81,8 @@ void Scene::runSimulation()
             robot_->setteleop(true);
     }
 
-    ros::Rate r( 1 /  CONFIG.simh );
-    // ros::Rate r( 10 );
+    // ros::Rate r( 1 /  CONFIG.simh );
+    ros::Rate r( 15 ); // 15 Hz seems to be good visually
 
     while (ros::ok())
     {
@@ -155,7 +155,7 @@ void Scene::moveAllAgents()
     // move the agents by social force
     Ped::Tscene::moveAgents(CONFIG.simh);
 
-    if (timestep >= 10)
+    if (timestep >= 500)
     {
         nh_.setParam("irl_features/move_robot", 1.0);
     }
@@ -189,8 +189,8 @@ void Scene::callbackRobotState(const pedsim_msgs::AgentState::ConstPtr& msg)
             {
                 robot_->setvx( vx );
                 robot_->setvy( vy );
-                robot_->setVmax( sqrt( vx * vx + vy * vy ) );
-                // robot_->setVmax( 1.0 );
+                // robot_->setVmax( sqrt( vx * vx + vy * vy ) );
+                robot_->setVmax( 1.5 );
             }
 
             ROS_INFO("(rx, ry), (%f, %f)", robot_->getx(), robot_->gety());
@@ -200,8 +200,8 @@ void Scene::callbackRobotState(const pedsim_msgs::AgentState::ConstPtr& msg)
     {
         if (robot_->getid() == msg->id)  
         {
-            robot_->setvx( vx );
-            robot_->setvy( vy );
+            // robot_->setvx( vx );
+            // robot_->setvy( vy );
             robot_->setVmax( 0.0 );
         }
     }
@@ -255,17 +255,26 @@ void Scene::publishAgentVisuals()
 
         if (a->gettype() == robot_->gettype()) 
         {
-            // marker.type = visualization_msgs::Marker::CUBE;
-            marker.type = visualization_msgs::Marker::MESH_RESOURCE;
-            marker.mesh_resource = "package://simulator/images/darylbot.dae";
+            // marker.type = visualization_msgs::Marker::MESH_RESOURCE;
+            // marker.mesh_resource = "package://simulator/images/darylbot.dae";
+            // marker.color.a = 1.0;
+            // marker.color.r = 1.0;
+            // marker.color.g = 1.0;
+            // marker.color.b = 1.0;
+
+            // marker.scale.x = 0.5;
+            // marker.scale.y = 0.5;
+            // marker.scale.z = 0.5;
+
+            marker.type = visualization_msgs::Marker::CYLINDER;
             marker.color.a = 1.0;
-            marker.color.r = 1.0;
-            marker.color.g = 1.0;
+            marker.color.r = 0.0;
+            marker.color.g = 0.0;
             marker.color.b = 1.0;
 
-            marker.scale.x = 0.5;
-            marker.scale.y = 0.5;
-            marker.scale.z = 0.5;
+            marker.scale.x = 0.3;
+            marker.scale.y = 0.3;
+            marker.scale.z = 1.5;
         }
         else
         {
