@@ -10,6 +10,8 @@ from std_msgs.msg import String
 import sys, os
 import math
 
+ANGLES     = np.array( [-1, math.cos( 3 * math.pi / 4 ), math.cos( math.pi / 4 )], dtype = np.float32 )
+
 
 # Simple math utils for dealing with angles and such
 def dotproduct(v1, v2):
@@ -17,6 +19,9 @@ def dotproduct(v1, v2):
 
 def length(v):
     return math.sqrt(dotproduct(v, v))
+
+def normalize(v):
+    return (v[0] / length(v), v[1] / length(v) )
 
 def angle(v1, v2):
     return math.acos(dotproduct(v1, v2) / ( (length(v1) * length(v2)) + 1e-12) ) * (180 / math.pi)
@@ -53,15 +58,33 @@ def diffangle(a1, a2):
 def agent_distance(robot, agent):
     return math.sqrt((robot[0]-agent[0])**2 + (robot[1]-agent[1])**2)
 
-def count_agents_in_range(robot, agents, radius):
+def count_agents_in_range(robot, agents, radius, return_all=False):
     count = 0
     rows, cols = agents.shape
+    range_agents = []
     for row in range(rows):
         distance = agent_distance((robot[0, 2], robot[0, 3]), (agents[row, 2], agents[row, 3]))
         if distance <= radius:
             count = count + 1
+            range_agents.append(agents[row, :])
 
-    return count
+    if return_all:
+        return range_agents, count
+    else:
+        return count
+
+def max_idx(value, reference):
+    result = 0
+    for element in reference:
+        if value >= element:
+            result = element
+    return result
+
+
+def compute_agent_direction(robot, agent):
+    a = normalize((robot[0, 4], robot[0, 5]))
+    b = normalize((agent[4], agent[5]))
+    return max_idx(dotproduct(a,b), ANGLES)
 
 
 
@@ -89,10 +112,19 @@ class MetricsLogger(object):
                 step_data =  np.vstack((step_data, v))
             
         robot = self._get_robot_data(step_data)
+
+        # proxemics
         intimate = count_agents_in_range(robot, step_data, 1.2)
         personal = count_agents_in_range(robot, step_data, 3.2)
         social = count_agents_in_range(robot, step_data, 5.2)
         public = count_agents_in_range(robot, step_data, 7.2)
+
+
+        # anisotropic metrics
+        intruders, num = count_agents_in_range(robot, step_data, 1.2, return_all=True)
+        for eachone in intruders:
+            direction = compute_agent_direction((robot), list(eachone))
+            rospy.loginfo("Intruding from direction [ %d ]" % (direction))
 
         rospy.loginfo("P_i, P_p, P_s, P_k : (%d, %d, %d, %d)" % (intimate, personal, social, public))
 
