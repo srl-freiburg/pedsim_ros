@@ -116,7 +116,7 @@ bool Scene::initialize()
 
     // setup publishers
     pub_all_agents_ = nh_.advertise<pedsim_msgs::AllAgentsState>("AllAgentsStatus", 0);
-    pub_agent_visuals_ = nh_.advertise<visualization_msgs::Marker>( "agents_markers", 0 );
+    pub_agent_visuals_ = nh_.advertise<visualization_msgs::MarkerArray>( "agents_markers", 0 );
     pub_obstacles_ = nh_.advertise<nav_msgs::GridCells>( "static_obstacles", 0 );
 
     // subscribers
@@ -238,6 +238,9 @@ void Scene::publishAgentStatus()
 void Scene::publishAgentVisuals()
 {
 
+    // minor optimization with arrays for speedup
+    visualization_msgs::MarkerArray marker_array;
+
     for (vector<Ped::Tagent*>::const_iterator iter = all_agents_.begin(); iter != all_agents_.end(); ++iter)
     {
         Ped::Tagent *a = (*iter);
@@ -307,9 +310,14 @@ void Scene::publishAgentVisuals()
             marker.pose.orientation.z = 0.0;
             marker.pose.orientation.w = 1.0;
         }
-        pub_agent_visuals_.publish( marker );
+        // pub_agent_visuals_.publish( marker );
+        marker_array.markers.push_back( marker );
 
     }
+
+
+    // now publish the array
+    pub_agent_visuals_.publish( marker_array );
 }
 
 

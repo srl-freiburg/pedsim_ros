@@ -41,6 +41,7 @@
 #include <pedsim_srvs/GetAllAgentsState.h>
 
 #include <visualization_msgs/Marker.h>
+#include <visualization_msgs/MarkerArray.h>
 #include <std_msgs/Header.h>
 #include <nav_msgs/GridCells.h>
 #include <geometry_msgs/Point.h>
