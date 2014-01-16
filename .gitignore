@@ -1,4 +1,5 @@
 build
+.svn
 *.log
 <<<<<<< HEAD
 CMakelists.txt.user
