@@ -22,7 +22,7 @@
     <waypoint id="stop_bottom" x="90" y="10" r="10"/>
     <waypoint id="stop_top" x="90" y="25" r="10"/>
 
-    <waypoint id="robot_start" x="10" y="10" r="10"/>
+    <waypoint id="robot_start" x="10" y="50" r="10"/>
     <waypoint id="robot_goal" x="68" y="52" r="10"/>
     <!--Attractions-->
     <!--Agents-->
@@ -34,7 +34,7 @@
         <addwaypoint id="stop_bottom"/>
     </agent>
     <!-- robot -->
-    <agent x="10" y="10" n="1" dx="0" dy="0" type="2">
+    <agent x="10" y="50" n="1" dx="0" dy="0" type="2">
         <addwaypoint id="robot_start"/>
         <addwaypoint id="robot_goal"/>
     </agent>
