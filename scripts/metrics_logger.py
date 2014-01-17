@@ -10,6 +10,8 @@ from std_msgs.msg import String
 import sys
 import math
 
+from collections import namedtuple
+
 ANGLES    = np.array( [-1, math.cos( 3 * math.pi / 4 ), math.cos( math.pi / 4 )], dtype = np.float32 )
 PROXEMICS = np.array( [0.45, 1.2, 3.6, 7.6] )
 
@@ -94,6 +96,15 @@ def compute_agent_direction(robot, agent):
         return 'AWAY'
 
 
+# Metrics containers
+class ProxemicsCount(object):
+    pass
+
+
+class AnisotropicCount(object):
+    pass    
+
+
 
 class MetricsLogger(object):
     """ Logger for various experiment metrics which can be run only bag files """
@@ -106,39 +117,77 @@ class MetricsLogger(object):
                          self.callback_agent_status)
         rospy.Subscriber("goal_status", String,
                          self.callback_goal_status)
+
+        # metric counters
+        self.proxemics = ProxemicsCount()
+        self.proxemics.intimate = 0
+        self.proxemics.personal = 0
+        self.proxemics.social = 0
+        self.proxemics.public = 0
+            
+        self.anisotropics = AnisotropicCount()
+        self.anisotropics.towards = 0
+        self.anisotropics.orthogonal = 0
+        self.anisotropics.away = 0
+
     
     def callback_agent_status(self, data):
         step_data = np.array([0, 0, 0, 0, 0, 0], dtype=np.float64)
-        for a in data.agent_states:
-            v = np.array([rospy.get_rostime().to_sec(), a.id,
-                          a.position.x, a.position.y,
-                          a.velocity.x, a.velocity.y],
-                         dtype=np.float64)
 
-            if self.GOAL_REACHED is False:
+        # only check while travelling
+        if self.GOAL_REACHED is False:
+            for a in data.agent_states:
+                v = np.array([rospy.get_rostime().to_sec(), a.id,
+                              a.position.x, a.position.y,
+                              a.velocity.x, a.velocity.y],
+                             dtype=np.float64)
+
                 step_data =  np.vstack((step_data, v))
-            
-        robot = self._get_robot_data(step_data)
+                
+            robot = self._get_robot_data(step_data)
 
-        # proxemics
-        intimate = count_agents_in_range(robot, step_data, PROXEMICS[0])
-        personal = count_agents_in_range(robot, step_data, PROXEMICS[1])
-        social = count_agents_in_range(robot, step_data, PROXEMICS[2])
-        public = count_agents_in_range(robot, step_data, PROXEMICS[3])
+            # proxemics
+            intimate = count_agents_in_range(robot, step_data, PROXEMICS[0])
+            personal = count_agents_in_range(robot, step_data, PROXEMICS[1])
+            social = count_agents_in_range(robot, step_data, PROXEMICS[2])
+            public = count_agents_in_range(robot, step_data, PROXEMICS[3])
+
+        
+            self.proxemics.intimate += intimate
+            self.proxemics.personal += personal
+            self.proxemics.social += social
+            self.proxemics.public += public
+
+            rospy.loginfo("P_i, P_p, P_s, P_k : (%d, %d, %d, %d)" % (intimate, personal, social, public))
 
 
-        # anisotropic metrics (check for all intruders in the social space)
-        intruders, num = count_agents_in_range(robot, step_data, PROXEMICS[2], return_all=True)
-        for eachone in intruders:
-            direction = compute_agent_direction((robot), list(eachone))
-            rospy.loginfo("Intruding from direction [ %s ]" % (direction))
+            # anisotropic metrics (check for all intruders in the social space)
+            intruders, num = count_agents_in_range(robot, step_data, PROXEMICS[2], return_all=True)
+            for eachone in intruders:
+                direction = compute_agent_direction((robot), list(eachone))
 
-        rospy.loginfo("P_i, P_p, P_s, P_k : (%d, %d, %d, %d)" % (intimate, personal, social, public))
+                if direction == 'AWAY':
+                    self.anisotropics.away += 1
+                elif direction == 'TOWARDS':
+                    self.anisotropics.towards += 1
+                else:
+                    self.anisotropics.orthogonal += 1
+
+                rospy.loginfo("Intruding from direction [ %s ]" % (direction))
 
 
     def callback_goal_status(self, data):
         if data.data == 'Arrived':
             self.GOAL_REACHED = True
+
+            # log final metrics
+            rospy.loginfo("FINAL Proxemics: P_i, P_p, P_s, P_k : (%d, %d, %d, %d)" % (
+                self.proxemics.intimate, self.proxemics.personal, 
+                self.proxemics.social, self.proxemics.public))
+
+            rospy.loginfo("FINAL Anisotropics: Towards, Orthogonal, Away : (%d, %d, %d)" % (
+                self.anisotropics.towards, self.anisotropics.orthogonal, self.anisotropics.away))
+
         else:
             self.GOAL_REACHED = False
 
