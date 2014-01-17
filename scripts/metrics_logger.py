@@ -76,9 +76,9 @@ def count_agents_in_range(robot, agents, radius, return_all=False):
 
 def max_idx(value, reference):
     result = 0
-    for element in reference:
+    for i, element in enumerate(reference):
         if value >= element:
-            result = element
+            result = i
     return result
 
 
@@ -87,11 +87,11 @@ def compute_agent_direction(robot, agent):
     b = normalize((agent[4], agent[5]))
 
     if max_idx(dotproduct(a,b), ANGLES) == 0:
-        return 'AWAY'
+        return 'TOWARDS'
     elif max_idx(dotproduct(a,b), ANGLES) == 1:
         return 'ORTHOGONAL'
     else:
-        return 'TOWARDS'
+        return 'AWAY'
 
 
 
