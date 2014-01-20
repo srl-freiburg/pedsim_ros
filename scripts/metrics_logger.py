@@ -10,7 +10,6 @@ from std_msgs.msg import String
 import sys
 import math
 
-from collections import namedtuple
 
 ANGLES    = np.array( [-1, math.cos( 3 * math.pi / 4 ), math.cos( math.pi / 4 )], dtype = np.float32 )
 PROXEMICS = np.array( [0.45, 1.2, 3.6, 7.6] )
@@ -38,7 +37,6 @@ def normangle(a, mina):
         return a
     else:
         return np.inf
-
 
 def diffangle(a1, a2):
     delta = 0
@@ -83,7 +81,6 @@ def max_idx(value, reference):
             result = i
     return result
 
-
 def compute_agent_direction(robot, agent):
     a = normalize((robot[0, 4], robot[0, 5]))
     b = normalize((agent[4], agent[5]))
@@ -103,7 +100,6 @@ class ProxemicsCount(object):
 
 class AnisotropicCount(object):
     pass    
-
 
 
 class MetricsLogger(object):
@@ -152,14 +148,12 @@ class MetricsLogger(object):
             social = count_agents_in_range(robot, step_data, PROXEMICS[2])
             public = count_agents_in_range(robot, step_data, PROXEMICS[3])
 
-        
             self.proxemics.intimate += intimate
             self.proxemics.personal += personal
             self.proxemics.social += social
             self.proxemics.public += public
 
             rospy.loginfo("P_i, P_p, P_s, P_k : (%d, %d, %d, %d)" % (intimate, personal, social, public))
-
 
             # anisotropic metrics (check for all intruders in the social space)
             intruders, num = count_agents_in_range(robot, step_data, PROXEMICS[2], return_all=True)
@@ -198,7 +192,7 @@ class MetricsLogger(object):
 
 def run(args):
     rospy.init_node('metrics_logger')
-    d = MetricsLogger()
+    MetricsLogger()
 
     # start up
     try:

@@ -49,7 +49,7 @@ class DataLogger(object):
 
 def run(args):
     rospy.init_node('data_logger')
-    d = DataLogger()
+    DataLogger()
 
     # start up
     try:
