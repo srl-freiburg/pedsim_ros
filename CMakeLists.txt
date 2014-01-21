@@ -33,7 +33,6 @@ include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/libpedsim
 )
 
-# file(GLOB_RECURSE QT_SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} FOLLOW_SYMLINKS *.cpp)
 set(SOURCES 
     src/scene.cpp src/agent.cpp src/obstacle.cpp src/waypoint.cpp src/config.cpp
 ) 

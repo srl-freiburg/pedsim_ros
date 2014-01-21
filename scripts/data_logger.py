@@ -46,6 +46,9 @@ class DataLogger(object):
         else:
             self.GOAL_REACHED = False
 
+    def filter_out_robot(self, traces, robot_id):
+        return traces[traces[:, 1] == robot_id]
+
 
 def run(args):
     rospy.init_node('data_logger')
