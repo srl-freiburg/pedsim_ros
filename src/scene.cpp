@@ -5,14 +5,14 @@ Scene::Scene(const ros::NodeHandle& node)
     : Ped::Tscene(), nh_(node)
 {
     // useful for keeping track of agents in the cleaning process
-    tree = new Ped::Ttree(this, 0, 0, 0, 1000, 1000);
+    tree = new Ped::Ttree(this, 0, -20, -20, 1000, 1000);
 }
 
 Scene::Scene( double left, double up, double width, double height, const ros::NodeHandle& node )
     : Ped::Tscene(left, up, width, height), nh_(node)
 {
     // useful for keeping track of agents in the cleaning process
-    tree = new Ped::Ttree(this, 0, 0, 0, 1000, 1000);
+    tree = new Ped::Ttree(this, 0, -20, -20, 1000, 1000);
 }
 
 
