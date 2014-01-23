@@ -6,6 +6,7 @@ Panels:
       Expanded:
         - /Grid1/Offset1
         - /Path1/Status1
+        - /Map1
         - /Map1/Status1
       Splitter Ratio: 0.5
     Tree Height: 839
@@ -59,10 +60,10 @@ Visualization Manager:
     - Alpha: 0.3
       Class: rviz/GridCells
       Color: 0; 170; 255
-      Enabled: true
+      Enabled: false
       Name: GridCells
       Topic: /static_obstacles
-      Value: true
+      Value: false
     - Alpha: 1
       Buffer Length: 1
       Class: rviz/Path
@@ -111,7 +112,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/XYOrbit
-      Distance: 104.026
+      Distance: 91.5429
       Focal Point:
         X: 61.0918
         Y: 8.75455

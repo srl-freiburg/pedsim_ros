@@ -41,13 +41,13 @@
         <addwaypoint id="robot_goal"/>
     </agent>
     <!--AgentClusters-->
-    <agent x="65" y="25" n="70" dx="100" dy="5" type="0">
+    <agent x="65" y="25" n="90" dx="100" dy="5" type="0">
         <addwaypoint id="left_top"/>
         <addwaypoint id="left_bottom"/>
         <addwaypoint id="right_bottom"/>
         <addwaypoint id="right_top"/>
     </agent>
-    <agent x="65" y="10" n="70" dx="100" dy="5" type="1">
+    <agent x="65" y="10" n="90" dx="100" dy="5" type="1">
         <addwaypoint id="right_bottom"/>
         <addwaypoint id="right_top"/>
         <addwaypoint id="left_top"/>

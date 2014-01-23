@@ -178,7 +178,8 @@ void Scene::callbackRobotState(const pedsim_msgs::AgentState::ConstPtr& msg)
             {
                 robot_->setvx( vx );
                 robot_->setvy( vy );
-                robot_->setVmax( sqrt( vx * vx + vy * vy ) );
+                robot_->setVmax( 1.34 );
+                // robot_->setVmax( sqrt( vx * vx + vy * vy ) );
             } 
             else 
             {

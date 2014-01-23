@@ -31,7 +31,7 @@ Panels:
 Visualization Manager:
   Class: ""
   Displays:
-    - Alpha: 0.4
+    - Alpha: 0.3
       Cell Size: 1
       Class: rviz/Grid
       Color: 96; 96; 98
@@ -59,19 +59,19 @@ Visualization Manager:
     - Alpha: 0.3
       Class: rviz/GridCells
       Color: 0; 170; 255
-      Enabled: true
+      Enabled: false
       Name: GridCells
       Topic: /static_obstacles
-      Value: true
+      Value: false
     - Alpha: 1
       Buffer Length: 1
       Class: rviz/Path
-      Color: 255; 255; 0
+      Color: 170; 255; 0
       Enabled: true
       Name: Path
       Topic: /planned_path
       Value: true
-    - Alpha: 0.7
+    - Alpha: 1
       Class: rviz/Map
       Color Scheme: costmap
       Draw Behind: false
@@ -111,17 +111,17 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/XYOrbit
-      Distance: 94.4367
+      Distance: 120.442
       Focal Point:
-        X: 54.1803
-        Y: 20.7332
-        Z: -5.0874e-05
+        X: 57.1296
+        Y: 29.5977
+        Z: -3.54845e-05
       Name: Current View
       Near Clip Distance: 0.01
-      Pitch: 0.869796
+      Pitch: 1.21979
       Target Frame: <Fixed Frame>
       Value: XYOrbit (rviz)
-      Yaw: 4.71037
+      Yaw: 4.70537
     Saved: ~
 Window Geometry:
   Displays:

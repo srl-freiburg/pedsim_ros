@@ -347,7 +347,7 @@ void Ped::Tagent::move( double h ) {
 
     //  sum of all forces --> acceleration
     if ( gettype() == 2 && getteleop() == false) {
-      factordesiredforce = 20;
+      factordesiredforce = 100;
       factorobstacleforce = 50;
       factorsocialforce = 2.1;
     }
