@@ -220,6 +220,7 @@ void Scene::publishAgentStatus()
         state.header = agent_header;
 
         state.id = a->getid();
+        state.type = a->gettype();
         state.position.x = a->getx();
         state.position.y = a->gety();
         state.position.z = a->getz();
