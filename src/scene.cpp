@@ -171,7 +171,7 @@ void Scene::callbackRobotState(const pedsim_msgs::AgentState::ConstPtr& msg)
     
     if (timestep_ >= robot_state)
     {
-        if (robot_->getid() == msg->id)  
+        if (robot_->gettype() == msg->type)  
         {
 
             if (teleop_state == 0.0)
@@ -194,7 +194,7 @@ void Scene::callbackRobotState(const pedsim_msgs::AgentState::ConstPtr& msg)
 
     } else
     {
-        if (robot_->getid() == msg->id)  
+        if (robot_->gettype() == msg->type)  
         {
             // robot_->setvx( vx );
             // robot_->setvy( vy );
