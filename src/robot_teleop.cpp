@@ -161,7 +161,8 @@ void Teleop::keyLoop()
     header_.stamp = ros::Time::now();
     astate.header = header_;
 
-    astate.id = 1;
+    // astate.id = 1;
+    astate.type = 2;
     astate.velocity.x = stepx;
     astate.velocity.y = stepy;
 
