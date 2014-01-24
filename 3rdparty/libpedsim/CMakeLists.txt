@@ -42,6 +42,8 @@ SET(SRC_FILES
 )
 #--------------------- End Files -------------------#
 
+# FIND_PACKAGE(Boost REQUIRED)
+
 # We need to add the current the source directory itself to the include path
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
 

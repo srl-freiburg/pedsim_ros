@@ -230,6 +230,9 @@ void Scene::publishAgentStatus()
         state.velocity.y = a->getvy();
         state.velocity.z = a->getvz();
 
+
+        // std::cout << a->vmax << " ";
+
         all_status.agent_states.push_back(state);
     }
 

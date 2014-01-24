@@ -19,7 +19,28 @@
 #include "ped_waypoint.h"
 #include "ped_scene.h"
 
+#include <boost/random.hpp>
+#include <boost/random/normal_distribution.hpp>
+#include <ctime>
+
 using namespace std;
+
+
+static boost::mt19937 rng; 
+
+
+inline double randSpeed()
+{
+    // rng.seed(static_cast<unsigned int>(std::time(0)));
+    boost::normal_distribution<> nd(1.34, 0.26);
+
+    boost::variate_generator<boost::mt19937&, boost::normal_distribution<> > var_nor(rng, nd);
+
+    double d = var_nor();
+
+    return d;
+}
+
 
 namespace Ped {
 

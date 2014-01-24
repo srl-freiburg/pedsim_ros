@@ -36,8 +36,9 @@ Ped::Tagent::Tagent() {
     follow = -1;
     // vmax = 1.5 + 1.5*(double)rand()/(double)RAND_MAX; // in m/s 
     // vmax = 1.0 + 0.7*(double)rand()/(double)RAND_MAX; // in m/s 
-    vmax = 1.34 + 0.7*(double)rand()/(double)RAND_MAX; // in m/s 
+    // vmax = 1.34 + 0.7*(double)rand()/(double)RAND_MAX; // in m/s 
     // vmax = 1.34; // For verification tests
+    vmax = randSpeed();
 
     mlLookAhead = false;
 
