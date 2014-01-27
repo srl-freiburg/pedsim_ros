@@ -134,7 +134,7 @@ bool Scene::initialize()
     CONFIG.width = cell_size;
     CONFIG.height = cell_size;
 
-    ROS_INFO("Loading from %s scene file", scene_file_param.c_str());
+    ROS_DEBUG("Loading from %s scene file", scene_file_param.c_str());
 
     // load scenario file
     QString scenefile = QString::fromStdString(scene_file_param);
@@ -498,7 +498,7 @@ void Scene::processData(QByteArray& data)
             if ((xmlReader.name() == "scenario") || (xmlReader.name() == "welcome")) 
             {
                 // nothing to do
-                ROS_INFO("Starting to read elements");
+                ROS_DEBUG("Starting to read elements");
             }
             else if (xmlReader.name() == "obstacle") 
             {
@@ -525,13 +525,13 @@ void Scene::processData(QByteArray& data)
                 if (boost::starts_with(id, "start")) 
                 {
                     w->setType(Ped::Twaypoint::TYPE_BIRTH);
-                    ROS_INFO("adding a birth waypoint");
+                    ROS_DEBUG("adding a birth waypoint");
                 }
 
                 if (boost::starts_with(id, "stop")) 
                 {
                     w->setType(Ped::Twaypoint::TYPE_DEATH);
-                    ROS_INFO("adding a death waypoint");
+                    ROS_DEBUG("adding a death waypoint");
                 }
 
                 this->waypoints[id] = w;
@@ -692,7 +692,7 @@ void Scene::drawObstacles(float x1, float y1, float x2, float y2)
         }
     }
 
-    // ROS_INFO("loaded %d obstacle cells", (int)obstacle_cells_.size());
+    // ROS_DEBUG("loaded %d obstacle cells", (int)obstacle_cells_.size());
 }
 
 
@@ -705,49 +705,6 @@ double* Scene::angleToQuaternion(double theta)
     q[3] = 1.0;
 
 
-    // using namespace boost::numeric::ublas;
-    // matrix<double> m (3, 3);
-    // m(0,0) = cos(theta); m(0,1) = -sin(theta); m(0,2) = 0.0;
-    // m(1,0) = sin(theta); m(1,1) = cos(theta); m(1,2) = 0.0;
-    // m(2,0) = 0.0; m(2,1) = 0.0; m(2,2) = 1.0;
-
-    // float trace = m(0,0) + m(1,1) + m(2,2); 
-    // if( trace > 0 ) 
-    // {
-    //     float s = 0.5f / sqrtf(trace+ 1.0f);
-    //     q[3] = 0.25f / s;
-    //     q[2] = ( m(2,1) - m(1,2) ) * s;
-    //     q[1] = ( m(0,2) - m(2,0) ) * s;
-    //     q[0] = ( m(1,0) - m(0,1) ) * s;
-    // } 
-    // else 
-    // {
-    //     if ( m(0,0) > m(1,1) && m(0,0) > m(2,2) ) 
-    //     {
-    //         float s = 2.0f * sqrtf( 1.0f + m(0,0) - m(1,1) - m(2,2));
-    //         q[3] = (m(2,1) - m(1,2) ) / s;
-    //         q[2] = 0.25f * s;
-    //         q[1] = (m(0,1) + m(1,0) ) / s;
-    //         q[0] = (m(0,2) + m(2,0) ) / s;
-    //     } 
-    //     else if (m(1,1) > m(2,2)) 
-    //     {
-    //         float s = 2.0f * sqrtf( 1.0f + m(1,1) - m(0,0) - m(2,2));
-    //         q[3] = (m(0,2) - m(2,0) ) / s;
-    //         q[2] = (m(0,1) + m(1,0) ) / s;
-    //         q[1] = 0.25f * s;
-    //         q[0] = (m(1,2) + m(2,1) ) / s;
-    //     } 
-    //     else 
-    //     {
-    //         float s = 2.0f * sqrtf( 1.0f + m(2,2) - m(0,0) - m(1,1) );
-    //         q[3] = (m(1,0) - m(0,1) ) / s;
-    //         q[2] = (m(0,2) + m(2,0) ) / s;
-    //         q[1] = (m(1,2) + m(2,1) ) / s;
-    //         q[0] = 0.25f * s;
-    //     }
-    // }
-
     return q;
 }
 
@@ -759,7 +716,7 @@ int main(int argc, char** argv)
     // initialize resources
     ros::init(argc, argv, "simulator");
 
-    ROS_INFO("node initialized");
+    ROS_DEBUG("node initialized");
 
     ros::NodeHandle node;
 
@@ -775,7 +732,7 @@ int main(int argc, char** argv)
 
     if (sim_scene.initialize()) 
     {
-        ROS_INFO("loaded parameters, starting simulation...");
+        ROS_DEBUG("loaded parameters, starting simulation...");
         sim_scene.runSimulation();
     }
     else
