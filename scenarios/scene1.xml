@@ -23,7 +23,7 @@
     <!--Waypoints (incl. WaitingQueues)-->
     <waypoint id="left_bottom" x="10" y="10" r="5"/>
     <waypoint id="left_top" x="10" y="25" r="5"/>
-    <waypoint id="right_bottom" x="140" y="10" r="5"/>
+    <waypoint id="right_bottom" x="140" y="5" r="5"/>
     <waypoint id="right_top" x="140" y="25" r="5"/>
     <waypoint id="robot_goal" x="120" y="40" r="5"/>
     <waypoint id="robot_start" x="35" y="40" r="5"/>
