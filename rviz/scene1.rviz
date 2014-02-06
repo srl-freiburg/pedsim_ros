@@ -5,11 +5,9 @@ Panels:
     Property Tree Widget:
       Expanded:
         - /Grid1/Offset1
-        - /Path1/Status1
         - /Map1
-        - /Map1/Status1
       Splitter Ratio: 0.5
-    Tree Height: 839
+    Tree Height: 356
   - Class: rviz/Selection
     Name: Selection
   - Class: rviz/Tool Properties
@@ -32,7 +30,7 @@ Panels:
 Visualization Manager:
   Class: ""
   Displays:
-    - Alpha: 0.4
+    - Alpha: 0.1
       Cell Size: 1
       Class: rviz/Grid
       Color: 96; 96; 98
@@ -111,15 +109,18 @@ Visualization Manager:
   Value: true
   Views:
     Current:
-      Angle: 0
-      Class: rviz/TopDownOrtho
+      Class: rviz/XYOrbit
+      Distance: 97.6074
+      Focal Point:
+        X: 73.891
+        Y: 2.72571
+        Z: 1.90696e-05
       Name: Current View
       Near Clip Distance: 0.01
-      Scale: 11.0387
+      Pitch: 1.1754
       Target Frame: <Fixed Frame>
-      Value: TopDownOrtho (rviz)
-      X: 72.5229
-      Y: 21.6505
+      Value: XYOrbit (rviz)
+      Yaw: 4.71859
     Saved: ~
 Window Geometry:
   Displays:
@@ -137,5 +138,5 @@ Window Geometry:
   Views:
     collapsed: true
   Width: 1920
-  X: 1920
+  X: 1913
   Y: 24
