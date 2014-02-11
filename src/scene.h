@@ -45,6 +45,9 @@
 #include <std_msgs/Header.h>
 #include <nav_msgs/GridCells.h>
 #include <geometry_msgs/Point.h>
+// #include <geometry_msgs/Point32.h>
+// #include <geometry_msgs/Polygon.h>
+// #include <geometry_msgs/PolygonStamped.h>
 
 
 class Scene : public Ped::Tscene
@@ -71,6 +74,7 @@ public:
     void publishAgentStatus();
     void publishAgentVisuals();
     void publishObstacles();
+    void publishSensorRange();
 
     /// subscriber helpers
     void callbackRobotState(const pedsim_msgs::AgentState::ConstPtr& msg);
@@ -97,6 +101,7 @@ private:
     ros::Publisher pub_all_agents_;
     ros::Publisher pub_agent_visuals_;
     ros::Publisher pub_obstacles_;
+    // ros::Publisher pub_sensor_range_;
 
     // subscribers
     ros::Subscriber sub_robot_state_;

@@ -91,6 +91,7 @@ void Scene::runSimulation()
 
         publishAgentStatus();
         publishAgentVisuals();
+        // publishSensorRange();
 
         // only publish the obstacles in the beginning
         if (timestep_ < 200)
@@ -116,8 +117,9 @@ bool Scene::initialize()
 
     // setup publishers
     pub_all_agents_ = nh_.advertise<pedsim_msgs::AllAgentsState>("AllAgentsStatus", 0);
-    pub_agent_visuals_ = nh_.advertise<visualization_msgs::MarkerArray>( "agents_markers", 0 );
-    pub_obstacles_ = nh_.advertise<nav_msgs::GridCells>( "static_obstacles", 0 );
+    pub_agent_visuals_ = nh_.advertise<visualization_msgs::MarkerArray>("agents_markers", 0);
+    pub_obstacles_ = nh_.advertise<nav_msgs::GridCells>("static_obstacles", 0);
+    // pub_sensor_range_ = nh_.advertise<geometry_msgs::Polygon>("sensor_radius", 0);
 
     // subscribers
     sub_robot_state_ = nh_.subscribe("robot_state", 1, &Scene::callbackRobotState, this);
@@ -364,6 +366,47 @@ void Scene::publishObstacles()
     }
 
     pub_obstacles_.publish(obstacles);
+}
+
+
+void Scene::publishSensorRange()
+{
+    // double sensor_range;
+    // nh_.getParam("/irl_features/sensor_range", sensor_range);
+
+    // geometry_msgs::PolygonStamped poly_stamed;
+    // poly_stamed.header.frame_id = "world";
+    // poly_stamed.header.stamp = ros::Time();
+  
+    // float theta[50] = {0.,0.12822827,0.25645654,0.38468481, 0.51291309,
+    //     0.64114136,  0.76936963,  0.8975979 ,  1.02582617,  1.15405444,
+    //     1.28228272,  1.41051099,  1.53873926,  1.66696753,  1.7951958 ,
+    //     1.92342407,  2.05165235,  2.17988062,  2.30810889,  2.43633716,
+    //     2.56456543,  2.6927937 ,  2.82102197,  2.94925025,  3.07747852,
+    //     3.20570679,  3.33393506,  3.46216333,  3.5903916 ,  3.71861988,
+    //     3.84684815,  3.97507642,  4.10330469,  4.23153296,  4.35976123,
+    //     4.48798951,  4.61621778,  4.74444605,  4.87267432,  5.00090259,
+    //     5.12913086,  5.25735913,  5.38558741,  5.51381568,  5.64204395,
+    //     5.77027222,  5.89850049,  6.02672876,  6.15495704,  6.28318531};
+
+
+    // float a = robot_->getx();
+    // float b = robot_->gety();
+    // geometry_msgs::Polygon poly;
+
+    // for (int i = 0; i < 50; i++)
+    // {
+    //     geometry_msgs::Point32 p;
+    //     p.x = sensor_range * cos(theta[i]) + a;
+    //     p.y = sensor_range * sin(theta[i]) + b;
+    //     p.z = 0.0;
+    //     poly.points.push_back(p);
+    // }
+
+    // poly_stamed.polygon = poly;    
+    // pub_sensor_range_.publish(poly);
+
+    // pub_sensor_range_.publish(poly_stamed);
 }
 
 

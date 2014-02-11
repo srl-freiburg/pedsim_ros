@@ -2,13 +2,13 @@
 <package>
   <name>simulator</name>
   <version>0.0.1</version>
-  <description>Not good looking pedsim ros version</description>
+  <description>ROSified pedsim simulator</description>
 
   <maintainer email="okal@cs.uni-freiburg.de">Billy Okal</maintainer>
 
   <license>BSD</license>
 
-  <!-- <url type="website">http://ros.org/wiki/pedsim_core</url> -->
+  <url type="website">http://ros.org/wiki/pedsim-siulator</url>
 
   <buildtool_depend>catkin</buildtool_depend>
 
