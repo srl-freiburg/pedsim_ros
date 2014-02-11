@@ -260,30 +260,30 @@ void Scene::publishAgentVisuals()
 
         if (a->gettype() == robot_->gettype()) 
         {
-            marker.type = visualization_msgs::Marker::MESH_RESOURCE;
-            marker.mesh_resource = "package://simulator/images/darylbot.dae";
+            // marker.type = visualization_msgs::Marker::MESH_RESOURCE;
+            // marker.mesh_resource = "package://simulator/images/darylbot.dae";
+            // marker.color.a = 1.0;
+            // marker.color.r = 1.0;
+            // marker.color.g = 1.0;
+            // marker.color.b = 1.0;
+
+            // marker.scale.x = 0.5;
+            // marker.scale.y = 0.5;
+            // marker.scale.z = 0.5;
+
+            marker.type = visualization_msgs::Marker::CUBE;
             marker.color.a = 1.0;
             marker.color.r = 1.0;
             marker.color.g = 1.0;
             marker.color.b = 1.0;
 
-            marker.scale.x = 0.5;
-            marker.scale.y = 0.5;
-            marker.scale.z = 0.5;
-
-            // marker.type = visualization_msgs::Marker::CYLINDER;
-            // marker.color.a = 1.0;
-            // marker.color.r = 0.0;
-            // marker.color.g = 0.0;
-            // marker.color.b = 1.0;
-
-            // marker.scale.x = 0.3;
-            // marker.scale.y = 0.3;
-            // marker.scale.z = 1.5;
+            marker.scale.x = 1.0;
+            marker.scale.y = 0.7;
+            marker.scale.z = 1.5;
         }
         else
         {
-            marker.type = visualization_msgs::Marker::CYLINDER;
+            marker.type = visualization_msgs::Marker::CUBE;
             
             if (a->gettype() == 0)
             {
@@ -301,9 +301,9 @@ void Scene::publishAgentVisuals()
             }
             
 
-            marker.scale.x = 0.3;
-            marker.scale.y = 0.3;
-            marker.scale.z = 1.5;
+            marker.scale.x = 0.2;
+            marker.scale.y = 0.5;
+            marker.scale.z = 2.0;
         }
 
         marker.action = 0;  // add or modify
@@ -317,10 +317,10 @@ void Scene::publishAgentVisuals()
             double theta = atan2(a->getvy(), a->getvx());
             double* q = angleToQuaternion(theta);
 
-            marker.pose.orientation.x = q[0];
-            marker.pose.orientation.y = q[1];
-            marker.pose.orientation.z = q[2];
-            marker.pose.orientation.w = q[3];
+            marker.pose.orientation.x = 0.0;
+            marker.pose.orientation.y = 0.0;
+            marker.pose.orientation.z = sin(-theta);
+            marker.pose.orientation.w = 1.0;
         }
         else
         {

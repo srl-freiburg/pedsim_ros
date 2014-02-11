@@ -8,7 +8,7 @@ Panels:
         - /Map1
         - /Polygon1
       Splitter Ratio: 0.5
-    Tree Height: 841
+    Tree Height: 339
   - Class: rviz/Selection
     Name: Selection
   - Class: rviz/Tool Properties
@@ -84,7 +84,7 @@ Visualization Manager:
       Marker Topic: /agents_markers
       Name: MarkerArray
       Namespaces:
-        {}
+        pedsim: true
       Queue Size: 0
       Value: true
     - Alpha: 1
@@ -118,17 +118,17 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/XYOrbit
-      Distance: 97.6074
+      Distance: 84.6576
       Focal Point:
-        X: 73.891
-        Y: 2.72571
+        X: 74.6552
+        Y: 5.19535
         Z: 1.90696e-05
       Name: Current View
       Near Clip Distance: 0.01
-      Pitch: 1.1754
+      Pitch: 0.9154
       Target Frame: <Fixed Frame>
       Value: XYOrbit (rviz)
-      Yaw: 4.71859
+      Yaw: 4.69859
     Saved: ~
 Window Geometry:
   Displays:
