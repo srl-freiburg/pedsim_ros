@@ -74,7 +74,7 @@ void Scene::runSimulation()
 
         // setup for teleoperation
         double teleop_state;
-        nh_.getParam("/irl_features/teleop_state", teleop_state);
+        nh_.getParam("/pedsim/teleop_state", teleop_state);
         if (teleop_state == 0.0)
             robot_->setteleop(false);
         else
@@ -116,7 +116,7 @@ bool Scene::initialize()
     obstacle_cells_.clear();
 
     // setup publishers
-    pub_all_agents_ = nh_.advertise<pedsim_msgs::AllAgentsState>("AllAgentsStatus", 0);
+    pub_all_agents_ = nh_.advertise<pedsim_msgs::AllAgentsState>("dynamic_obstacles", 0);
     pub_agent_visuals_ = nh_.advertise<visualization_msgs::MarkerArray>("agents_markers", 0);
     pub_obstacles_ = nh_.advertise<nav_msgs::GridCells>("static_obstacles", 0);
     // pub_sensor_range_ = nh_.advertise<geometry_msgs::Polygon>("sensor_radius", 0);
@@ -132,7 +132,7 @@ bool Scene::initialize()
     std::string scene_file_param;
     nh_.getParam("/simulator/scene_file", scene_file_param);
     double cell_size;
-    nh_.getParam("/irl_features/cell_size", cell_size);
+    nh_.getParam("/pedsim/cell_size", cell_size);
     CONFIG.width = cell_size;
     CONFIG.height = cell_size;
 
@@ -166,10 +166,10 @@ void Scene::callbackRobotState(const pedsim_msgs::AgentState::ConstPtr& msg)
     double vy = msg->velocity.y;
 
     double robot_state;
-    nh_.getParam("/irl_features/move_robot", robot_state);
+    nh_.getParam("/pedsim/move_robot", robot_state);
     
     double teleop_state;
-    nh_.getParam("/irl_features/teleop_state", teleop_state);
+    nh_.getParam("/pedsim/teleop_state", teleop_state);
     
     if (timestep_ >= robot_state)
     {
@@ -372,7 +372,7 @@ void Scene::publishObstacles()
 void Scene::publishSensorRange()
 {
     // double sensor_range;
-    // nh_.getParam("/irl_features/sensor_range", sensor_range);
+    // nh_.getParam("/pedsim/sensor_range", sensor_range);
 
     // geometry_msgs::PolygonStamped poly_stamed;
     // poly_stamed.header.frame_id = "world";
@@ -764,10 +764,10 @@ int main(int argc, char** argv)
     ros::NodeHandle node;
 
     double x1,x2, y1,y2;
-    node.getParam("/irl_features/x1", x1);
-    node.getParam("/irl_features/x2", x2);
-    node.getParam("/irl_features/y1", y1);
-    node.getParam("/irl_features/y2", y2);
+    node.getParam("/pedsim/x1", x1);
+    node.getParam("/pedsim/x2", x2);
+    node.getParam("/pedsim/y1", y1);
+    node.getParam("/pedsim/y2", y2);
 
     // Scene sim_scene(0, 0, 45, 45, node);
     // Scene sim_scene(0, 0, 300, 100, node);
