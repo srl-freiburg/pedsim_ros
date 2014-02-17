@@ -5,6 +5,7 @@ Panels:
     Property Tree Widget:
       Expanded:
         - /Grid1/Offset1
+        - /Map1
         - /Polygon1
       Splitter Ratio: 0.5
     Tree Height: 832
@@ -66,18 +67,18 @@ Visualization Manager:
       Buffer Length: 1
       Class: rviz/Path
       Color: 255; 255; 0
-      Enabled: false
+      Enabled: true
       Name: Path
       Topic: /planned_path
-      Value: false
+      Value: true
     - Alpha: 0.7
       Class: rviz/Map
-      Color Scheme: map
+      Color Scheme: costmap
       Draw Behind: false
-      Enabled: false
+      Enabled: true
       Name: Map
       Topic: /costmap
-      Value: false
+      Value: true
     - Class: rviz/MarkerArray
       Enabled: true
       Marker Topic: /agents_markers
