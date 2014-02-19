@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<package>
+  <name>pedsim_simulator</name>
+  <version>0.0.1</version>
+  <description>ROSified pedsim simulator</description>
+
+  <maintainer email="okal@cs.uni-freiburg.de">Billy Okal</maintainer>
+
+  <license>BSD</license>
+
+  <url type="website">http://ros.org/wiki/pedsim_siulator</url>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <build_depend>roscpp</build_depend>
+  <build_depend>rospy</build_depend>
+  <build_depend>pedsim_msgs</build_depend>
+  <build_depend>std_msgs</build_depend>
+  <build_depend>pedsim_srvs</build_depend>
+  <build_depend>visualization_msgs</build_depend>
+  <build_depend>nav_msgs</build_depend>
+  <build_depend>geometry_msgs</build_depend>
+  <build_depend>tf</build_depend>
+
+  <run_depend>tf</run_depend>
+  <run_depend>roscpp</run_depend>
+  <run_depend>rospy</run_depend>
+  <run_depend>pedsim_msgs</run_depend>
+  <run_depend>std_msgs</run_depend>
+  <run_depend>pedsim_srvs</run_depend>
+  <run_depend>visualization_msgs</run_depend>
+  <run_depend>nav_msgs</run_depend>
+  <run_depend>geometry_msgs</run_depend>
+
+</package>

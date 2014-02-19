@@ -12,3 +12,7 @@
 *.la
 *.a
 .svn
+build
+.svn
+*.log
+CMakelists.txt.user
