@@ -1,6 +1,6 @@
 #!/usr/bin/env python  
 import roslib
-roslib.load_manifest('simulator')
+roslib.load_manifest('pedsim_simulator')
 import rospy
 
 import tf

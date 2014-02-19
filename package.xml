@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <package>
-  <name>simulator</name>
+  <name>pedsim_simulator</name>
   <version>0.0.1</version>
   <description>ROSified pedsim simulator</description>
 
@@ -8,7 +8,7 @@
 
   <license>BSD</license>
 
-  <url type="website">http://ros.org/wiki/pedsim-siulator</url>
+  <url type="website">http://ros.org/wiki/pedsim_siulator</url>
 
   <buildtool_depend>catkin</buildtool_depend>
 

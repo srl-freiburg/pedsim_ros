@@ -1,5 +1,5 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
-PROJECT(simulator)
+PROJECT(pedsim_simulator)
 
 set( PEDSIM_CORE_DEPENDENCIES
     roscpp
