@@ -1,0 +1,3 @@
+int16 agent_id
+---
+pedsim_msgs/AgentState state

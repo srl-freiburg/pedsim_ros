@@ -1,0 +1,3 @@
+pedsim_msgs/AllAgentsState agent_states
+---
+bool finished

@@ -1,0 +1,3 @@
+int16[] agent_ids
+---
+pedsim_msgs/AllAgentsState agent_states
