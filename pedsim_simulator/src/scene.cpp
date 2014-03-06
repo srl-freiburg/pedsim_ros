@@ -61,13 +61,16 @@ void Scene::clear()
 
 void Scene::runSimulation() 
 {
-
+    // ROS_INFO("Running pedsim simulator node");
     /// setup the agents and the robot
     all_agents_ = getAllAgents();
+
+    // ROS_INFO("Got all agents");
 
     for (vector<Ped::Tagent*>::const_iterator iter = all_agents_.begin(); iter != all_agents_.end(); ++iter)
     {
         Ped::Tagent *a = (*iter);
+        // ROS_INFO("Searching for robot");
 
         if (a->gettype() == 2)
             robot_ = a;
@@ -75,9 +78,8 @@ void Scene::runSimulation()
         // setup for teleoperation
         double teleop_state;
         nh_.getParam("/pedsim/teleop_state", teleop_state);
-        if (teleop_state == 0.0)
-            robot_->setteleop(false);
-        else
+        // ROS_INFO("Teleop state %f", teleop_state);
+        if (teleop_state > 0.0)
             robot_->setteleop(true);
     }
 
@@ -88,6 +90,8 @@ void Scene::runSimulation()
     {
         moveAllAgents();
         // spawnKillAgents();
+
+        // ROS_INFO("Moving all agents");
 
         publishAgentStatus();
         publishAgentVisuals();
@@ -419,59 +423,59 @@ void Scene::spawnKillAgents()
         double ay = a->gety();
 
   
-        if (a->gettype() != 2 && timestep_ > 10) 
-        {
-            if (a->destination->gettype() == Ped::Twaypoint::TYPE_DEATH)
-            {
-                // get the agents first ever waypoint and move it there to start over
-                Ped::Twaypoint* wp = a->birth_waypoint;
-                Ped::Twaypoint* wc = a->death_waypoint;
+        // if (a->gettype() != 2 && timestep_ > 10) 
+        // {
+        //     if (a->destination->gettype() == Ped::Twaypoint::TYPE_DEATH)
+        //     {
+        //         // get the agents first ever waypoint and move it there to start over
+        //         Ped::Twaypoint* wp = a->birth_waypoint;
+        //         Ped::Twaypoint* wc = a->death_waypoint;
 
-                double wx = wc->getx();
-                double wy = wc->gety();
+        //         double wx = wc->getx();
+        //         double wy = wc->gety();
 
-                if (sqrt( pow(ax-wx, 2.0) + pow(ay-wy, 2.0) )  <= ((wc->getr())) ) 
-                {
-                // if (a->hasreacheddestination) {
-                    double randomizedX = wp->getx();
-                    double randomizedY = wp->gety();
-                    double dx = wp->getr();
-                    double dy = wp->getr();
+        //         if (sqrt( pow(ax-wx, 2.0) + pow(ay-wy, 2.0) )  <= ((wc->getr())) ) 
+        //         {
+        //         // if (a->hasreacheddestination) {
+        //             double randomizedX = wp->getx();
+        //             double randomizedY = wp->gety();
+        //             double dx = wp->getr();
+        //             double dy = wp->getr();
 
-                    randomizedX += qrand()/(double)RAND_MAX * dx - dx/2;
-                    randomizedY += qrand()/(double)RAND_MAX * dy - dy/2;
+        //             randomizedX += qrand()/(double)RAND_MAX * dx - dx/2;
+        //             randomizedY += qrand()/(double)RAND_MAX * dy - dy/2;
 
-                    a->setPosition(randomizedX, randomizedY, 0);
-                    moveAgent(a);
-                }
-            }
+        //             a->setPosition(randomizedX, randomizedY, 0);
+        //             moveAgent(a);
+        //         }
+        //     }
 
-            if (a->destination->gettype() == Ped::Twaypoint::TYPE_BIRTH)
-            {
-                // get the agents first ever waypoint and move it there to start over
-                Ped::Twaypoint* wp = a->death_waypoint;
-                Ped::Twaypoint* wc = a->birth_waypoint;
+        //     if (a->destination->gettype() == Ped::Twaypoint::TYPE_BIRTH)
+        //     {
+        //         // get the agents first ever waypoint and move it there to start over
+        //         Ped::Twaypoint* wp = a->death_waypoint;
+        //         Ped::Twaypoint* wc = a->birth_waypoint;
 
-                double wx = wc->getx();
-                double wy = wc->gety();
+        //         double wx = wc->getx();
+        //         double wy = wc->gety();
                 
-                if (sqrt( pow(ax-wx, 2.0) + pow(ay-wy, 2.0) ) <= ((wc->getr()))) 
-                {
-                // if (a->hasreacheddestination) {
-                    double randomizedX = wp->getx();
-                    double randomizedY = wp->gety();
-                    double dx = wp->getr();
-                    double dy = wp->getr();
+        //         if (sqrt( pow(ax-wx, 2.0) + pow(ay-wy, 2.0) ) <= ((wc->getr()))) 
+        //         {
+        //         // if (a->hasreacheddestination) {
+        //             double randomizedX = wp->getx();
+        //             double randomizedY = wp->gety();
+        //             double dx = wp->getr();
+        //             double dy = wp->getr();
 
-                    randomizedX += qrand()/(double)RAND_MAX * dx - dx/2;
-                    randomizedY += qrand()/(double)RAND_MAX * dy - dy/2;
+        //             randomizedX += qrand()/(double)RAND_MAX * dx - dx/2;
+        //             randomizedY += qrand()/(double)RAND_MAX * dy - dy/2;
 
-                    a->setPosition(randomizedX, randomizedY, 0);
-                    moveAgent(a);
-                }
-            }
+        //             a->setPosition(randomizedX, randomizedY, 0);
+        //             moveAgent(a);
+        //         }
+        //     }
 
-        }   
+        // }   
   
     }
 }
@@ -565,17 +569,19 @@ void Scene::processData(QByteArray& data)
 
                 Waypoint* w = new Waypoint(id, x, y, r);
 
-                if (boost::starts_with(id, "start")) 
-                {
-                    w->setType(Ped::Twaypoint::TYPE_BIRTH);
-                    ROS_DEBUG("adding a birth waypoint");
-                }
+                // if (boost::starts_with(id, "start")) 
+                // {
+                //     // NOTE - new update has new waypoint definition
+                //     // need to rework this mechanism
+                //     // w->setType(Ped::Twaypoint::TYPE_BIRTH);
+                //     ROS_DEBUG("adding a birth waypoint");
+                // }
 
-                if (boost::starts_with(id, "stop")) 
-                {
-                    w->setType(Ped::Twaypoint::TYPE_DEATH);
-                    ROS_DEBUG("adding a death waypoint");
-                }
+                // if (boost::starts_with(id, "stop")) 
+                // {
+                //     // w->setType(Ped::Twaypoint::TYPE_DEATH);
+                //     ROS_DEBUG("adding a death waypoint");
+                // }
 
                 this->waypoints[id] = w;
             }
@@ -759,7 +765,7 @@ int main(int argc, char** argv)
     // initialize resources
     ros::init(argc, argv, "simulator");
 
-    ROS_DEBUG("node initialized");
+    ROS_INFO("node initialized");
 
     ros::NodeHandle node;
 
@@ -775,7 +781,7 @@ int main(int argc, char** argv)
 
     if (sim_scene.initialize()) 
     {
-        ROS_DEBUG("loaded parameters, starting simulation...");
+        ROS_INFO("loaded parameters, starting simulation...");
         sim_scene.runSimulation();
     }
     else

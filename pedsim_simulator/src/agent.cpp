@@ -70,6 +70,13 @@ void Agent::move(double h) {
     Ped::Tagent::setfactorsocialforce(CONFIG.simPedForce);
     Ped::Tagent::setfactorobstacleforce(CONFIG.simWallForce);
 
+    if (Tagent::gettype() == 2) // robot agent
+    {
+        Ped::Tagent::setfactorsocialforce(CONFIG.simPedForce);
+        Ped::Tagent::setfactorobstacleforce(50);
+        Ped::Tagent::setfactordesiredforce(100);
+    }
+
     Ped::Tagent::move(h);
 
     updateView();
