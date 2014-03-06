@@ -3,6 +3,7 @@
   <param name="/simulator/scene_file" value="$(find pedsim_simulator)scenarios/scene1.xml" type="string"/>
   <param name="/pedsim/update_type" value="oracle" type="string"/>
   <param name="/pedsim/sensor_range" value="30.0" type="double"/>
+  <param name="/pedsim/cell_size" value="1.0" type="double"/>
 
   <!-- other parameters -->
   <param name="/pedsim/cell_size" value="1.0" type="double"/>
