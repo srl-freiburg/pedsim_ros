@@ -20,7 +20,7 @@
         <addwaypoint id="robot_start"/>
         <addwaypoint id="robot_goal"/>
     </agent> -->
-    <agent x="20" y="30" n="1" dx="0" dy="0" type="2">
+    <agent x="30" y="40" n="1" dx="0" dy="0" type="2">
         <addwaypoint id="check_c"/>
         <addwaypoint id="check_a"/>
     </agent>

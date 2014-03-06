@@ -1,26 +1,16 @@
 //
-// pedsim - A microscopic pedestrian simulation system. 
-// Copyright (c) 2003 - 2012 by Christian Gloor
-//                              
+// pedsim - A microscopic pedestrian simulation system.
+// Copyright (c) 2003 - 2014 by Christian Gloor
+//
 
 #include "ped_vector.h"
 
 #include <cmath>
 
-using namespace std;
-
-
-
 /// Default constructor, which makes sure that all the values are set to 0.
-Ped::Tvector::Tvector() : x(0), y(0), z(0) {
-}
+/// \date    2012-01-16
+Ped::Tvector::Tvector() : x(0), y(0), z(0) {};
 
-Ped::Tvector Ped::Tvector::fromPolar(const Tangle& angleIn, double radiusIn) {
-    double x = radiusIn * cos(angleIn.toRadian());
-    double y = radiusIn * sin(angleIn.toRadian());
-
-    return Ped::Tvector(x, y);
-}
 
 double Ped::Tvector::length() const {
     return sqrt(x*x + y*y + z*z);
@@ -31,13 +21,14 @@ double Ped::Tvector::lengthSquared() const {
 }
 
 /// Normalizes the vector to a length of 1.
+/// \date    2010-02-12
 void Ped::Tvector::normalize() {
     double len = length();
-    
+
     // null vectors cannot be normalized
     if(len == 0)
         return;
-    
+
     x /= len;
     y /= len;
     z /= len;
@@ -115,16 +106,21 @@ double Ped::Tvector::polarRadius() const {
     return length();
 }
 
-Ped::Tangle Ped::Tvector::polarAngle() const {
-    return Tangle::fromRadian(atan2(y, x));
+double Ped::Tvector::polarAngle() const {
+    return atan2(y, x);
 }
 
-Ped::Tangle Ped::Tvector::angleTo(const Tvector &other) const {
-    Ped::Tangle angleThis = polarAngle();
-    Ped::Tangle angleOther = other.polarAngle();
-    
+double Ped::Tvector::angleTo(const Tvector &other) const {
+    double angleThis = polarAngle();
+    double angleOther = other.polarAngle();
+
     // compute angle
-    Ped::Tangle diffAngle = angleOther - angleThis;
+    double diffAngle = angleOther - angleThis;
+    // → normalize angle
+    if(diffAngle > M_PI)
+        diffAngle -= 2*M_PI;
+    else if(diffAngle <= -M_PI)
+        diffAngle += 2*M_PI;
 
     return diffAngle;
 }
@@ -183,14 +179,14 @@ Ped::Tvector& Ped::Tvector::operator/=(double divisor) {
 }
 
 bool operator==(const Ped::Tvector& vector1In, const Ped::Tvector& vector2In) {
-    return (vector1In.x == vector2In.x) 
-        && (vector1In.y == vector2In.y) 
+    return (vector1In.x == vector2In.x)
+        && (vector1In.y == vector2In.y)
         && (vector1In.z == vector2In.z);
 }
 
 bool operator!=(const Ped::Tvector& vector1In, const Ped::Tvector& vector2In) {
-    return (vector1In.x != vector2In.x) 
-        || (vector1In.y != vector2In.y) 
+    return (vector1In.x != vector2In.x)
+        || (vector1In.y != vector2In.y)
         || (vector1In.z != vector2In.z);
 }
 
@@ -217,31 +213,4 @@ Ped::Tvector operator-(const Ped::Tvector& vectorIn) {
 
 Ped::Tvector operator*(double factor, const Ped::Tvector& vector) {
     return vector.scaled(factor);
-}
-
-
-
-
-
-
-/// Vector cross product helper: calculates the cross product of two vectors.
-/// \date    2010-02-12
-/// \warning The result is assigned to the vector calling the method. 
-/// \param   &a The first vector
-/// \param   &b The second vector
-void Ped::Tvector::cross(const Ped::Tvector &a, const Ped::Tvector &b) {
-	x = a.y*b.z - a.z*b.y;
-	y = a.z*b.x - a.x*b.z;
-	z = a.x*b.y - a.y*b.x;
-}
-
-
-/// Vector scalar product helper: calculates the scalar product of two vectors.
-/// \date    2012-01-14
-/// \return  The scalar product.
-/// \param   &a The first vector
-/// \param   &b The second vector
-//static double Ped::Tvector::scalar(const Ped::Tvector &a, const Ped::Tvector &b) {
-double scalar(const Ped::Tvector &a, const Ped::Tvector &b) {
-	return acos( (a.x*b.x + a.y*b.y + a.z*b.z) / ( sqrt(a.x*a.x + a.y*a.y + a.z*a.z) * sqrt(b.x*b.x + b.y*b.y + b.z*b.z) ) );
 }

@@ -25,12 +25,14 @@ catkin_package(
  CATKIN_DEPENDS ${PEDSIM_CORE_DEPENDENCIES}
 )
 
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/libpedsim)
+# add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/libpedsim)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/libpedsim2.3)
 
-include_directories(include)
+
+# include_directories(include)
 include_directories(
   ${catkin_INCLUDE_DIRS}
-  ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/libpedsim
+  ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/libpedsim2.3
 )
 
 set(SOURCES 
