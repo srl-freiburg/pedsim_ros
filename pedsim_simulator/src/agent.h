@@ -30,7 +30,6 @@ public:
 
 
     // Methods
-public:
     void move(double h);
     Ped::Tvector socialForce() const;
     Ped::Tvector obstacleForce() const;
@@ -49,18 +48,13 @@ public:
     void setY(double yIn);
     void setType(int t);
 
-    // → ScenarioElement Overrides/Overloads
-public:
     void updateLookOnSelection(bool selectedIn);
-
-    // → QGraphicsItem Overrides
     virtual int type() const { Ped::Tagent::gettype(); }
 
 
     // → waypoints
     //HACK: we need to save them here again, because Ped::Tagent doesn't give
     //      access to them in any way
-public:
     QList<Waypoint*> waypoints;
 };
 

@@ -38,9 +38,7 @@ public:
 	/// returns the force into the direction of the waypoint
 	Ped::Tvector getForce(double myx, double myy, double fromx, double fromy, bool& reached);
 
-	// → ScenarioElement Overrides/Overloads
 public:
-	// → QGraphicsItem Overrides
 	virtual int type() const { return Ped::Twaypoint::gettype(); }
 
 	// Attributes

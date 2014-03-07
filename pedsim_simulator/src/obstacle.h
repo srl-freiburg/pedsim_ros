@@ -20,11 +20,6 @@ class Scene;
 
 class Obstacle : public Ped::Tobstacle 
 {
-	// Define Type
-	// Needed by QGraphicsItem::type()
-public:
-
-	// Constructor and Destructor
 public:
     Obstacle( double ax = 0, double ay = 0, double bx = 1, double by = 1);
 	virtual ~Obstacle();
@@ -38,7 +33,6 @@ public:
 	void setX2(double xIn);
 	void setY2(double yIn);
 
-	// → ScenarioElement Overrides/Overloads
 public:
 	void updateLookOnSelection(bool selectedIn);
 

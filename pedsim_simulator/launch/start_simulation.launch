@@ -25,5 +25,5 @@
 
 
   <!-- Keyboard teleoperation node -->
-  <!-- <node name="teleop" pkg="pedsim_simulator" type="teleop" respawn="false" output="log" /> -->
+  <node name="teleop" pkg="pedsim_simulator" type="teleop" respawn="false" output="log" />
 </launch>
