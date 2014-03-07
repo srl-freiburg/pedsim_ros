@@ -74,7 +74,6 @@ public:
     void publishAgentStatus();
     void publishAgentVisuals();
     void publishObstacles();
-    void publishSensorRange();
 
     /// subscriber helpers
     void callbackRobotState(const pedsim_msgs::AgentState::ConstPtr& msg);
@@ -119,7 +118,6 @@ private:
     std::vector<TLoc> obstacle_cells_;
 
 
-    inline double* angleToQuaternion(double theta);
 };
 
 

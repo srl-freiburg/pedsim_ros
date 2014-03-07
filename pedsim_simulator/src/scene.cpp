@@ -95,7 +95,6 @@ void Scene::runSimulation()
 
         publishAgentStatus();
         publishAgentVisuals();
-        // publishSensorRange();
 
         // only publish the obstacles in the beginning
         if (timestep_ < 200)
@@ -264,15 +263,15 @@ void Scene::publishAgentVisuals()
         if (a->gettype() == robot_->gettype()) 
         {
             marker.type = visualization_msgs::Marker::MESH_RESOURCE;
-            marker.mesh_resource = "package://simulator/images/darylbot.dae";
+            marker.mesh_resource = "package://pedsim_simulator/images/darylbot.dae";
             marker.color.a = 1.0;
             marker.color.r = 1.0;
             marker.color.g = 1.0;
             marker.color.b = 1.0;
 
-            marker.scale.x = 0.5;
-            marker.scale.y = 0.5;
-            marker.scale.z = 0.5;
+            marker.scale.x = 1.0;
+            marker.scale.y = 1.0;
+            marker.scale.z = 1.0;
         }
         else
         {
@@ -362,45 +361,6 @@ void Scene::publishObstacles()
 }
 
 
-void Scene::publishSensorRange()
-{
-    double sensor_range;    // default to kinect range
-    ros::param::param<double>("/pedsim/sensor_range", sensor_range, 7.0);
-
-    // geometry_msgs::PolygonStamped poly_stamed;
-    // poly_stamed.header.frame_id = "world";
-    // poly_stamed.header.stamp = ros::Time();
-  
-    // float theta[50] = {0.,0.12822827,0.25645654,0.38468481, 0.51291309,
-    //     0.64114136,  0.76936963,  0.8975979 ,  1.02582617,  1.15405444,
-    //     1.28228272,  1.41051099,  1.53873926,  1.66696753,  1.7951958 ,
-    //     1.92342407,  2.05165235,  2.17988062,  2.30810889,  2.43633716,
-    //     2.56456543,  2.6927937 ,  2.82102197,  2.94925025,  3.07747852,
-    //     3.20570679,  3.33393506,  3.46216333,  3.5903916 ,  3.71861988,
-    //     3.84684815,  3.97507642,  4.10330469,  4.23153296,  4.35976123,
-    //     4.48798951,  4.61621778,  4.74444605,  4.87267432,  5.00090259,
-    //     5.12913086,  5.25735913,  5.38558741,  5.51381568,  5.64204395,
-    //     5.77027222,  5.89850049,  6.02672876,  6.15495704,  6.28318531};
-
-
-    // float a = robot_->getx();
-    // float b = robot_->gety();
-    // geometry_msgs::Polygon poly;
-
-    // for (int i = 0; i < 50; i++)
-    // {
-    //     geometry_msgs::Point32 p;
-    //     p.x = sensor_range * cos(theta[i]) + a;
-    //     p.y = sensor_range * sin(theta[i]) + b;
-    //     p.z = 0.0;
-    //     poly.points.push_back(p);
-    // }
-
-    // poly_stamed.polygon = poly;    
-    // pub_sensor_range_.publish(poly);
-
-    // pub_sensor_range_.publish(poly_stamed);
-}
 
 
 void Scene::spawnKillAgents() 
@@ -733,17 +693,6 @@ void Scene::drawObstacles(float x1, float y1, float x2, float y2)
     // ROS_DEBUG("loaded %d obstacle cells", (int)obstacle_cells_.size());
 }
 
-
-double* Scene::angleToQuaternion(double theta)
-{
-    double* q = new double[4];
-    q[0] = 0.0;
-    q[1] = 0.0;
-    q[2] = 0.0;
-    q[3] = 1.0;
-
-    return q;
-}
 
 
 
