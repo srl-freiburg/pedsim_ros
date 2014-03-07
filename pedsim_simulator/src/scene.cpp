@@ -76,9 +76,9 @@ void Scene::runSimulation()
             robot_ = a;
 
         // setup for teleoperation
-        double teleop_state;
-        nh_.getParam("/pedsim/teleop_state", teleop_state);
-        // ROS_INFO("Teleop state %f", teleop_state);
+        double teleop_state;    // default to OFF
+        ros::param::param<double>("/pedsim/teleop_state", teleop_state, 0.0);
+
         if (teleop_state > 0.0)
             robot_->setteleop(true);
     }
@@ -134,9 +134,11 @@ bool Scene::initialize()
 
     // load parameters
     std::string scene_file_param;
-    nh_.getParam("/simulator/scene_file", scene_file_param);
+    ros::param::param<std::string>("/simulator/scene_file", scene_file_param, "scene.xml");
+
     double cell_size;
-    nh_.getParam("/pedsim/cell_size", cell_size);
+    ros::param::param<double>("/simulator/cell_size", cell_size, 1.0);
+
     CONFIG.width = cell_size;
     CONFIG.height = cell_size;
 
@@ -170,10 +172,10 @@ void Scene::callbackRobotState(const pedsim_msgs::AgentState::ConstPtr& msg)
     double vy = msg->velocity.y;
 
     double robot_state;
-    nh_.getParam("/pedsim/move_robot", robot_state);
+    ros::param::param<double>("/pedsim/move_robot", robot_state, 100.0);
     
     double teleop_state;
-    nh_.getParam("/pedsim/teleop_state", teleop_state);
+    ros::param::param<double>("/pedsim/teleop_state", teleop_state, 0.0);
     
     if (timestep_ >= robot_state)
     {
@@ -236,9 +238,6 @@ void Scene::publishAgentStatus()
         state.velocity.y = a->getvy();
         state.velocity.z = a->getvz();
 
-
-        // std::cout << a->vmax << " ";
-
         all_status.agent_states.push_back(state);
     }
 
@@ -264,26 +263,16 @@ void Scene::publishAgentVisuals()
 
         if (a->gettype() == robot_->gettype()) 
         {
-            // marker.type = visualization_msgs::Marker::MESH_RESOURCE;
-            // marker.mesh_resource = "package://simulator/images/darylbot.dae";
-            // marker.color.a = 1.0;
-            // marker.color.r = 1.0;
-            // marker.color.g = 1.0;
-            // marker.color.b = 1.0;
-
-            // marker.scale.x = 0.5;
-            // marker.scale.y = 0.5;
-            // marker.scale.z = 0.5;
-
-            marker.type = visualization_msgs::Marker::CUBE;
+            marker.type = visualization_msgs::Marker::MESH_RESOURCE;
+            marker.mesh_resource = "package://simulator/images/darylbot.dae";
             marker.color.a = 1.0;
             marker.color.r = 1.0;
             marker.color.g = 1.0;
             marker.color.b = 1.0;
 
-            marker.scale.x = 1.0;
-            marker.scale.y = 0.7;
-            marker.scale.z = 1.5;
+            marker.scale.x = 0.5;
+            marker.scale.y = 0.5;
+            marker.scale.z = 0.5;
         }
         else
         {
@@ -352,7 +341,7 @@ void Scene::publishObstacles()
     obstacles.cell_height = CONFIG.height;
 
     double cell_size;
-    nh_.getParam("/simulator/cell_size", cell_size);
+    ros::param::param<double>("/simulator/cell_size", cell_size, 1.0);
 
     std::vector<TLoc>::const_iterator it = obstacle_cells_.begin();
     while( it != obstacle_cells_.end())
@@ -375,8 +364,8 @@ void Scene::publishObstacles()
 
 void Scene::publishSensorRange()
 {
-    // double sensor_range;
-    // nh_.getParam("/pedsim/sensor_range", sensor_range);
+    double sensor_range;    // default to kinect range
+    ros::param::param<double>("/pedsim/sensor_range", sensor_range, 7.0);
 
     // geometry_msgs::PolygonStamped poly_stamed;
     // poly_stamed.header.frame_id = "world";
@@ -416,11 +405,11 @@ void Scene::publishSensorRange()
 
 void Scene::spawnKillAgents() 
 {
-    for (vector<Ped::Tagent*>::const_iterator iter = all_agents_.begin(); iter != all_agents_.end(); ++iter) 
-    {
-        Ped::Tagent *a = (*iter);
-        double ax = a->getx();
-        double ay = a->gety();
+    // for (vector<Ped::Tagent*>::const_iterator iter = all_agents_.begin(); iter != all_agents_.end(); ++iter) 
+    // {
+    //     Ped::Tagent *a = (*iter);
+    //     double ax = a->getx();
+    //     double ay = a->gety();
 
   
         // if (a->gettype() != 2 && timestep_ > 10) 
@@ -477,7 +466,7 @@ void Scene::spawnKillAgents()
 
         // }   
   
-    }
+    // }
 }
 
 std::set<const Ped::Tagent*> Scene::getNeighbors(double x, double y, double maxDist)
@@ -753,7 +742,6 @@ double* Scene::angleToQuaternion(double theta)
     q[2] = 0.0;
     q[3] = 1.0;
 
-
     return q;
 }
 
@@ -770,10 +758,10 @@ int main(int argc, char** argv)
     ros::NodeHandle node;
 
     double x1,x2, y1,y2;
-    node.getParam("/pedsim/x1", x1);
-    node.getParam("/pedsim/x2", x2);
-    node.getParam("/pedsim/y1", y1);
-    node.getParam("/pedsim/y2", y2);
+    ros::param::param<double>("/pedsim/x1", x1, 0.0);
+    ros::param::param<double>("/pedsim/x2", x2, 100.0);
+    ros::param::param<double>("/pedsim/y1", y1, 0.0);
+    ros::param::param<double>("/pedsim/y2", y2, 100.0);
 
     // Scene sim_scene(0, 0, 45, 45, node);
     // Scene sim_scene(0, 0, 300, 100, node);
