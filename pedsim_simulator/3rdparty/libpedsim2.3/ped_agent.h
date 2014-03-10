@@ -18,7 +18,29 @@
 #include <set>
 #include <vector>
 
+
+#include <boost/random.hpp>
+#include <boost/random/normal_distribution.hpp>
+#include <ctime>
+
 using namespace std;
+
+
+static boost::mt19937 rng; 
+
+
+inline double randSpeed()
+{
+    // rng.seed(static_cast<unsigned int>(std::time(0)));
+    boost::normal_distribution<> nd(1.34, 0.26);
+
+    boost::variate_generator<boost::mt19937&, boost::normal_distribution<> > var_nor(rng, nd);
+
+    double d = var_nor();
+
+    return d;
+}
+
 
 namespace Ped {
     class Tscene;
@@ -63,6 +85,7 @@ namespace Ped {
         int gettype() const { return type; };
         double getvmax() const { return vmax; };
         bool getteleop() { return teleop; }
+        double getRadius() { return agentRadius; }
 
         // these getter should replace the ones later (returning the individual vector values)
         const Tvector& getPosition() const { return p; }
