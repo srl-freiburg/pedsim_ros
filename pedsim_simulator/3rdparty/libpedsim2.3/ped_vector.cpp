@@ -115,14 +115,15 @@ double Ped::Tvector::angleTo(const Tvector &other) const {
     double angleOther = other.polarAngle();
 
     // compute angle
-    double diffAngle = angleOther - angleThis;
-    // → normalize angle
-    if(diffAngle > M_PI)
-        diffAngle -= 2*M_PI;
-    else if(diffAngle <= -M_PI)
-        diffAngle += 2*M_PI;
+    // double diffAngle = angleOther - angleThis;
+    double angle_diff = diffAngle(angleOther, angleThis);
+    // // → normalize angle
+    // if(diffAngle > M_PI)
+    //     diffAngle -= 2*M_PI;
+    // else if(diffAngle <= -M_PI)
+    //     diffAngle += 2*M_PI;
 
-    return diffAngle;
+    return angle_diff;
 }
 
 Ped::Tvector Ped::Tvector::operator+(const Tvector& other) const {

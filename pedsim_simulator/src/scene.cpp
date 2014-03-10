@@ -151,6 +151,8 @@ bool Scene::initialize()
         return false;
     }
 
+    orientation_handler_.reset(new OrientationHandler());
+
     return true;
 }
 
@@ -307,12 +309,12 @@ void Scene::publishAgentVisuals()
         {
             // construct the orientation quaternion
             double theta = atan2(a->getvy(), a->getvx());
-            double* q = angleToQuaternion(theta);
+            Eigen::Quaternionf q = orientation_handler_->angle2Quaternion(theta);
 
-            marker.pose.orientation.x = 0.0;
-            marker.pose.orientation.y = 0.0;
-            marker.pose.orientation.z = sin(-theta);
-            marker.pose.orientation.w = 1.0;
+            marker.pose.orientation.x = q.x();
+            marker.pose.orientation.y = q.y();
+            marker.pose.orientation.z = q.z();
+            marker.pose.orientation.w = q.w();
         }
         else
         {

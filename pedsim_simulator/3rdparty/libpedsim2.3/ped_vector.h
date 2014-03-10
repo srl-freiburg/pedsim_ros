@@ -12,6 +12,8 @@
 #define LIBEXPORT
 #endif
 
+#include <cmath>
+
 namespace Ped {
     /// Vector helper class. This is basically a struct with some related functions attached.
     /// x, y, and z are public, so that they can be accessed easily.
@@ -70,5 +72,65 @@ bool operator==(const Ped::Tvector& vector1In, const Ped::Tvector& vector2In);
 bool operator!=(const Ped::Tvector& vector1In, const Ped::Tvector& vector2In);
 Ped::Tvector operator-(const Ped::Tvector& vectorIn);
 Ped::Tvector operator*(double factor, const Ped::Tvector& vector);
+
+
+
+// Puts angle alpha into the interval [min..min+2*pi[
+inline double normAngle(double alpha, double min) 
+{
+    while (alpha >= min+2.0*M_PI) {
+        alpha -= 2.0*M_PI;
+    }
+    while (alpha < min) {
+        alpha += 2.0*M_PI;
+    }
+    return alpha;
+};
+
+inline double diffAngle(double alpha1, double alpha2) 
+{
+    double delta;
+
+    // normalize angles alpha1 and alpha2
+    alpha1 = normAngle(alpha1, 0);
+    alpha2 = normAngle(alpha2, 0);
+
+    // take difference and unwrap
+    delta = alpha1 - alpha2;
+    if (alpha1 > alpha2) {
+        while (delta > M_PI) {
+            delta -= 2.0*M_PI;
+        }
+    }
+    else if (alpha2 > alpha1) {
+        while (delta < -M_PI) {
+            delta += 2.0*M_PI;
+        }
+    }
+    return delta;
+};
+
+// angle utils
+inline double angleBetween(Ped::Tvector a, Ped::Tvector b)
+{
+    a.normalize();
+    b.normalize();
+
+    double dt = (a.x * b.x) + (a.y * b.y);
+    double angle_dot =  acos(dt);
+    angle_dot = normAngle(angle_dot, 0);
+
+    double ac1, ac2;
+    ac1 = atan2(a.y, a.x);
+    ac2 = atan2(b.y, b.x);
+
+    double dangle = diffAngle(ac1, ac2);
+    dangle = normAngle(dangle, 0);
+
+    return dangle;
+}
+
+
+
 
 #endif

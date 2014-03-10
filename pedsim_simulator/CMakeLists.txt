@@ -19,6 +19,8 @@ find_package(catkin REQUIRED COMPONENTS ${PEDSIM_CORE_DEPENDENCIES})
 # add qt4 to the project
 FIND_PACKAGE(Boost REQUIRED)
 FIND_PACKAGE(Qt4 REQUIRED)
+FIND_PACKAGE(Eigen REQUIRED)
+
 INCLUDE(${QT_USE_FILE})
 
 catkin_package(
@@ -30,13 +32,21 @@ add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/libpedsim2.3)
 
 
 # include_directories(include)
+
+include_directories(${Eigen_INCLUDE_DIRS})
 include_directories(
   ${catkin_INCLUDE_DIRS}
   ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/libpedsim2.3
 )
 
 set(SOURCES 
-    src/scene.cpp src/agent.cpp src/obstacle.cpp src/waypoint.cpp src/config.cpp
+    src/scene.cpp 
+    src/agent.cpp 
+    src/obstacle.cpp 
+    src/waypoint.cpp 
+    src/config.cpp 
+    src/waitingqueue.cpp 
+    src/orientationhandler.cpp
 ) 
 
 add_executable(simulator ${SOURCES} ${QT_RESOURCES_CPP} ${QT_FORMS_HPP} ${QT_MOC_HPP})

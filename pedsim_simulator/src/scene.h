@@ -49,6 +49,8 @@
 // #include <geometry_msgs/Polygon.h>
 // #include <geometry_msgs/PolygonStamped.h>
 
+#include "orientationhandler.h"
+
 
 class Scene : public Ped::Tscene
 {
@@ -118,6 +120,8 @@ private:
     std::vector<TLoc> obstacle_cells_;
 
 
+    // handling quaternions
+    OrientationHandlerPtr orientation_handler_;
 };
 
 
