@@ -2,6 +2,8 @@
 #define WAITING_QUEUE_H 
 
 #include "agent.h"
+#include <deque>
+#include <boost/foreach.hpp>
 
 
 class WaitingQueue
@@ -13,18 +15,27 @@ public:
     void enqueueAgent(Ped::Tagent* a);
     void serveAgent(size_t agent_id); 
 
+    void setWaitTime(int wtime) { wait_time_ = wtime; }
+
 private:
     // queue service location
     double x_, y_;
 
-    // average wait time per person
-    double wait_time_;
+    // queue direction
+    double theta_;
 
-    std::list<Ped::Tagent*> people_;
+    // average wait time per person
+    int wait_time_;
+
+    // time passed since last service
+    int time_passed_;
+
+    std::deque<Ped::Tagent*> people_;
         
 
-    void updateQueue();
+    void updateQueue(double px, double py);
     void releaseAgent(Ped::Tagent* a);
+    Ped::Tvector getQueueEnd();
 };
 
 
