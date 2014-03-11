@@ -44,9 +44,11 @@
 #include <geometry_msgs/Point.h>
 
 #include "orientationhandler.h"
+#include "waitingqueue.h"
 
 #include <boost/random.hpp>
 #include <boost/random/normal_distribution.hpp>
+#include <boost/random/uniform_real.hpp>
 #include <ctime>
 
 using namespace std;
@@ -64,6 +66,17 @@ inline double randHeight()
 
     return d;
 }
+
+inline double coinFlip()
+{
+    boost::uniform_real<> uni_dist(0,1);
+    boost::variate_generator<boost::mt19937&, boost::uniform_real<> > uni(generator, uni_dist);
+
+    double c = uni();
+
+    return c;
+}
+
 
 
 class Scene : public Ped::Tscene
@@ -136,6 +149,14 @@ private:
 
     // handling quaternions
     OrientationHandlerPtr orientation_handler_;
+
+    // simple waiting queue
+    WaitingQueuePtr queue_;
+
+    inline double distance(double x1, double x2, double y1, double y2)
+    {
+        return sqrt( (x1-y1)*(x1-y1) + (x2-y2)*(x2-y2) );
+    }
 };
 
 

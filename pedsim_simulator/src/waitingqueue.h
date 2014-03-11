@@ -4,6 +4,7 @@
 #include "agent.h"
 #include <deque>
 #include <boost/foreach.hpp>
+#include <boost/shared_ptr.hpp>
 
 
 class WaitingQueue
@@ -14,8 +15,13 @@ public:
 
     void enqueueAgent(Ped::Tagent* a);
     void serveAgent(size_t agent_id); 
+    bool agentInQueue(Ped::Tagent* a);
 
+public:
+    // set of quickies
     void setWaitTime(int wtime) { wait_time_ = wtime; }
+    double getX() { return x_; }
+    double getY() { return y_; }
 
 private:
     // queue service location
@@ -37,6 +43,10 @@ private:
     void releaseAgent(Ped::Tagent* a);
     Ped::Tvector getQueueEnd();
 };
+
+
+typedef boost::shared_ptr<WaitingQueue> WaitingQueuePtr;
+typedef boost::shared_ptr<WaitingQueue const> WaitingQueueConstPtr;
 
 
 #endif

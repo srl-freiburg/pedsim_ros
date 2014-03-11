@@ -21,6 +21,15 @@ WaitingQueue::~WaitingQueue()
 
 void WaitingQueue::enqueueAgent(Ped::Tagent* a)
 {
+    std::cout << "Adding agent to queue: ";
+    std::cout << a->getid() << " ";
+    std::cout << a->getx() << " ";
+    std::cout << a->gety() << " ";
+    std::cout << std::endl;
+
+    if (people_.size() == 10)
+        return;
+
     // manipulate the forces on the agent
     a->setfactorsocialforce(0.0);
     a->setfactorobstacleforce(0.0);
@@ -49,8 +58,19 @@ void WaitingQueue::serveAgent(size_t agent_id)
 }
 
 
- void WaitingQueue::updateQueue(double px, double py)
- {
+bool WaitingQueue::agentInQueue(Ped::Tagent* a)
+{
+    bool inqueue = false;
+    BOOST_FOREACH(Ped::Tagent* p, people_)
+    {
+        if (a->getid() == p->getid())
+            inqueue = true;
+    }
+    return inqueue;
+}
+
+void WaitingQueue::updateQueue(double px, double py)
+{
     double prevx = px;
     double prevy = py;
 
@@ -64,7 +84,7 @@ void WaitingQueue::serveAgent(size_t agent_id)
         prevx = ax;
         prevy = ay;  
     }
- }
+}
 
 void WaitingQueue::releaseAgent(Ped::Tagent* a)
 {

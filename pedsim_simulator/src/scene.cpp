@@ -145,7 +145,10 @@ bool Scene::initialize()
         return false;
     }
 
+
+    // further objects
     orientation_handler_.reset(new OrientationHandler());
+    queue_.reset(new WaitingQueue(50.0, 20.0));
 
     return true;
 }
@@ -232,6 +235,17 @@ void Scene::publishAgentStatus()
         state.velocity.z = a->getvz();
 
         all_status.agent_states.push_back(state);
+
+
+        /// \NOTE simple test of queues
+        /// \TODO remove this
+
+        if (a->gettype() != 2)
+            if (queue_->agentInQueue(a) == false &&
+                distance(queue_->getX(), queue_->getY(), a->getx(), a->gety()) < 5.0 
+                && randHeight() > 0.5
+                )
+                queue_->enqueueAgent(a);
     }
 
     pub_all_agents_.publish(all_status);
