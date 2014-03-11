@@ -61,11 +61,8 @@ void Scene::clear()
 
 void Scene::runSimulation() 
 {
-    // ROS_INFO("Running pedsim simulator node");
     /// setup the agents and the robot
     all_agents_ = getAllAgents();
-
-    // ROS_INFO("Got all agents");
 
     for (vector<Ped::Tagent*>::const_iterator iter = all_agents_.begin(); iter != all_agents_.end(); ++iter)
     {
@@ -90,8 +87,6 @@ void Scene::runSimulation()
     {
         moveAllAgents();
         // spawnKillAgents();
-
-        // ROS_INFO("Moving all agents");
 
         publishAgentStatus();
         publishAgentVisuals();
@@ -122,7 +117,6 @@ bool Scene::initialize()
     pub_all_agents_ = nh_.advertise<pedsim_msgs::AllAgentsState>("dynamic_obstacles", 0);
     pub_agent_visuals_ = nh_.advertise<visualization_msgs::MarkerArray>("agents_markers", 0);
     pub_obstacles_ = nh_.advertise<nav_msgs::GridCells>("static_obstacles", 0);
-    // pub_sensor_range_ = nh_.advertise<geometry_msgs::Polygon>("sensor_radius", 0);
 
     // subscribers
     sub_robot_state_ = nh_.subscribe("robot_state", 1, &Scene::callbackRobotState, this);
@@ -197,22 +191,20 @@ void Scene::callbackRobotState(const pedsim_msgs::AgentState::ConstPtr& msg)
                 // robot_->setVmax( sqrt( vx * vx + vy * vy ) );
                 robot_->setVmax( 1.5 );
             }
-
-            // ROS_DEBUG("(rx, ry), (%f, %f)", robot_->getx(), robot_->gety());
         }
 
     } else
     {
         if (robot_->gettype() == msg->type)  
         {
-            // robot_->setvx( vx );
-            // robot_->setvy( vy );
             robot_->setVmax( 0.0 );
         }
     }
 }
 
-
+/// \brief publish the status messages of all the agents
+/// each containing position and velocity. This is updated
+/// at the rate of running the node
 void Scene::publishAgentStatus()
 {
     pedsim_msgs::AllAgentsState all_status;
@@ -246,6 +238,8 @@ void Scene::publishAgentStatus()
 }
 
 
+/// \brief publish visual markers for the agents and the robot
+/// for visualizing in rviz
 void Scene::publishAgentVisuals()
 {
 
@@ -267,13 +261,15 @@ void Scene::publishAgentVisuals()
             marker.type = visualization_msgs::Marker::MESH_RESOURCE;
             marker.mesh_resource = "package://pedsim_simulator/images/darylbot.dae";
             marker.color.a = 1.0;
-            marker.color.r = 1.0;
+            marker.color.r = 0.5;
             marker.color.g = 1.0;
-            marker.color.b = 1.0;
+            marker.color.b = 0.5;
 
             marker.scale.x = 1.0;
             marker.scale.y = 1.0;
             marker.scale.z = 1.0;
+
+             marker.pose.position.z = 0.0;
         }
         else
         {
@@ -297,13 +293,15 @@ void Scene::publishAgentVisuals()
 
             marker.scale.x = 0.2;
             marker.scale.y = 0.5;
-            marker.scale.z = 2.0;
+            marker.scale.z = 1.75; //randHeight();
+
+            marker.pose.position.z = 0.8;
         }
 
         marker.action = 0;  // add or modify
         marker.pose.position.x = a->getx();
         marker.pose.position.y = a->gety();
-        marker.pose.position.z = 0.75;
+       
 
         if (a->getvx() != 0.0) 
         {
@@ -323,13 +321,10 @@ void Scene::publishAgentVisuals()
             marker.pose.orientation.z = 0.0;
             marker.pose.orientation.w = 1.0;
         }
-        // pub_agent_visuals_.publish( marker );
         marker_array.markers.push_back( marker );
-
     }
 
-
-    // now publish the array
+    // publish the marker array
     pub_agent_visuals_.publish( marker_array );
 }
 

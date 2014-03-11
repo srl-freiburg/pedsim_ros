@@ -18,9 +18,6 @@
 #include "obstacle.h"
 #include "waypoint.h"
 
-// #include <boost/signal.hpp>
-// #include <tf/transform_broadcaster.h>
-
 #include <boost/foreach.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string/predicate.hpp>
@@ -45,11 +42,28 @@
 #include <std_msgs/Header.h>
 #include <nav_msgs/GridCells.h>
 #include <geometry_msgs/Point.h>
-// #include <geometry_msgs/Point32.h>
-// #include <geometry_msgs/Polygon.h>
-// #include <geometry_msgs/PolygonStamped.h>
 
 #include "orientationhandler.h"
+
+#include <boost/random.hpp>
+#include <boost/random/normal_distribution.hpp>
+#include <ctime>
+
+using namespace std;
+
+static boost::mt19937 generator; 
+
+inline double randHeight()
+{
+    // generator.seed(static_cast<unsigned int>(42));
+    boost::normal_distribution<> nd(1.70, 0.30);
+
+    boost::variate_generator<boost::mt19937&, boost::normal_distribution<> > var_nor(generator, nd);
+
+    double d = var_nor();
+
+    return d;
+}
 
 
 class Scene : public Ped::Tscene

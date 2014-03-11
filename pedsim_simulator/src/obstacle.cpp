@@ -45,6 +45,3 @@ void Obstacle::setY2(double yIn) {
     setPosition(getax(), getay(), getbx(), yIn);
 }
 
-void Obstacle::updateLookOnSelection(bool selectedIn) {
-    
-}

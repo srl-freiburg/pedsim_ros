@@ -32,10 +32,6 @@ public:
 	void setY1(double yIn);
 	void setX2(double xIn);
 	void setY2(double yIn);
-
-public:
-	void updateLookOnSelection(bool selectedIn);
-
 };
 
 #endif

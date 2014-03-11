@@ -37,9 +37,6 @@ public:
     Ped::Tvector lookaheadForce(Ped::Tvector desired) const;
     Ped::Tvector myForce(Ped::Tvector desired) const;
 
-protected:
-    void updateView();
-
     // → Ped::Tagent Overrides/Overloads
 public:
     void addWaypoint(Waypoint* waypointIn);
@@ -48,7 +45,6 @@ public:
     void setY(double yIn);
     void setType(int t);
 
-    void updateLookOnSelection(bool selectedIn);
     virtual int type() const { Ped::Tagent::gettype(); }
 
 

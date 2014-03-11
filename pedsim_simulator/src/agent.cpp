@@ -64,25 +64,19 @@ Ped::Tvector Agent::myForce(Ped::Tvector desired) const {
 }
 
 /// move - calls the lib move and updates the graphics then
-/// \date    2012-01-17
 void Agent::move(double h) {
-    //TODO: only change this when the config changes
+    //TODO: add these to rosparam
     Ped::Tagent::setfactorsocialforce(CONFIG.simPedForce);
     Ped::Tagent::setfactorobstacleforce(CONFIG.simWallForce);
 
     if (Tagent::gettype() == 2) // robot agent
     {
         Ped::Tagent::setfactorsocialforce(CONFIG.simPedForce);
-        Ped::Tagent::setfactorobstacleforce(50);
-        Ped::Tagent::setfactordesiredforce(100);
+        Ped::Tagent::setfactorobstacleforce(350);
+        Ped::Tagent::setfactordesiredforce(1.5);
     }
 
     Ped::Tagent::move(h);
-
-    updateView();
-}
-
-void Agent::updateView() {
 }
 
 void Agent::addWaypoint(Waypoint* waypointIn) {
@@ -96,9 +90,6 @@ void Agent::addWaypoint(Waypoint* waypointIn) {
 void Agent::setPosition(double px, double py) {
     // call super class' method
     Ped::Tagent::setPosition(px, py, 0);
-
-    // update graphical representation
-    updateView();
 }
 
 
@@ -113,11 +104,4 @@ void Agent::setY(double yIn) {
 void Agent::setType(int t) {
     // call super class' method
     Ped::Tagent::setType(t);
-
-    // update graphical representation
-    updateView();
-}
-
-void Agent::updateLookOnSelection(bool selectedIn) {
-   
 }
