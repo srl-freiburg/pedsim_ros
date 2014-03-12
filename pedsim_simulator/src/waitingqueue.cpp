@@ -8,7 +8,7 @@ WaitingQueue::WaitingQueue(const double x, const double y)
     : x_(x), y_(y)
 {
     people_.clear();
-    wait_time_ = 10;
+    wait_time_ = 30;
     time_passed_ = 0;
     theta_ = M_PI;
 }
@@ -21,13 +21,13 @@ WaitingQueue::~WaitingQueue()
 
 void WaitingQueue::enqueueAgent(Ped::Tagent* a)
 {
-    std::cout << "Adding agent to queue: ";
-    std::cout << a->getid() << " ";
-    std::cout << a->getx() << " ";
-    std::cout << a->gety() << " ";
-    std::cout << std::endl;
+    // std::cout << "Adding agent to queue: ";
+    // std::cout << a->getid() << " ";
+    // std::cout << a->getx() << " ";
+    // std::cout << a->gety() << " ";
+    // std::cout << std::endl;
 
-    if (people_.size() == 10)
+    if (people_.size() == 15)   // limit queue size
         return;
 
     // manipulate the forces on the agent
@@ -54,15 +54,21 @@ void WaitingQueue::serveAgent()
 {
     if (time_passed_ >= wait_time_ && people_.size() > 0)
     {
+        std::cout << "Serving an agent " << std::endl;
+
         // remove top agent from queue
         Ped::Tagent* lucky_one = people_.front();
         releaseAgent(lucky_one);
 
         // update queue
-        updateQueue(lucky_one->getx(), lucky_one->gety());
+        // updateQueue(lucky_one->getx(), lucky_one->gety());
+
+        time_passed_ = 0;
     }
-    
-    time_passed_++;
+    else if (time_passed_ < wait_time_ && people_.size() > 0)
+    {
+        time_passed_++;
+    }
 }
 
 
@@ -103,7 +109,7 @@ void WaitingQueue::releaseAgent(Ped::Tagent* a)
     a->setfactorlookaheadforce(1.0);
 
     a->setVmax(randSpeed());
-    a->setPosition(x_+a->getRadius()+1, y_+a->getRadius()+1, 0);
+    a->setPosition(x_+a->getRadius()+10, y_+a->getRadius()+10, 0);
 
     // restore its color/type
     if (a->gettype() == 0) 
