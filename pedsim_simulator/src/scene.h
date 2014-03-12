@@ -141,7 +141,7 @@ private:
     QList<Agent*> currentAgents;
     QList<Obstacle*> obstacles;
     QMap<QString, Waypoint*> waypoints;
-    size_t timestep_;
+    size_t timestep_, last_service_;
 
     // obstacle cell locations
     std::vector<TLoc> obstacle_cells_;

@@ -8,7 +8,7 @@ WaitingQueue::WaitingQueue(const double x, const double y)
     : x_(x), y_(y)
 {
     people_.clear();
-    wait_time_ = 5;
+    wait_time_ = 10;
     time_passed_ = 0;
     theta_ = M_PI;
 }
@@ -50,7 +50,7 @@ void WaitingQueue::enqueueAgent(Ped::Tagent* a)
     people_.push_back(a);
 }   
 
-void WaitingQueue::serveAgent(size_t agent_id)
+void WaitingQueue::serveAgent()
 {
     if (time_passed_ >= wait_time_ && people_.size() > 0)
     {
@@ -103,7 +103,13 @@ void WaitingQueue::releaseAgent(Ped::Tagent* a)
     a->setfactorlookaheadforce(1.0);
 
     a->setVmax(randSpeed());
-    a->setPosition(x_+a->getRadius(), y_+a->getRadius(), 0);
+    a->setPosition(x_+a->getRadius()+1, y_+a->getRadius()+1, 0);
+
+    // restore its color/type
+    if (a->gettype() == 0) 
+        a->setType(1);
+    else 
+        a->setType(0);
 }
 
 

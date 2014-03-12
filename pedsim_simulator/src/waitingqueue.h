@@ -14,13 +14,13 @@ public:
     ~WaitingQueue();
 
     void enqueueAgent(Ped::Tagent* a);
-    void serveAgent(size_t agent_id); 
+    void serveAgent(); 
     bool agentInQueue(Ped::Tagent* a);
 
 public:
     // set of quickies
     void setWaitTime(int wtime) { wait_time_ = wtime; }
-    double getWaitTime() { return wait_time_; }
+    int getWaitTime() { return wait_time_; }
     double getX() { return x_; }
     double getY() { return y_; }
 

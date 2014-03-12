@@ -59,6 +59,9 @@ void Scene::clear()
     obstacles.clear();
 }
 
+
+/// \brief Run the main mode 
+/// The core of the application
 void Scene::runSimulation() 
 {
     /// setup the agents and the robot
@@ -95,6 +98,15 @@ void Scene::runSimulation()
         if (timestep_ < 200)
             publishObstacles();
 
+
+        // see whether to serve an agent at the queue
+        // if (last_service_ >= queue_->getWaitTime())
+        // {
+        //     queue_->serveAgent();
+        //     last_service_ = 0;
+        // }
+
+
         // helps to make things faster
         cleanupItems();
 
@@ -108,6 +120,7 @@ bool Scene::initialize()
 {
     // start the time steps
     timestep_ = 0;
+    last_service_ = 0;
 
     /// setup the list of all agents and the robot agent
     all_agents_.clear();
@@ -157,6 +170,7 @@ bool Scene::initialize()
 void Scene::moveAllAgents()
 {
     timestep_++;
+    last_service_++;
 
     // move the agents by social force
     Ped::Tscene::moveAgents(CONFIG.simh);
