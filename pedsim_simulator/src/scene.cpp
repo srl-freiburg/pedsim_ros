@@ -241,11 +241,18 @@ void Scene::publishAgentStatus()
         /// \TODO remove this
 
         if (a->gettype() != 2)
-            if (queue_->agentInQueue(a) == false &&
-                distance(queue_->getX(), queue_->getY(), a->getx(), a->gety()) < 5.0 
-                && randHeight() > 0.5
-                )
-                queue_->enqueueAgent(a);
+        {
+            if (queue_->agentInQueue(a) == false )
+            {
+                double d = distance(queue_->getX(), queue_->getY(), a->getx(), a->gety());
+
+                if (d < 3.0)
+                {
+                    ROS_INFO("Call to enqueu agent");
+                    queue_->enqueueAgent(a);
+                }
+            }
+        }
     }
 
     pub_all_agents_.publish(all_status);

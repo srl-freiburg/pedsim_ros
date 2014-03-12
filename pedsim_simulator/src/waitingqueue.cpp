@@ -40,7 +40,15 @@ void WaitingQueue::enqueueAgent(Ped::Tagent* a)
     // set position to the end of the queue
     Ped::Tvector qend = getQueueEnd();
     a->setPosition(qend.x, qend.y, qend.z);
-}
+
+    // change its color/type
+    if (a->gettype() == 0) 
+        a->setType(1);
+    else 
+        a->setType(0);
+
+    people_.push_back(a);
+}   
 
 void WaitingQueue::serveAgent(size_t agent_id)
 {
@@ -95,20 +103,36 @@ void WaitingQueue::releaseAgent(Ped::Tagent* a)
     a->setfactorlookaheadforce(1.0);
 
     a->setVmax(randSpeed());
-
     a->setPosition(x_+a->getRadius(), y_+a->getRadius(), 0);
 }
 
 
 Ped::Tvector WaitingQueue::getQueueEnd()
 {
+    double buffer = 0.5;
     if (people_.size() == 0)
     {
-        return Ped::Tvector(x_+(0.5*cos(theta_)), y_+(0.5*sin(theta_)), 0.0);
+        return Ped::Tvector(
+            x_+(buffer*cos(theta_)), 
+            y_+(buffer*sin(theta_)), 
+            0.0);
+
+        // return Ped::Tvector(
+        //     x_+(buffer), 
+        //     y_+(buffer), 
+        //     0.0);
     }
     else
     {
         Ped::Tagent* last_one = people_.back();
-        return Ped::Tvector(last_one->getx()+(0.5*cos(theta_)), last_one->gety()+(0.5*sin(theta_)), 0.0);
+        return Ped::Tvector(
+            last_one->getx()+(buffer*cos(theta_)), 
+            last_one->gety()+(buffer*sin(theta_)), 
+            0.0);
+
+        // return Ped::Tvector(
+        //     last_one->getx()+(buffer), 
+        //     last_one->gety()+(buffer), 
+        //     0.0);
     }
 }

@@ -20,6 +20,7 @@ public:
 public:
     // set of quickies
     void setWaitTime(int wtime) { wait_time_ = wtime; }
+    double getWaitTime() { return wait_time_; }
     double getX() { return x_; }
     double getY() { return y_; }
 
@@ -38,7 +39,6 @@ private:
 
     std::deque<Ped::Tagent*> people_;
         
-
     void updateQueue(double px, double py);
     void releaseAgent(Ped::Tagent* a);
     Ped::Tvector getQueueEnd();
