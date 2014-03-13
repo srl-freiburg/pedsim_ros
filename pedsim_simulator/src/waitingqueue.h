@@ -20,7 +20,11 @@ public:
 public:
     // set of quickies
     void setWaitTime(int wtime) { wait_time_ = wtime; }
+    void setOrientation(double theta) { theta_ = theta; }
+    void setLocation(double x, double y) { x_ = x; y_ = y; }
+
     int getWaitTime() { return wait_time_; }
+    double getOrientation() { return theta_; }
     double getX() { return x_; }
     double getY() { return y_; }
 
@@ -37,7 +41,7 @@ private:
     // time passed since last service
     int time_passed_;
 
-    std::deque<Ped::Tagent*> people_;
+    std::deque<Ped::Tagent*> queueing_agents_;
         
     void updateQueue(double px, double py);
     void releaseAgent(Ped::Tagent* a);

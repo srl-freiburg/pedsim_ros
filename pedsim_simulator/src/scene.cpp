@@ -254,7 +254,7 @@ void Scene::publishAgentStatus()
 
                 if (d < 4.5 && coinFlip() > 0.5 )
                 {
-                    ROS_INFO("Call to enque agent");
+                    // ROS_INFO("Call to enque agent");
                     queue_->enqueueAgent(a);
                 }
             }

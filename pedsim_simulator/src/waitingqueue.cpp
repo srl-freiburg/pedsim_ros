@@ -7,7 +7,7 @@
 WaitingQueue::WaitingQueue(const double x, const double y)
     : x_(x), y_(y)
 {
-    people_.clear();
+    queueing_agents_.clear();
     wait_time_ = 30;
     time_passed_ = 0;
     theta_ = -M_PI/6;
@@ -15,13 +15,13 @@ WaitingQueue::WaitingQueue(const double x, const double y)
 
 WaitingQueue::~WaitingQueue()
 {
-    people_.clear();
+    queueing_agents_.clear();
 }
 
 
 void WaitingQueue::enqueueAgent(Ped::Tagent* a)
 {
-    if (people_.size() == 15)   //TEMP limit queue size
+    if (queueing_agents_.size() == 15)   //TEMP limit queue size
         return;
 
     // make the agent stop
@@ -31,23 +31,17 @@ void WaitingQueue::enqueueAgent(Ped::Tagent* a)
     Ped::Tvector qend = getQueueEnd();
     a->setPosition(qend.x, qend.y, qend.z);
 
-    // change its color/type
-    if (a->gettype() == Ped::Tagent::ADULT) 
-        a->setType(Ped::Tagent::CHILD);
-    else 
-        a->setType(Ped::Tagent::ADULT);
-
-    people_.push_back(a);
+    queueing_agents_.push_back(a);
 }   
 
 void WaitingQueue::serveAgent()
 {
-    if (time_passed_ >= wait_time_ && people_.size() > 0)
+    if (time_passed_ >= wait_time_ && queueing_agents_.size() > 0)
     {
-        std::cout << "Serving an agent " << std::endl;
+        // std::cout << "Serving an agent " << std::endl;
 
         // remove top agent from queue
-        Ped::Tagent* lucky_one = people_.front();
+        Ped::Tagent* lucky_one = queueing_agents_.front();
         releaseAgent(lucky_one);
 
         // update queue
@@ -55,7 +49,7 @@ void WaitingQueue::serveAgent()
 
         time_passed_ = 0;
     }
-    else if (time_passed_ < wait_time_ && people_.size() > 0)
+    else if (time_passed_ < wait_time_ && queueing_agents_.size() > 0)
     {
         time_passed_++;
     }
@@ -65,7 +59,7 @@ void WaitingQueue::serveAgent()
 bool WaitingQueue::agentInQueue(Ped::Tagent* a)
 {
     bool inqueue = false;
-    BOOST_FOREACH(Ped::Tagent* p, people_)
+    BOOST_FOREACH(Ped::Tagent* p, queueing_agents_)
     {
         if (a->getid() == p->getid())
             inqueue = true;
@@ -78,7 +72,7 @@ void WaitingQueue::updateQueue(double px, double py)
     double prevx = px;
     double prevy = py;
 
-    BOOST_FOREACH(Ped::Tagent* a, people_)
+    BOOST_FOREACH(Ped::Tagent* a, queueing_agents_)
     {
         double ax = a->getx();
         double ay = a->gety();
@@ -94,44 +88,26 @@ void WaitingQueue::releaseAgent(Ped::Tagent* a)
 {
     // reset the factors for the social forces
     a->setMobile();
-
-    // a->setVmax(randSpeed());
     a->setPosition(x_+a->getRadius()+10, y_+a->getRadius()+10, 0);
-
-    // restore its color/type
-    if (a->gettype() == Ped::Tagent::ADULT) 
-        a->setType(Ped::Tagent::CHILD);
-    else 
-        a->setType(Ped::Tagent::ADULT);
 }
 
 
 Ped::Tvector WaitingQueue::getQueueEnd()
 {
     double buffer = 0.5;
-    if (people_.size() == 0)
+    if (queueing_agents_.size() == 0)
     {
         return Ped::Tvector(
             x_+(buffer*cos(theta_)), 
             y_+(buffer*sin(theta_)), 
             0.0);
-
-        // return Ped::Tvector(
-        //     x_+(buffer), 
-        //     y_+(buffer), 
-        //     0.0);
     }
     else
     {
-        Ped::Tagent* last_one = people_.back();
+        Ped::Tagent* last_one = queueing_agents_.back();
         return Ped::Tvector(
             last_one->getx()+(buffer*cos(theta_)), 
             last_one->gety()+(buffer*sin(theta_)), 
             0.0);
-
-        // return Ped::Tvector(
-        //     last_one->getx()+(buffer), 
-        //     last_one->gety()+(buffer), 
-        //     0.0);
     }
 }
