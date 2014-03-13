@@ -58,6 +58,14 @@ namespace Ped {
 /// \author  chgloor
 /// \date    2003-12-26
     class LIBEXPORT Tagent {
+    public:
+        enum AgentType
+        {
+            ADULT = 0,
+            CHILD = 1,
+            ROBOT = 2,
+            ELDERLY = 3
+        };
 
     public:
         Tagent();
@@ -72,7 +80,7 @@ namespace Ped {
         virtual Tvector myForce(Tvector desired);
 
         void setPosition(double px, double py, double pz);
-        void setType(int t) { this->type = t; };
+        void setType(AgentType t) { this->type = t; };
         void setFollow(int id);
         void setVmax(double vmax);
         void setvx(const double vx) {v.x = vx;}
@@ -82,7 +90,7 @@ namespace Ped {
         int getFollow() const;
 
         int getid() const { return id; };
-        int gettype() const { return type; };
+        AgentType gettype() const { return type; };
         double getvmax() const { return vmax; };
         bool getteleop() { return teleop; }
         double getRadius() { return agentRadius; }
@@ -121,7 +129,7 @@ namespace Ped {
         Tvector p;                                        ///< current position of the agent
         Tvector v;                                        ///< velocity of the agent
         Tvector a;                                        ///< current acceleration of the agent
-        int type;
+        AgentType type;
         double vmax;                                      ///< individual max velocity per agent
         int follow;
         bool teleop;

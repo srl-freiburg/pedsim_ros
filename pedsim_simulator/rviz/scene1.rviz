@@ -5,7 +5,6 @@ Panels:
     Property Tree Widget:
       Expanded:
         - /Grid1/Offset1
-        - /Path1
       Splitter Ratio: 0.5
     Tree Height: 817
   - Class: rviz/Selection
@@ -55,7 +54,7 @@ Visualization Manager:
       Radius: 0.1
       Reference Frame: <Fixed Frame>
       Value: true
-    - Alpha: 0.3
+    - Alpha: 0.7
       Class: rviz/GridCells
       Color: 0; 170; 255
       Enabled: true
@@ -110,17 +109,17 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/XYOrbit
-      Distance: 74.4987
+      Distance: 75.1788
       Focal Point:
-        X: 74.6552
-        Y: 5.19535
-        Z: 1.90696e-05
+        X: 68.3286
+        Y: 11.7757
+        Z: 1.71623e-05
       Name: Current View
       Near Clip Distance: 0.01
-      Pitch: 0.9804
+      Pitch: 0.8604
       Target Frame: <Fixed Frame>
       Value: XYOrbit (rviz)
-      Yaw: 4.68859
+      Yaw: 4.71858
     Saved: ~
 Window Geometry:
   Displays:

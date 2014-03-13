@@ -22,9 +22,11 @@ namespace Ped {
     /// The waypoint classs
     /// \author  chgloor
     /// \date    2012-01-07
-    class LIBEXPORT Twaypoint {
+    class LIBEXPORT Twaypoint 
+    {
     public:
-        enum WaypointType {
+        enum WaypointType 
+        {
             TYPE_NORMAL = 0,
             TYPE_POINT = 1
         };

@@ -72,7 +72,7 @@ void Scene::runSimulation()
         Ped::Tagent *a = (*iter);
         // ROS_INFO("Searching for robot");
 
-        if (a->gettype() == 2)
+        if (a->gettype() == Ped::Tagent::ROBOT)
             robot_ = a;
 
         // setup for teleoperation
@@ -244,7 +244,7 @@ void Scene::publishAgentStatus()
         /// \NOTE simple test of queues
         /// \TODO remove this
 
-        if (a->gettype() != 2)
+        if (a->gettype() != Ped::Tagent::ROBOT)
         {
             if (queue_->agentInQueue(a) == false )
             {
@@ -299,12 +299,16 @@ void Scene::publishAgentVisuals()
         {
             marker.type = visualization_msgs::Marker::CUBE;
             
-            if (a->gettype() == 0)
+            if (a->gettype() == Ped::Tagent::ADULT)
             {
                 marker.color.a = 1.0;
                 marker.color.r = 0.0;
                 marker.color.g = 1.0;
                 marker.color.b = 1.0;
+
+                marker.scale.x = 0.2;
+                marker.scale.y = 0.5;
+                marker.scale.z = 1.75; //randHeight();
             }
             else
             {
@@ -312,12 +316,11 @@ void Scene::publishAgentVisuals()
                 marker.color.r = 1.0;
                 marker.color.g = 0.0;
                 marker.color.b = 1.0;
-            }
-            
 
-            marker.scale.x = 0.2;
-            marker.scale.y = 0.5;
-            marker.scale.z = 1.75; //randHeight();
+                marker.scale.x = 0.2;
+                marker.scale.y = 0.4;
+                marker.scale.z = 1.55; //randHeight();
+            }
 
             marker.pose.position.z = 0.8;
         }
@@ -575,7 +578,7 @@ void Scene::processData(QByteArray& data)
                     if(dy != 0)
                         randomizedY += rand()/(double)RAND_MAX * dy - dy/2;
                     a->setPosition(randomizedX, randomizedY);
-                    a->setType(type);
+                    a->setType(static_cast<Ped::Tagent::AgentType>(type));
                     this->addAgent(a);
                     currentAgents.append(a);
                 }

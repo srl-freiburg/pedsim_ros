@@ -32,10 +32,10 @@ void WaitingQueue::enqueueAgent(Ped::Tagent* a)
     a->setPosition(qend.x, qend.y, qend.z);
 
     // change its color/type
-    if (a->gettype() == 0) 
-        a->setType(1);
+    if (a->gettype() == Ped::Tagent::ADULT) 
+        a->setType(Ped::Tagent::CHILD);
     else 
-        a->setType(0);
+        a->setType(Ped::Tagent::ADULT);
 
     people_.push_back(a);
 }   
@@ -99,10 +99,10 @@ void WaitingQueue::releaseAgent(Ped::Tagent* a)
     a->setPosition(x_+a->getRadius()+10, y_+a->getRadius()+10, 0);
 
     // restore its color/type
-    if (a->gettype() == 0) 
-        a->setType(1);
+    if (a->gettype() == Ped::Tagent::ADULT) 
+        a->setType(Ped::Tagent::CHILD);
     else 
-        a->setType(0);
+        a->setType(Ped::Tagent::ADULT);
 }
 
 

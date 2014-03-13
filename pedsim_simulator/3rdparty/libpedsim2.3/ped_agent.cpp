@@ -30,7 +30,7 @@ Ped::Tagent::Tagent() {
     v.x = 0;
     v.y = 0;
     v.z = 0;
-    type = 0;
+    type = ADULT;
     teleop = false;
     hasreacheddestination = true;
     destination = NULL;

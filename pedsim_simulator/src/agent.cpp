@@ -20,7 +20,7 @@ Agent::Agent(double xIn, double yIn)
     : Ped::Tagent()
 {
     // initialize Ped::Tagent
-    Ped::Tagent::setType(0);
+    Ped::Tagent::setType(Ped::Tagent::ADULT);
 };
 
 Agent::~Agent() {
@@ -101,7 +101,7 @@ void Agent::setY(double yIn) {
     setPosition(getx(), yIn);
 }
 
-void Agent::setType(int t) {
+void Agent::setType(Ped::Tagent::AgentType t) {
     // call super class' method
     Ped::Tagent::setType(t);
 }

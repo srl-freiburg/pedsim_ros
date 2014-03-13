@@ -43,9 +43,9 @@ public:
     void setPosition(double px, double py);
     void setX(double xIn);
     void setY(double yIn);
-    void setType(int t);
+    void setType(Ped::Tagent::AgentType t);
 
-    virtual int type() const { Ped::Tagent::gettype(); }
+    virtual Ped::Tagent::AgentType type() const { Ped::Tagent::gettype(); }
 
 
     // → waypoints
