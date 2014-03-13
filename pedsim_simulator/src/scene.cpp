@@ -93,6 +93,7 @@ void Scene::runSimulation()
 
         publishAgentStatus();
         publishAgentVisuals();
+        publishWalls();
 
         // only publish the obstacles in the beginning
         if (timestep_ < 200)
@@ -120,6 +121,7 @@ bool Scene::initialize()
     pub_all_agents_ = nh_.advertise<pedsim_msgs::AllAgentsState>("dynamic_obstacles", 0);
     pub_agent_visuals_ = nh_.advertise<visualization_msgs::MarkerArray>("agents_markers", 0);
     pub_obstacles_ = nh_.advertise<nav_msgs::GridCells>("static_obstacles", 0);
+    pub_walls_ = nh_.advertise<visualization_msgs::Marker>("walls", 0);
 
     // subscribers
     sub_robot_state_ = nh_.subscribe("robot_state", 1, &Scene::callbackRobotState, this);
@@ -294,7 +296,7 @@ void Scene::publishAgentVisuals()
             marker.scale.y = 1.0;
             marker.scale.z = 1.0;
 
-            marker.pose.position.z = 0.8;
+            marker.pose.position.z = marker.scale.z / 2.0;
         }
         else
         {
@@ -323,7 +325,7 @@ void Scene::publishAgentVisuals()
                 marker.scale.z = 1.55; //randHeight();
             }
 
-            marker.pose.position.z = 0.8;
+            marker.pose.position.z = marker.scale.z / 2.0;
         }
 
         marker.action = 0;  // add or modify
@@ -383,6 +385,49 @@ void Scene::publishObstacles()
     }
 
     pub_obstacles_.publish(obstacles);
+}
+
+
+void Scene::publishWalls()
+{
+    double cell_size;
+    ros::param::param<double>("/simulator/cell_size", cell_size, 1.0);
+
+    visualization_msgs::Marker marker;
+    marker.header.frame_id = "world";
+    marker.header.stamp = ros::Time();
+    marker.ns = "pedsim";
+    marker.id = 10000;
+
+    marker.color.a = 1.0;
+    marker.color.r = 1.0;
+    marker.color.g = 0.0;
+    marker.color.b = 0.0;
+
+    marker.scale.x = 1.0;
+    marker.scale.y = 1.0;
+    marker.scale.z = 3.0; 
+
+    marker.pose.position.z = marker.scale.z / 2.0;
+
+    marker.type = visualization_msgs::Marker::CUBE_LIST;
+
+    std::vector<TLoc>::const_iterator it = obstacle_cells_.begin();
+    while( it != obstacle_cells_.end())
+    {
+        geometry_msgs::Point p;
+        TLoc loc = (*it);
+        // p.x = loc.x + (cell_size/2.0f);
+        // p.y = loc.y + (cell_size/2.0f);
+        p.x = loc.x;
+        p.y = loc.y;
+        p.z = 0.0;
+        marker.points.push_back(p);
+
+        it++;
+    }
+
+    pub_walls_.publish(marker);
 }
 
 

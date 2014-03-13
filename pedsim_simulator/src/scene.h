@@ -103,6 +103,7 @@ public:
     void publishAgentStatus();
     void publishAgentVisuals();
     void publishObstacles();
+    void publishWalls();
 
     /// subscriber helpers
     void callbackRobotState(const pedsim_msgs::AgentState::ConstPtr& msg);
@@ -129,7 +130,7 @@ private:
     ros::Publisher pub_all_agents_;
     ros::Publisher pub_agent_visuals_;
     ros::Publisher pub_obstacles_;
-    // ros::Publisher pub_sensor_range_;
+    ros::Publisher pub_walls_;
 
     // subscribers
     ros::Subscriber sub_robot_state_;
