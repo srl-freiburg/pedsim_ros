@@ -250,9 +250,9 @@ void Scene::publishAgentStatus()
             {
                 double d = distance(queue_->getX(), queue_->getY(), a->getx(), a->gety());
 
-                if (d < 4.5)
+                if (d < 4.5 && coinFlip() > 0.5 )
                 {
-                    ROS_INFO("Call to enqueu agent");
+                    ROS_INFO("Call to enque agent");
                     queue_->enqueueAgent(a);
                 }
             }
@@ -267,7 +267,6 @@ void Scene::publishAgentStatus()
 /// for visualizing in rviz
 void Scene::publishAgentVisuals()
 {
-
     // minor optimization with arrays for speedup
     visualization_msgs::MarkerArray marker_array;
 

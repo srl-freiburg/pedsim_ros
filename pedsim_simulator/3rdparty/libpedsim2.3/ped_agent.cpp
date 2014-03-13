@@ -181,7 +181,8 @@ void Ped::Tagent::setfactorsocialforce(double f) {
 /// and about 10 do make sense.
 /// \date    2012-01-20
 /// \param   f The factor
-void Ped::Tagent::setfactorobstacleforce(double f) {
+void Ped::Tagent::setfactorobstacleforce(double f) 
+{
     factorobstacleforce = f;
 }
 
@@ -189,7 +190,8 @@ void Ped::Tagent::setfactorobstacleforce(double f) {
 /// and about 10 do make sense.
 /// \date    2012-01-20
 /// \param   f The factor
-void Ped::Tagent::setfactordesiredforce(double f) {
+void Ped::Tagent::setfactordesiredforce(double f) 
+{
     factordesiredforce = f;
 }
 
@@ -197,8 +199,30 @@ void Ped::Tagent::setfactordesiredforce(double f) {
 /// 0 and about 10 do make sense.
 /// \date    2012-01-20
 /// \param   f The factor
-void Ped::Tagent::setfactorlookaheadforce(double f) {
+void Ped::Tagent::setfactorlookaheadforce(double f) 
+{
     factorlookaheadforce = f;
+}
+
+/// Set an agent to be stationary/immobile
+/// useful for modelling contexts like queues and people standing
+void Ped::Tagent::setStationary() {
+    setfactorobstacleforce(0.0);
+    setfactordesiredforce(0.0);
+    setfactorsocialforce(0.0);
+    setfactorlookaheadforce(0.0);
+    vmax = 0.0;
+}
+
+
+/// Set an agent to be mobile 
+/// Restoring default social force behaviour
+void Ped::Tagent::setMobile() {
+    setfactorobstacleforce(10.0);
+    setfactordesiredforce(1.0);
+    setfactorsocialforce(2.1);
+    setfactorlookaheadforce(1.0);
+    vmax = randSpeed();
 }
 
 /// Calculates the force between this agent and the next assigned waypoint.  If
@@ -209,9 +233,11 @@ void Ped::Tagent::setfactorlookaheadforce(double f) {
 /// \date    2012-01-17
 /// \todo    move this destination handling into a separate method called by move(). then mark this method as const
 /// \return  Tvector: the calculated force
-Ped::Tvector Ped::Tagent::desiredForce() {
+Ped::Tvector Ped::Tagent::desiredForce() 
+{
     // following behavior
-    if(follow >= 0) {
+    if(follow >= 0) 
+    {
         Tagent* followedAgent = scene->agents.at(follow);
         Twaypoint newDestination(followedAgent->getx(), followedAgent->gety(), 0);
         newDestination.settype(Ped::Twaypoint::TYPE_POINT);
@@ -224,7 +250,8 @@ Ped::Tvector Ped::Tagent::desiredForce() {
 
     // waypoint management (fetch new destination if available)
     // consider: replace hasreacheddestination with destination==NULL
-    if((hasreacheddestination == true) && (!waypoints.empty())) {
+    if((hasreacheddestination == true) && (!waypoints.empty())) 
+    {
         destination = waypoints.front();
         // round queue
         waypoints.pop_front();
@@ -233,27 +260,31 @@ Ped::Tvector Ped::Tagent::desiredForce() {
     }
 
     // if there is no destination, don't move
-    if(destination == NULL) {
+    if(destination == NULL) 
+    {
         desiredDirection = Ped::Tvector();
         Tvector antiMove = -v / relaxationTime;
         return antiMove;
     }
 
     bool reached;
-    if(lastdestination == NULL) {
+    if(lastdestination == NULL) 
+    {
         // create a temporary destination of type point, since no normal from last dest is available
         Twaypoint tempDestination(destination->getx(), destination->gety(), destination->getr());
         tempDestination.settype(Ped::Twaypoint::TYPE_POINT);
 
         desiredDirection = tempDestination.getForce(p.x, p.y, 0, 0, &reached);
     }
-    else {
+    else 
+    {
         desiredDirection = destination->getForce(p.x, p.y, lastdestination->getx(), lastdestination->gety(), &reached);
     }
 
 
     // mark destination as reached for next time step
-    if((hasreacheddestination == false) && (reached == true)) {
+    if((hasreacheddestination == false) && (reached == true)) 
+    {
         hasreacheddestination = true;
         lastdestination = destination;
         destination = NULL;
@@ -272,7 +303,8 @@ Ped::Tvector Ped::Tagent::desiredForce() {
 /// this is just fine.
 /// \date    2012-01-17
 /// \return  Tvector: the calculated force
-Ped::Tvector Ped::Tagent::socialForce() const {
+Ped::Tvector Ped::Tagent::socialForce() const 
+{
     // define relative importance of position vs velocity vector
     // (set according to Moussaid-Helbing 2009)
     const double lambdaImportance = 2.0;

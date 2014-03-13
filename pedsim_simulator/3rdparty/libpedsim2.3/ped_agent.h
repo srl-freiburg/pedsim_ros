@@ -106,6 +106,9 @@ namespace Ped {
         void setfactorobstacleforce(double f);
         void setfactordesiredforce(double f);
         void setfactorlookaheadforce(double f);
+        
+        void setStationary();
+        void setMobile();
 
         void assignScene(Tscene* s);
         void addWaypoint(Twaypoint* wp);

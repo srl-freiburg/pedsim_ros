@@ -10,7 +10,7 @@ WaitingQueue::WaitingQueue(const double x, const double y)
     people_.clear();
     wait_time_ = 30;
     time_passed_ = 0;
-    theta_ = M_PI;
+    theta_ = -M_PI/6;
 }
 
 WaitingQueue::~WaitingQueue()
@@ -21,21 +21,11 @@ WaitingQueue::~WaitingQueue()
 
 void WaitingQueue::enqueueAgent(Ped::Tagent* a)
 {
-    // std::cout << "Adding agent to queue: ";
-    // std::cout << a->getid() << " ";
-    // std::cout << a->getx() << " ";
-    // std::cout << a->gety() << " ";
-    // std::cout << std::endl;
-
-    if (people_.size() == 15)   // limit queue size
+    if (people_.size() == 15)   //TEMP limit queue size
         return;
 
-    // manipulate the forces on the agent
-    a->setfactorsocialforce(0.0);
-    a->setfactorobstacleforce(0.0);
-    a->setfactordesiredforce(0.0);
-    a->setfactorlookaheadforce(0.0);
-    a->setVmax(0.0);
+    // make the agent stop
+    a->setStationary();
 
     // set position to the end of the queue
     Ped::Tvector qend = getQueueEnd();
@@ -103,12 +93,9 @@ void WaitingQueue::updateQueue(double px, double py)
 void WaitingQueue::releaseAgent(Ped::Tagent* a)
 {
     // reset the factors for the social forces
-    a->setfactorsocialforce(CONFIG.simPedForce);
-    a->setfactorobstacleforce(CONFIG.simWallForce);
-    a->setfactordesiredforce(1.0);
-    a->setfactorlookaheadforce(1.0);
+    a->setMobile();
 
-    a->setVmax(randSpeed());
+    // a->setVmax(randSpeed());
     a->setPosition(x_+a->getRadius()+10, y_+a->getRadius()+10, 0);
 
     // restore its color/type
