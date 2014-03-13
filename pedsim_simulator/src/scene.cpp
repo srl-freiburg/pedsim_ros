@@ -283,7 +283,8 @@ void Scene::publishAgentVisuals()
         if (a->gettype() == robot_->gettype()) 
         {
             marker.type = visualization_msgs::Marker::MESH_RESOURCE;
-            marker.mesh_resource = "package://pedsim_simulator/images/darylbot.dae";
+            marker.mesh_resource = 
+              "package://pedsim_simulator/images/darylbot_rotated_shifted.dae";
             marker.color.a = 1.0;
             marker.color.r = 0.5;
             marker.color.g = 1.0;
@@ -293,7 +294,7 @@ void Scene::publishAgentVisuals()
             marker.scale.y = 1.0;
             marker.scale.z = 1.0;
 
-             marker.pose.position.z = 0.0;
+            marker.pose.position.z = 0.8;
         }
         else
         {
