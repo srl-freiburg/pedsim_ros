@@ -84,7 +84,7 @@ class Scene : public Ped::Tscene
 public:
     Scene(const ros::NodeHandle& node);
     Scene( double left, double up, double width, double height, const ros::NodeHandle& node );
-    ~Scene() { clear(); }
+    ~Scene() { clear(); waiting_queues_.clear(); }
 
     void clear();
     std::set<const Ped::Tagent*> getNeighbors(double x, double y, double maxDist);
@@ -104,6 +104,7 @@ public:
     void publishAgentVisuals();
     void publishObstacles();
     void publishWalls();
+    void updateQueues();
 
     /// subscriber helpers
     void callbackRobotState(const pedsim_msgs::AgentState::ConstPtr& msg);
@@ -147,12 +148,11 @@ private:
     // obstacle cell locations
     std::vector<TLoc> obstacle_cells_;
 
-
     // handling quaternions
     OrientationHandlerPtr orientation_handler_;
 
     // simple waiting queue
-    WaitingQueuePtr queue_;
+    std::vector<WaitingQueuePtr> waiting_queues_;
 
     inline double distance(double x1, double x2, double y1, double y2)
     {
@@ -166,4 +166,4 @@ typedef boost::shared_ptr<Scene> ScenePtr;
 typedef boost::shared_ptr<Scene const> SceneConstPtr;
 
 
-#endif // SCENE_ICRA14_H
+#endif // SCENE_H

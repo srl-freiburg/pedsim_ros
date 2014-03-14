@@ -69,7 +69,8 @@ void Agent::move(double h) {
     Ped::Tagent::setfactorsocialforce(CONFIG.simPedForce);
     Ped::Tagent::setfactorobstacleforce(CONFIG.simWallForce);
 
-    if (Tagent::gettype() == 2) // robot agent
+    // use SFM as local controller for the robot
+    if (Tagent::gettype() == Ped::Tagent::ROBOT )
     {
         Ped::Tagent::setfactorsocialforce(CONFIG.simPedForce);
         Ped::Tagent::setfactorobstacleforce(350);

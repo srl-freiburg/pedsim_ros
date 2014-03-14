@@ -5,14 +5,14 @@ Scene::Scene(const ros::NodeHandle& node)
     : Ped::Tscene(), nh_(node)
 {
     // useful for keeping track of agents in the cleaning process
-    tree = new Ped::Ttree(this, 0, -20, -20, 1000, 1000);
+    tree = new Ped::Ttree(this, 0, -20, -20, 500, 500);
 }
 
 Scene::Scene( double left, double up, double width, double height, const ros::NodeHandle& node )
     : Ped::Tscene(left, up, width, height), nh_(node)
 {
     // useful for keeping track of agents in the cleaning process
-    tree = new Ped::Ttree(this, 0, -20, -20, 1000, 1000);
+    tree = new Ped::Ttree(this, 0, -20, -20, 500, 500);
 }
 
 
@@ -74,13 +74,6 @@ void Scene::runSimulation()
 
         if (a->gettype() == Ped::Tagent::ROBOT)
             robot_ = a;
-
-        // setup for teleoperation
-        double teleop_state;    // default to OFF
-        ros::param::param<double>("/pedsim/teleop_state", teleop_state, 0.0);
-
-        if (teleop_state > 0.0)
-            robot_->setteleop(true);
     }
 
     ros::Rate r( 1 /  CONFIG.simh );
@@ -94,6 +87,7 @@ void Scene::runSimulation()
         publishAgentStatus();
         publishAgentVisuals();
         publishWalls();
+        updateQueues();
 
         // only publish the obstacles in the beginning
         if (timestep_ < 200)
@@ -116,6 +110,7 @@ bool Scene::initialize()
     /// setup the list of all agents and the robot agent
     all_agents_.clear();
     obstacle_cells_.clear();
+    waiting_queues_.clear();
 
     // setup publishers
     pub_all_agents_ = nh_.advertise<pedsim_msgs::AllAgentsState>("dynamic_obstacles", 0);
@@ -153,7 +148,6 @@ bool Scene::initialize()
 
     // further objects
     orientation_handler_.reset(new OrientationHandler());
-    queue_.reset(new WaitingQueue(50.0, 20.0));
 
     return true;
 }
@@ -162,7 +156,21 @@ bool Scene::initialize()
 void Scene::moveAllAgents()
 {
     timestep_++;
-    queue_->serveAgent();
+
+    /// serve agents in queues (if any)
+    BOOST_FOREACH(WaitingQueuePtr q, waiting_queues_)
+    {
+        q->serveAgent();
+    }
+
+    // Make the robot wait
+    double robot_wait_time;
+    ros::param::param<double>("/pedsim/move_robot", robot_wait_time, 100.0);
+
+    if ((double)timestep_ >= robot_wait_time)
+        robot_->setMobile();
+    else
+        robot_->setStationary();
 
     // move the agents by social force
     Ped::Tscene::moveAgents(CONFIG.simh);
@@ -174,42 +182,59 @@ void Scene::callbackRobotState(const pedsim_msgs::AgentState::ConstPtr& msg)
 {
     double vx = msg->velocity.x;
     double vy = msg->velocity.y;
-
-    double robot_state;
-    ros::param::param<double>("/pedsim/move_robot", robot_state, 100.0);
     
     double teleop_state;
     ros::param::param<double>("/pedsim/teleop_state", teleop_state, 0.0);
+
+    if (teleop_state > 0.0)
+        robot_->setteleop(true);
     
-    if (timestep_ >= robot_state)
+    if (robot_->gettype() == msg->type)  
     {
-        if (robot_->gettype() == msg->type)  
-        {
 
-            if (teleop_state == 0.0)
-            {
-                robot_->setvx( vx );
-                robot_->setvy( vy );
-                robot_->setVmax( 1.34 );
-                // robot_->setVmax( sqrt( vx * vx + vy * vy ) );
-            } 
-            else 
-            {
-                robot_->setvx( vx );
-                robot_->setvy( vy );
-                // robot_->setVmax( sqrt( vx * vx + vy * vy ) );
-                robot_->setVmax( 1.5 );
-            }
-        }
-
-    } else
-    {
-        if (robot_->gettype() == msg->type)  
+        if (robot_->getteleop() == false)
         {
-            robot_->setVmax( 0.0 );
+            robot_->setvx( vx );
+            robot_->setvy( vy );
+            // robot_->setVmax( 1.34 );
+            robot_->setVmax( sqrt( vx * vx + vy * vy ) );
+        } 
+        else 
+        {
+            robot_->setvx( vx );
+            robot_->setvy( vy );
+            robot_->setVmax( sqrt( vx * vx + vy * vy ) );
+            // robot_->setVmax( 1.5 );
         }
     }
 }
+
+
+void Scene::updateQueues()
+{
+    BOOST_FOREACH(WaitingQueuePtr q, waiting_queues_)
+    {
+        BOOST_FOREACH(Ped::Tagent* a, all_agents_)
+        {
+
+            if (a->gettype() != Ped::Tagent::ROBOT)
+            {
+                if (q->agentInQueue(a) == false )
+                {
+                    double d = distance(q->getX(), q->getY(), a->getx(), a->gety());
+
+                    if (d < 4.5 && coinFlip() > 0.5 )
+                    {
+                        // ROS_INFO("Call to enque agent");
+                        q->enqueueAgent(a);
+                    }
+                }
+            }
+
+        }
+    }
+}
+
 
 /// \brief publish the status messages of all the agents
 /// each containing position and velocity. This is updated
@@ -241,24 +266,6 @@ void Scene::publishAgentStatus()
         state.velocity.z = a->getvz();
 
         all_status.agent_states.push_back(state);
-
-
-        /// \NOTE simple test of queues
-        /// \TODO remove this
-
-        if (a->gettype() != Ped::Tagent::ROBOT)
-        {
-            if (queue_->agentInQueue(a) == false )
-            {
-                double d = distance(queue_->getX(), queue_->getY(), a->getx(), a->gety());
-
-                if (d < 4.5 && coinFlip() > 0.5 )
-                {
-                    // ROS_INFO("Call to enque agent");
-                    queue_->enqueueAgent(a);
-                }
-            }
-        }
     }
 
     pub_all_agents_.publish(all_status);
@@ -578,6 +585,19 @@ void Scene::processData(QByteArray& data)
                 // fill the obstacle cells
                 drawObstacles(x1, y1, x2, y2);
             }
+            else if (xmlReader.name() == "queue")
+            {
+                QString id = xmlReader.attributes().value("id").toString();
+                double x = xmlReader.attributes().value("x").toString().toDouble();
+                double y = xmlReader.attributes().value("y").toString().toDouble();
+                double theta = xmlReader.attributes().value("direction").toString().toDouble();
+
+                WaitingQueuePtr q;
+                q.reset(new WaitingQueue(x, y, theta, id.toStdString()));
+                waiting_queues_.push_back(q);
+
+                ROS_INFO("Added queue at: (%f, %f)", x, y);
+            }
             else if (xmlReader.name() == "waypoint") 
             {
                 // TODO - add an explicit waypoint type
@@ -609,7 +629,7 @@ void Scene::processData(QByteArray& data)
                 int n = xmlReader.attributes().value("n").toString().toDouble();
                 double dx = xmlReader.attributes().value("dx").toString().toDouble();
                 double dy = xmlReader.attributes().value("dy").toString().toDouble();
-                double type = xmlReader.attributes().value("type").toString().toInt();
+                int type = xmlReader.attributes().value("type").toString().toInt();
                 for (int i=0; i<n; i++) 
                 {
                     Agent* a = new Agent();

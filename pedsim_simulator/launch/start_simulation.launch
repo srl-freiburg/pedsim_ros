@@ -1,6 +1,6 @@
 <launch>
   <!-- params -->
-  <param name="/simulator/scene_file" value="$(find pedsim_simulator)scenarios/scene1.xml" type="string"/>
+  <param name="/simulator/scene_file" value="$(find pedsim_simulator)scenarios/scene1_queues.xml" type="string"/>
   <param name="/pedsim/update_type" value="oracle" type="string"/>
   <param name="/pedsim/sensor_range" value="30.0" type="double"/>
   <param name="/pedsim/cell_size" value="1.0" type="double"/>
@@ -11,8 +11,8 @@
   <param name="/pedsim/target_type" value="2" type="int"/>
 
   <!-- robot control parameters -->
-  <param name="/pedsim/move_robot" value="400" type="double"/>
-  <param name="/pedsim/teleop_state" value="0.0" type="double"/>
+  <param name="/pedsim/move_robot" value="100" type="double"/>
+  <param name="/pedsim/teleop_state" value="1.0" type="double"/>
 
 
   <!-- tf broadcaster for aligning frames -->

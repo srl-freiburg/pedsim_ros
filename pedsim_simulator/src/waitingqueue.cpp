@@ -3,6 +3,14 @@
 #include "config.h"
 
 
+WaitingQueue::WaitingQueue()
+{
+    queueing_agents_.clear();
+    wait_time_ = 30;
+    time_passed_ = 0;
+    theta_ = -M_PI/6;
+    id_ = "_";
+}
 
 WaitingQueue::WaitingQueue(const double x, const double y)
     : x_(x), y_(y)
@@ -11,6 +19,15 @@ WaitingQueue::WaitingQueue(const double x, const double y)
     wait_time_ = 30;
     time_passed_ = 0;
     theta_ = -M_PI/6;
+    id_ = "_";
+}
+
+WaitingQueue::WaitingQueue(const double x, const double y, double theta, std::string id)
+    : x_(x), y_(y), theta_(theta), id_(id)
+{
+    queueing_agents_.clear();
+    wait_time_ = 30;
+    time_passed_ = 0;
 }
 
 WaitingQueue::~WaitingQueue()

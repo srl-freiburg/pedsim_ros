@@ -10,7 +10,9 @@
 class WaitingQueue
 {
 public:
+    WaitingQueue();
     WaitingQueue(const double x, const double y);
+    WaitingQueue(const double x, const double y, double theta, std::string id);
     ~WaitingQueue();
 
     void enqueueAgent(Ped::Tagent* a);
@@ -31,6 +33,8 @@ public:
 private:
     // queue service location
     double x_, y_;
+
+    std::string id_;
 
     // queue direction
     double theta_;

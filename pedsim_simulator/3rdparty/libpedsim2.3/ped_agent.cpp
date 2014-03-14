@@ -217,10 +217,10 @@ void Ped::Tagent::setfactorlookaheadforce(double f)
 /// Set an agent to be stationary/immobile
 /// useful for modelling contexts like queues and people standing
 void Ped::Tagent::setStationary() {
-    setfactorobstacleforce(0.0);
-    setfactordesiredforce(0.0);
-    setfactorsocialforce(0.0);
-    setfactorlookaheadforce(0.0);
+    // setfactorobstacleforce(0.0);
+    // setfactordesiredforce(0.0);
+    // setfactorsocialforce(0.0);
+    // setfactorlookaheadforce(0.0);
     vmax = 0.0;
 }
 
@@ -228,10 +228,10 @@ void Ped::Tagent::setStationary() {
 /// Set an agent to be mobile 
 /// Restoring default social force behaviour
 void Ped::Tagent::setMobile() {
-    setfactorobstacleforce(10.0);
-    setfactordesiredforce(1.0);
-    setfactorsocialforce(2.1);
-    setfactorlookaheadforce(1.0);
+    // setfactorobstacleforce(10.0);
+    // setfactordesiredforce(1.0);
+    // setfactorsocialforce(2.1);
+    // setfactorlookaheadforce(1.0);
     vmax = randSpeed();
 }
 
@@ -361,11 +361,6 @@ Ped::Tvector Ped::Tagent::socialForce() const
         // compute model parameter B = gamma * ||D||
         double B = gamma * interactionLength;
 
-        // According to paper, this should be the sum of the two forces...
-//          force += -exp(-diff.length()/B)
-//              * (exp(-pow(n_prime*B*theta,2)) * interactionDirection
-//                  + exp(-pow(n*B*theta,2)) * interactionDirection.leftNormalVector());
-
         double forceVelocityAmount = -exp(-diff.length()/B - (n_prime*B*theta)*(n_prime*B*theta));
         double forceAngleAmount = -thetaSign * exp(-diff.length()/B - (n*B*theta)*(n*B*theta));
 
@@ -374,34 +369,6 @@ Ped::Tvector Ped::Tagent::socialForce() const
 
         force += forceVelocity + forceAngle;
     }
-
-
-
-// Old code: (didn't follow papers)
-//      const double maxDistance = 10.0;
-//      const double maxDistSquared = maxDistance*maxDistance;
-//
-//      Ped::Tvector force;
-//      for(set<const Ped::Tagent*>::iterator iter = neighbors.begin(); iter!=neighbors.end(); ++iter) {
-//          const Ped::Tagent* other = *iter;
-//
-//          // don't compute social force to yourself
-//          if(other->id == id)
-//              continue;
-//
-//           // quick distance check
-//          Ped::Tvector diff = other->p - p;
-//          if((abs(diff.x) < maxDistance)
-//              && (abs(diff.y) < maxDistance)) {
-//              double dist2 = diff.lengthSquared();
-//
-//              // ignore too small forces
-//              if(dist2 < maxDistSquared) {
-//                  double expdist = exp(-sqrt(dist2)/socialForceSigma);
-//                  force += -expdist * diff;
-//              }
-//          }
-//      }
 
     return force;
 }
