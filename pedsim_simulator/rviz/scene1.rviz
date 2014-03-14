@@ -93,6 +93,14 @@ Visualization Manager:
         pedsim: true
       Queue Size: 1
       Value: true
+    - Class: rviz/Marker
+      Enabled: true
+      Marker Topic: /queues
+      Name: Marker
+      Namespaces:
+        pedsim: true
+      Queue Size: 1
+      Value: true
   Enabled: true
   Global Options:
     Background Color: 208; 208; 208
@@ -117,17 +125,22 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/XYOrbit
-      Distance: 15.5385
+      Distance: 75.9384
+      Enable Stereo Rendering:
+        Stereo Eye Separation: 0.06
+        Stereo Focal Distance: 1
+        Swap Stereo Eyes: false
+        Value: false
       Focal Point:
-        X: 83.8016
-        Y: 14.9682
-        Z: 2.09771e-05
+        X: 76.7738
+        Y: 10.0154
+        Z: 2.86065e-05
       Name: Current View
       Near Clip Distance: 0.01
-      Pitch: 0.420401
+      Pitch: 1.2304
       Target Frame: <Fixed Frame>
       Value: XYOrbit (rviz)
-      Yaw: 4.12856
+      Yaw: 4.70855
     Saved: ~
 Window Geometry:
   Displays:

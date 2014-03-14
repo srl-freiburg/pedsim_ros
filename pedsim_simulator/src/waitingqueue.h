@@ -29,12 +29,14 @@ public:
     double getOrientation() { return theta_; }
     double getX() { return x_; }
     double getY() { return y_; }
+    int getId() { return id_; }
 
 private:
     // queue service location
     double x_, y_;
 
-    std::string id_;
+    std::string name_;
+    int id_;
 
     // queue direction
     double theta_;

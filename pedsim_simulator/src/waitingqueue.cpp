@@ -5,26 +5,35 @@
 
 WaitingQueue::WaitingQueue()
 {
+    static int staticid = 0;
+    id_ = staticid++;
+
     queueing_agents_.clear();
     wait_time_ = 30;
     time_passed_ = 0;
     theta_ = -M_PI/6;
-    id_ = "_";
+    name_ = "_";
 }
 
 WaitingQueue::WaitingQueue(const double x, const double y)
     : x_(x), y_(y)
 {
+    static int staticid = 0;
+    id_ = staticid++;
+
     queueing_agents_.clear();
     wait_time_ = 30;
     time_passed_ = 0;
     theta_ = -M_PI/6;
-    id_ = "_";
+    name_ = "_";
 }
 
-WaitingQueue::WaitingQueue(const double x, const double y, double theta, std::string id)
-    : x_(x), y_(y), theta_(theta), id_(id)
+WaitingQueue::WaitingQueue(const double x, const double y, double theta, std::string name)
+    : x_(x), y_(y), theta_(theta), name_(name)
 {
+    static int staticid = 0;
+    id_ = staticid++;
+
     queueing_agents_.clear();
     wait_time_ = 30;
     time_passed_ = 0;
@@ -55,8 +64,6 @@ void WaitingQueue::serveAgent()
 {
     if (time_passed_ >= wait_time_ && queueing_agents_.size() > 0)
     {
-        // std::cout << "Serving an agent " << std::endl;
-
         // remove top agent from queue
         Ped::Tagent* lucky_one = queueing_agents_.front();
         releaseAgent(lucky_one);

@@ -117,6 +117,7 @@ bool Scene::initialize()
     pub_agent_visuals_ = nh_.advertise<visualization_msgs::MarkerArray>("agents_markers", 0);
     pub_obstacles_ = nh_.advertise<nav_msgs::GridCells>("static_obstacles", 0);
     pub_walls_ = nh_.advertise<visualization_msgs::Marker>("walls", 0);
+    pub_queues_ = nh_.advertise<visualization_msgs::Marker>("queues", 0);
 
     // subscribers
     sub_robot_state_ = nh_.subscribe("robot_state", 1, &Scene::callbackRobotState, this);
@@ -214,6 +215,8 @@ void Scene::updateQueues()
 {
     BOOST_FOREACH(WaitingQueuePtr q, waiting_queues_)
     {
+
+        /// Add agents into queues
         BOOST_FOREACH(Ped::Tagent* a, all_agents_)
         {
 
@@ -230,8 +233,39 @@ void Scene::updateQueues()
                     }
                 }
             }
-
         }
+
+        // visualize the queues
+        visualization_msgs::Marker marker;
+        marker.header.frame_id = "world";
+        marker.header.stamp = ros::Time();
+        marker.ns = "pedsim";
+        marker.id = q->getId();
+
+        marker.color.a = 1.0;
+        marker.color.r = 0.0;
+        marker.color.g = 0.0;
+        marker.color.b = 1.0;
+
+        marker.scale.x = 1.0;
+        marker.scale.y = 1.0;
+        marker.scale.z = 1.0; 
+
+        marker.pose.position.x = q->getX();
+        marker.pose.position.y = q->getY();
+        marker.pose.position.z = marker.scale.z / 2.0;
+
+        double theta = q->getOrientation();
+        Eigen::Quaternionf q = orientation_handler_->angle2Quaternion(theta);
+
+        marker.pose.orientation.x = q.x();
+        marker.pose.orientation.y = q.y();
+        marker.pose.orientation.z = q.z();
+        marker.pose.orientation.w = q.w();
+
+        marker.type = visualization_msgs::Marker::CUBE;
+
+        pub_queues_.publish(marker);
     }
 }
 

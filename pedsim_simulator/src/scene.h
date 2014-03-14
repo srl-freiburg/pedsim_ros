@@ -132,6 +132,7 @@ private:
     ros::Publisher pub_agent_visuals_;
     ros::Publisher pub_obstacles_;
     ros::Publisher pub_walls_;
+    ros::Publisher pub_queues_;
 
     // subscribers
     ros::Subscriber sub_robot_state_;
