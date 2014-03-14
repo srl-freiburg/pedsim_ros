@@ -32,8 +32,9 @@
 #ifndef _agent_h_
 #define _agent_h_
 
-#include "ped_agent.h"
-#include "ped_vector.h"
+#include <libpedsim/ped_agent.h>
+#include <libpedsim/ped_vector.h>
+
 #include <QList>
 
 // Forward Declarations
@@ -43,13 +44,11 @@ class Waypoint;
 
 class Agent : public Ped::Tagent 
 {
-    // Constructor and Destructor
 public:
     Agent(double xIn = 0, double yIn = 0);
     virtual ~Agent();
 
-
-    // Methods
+    /// Methods
     void move(double h);
     Ped::Tvector socialForce() const;
     Ped::Tvector obstacleForce() const;
@@ -57,21 +56,13 @@ public:
     Ped::Tvector lookaheadForce(Ped::Tvector desired) const;
     Ped::Tvector myForce(Ped::Tvector desired) const;
 
-    // → Ped::Tagent Overrides/Overloads
+    /// Ped::Tagent Overrides/Overloads
 public:
     void addWaypoint(Waypoint* waypointIn);
     void setPosition(double px, double py);
     void setX(double xIn);
     void setY(double yIn);
     void setType(Ped::Tagent::AgentType t);
-
-    virtual Ped::Tagent::AgentType type() const { Ped::Tagent::gettype(); }
-
-
-    // → waypoints
-    //HACK: we need to save them here again, because Ped::Tagent doesn't give
-    //      access to them in any way
-    QList<Waypoint*> waypoints;
 };
 
 #endif

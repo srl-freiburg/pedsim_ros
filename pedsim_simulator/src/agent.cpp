@@ -1,17 +1,37 @@
-// Simulating Group Dynamics in Crowds of Pedestrians (SGDiCoP)
-// Author: Sven Wehner <mail@svenwehner.de>
-//
-// Forked from: PedSim's demo application (version 2.2).
-// (http://pedsim.silmaril.org/)
-// Copyright text:
-// 		pedsim - A microscopic pedestrian simulation system.
-// 		Copyright (c) 2003 - 2012 by Christian Gloor
+/**
+* Copyright 2014 Social Robotics Lab, University of Freiburg
+*
+* Redistribution and use in source and binary forms, with or without
+* modification, are permitted provided that the following conditions are met:
+*
+*    # Redistributions of source code must retain the above copyright
+*       notice, this list of conditions and the following disclaimer.
+*    # Redistributions in binary form must reproduce the above copyright
+*       notice, this list of conditions and the following disclaimer in the
+*       documentation and/or other materials provided with the distribution.
+*    # Neither the name of the University of Freiburg nor the names of its
+*       contributors may be used to endorse or promote products derived from
+*       this software without specific prior written permission.
+*
+* THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+* AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+* IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+* ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+* LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+* CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+* SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+* INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+* CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+* ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+* POSSIBILITY OF SUCH DAMAGE.
+*
+* \author Billy Okal <okal@cs.uni-freiburg.de>
+*/
 
 
 #include <pedsim_simulator/agent.h>
 #include <pedsim_simulator/config.h>
 #include <pedsim_simulator/waypoint.h>
-
 
 
 Agent::Agent(double xIn, double yIn)
@@ -21,48 +41,49 @@ Agent::Agent(double xIn, double yIn)
     Ped::Tagent::setType(Ped::Tagent::ADULT);
 };
 
-Agent::~Agent() {
+Agent::~Agent() 
+{
 }
 
 /// Calculates the social force. Same as in lib, but adds graphical representation
-/// \date    2012-01-17
-Ped::Tvector Agent::socialForce() const {
-    Ped::Tvector t = Tagent::socialForce();
-    return t;
+Ped::Tvector Agent::socialForce() const
+{
+    return Tagent::socialForce();
 }
 
 /// Calculates the obstacle force. Same as in lib, but adds graphical representation
-/// \date    2012-01-17
-Ped::Tvector Agent::obstacleForce() const {
-    Ped::Tvector t = Tagent::obstacleForce();
-    return t;
+Ped::Tvector Agent::obstacleForce() const 
+{
+    return Tagent::obstacleForce();
 }
 
 /// Calculates the desired force. Same as in lib, but adds graphical representation
-/// \author  chgloor
-Ped::Tvector Agent::desiredForce() {
-    Ped::Tvector t = Tagent::desiredForce();
-    return t;
+Ped::Tvector Agent::desiredForce() 
+{
+    return Tagent::desiredForce();
 }
 
 /// Calculates the look ahead force. Same as in lib, but adds graphical representation
-/// \date    2012-01-17
-Ped::Tvector Agent::lookaheadForce(Ped::Tvector desired) const {
+Ped::Tvector Agent::lookaheadForce(Ped::Tvector desired) const 
+{
     Ped::Tvector t;
-    if (CONFIG.mlLookAhead == true) {
+    if (CONFIG.mlLookAhead == true)
+	{
         t = Tagent::lookaheadForce(desired);
     }
     return t;
 }
 
-Ped::Tvector Agent::myForce(Ped::Tvector desired) const {
+Ped::Tvector Agent::myForce(Ped::Tvector desired) const 
+{
     Ped::Tvector t;
 
     return t;
 }
 
-/// move - calls the lib move and updates the graphics then
-void Agent::move(double h) {
+/// \brief Move the agents in one time step
+void Agent::move(double h) 
+{
     //TODO: add these to rosparam
     Ped::Tagent::setfactorsocialforce(CONFIG.simPedForce);
     Ped::Tagent::setfactorobstacleforce(CONFIG.simWallForce);
@@ -78,29 +99,31 @@ void Agent::move(double h) {
     Ped::Tagent::move(h);
 }
 
-void Agent::addWaypoint(Waypoint* waypointIn) {
-    // keep track of waypoints
-    waypoints.append(waypointIn);
-
+void Agent::addWaypoint(Waypoint* waypointIn) 
+{
     // call the original method
     Ped::Tagent::addWaypoint(waypointIn);
 }
 
-void Agent::setPosition(double px, double py) {
+void Agent::setPosition(double px, double py) 
+{
     // call super class' method
     Ped::Tagent::setPosition(px, py, 0);
 }
 
 
-void Agent::setX(double xIn) {
+void Agent::setX(double xIn) 
+{
     setPosition(xIn, gety());
 }
 
-void Agent::setY(double yIn) {
+void Agent::setY(double yIn)
+{
     setPosition(getx(), yIn);
 }
 
-void Agent::setType(Ped::Tagent::AgentType t) {
+void Agent::setType(Ped::Tagent::AgentType t) 
+{
     // call super class' method
     Ped::Tagent::setType(t);
 }

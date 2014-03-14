@@ -34,8 +34,8 @@
 
 #include <cstdlib>
 
-#include <ped_scene.h>
-#include <ped_tree.h>
+#include <libpedsim/ped_scene.h>
+#include <libpedsim/ped_tree.h>
 
 #include <QMap>
 #include <QTimer>
@@ -44,10 +44,10 @@
 #include <QXmlStreamReader>
 #include <QRect>
 
-#include "config.h"
-#include "agent.h"
-#include "obstacle.h"
-#include "waypoint.h"
+#include <pedsim_simulator/config.h>
+#include <pedsim_simulator/agent.h>
+#include <pedsim_simulator/obstacle.h>
+#include <pedsim_simulator/waypoint.h>
 
 #include <boost/foreach.hpp>
 #include <boost/lexical_cast.hpp>
@@ -74,8 +74,8 @@
 #include <nav_msgs/GridCells.h>
 #include <geometry_msgs/Point.h>
 
-#include "orientationhandler.h"
-#include "waitingqueue.h"
+#include <pedsim_simulator/orientationhandler.h>
+#include <pedsim_simulator/waitingqueue.h>
 
 #include <boost/random.hpp>
 #include <boost/random/normal_distribution.hpp>

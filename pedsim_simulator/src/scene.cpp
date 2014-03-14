@@ -1,3 +1,33 @@
+/**
+* Copyright 2014 Social Robotics Lab, University of Freiburg
+*
+* Redistribution and use in source and binary forms, with or without
+* modification, are permitted provided that the following conditions are met:
+*
+*    # Redistributions of source code must retain the above copyright
+*       notice, this list of conditions and the following disclaimer.
+*    # Redistributions in binary form must reproduce the above copyright
+*       notice, this list of conditions and the following disclaimer in the
+*       documentation and/or other materials provided with the distribution.
+*    # Neither the name of the University of Freiburg nor the names of its
+*       contributors may be used to endorse or promote products derived from
+*       this software without specific prior written permission.
+*
+* THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+* AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+* IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+* ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+* LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+* CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+* SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+* INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+* CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+* ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+* POSSIBILITY OF SUCH DAMAGE.
+*
+* \author Billy Okal <okal@cs.uni-freiburg.de>
+*/
+
 
 #include <pedsim_simulator/scene.h>
 
@@ -112,21 +142,21 @@ bool Scene::initialize()
     obstacle_cells_.clear();
     waiting_queues_.clear();
 
-    // setup publishers
+    /// setup publishers
     pub_all_agents_ = nh_.advertise<pedsim_msgs::AllAgentsState>("dynamic_obstacles", 0);
     pub_agent_visuals_ = nh_.advertise<visualization_msgs::MarkerArray>("agents_markers", 0);
     pub_obstacles_ = nh_.advertise<nav_msgs::GridCells>("static_obstacles", 0);
     pub_walls_ = nh_.advertise<visualization_msgs::Marker>("walls", 0);
     pub_queues_ = nh_.advertise<visualization_msgs::Marker>("queues", 0);
 
-    // subscribers
+    /// subscribers
     sub_robot_state_ = nh_.subscribe("robot_state", 1, &Scene::callbackRobotState, this);
 
-    // services hooks
+    /// services hooks
     srv_move_agent_ = nh_.advertiseService("SetAgentState", &Scene::srvMoveAgentHandler, this);
 
 
-    // load parameters
+    /// load parameters
     std::string scene_file_param;
     ros::param::param<std::string>("/simulator/scene_file", scene_file_param, "scene.xml");
 
@@ -147,7 +177,7 @@ bool Scene::initialize()
     }
 
 
-    // further objects
+    /// further objects
     orientation_handler_.reset(new OrientationHandler());
 
     return true;
@@ -719,95 +749,94 @@ void Scene::drawObstacles(float x1, float y1, float x2, float y2)
     int ddy, ddx;        // compulsory variables: the double values of dy and dx
     int dx = x2 - x1;
     int dy = y2 - y1;
-    double unit_x,unit_y;
-    unit_x=1;
-    unit_y=1;
+    double unit_x, unit_y;
+    unit_x = 1;
+    unit_y = 1;
     // POINT (y1, x1);  // first point
-    // NB the last point can't be here, because of its previous point (which has to be verified)
-    if (dy < 0)
-    {
+    // NB the last point can't be here, because of its previous point (which has
+	// to be verified)
+    if(dy < 0) 
+	{
         ystep = -unit_y;
         dy = -dy;
-    }
-    else
-    {
+    } 
+    else 
+	{
         ystep = unit_y;
     }
-    if (dx < 0)
-    {
+    if(dx < 0) 
+	{
         xstep = -unit_x;
         dx = -dx;
-    }
-    else
-    {
+    } 
+    else 
+	{
         xstep = unit_x;
     }
 
     ddy = 2 * dy;  // work with double values for full precision
     ddx = 2 * dx;
-    
-    obstacle_cells_.push_back(TLoc(x1,y1));
 
-    if (ddx >= ddy)
-    {  // first octant (0 <= slope <= 1)
+    obstacle_cells_.push_back(TLoc(x1, y1));
+
+    if(ddx >= ddy) 
+	{
+        // first octant (0 <= slope <= 1)
         // compulsory initialization (even for errorprev, needed when dx==dy)
         errorprev = error = dx;  // start in the middle of the square
-        for (i=0 ; i < dx ; i++)
-        {  // do not use the first point (already done)
+        for(i = 0 ; i < dx ; i++) 
+		{
+            // do not use the first point (already done)
             x += xstep;
             error += ddy;
-            if (error > ddx)
-            {  // increment y if AFTER the middle ( > )
+            if(error > ddx) 
+			{
+                // increment y if AFTER the middle ( > )
                 y += ystep;
                 error -= ddx;
-                // three cases (octant == right->right-top for directions below):
-                if (error + errorprev < ddx)
-                {  // bottom square also
-                    obstacle_cells_.push_back(TLoc(x,y-ystep));
-                }
-                else if (error + errorprev > ddx)
-                {
+                // three cases (octant == right->right-top for directions
+				// below):
+                if(error + errorprev < ddx) 
+				{
+                    // bottom square also
+                    obstacle_cells_.push_back(TLoc(x, y - ystep));
+                } 
+                else if(error + errorprev > ddx) 
+				{
                     // left square also
-                    obstacle_cells_.push_back(TLoc(x-xstep,y));
-                }
-                else
-                {  // corner: bottom and left squares also
-                    obstacle_cells_.push_back(TLoc(x,y-ystep));
-                    obstacle_cells_.push_back(TLoc(x-xstep,y));
+                    obstacle_cells_.push_back(TLoc(x - xstep, y));
+                } 
+                else 
+				{
+                    // corner: bottom and left squares also
+                    obstacle_cells_.push_back(TLoc(x, y - ystep));
+                    obstacle_cells_.push_back(TLoc(x - xstep, y));
 
                 }
             }
-            obstacle_cells_.push_back(TLoc(x,y));
+            obstacle_cells_.push_back(TLoc(x, y));
             errorprev = error;
         }
-    }
-    else
-    {  // the same as above
+    } else {
+        // the same as above
         errorprev = error = dy;
-        for (i=0 ; i < dy ; i++)
-        {
+        for(i = 0 ; i < dy ; i++) {
             y += ystep;
             error += ddx;
-            if (error > ddy)
-            {
+            if(error > ddy) {
                 x += xstep;
                 error -= ddy;
-                if (error + errorprev < ddy)
-                {
-                    obstacle_cells_.push_back(TLoc(x-xstep,y));
-                }
-                else if (error + errorprev > ddy)
-                {
-                    obstacle_cells_.push_back(TLoc(x,y-ystep));
-                }
-                else
-                {
-                    obstacle_cells_.push_back(TLoc(x-xstep,y));
-                    obstacle_cells_.push_back(TLoc(x,y-ystep));
+                if(error + errorprev < ddy) {
+                    obstacle_cells_.push_back(TLoc(x - xstep, y));
+                } else if(error + errorprev > ddy) {
+                    obstacle_cells_.push_back(TLoc(x, y - ystep));
+                } else {
+                    obstacle_cells_.push_back(TLoc(x - xstep, y));
+                    obstacle_cells_.push_back(TLoc(x, y - ystep));
                 }
             }
 
-            obstacle_cells_.push_back(TLoc(x,y));
+            obstacle_cells_.push_back(TLoc(x, y));
             errorprev = error;
         }
     }
