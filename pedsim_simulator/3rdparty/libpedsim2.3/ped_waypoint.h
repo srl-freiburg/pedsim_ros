@@ -28,7 +28,9 @@ namespace Ped {
         enum WaypointType 
         {
             TYPE_NORMAL = 0,
-            TYPE_POINT = 1
+            TYPE_POINT = 1,
+            TYPE_BIRTH = 2,
+            TYPE_DEATH = 3
         };
 
     public:

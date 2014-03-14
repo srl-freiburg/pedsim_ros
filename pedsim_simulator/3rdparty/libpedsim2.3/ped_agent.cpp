@@ -35,6 +35,8 @@ Ped::Tagent::Tagent() {
     hasreacheddestination = true;
     destination = NULL;
     lastdestination = NULL;
+    birth_waypoint = NULL;
+    death_waypoint = NULL;
     follow = -1;
     mlLookAhead = false;
     scene = NULL;
@@ -83,6 +85,14 @@ void Ped::Tagent::assignScene(Ped::Tscene *s) {
 /// \date    2012-01-19
 void Ped::Tagent::addWaypoint(Twaypoint *wp) {
     waypoints.push_back(wp);
+
+    if (wp->gettype() == Ped::Twaypoint::TYPE_BIRTH) {
+        birth_waypoint = wp;
+    }
+
+    if (wp->gettype() == Ped::Twaypoint::TYPE_DEATH) {
+        death_waypoint = wp;
+    }
 }
 
 

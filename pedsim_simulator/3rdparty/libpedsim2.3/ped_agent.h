@@ -110,6 +110,10 @@ namespace Ped {
         double getvy() const { return v.y; };
         double getvz() const { return v.z; };
 
+        Twaypoint* getBirthWaypoint() { return birth_waypoint; }
+        Twaypoint* getDeathWaypoint() { return death_waypoint; }
+        Twaypoint* getDestination() { return destination; }
+
         void setfactorsocialforce(double f);
         void setfactorobstacleforce(double f);
         void setfactordesiredforce(double f);
@@ -142,6 +146,9 @@ namespace Ped {
         Twaypoint* destination;                           ///< coordinates of the next destination
         Twaypoint* lastdestination;                       ///< coordinates of the last destination
         bool hasreacheddestination;                       ///< true if it has reached its destination
+
+        Twaypoint *birth_waypoint;          // used for flow generation
+        Twaypoint *death_waypoint;
 
         bool mlLookAhead;
 
