@@ -67,7 +67,7 @@ Ped::Tvector Agent::desiredForce()
 Ped::Tvector Agent::lookaheadForce(Ped::Tvector desired) const 
 {
     Ped::Tvector t;
-    if (CONFIG.mlLookAhead == true)
+    if (CONFIG.look_ahead == true)
 	{
         t = Tagent::lookaheadForce(desired);
     }
@@ -85,13 +85,13 @@ Ped::Tvector Agent::myForce(Ped::Tvector desired) const
 void Agent::move(double h) 
 {
     //TODO: add these to rosparam
-    Ped::Tagent::setfactorsocialforce(CONFIG.simPedForce);
-    Ped::Tagent::setfactorobstacleforce(CONFIG.simWallForce);
+    Ped::Tagent::setfactorsocialforce(CONFIG.factor_social_force);
+    Ped::Tagent::setfactorobstacleforce(CONFIG.factor_obstacle_force);
 
     // use SFM as local controller for the robot
     if (Tagent::gettype() == Ped::Tagent::ROBOT )
     {
-        Ped::Tagent::setfactorsocialforce(CONFIG.simPedForce);
+        Ped::Tagent::setfactorsocialforce(CONFIG.factor_social_force);
         Ped::Tagent::setfactorobstacleforce(350);
         Ped::Tagent::setfactordesiredforce(1.5);
     }

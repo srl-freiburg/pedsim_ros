@@ -77,54 +77,35 @@
 #include <pedsim_simulator/orientationhandler.h>
 #include <pedsim_simulator/waitingqueue.h>
 
-#include <boost/random.hpp>
-#include <boost/random/normal_distribution.hpp>
-#include <boost/random/uniform_real.hpp>
-#include <ctime>
-
-using namespace std;
-
-static boost::mt19937 generator; 
-
-inline double randHeight()
-{
-    // generator.seed(static_cast<unsigned int>(42));
-    boost::normal_distribution<> nd(1.70, 0.30);
-
-    boost::variate_generator<boost::mt19937&, boost::normal_distribution<> > var_nor(generator, nd);
-
-    return var_nor();
-}
-
-inline double coinFlip()
-{
-    boost::uniform_real<> uni_dist(0,1);
-    boost::variate_generator<boost::mt19937&, boost::uniform_real<> > uni(generator, uni_dist);
-
-    return uni();
-}
-
+#include <pedsim_simulator/utilities.h>
 
 
 class Scene : public Ped::Tscene
 {
 public:
-    Scene(const ros::NodeHandle& node);
-    Scene( double left, double up, double width, double height, const ros::NodeHandle& node );
+    Scene(const ros::NodeHandle &node);
+    Scene(double left, double up, 
+		  double width, double height, 
+		  const ros::NodeHandle &node);
     ~Scene() { clear(); waiting_queues_.clear(); }
 
     void clear();
-    std::set<const Ped::Tagent*> getNeighbors(double x, double y, double maxDist);
+    std::set<const Ped::Tagent *> getNeighbors(
+		double x, double y, double maxDist);
 
     /// overriding methods
-    void addAgent(Ped::Tagent *a) { Ped::Tscene::addAgent(a); }
-    void addObstacle(Ped::Tobstacle *o) { Ped::Tscene::addObstacle(o); }
-    void cleanup() { Ped::Tscene::cleanup(); }
-    void moveAgents(double h) { Ped::Tscene::moveAgents(h); }
+    void addAgent(Ped::Tagent *a); 
+    void addObstacle(Ped::Tobstacle *o); 
+    void cleanup();
+    void moveAgents(double h);
+	
+	/// creating artificial flows
     void spawnKillAgents();
 
     /// service handler for moving agents
-    bool srvMoveAgentHandler(pedsim_srvs::SetAgentState::Request&, pedsim_srvs::SetAgentState::Response& );
+    bool srvMoveAgentHandler(
+		pedsim_srvs::SetAgentState::Request &,
+		pedsim_srvs::SetAgentState::Response &);
 
     /// publisher helpers
     void publishAgentStatus();
@@ -134,23 +115,24 @@ public:
     void updateQueues();
 
     /// subscriber helpers
-    void callbackRobotState(const pedsim_msgs::AgentState::ConstPtr& msg);
+    void callbackRobotState(const pedsim_msgs::AgentState::ConstPtr &msg);
 
     /// helpers related to parsing scene files
-    inline bool readFromFile(const QString& filename);
-    inline void processData(QByteArray& data);
+    inline bool readFromFile(const QString &filename);
+    inline void processData(QByteArray &data);
     inline void drawObstacles(float x1, float y1, float x2, float y2);
 
     /// simulaition management
     bool initialize();
+	void loadConfigParameters();
     void runSimulation();
     void moveAllAgents();
     void cleanupItems();
 
 private:
     // robot and agents
-    Ped::Tagent* robot_;
-    std::vector<Ped::Tagent*> all_agents_;
+    Ped::Tagent *robot_;
+    std::vector<Ped::Tagent *> all_agents_;
 
     ros::NodeHandle nh_;
 
@@ -168,26 +150,19 @@ private:
     ros::ServiceServer srv_move_agent_;
 
     QXmlStreamReader xmlReader;
-    QList<Agent*> currentAgents;
-    QList<Obstacle*> obstacles;
-    QMap<QString, Waypoint*> waypoints;
+    QList<Agent *> currentAgents;
+    QList<Obstacle *> obstacles;
+    QMap<QString, Waypoint *> waypoints;
     size_t timestep_;
 
     // obstacle cell locations
-    std::vector<TLoc> obstacle_cells_;
+    std::vector<Location> obstacle_cells_;
 
     /// handling quaternions for orientations
     OrientationHandlerPtr orientation_handler_;
 
     /// waiting queues in the scene
     std::vector<WaitingQueuePtr> waiting_queues_;
-
-	
-	/// \brief Euclidean distance between two points
-    inline double distance(double x1, double x2, double y1, double y2)
-    {
-        return sqrt( (x1-y1)*(x1-y1) + (x2-y2)*(x2-y2) );
-    }
 };
 
 

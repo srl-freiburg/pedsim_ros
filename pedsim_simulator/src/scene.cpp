@@ -31,14 +31,15 @@
 
 #include <pedsim_simulator/scene.h>
 
-Scene::Scene(const ros::NodeHandle& node)  
+Scene::Scene(const ros::NodeHandle &node)
     : Ped::Tscene(), nh_(node)
 {
     // useful for keeping track of agents in the cleaning process
     tree = new Ped::Ttree(this, 0, -20, -20, 500, 500);
 }
 
-Scene::Scene( double left, double up, double width, double height, const ros::NodeHandle& node )
+Scene::Scene(double left, double up, double width, double height, const
+             ros::NodeHandle &node)
     : Ped::Tscene(left, up, width, height), nh_(node)
 {
     // useful for keeping track of agents in the cleaning process
@@ -46,21 +47,19 @@ Scene::Scene( double left, double up, double width, double height, const ros::No
 }
 
 
-bool Scene::srvMoveAgentHandler(pedsim_srvs::SetAgentState::Request& req, pedsim_srvs::SetAgentState::Response& res)
+bool Scene::srvMoveAgentHandler(pedsim_srvs::SetAgentState::Request &req,
+                                pedsim_srvs::SetAgentState::Response &res)
 {
     pedsim_msgs::AgentState state = req.state;
 
     double vx = state.velocity.x;
     double vy = state.velocity.y;
 
-    if (robot_->getid() == state.id)  
-    {
-        robot_->setvx( vx );
-        robot_->setvy( vy );
-        robot_->setVmax( sqrt( vx * vx + vy * vy ) );
-    }
-    else
-    {
+    if (robot_->getid() == state.id) {
+        robot_->setvx(vx);
+        robot_->setvy(vy);
+        robot_->setVmax(sqrt(vx * vx + vy * vy));
+    } else {
         res.finished = false;
     }
 
@@ -71,46 +70,39 @@ bool Scene::srvMoveAgentHandler(pedsim_srvs::SetAgentState::Request& req, pedsim
 
 
 
-void Scene::cleanupItems() 
+void Scene::cleanupItems()
 {
     cleanup();
 }
 
-void Scene::clear() 
+void Scene::clear()
 {
     all_agents_.clear();
 
-    BOOST_FOREACH(Waypoint* waypoint, waypoints)
-        delete waypoint;
+    BOOST_FOREACH(Waypoint * waypoint, waypoints)
+    delete waypoint;
     waypoints.clear();
 
-    BOOST_FOREACH(Obstacle* obs, obstacles)
-        delete obs;
+    BOOST_FOREACH(Obstacle * obs, obstacles)
+    delete obs;
     obstacles.clear();
 }
 
 
-/// \brief Run the main mode 
+/// \brief Run the main mode
 /// The core of the application
-void Scene::runSimulation() 
+void Scene::runSimulation()
 {
     /// setup the agents and the robot
     all_agents_ = getAllAgents();
-
-    for (vector<Ped::Tagent*>::const_iterator iter = all_agents_.begin(); iter != all_agents_.end(); ++iter)
-    {
-        Ped::Tagent *a = (*iter);
-        // ROS_INFO("Searching for robot");
-
+    BOOST_FOREACH(Ped::Tagent * a, all_agents_) {
         if (a->gettype() == Ped::Tagent::ROBOT)
             robot_ = a;
     }
 
-    ros::Rate r( 1 /  CONFIG.simh );
-    // ros::Rate r( 15 ); // 15 Hz seems to be good visually
+    ros::Rate r(1 /  CONFIG.simulation_step); // 10 Hz
 
-    while (ros::ok())
-    {
+    while (ros::ok()) {
         moveAllAgents();
         // spawnKillAgents();
 
@@ -143,39 +135,38 @@ bool Scene::initialize()
     waiting_queues_.clear();
 
     /// setup publishers
-    pub_all_agents_ = nh_.advertise<pedsim_msgs::AllAgentsState>("dynamic_obstacles", 0);
-    pub_agent_visuals_ = nh_.advertise<visualization_msgs::MarkerArray>("agents_markers", 0);
-    pub_obstacles_ = nh_.advertise<nav_msgs::GridCells>("static_obstacles", 0);
-    pub_walls_ = nh_.advertise<visualization_msgs::Marker>("walls", 0);
-    pub_queues_ = nh_.advertise<visualization_msgs::Marker>("queues", 0);
+    pub_all_agents_ = nh_.advertise<pedsim_msgs::AllAgentsState> (
+                          "dynamic_obstacles", 0);
+    pub_agent_visuals_ = nh_.advertise<visualization_msgs::MarkerArray> (
+                             "agents_markers", 0);
+    pub_obstacles_ = nh_.advertise<nav_msgs::GridCells> ("static_obstacles", 0);
+    pub_walls_ = nh_.advertise<visualization_msgs::Marker> ("walls", 0);
+    pub_queues_ = nh_.advertise<visualization_msgs::Marker> ("queues", 0);
 
     /// subscribers
-    sub_robot_state_ = nh_.subscribe("robot_state", 1, &Scene::callbackRobotState, this);
+    sub_robot_state_ = nh_.subscribe("robot_state", 1,
+                                     &Scene::callbackRobotState, this);
 
     /// services hooks
-    srv_move_agent_ = nh_.advertiseService("SetAgentState", &Scene::srvMoveAgentHandler, this);
+    srv_move_agent_ = nh_.advertiseService("SetAgentState",
+                                           &Scene::srvMoveAgentHandler, this);
 
 
     /// load parameters
     std::string scene_file_param;
-    ros::param::param<std::string>("/simulator/scene_file", scene_file_param, "scene.xml");
-
-    double cell_size;
-    ros::param::param<double>("/simulator/cell_size", cell_size, 1.0);
-
-    CONFIG.width = cell_size;
-    CONFIG.height = cell_size;
-
-    ROS_DEBUG("Loading from %s scene file", scene_file_param.c_str());
-
+    ros::param::param<std::string> ("/simulator/scene_file", scene_file_param,
+                                    "scene.xml");
     // load scenario file
     QString scenefile = QString::fromStdString(scene_file_param);
-    if (!readFromFile(scenefile)) 
-    {
+    if (!readFromFile(scenefile)) {
         ROS_WARN("Could not load the scene file, check paths");
         return false;
     }
 
+    ROS_DEBUG("Loading from %s scene file", scene_file_param.c_str());
+
+    /// load the remaining parameters
+    loadConfigParameters();
 
     /// further objects
     orientation_handler_.reset(new OrientationHandler());
@@ -184,57 +175,63 @@ bool Scene::initialize()
 }
 
 
+void Scene::loadConfigParameters()
+{
+    double cell_size;
+    ros::param::param<double> ("/simulator/cell_size", cell_size, 1.0);
+    CONFIG.cell_width = cell_size;
+    CONFIG.cell_height = cell_size;
+
+    double robot_wait_time;
+    ros::param::param<double> ("/pedsim/move_robot", robot_wait_time, 100.0);
+    CONFIG.robot_wait_time = robot_wait_time;
+
+    double teleop_state;
+    ros::param::param<double> ("/pedsim/teleop_state", teleop_state, 0.0);
+    CONFIG.robot_mode = static_cast<RobotState>(teleop_state);
+}
+
+
 void Scene::moveAllAgents()
 {
     timestep_++;
 
     /// serve agents in queues (if any)
-    BOOST_FOREACH(WaitingQueuePtr q, waiting_queues_)
-    {
+    BOOST_FOREACH(WaitingQueuePtr q, waiting_queues_) {
         q->serveAgent();
     }
 
     // Make the robot wait
-    double robot_wait_time;
-    ros::param::param<double>("/pedsim/move_robot", robot_wait_time, 100.0);
-
-    if ((double)timestep_ >= robot_wait_time)
+    if ((double) timestep_ >= CONFIG.robot_wait_time)
         robot_->setMobile();
     else
         robot_->setStationary();
 
     // move the agents by social force
-    Ped::Tscene::moveAgents(CONFIG.simh);
+    Ped::Tscene::moveAgents(CONFIG.simulation_step);
 }
 
 
 
-void Scene::callbackRobotState(const pedsim_msgs::AgentState::ConstPtr& msg)
+void Scene::callbackRobotState(const pedsim_msgs::AgentState::ConstPtr &msg)
 {
     double vx = msg->velocity.x;
     double vy = msg->velocity.y;
-    
-    double teleop_state;
-    ros::param::param<double>("/pedsim/teleop_state", teleop_state, 0.0);
 
-    if (teleop_state > 0.0)
+    if (CONFIG.robot_mode == TELEOPERATION)
         robot_->setteleop(true);
-    
-    if (robot_->gettype() == msg->type)  
-    {
 
-        if (robot_->getteleop() == false)
-        {
-            robot_->setvx( vx );
-            robot_->setvy( vy );
+    if (robot_->gettype() == msg->type) {
+
+        if (robot_->getteleop() == false) {
+            robot_->setvx(vx);
+            robot_->setvy(vy);
             // robot_->setVmax( 1.34 );
-            robot_->setVmax( sqrt( vx * vx + vy * vy ) );
-        } 
-        else 
-        {
-            robot_->setvx( vx );
-            robot_->setvy( vy );
-            robot_->setVmax( sqrt( vx * vx + vy * vy ) );
+            robot_->setVmax(sqrt(vx * vx + vy * vy));
+        } else {
+            robot_->setvx(vx);
+            robot_->setvy(vy);
+            robot_->setVmax(sqrt(vx * vx + vy * vy));
             // robot_->setVmax( 1.5 );
         }
     }
@@ -243,21 +240,16 @@ void Scene::callbackRobotState(const pedsim_msgs::AgentState::ConstPtr& msg)
 
 void Scene::updateQueues()
 {
-    BOOST_FOREACH(WaitingQueuePtr q, waiting_queues_)
-    {
-
+    BOOST_FOREACH(WaitingQueuePtr q, waiting_queues_) {
         /// Add agents into queues
-        BOOST_FOREACH(Ped::Tagent* a, all_agents_)
-        {
+        BOOST_FOREACH(Ped::Tagent * a, all_agents_) {
+            if (a->gettype() != Ped::Tagent::ROBOT) {
+                if (q->agentInQueue(a) == false) {
+                    double d = distance(
+                                   q->getX(), q->getY(),
+                                   a->getx(), a->gety());
 
-            if (a->gettype() != Ped::Tagent::ROBOT)
-            {
-                if (q->agentInQueue(a) == false )
-                {
-                    double d = distance(q->getX(), q->getY(), a->getx(), a->gety());
-
-                    if (d < 4.5 && coinFlip() > 0.5 )
-                    {
+                    if (d < 4.5 && coinFlip() > 0.5) {
                         // ROS_INFO("Call to enque agent");
                         q->enqueueAgent(a);
                     }
@@ -279,7 +271,7 @@ void Scene::updateQueues()
 
         marker.scale.x = 1.0;
         marker.scale.y = 1.0;
-        marker.scale.z = 1.0; 
+        marker.scale.z = 1.0;
 
         marker.pose.position.x = q->getX();
         marker.pose.position.y = q->getY();
@@ -310,10 +302,7 @@ void Scene::publishAgentStatus()
     all_header.stamp = ros::Time::now();
     all_status.header = all_header;
 
-    for (vector<Ped::Tagent*>::const_iterator iter = all_agents_.begin(); iter != all_agents_.end(); ++iter) 
-    {
-        Ped::Tagent *a = (*iter);
-
+    BOOST_FOREACH(Ped::Tagent * a, all_agents_) {
         pedsim_msgs::AgentState state;
         std_msgs::Header agent_header;
         agent_header.stamp = ros::Time::now();
@@ -343,21 +332,17 @@ void Scene::publishAgentVisuals()
     // minor optimization with arrays for speedup
     visualization_msgs::MarkerArray marker_array;
 
-    for (vector<Ped::Tagent*>::const_iterator iter = all_agents_.begin(); iter != all_agents_.end(); ++iter)
-    {
-        Ped::Tagent *a = (*iter);
-
+    BOOST_FOREACH(Ped::Tagent * a, all_agents_) {
         visualization_msgs::Marker marker;
         marker.header.frame_id = "world";
         marker.header.stamp = ros::Time();
         marker.ns = "pedsim";
         marker.id = a->getid();
 
-        if (a->gettype() == robot_->gettype()) 
-        {
+        if (a->gettype() == robot_->gettype()) {
             marker.type = visualization_msgs::Marker::MESH_RESOURCE;
-            marker.mesh_resource = 
-              "package://pedsim_simulator/images/darylbot_rotated_shifted.dae";
+            marker.mesh_resource =
+"package://pedsim_simulator/images/darylbot_rotated_shifted.dae";
             marker.color.a = 1.0;
             marker.color.r = 0.5;
             marker.color.g = 1.0;
@@ -368,13 +353,10 @@ void Scene::publishAgentVisuals()
             marker.scale.z = 1.0;
 
             marker.pose.position.z = marker.scale.z / 2.0;
-        }
-        else
-        {
+        } else {
             marker.type = visualization_msgs::Marker::CUBE;
-            
-            if (a->gettype() == Ped::Tagent::ADULT)
-            {
+
+            if (a->gettype() == Ped::Tagent::ADULT) {
                 marker.color.a = 1.0;
                 marker.color.r = 0.0;
                 marker.color.g = 1.0;
@@ -383,9 +365,7 @@ void Scene::publishAgentVisuals()
                 marker.scale.x = 0.2;
                 marker.scale.y = 0.5;
                 marker.scale.z = 1.75; //randHeight();
-            }
-            else
-            {
+            } else {
                 marker.color.a = 1.0;
                 marker.color.r = 1.0;
                 marker.color.g = 0.0;
@@ -402,31 +382,29 @@ void Scene::publishAgentVisuals()
         marker.action = 0;  // add or modify
         marker.pose.position.x = a->getx();
         marker.pose.position.y = a->gety();
-       
 
-        if (a->getvx() != 0.0) 
-        {
+
+        if (a->getvx() != 0.0) {
             // construct the orientation quaternion
             double theta = atan2(a->getvy(), a->getvx());
-            Eigen::Quaternionf q = orientation_handler_->angle2Quaternion(theta);
+            Eigen::Quaternionf q = orientation_handler_->angle2Quaternion(theta
+                                                                         );
 
             marker.pose.orientation.x = q.x();
             marker.pose.orientation.y = q.y();
             marker.pose.orientation.z = q.z();
             marker.pose.orientation.w = q.w();
-        }
-        else
-        {
+        } else {
             marker.pose.orientation.x = 0.0;
             marker.pose.orientation.y = 0.0;
             marker.pose.orientation.z = 0.0;
             marker.pose.orientation.w = 1.0;
         }
-        marker_array.markers.push_back( marker );
+        marker_array.markers.push_back(marker);
     }
 
     // publish the marker array
-    pub_agent_visuals_.publish( marker_array );
+    pub_agent_visuals_.publish(marker_array);
 }
 
 
@@ -434,17 +412,13 @@ void Scene::publishObstacles()
 {
     nav_msgs::GridCells obstacles;
     obstacles.header.frame_id = "world";
-    obstacles.cell_width = CONFIG.width;
-    obstacles.cell_height = CONFIG.height;
+    obstacles.cell_width = CONFIG.cell_width;
+    obstacles.cell_height = CONFIG.cell_height;
 
-    double cell_size;
-    ros::param::param<double>("/simulator/cell_size", cell_size, 1.0);
-
-    std::vector<TLoc>::const_iterator it = obstacle_cells_.begin();
-    while( it != obstacle_cells_.end())
-    {
+    std::vector<Location>::const_iterator it = obstacle_cells_.begin();
+    while (it != obstacle_cells_.end()) {
         geometry_msgs::Point p;
-        TLoc loc = (*it);
+        Location loc = (*it);
         // p.x = loc.x + (cell_size/2.0f);
         // p.y = loc.y + (cell_size/2.0f);
         p.x = loc.x;
@@ -461,9 +435,6 @@ void Scene::publishObstacles()
 
 void Scene::publishWalls()
 {
-    double cell_size;
-    ros::param::param<double>("/simulator/cell_size", cell_size, 1.0);
-
     visualization_msgs::Marker marker;
     marker.header.frame_id = "world";
     marker.header.stamp = ros::Time();
@@ -477,17 +448,16 @@ void Scene::publishWalls()
 
     marker.scale.x = 1.0;
     marker.scale.y = 1.0;
-    marker.scale.z = 3.0; 
+    marker.scale.z = 3.0;
 
     marker.pose.position.z = marker.scale.z / 2.0;
 
     marker.type = visualization_msgs::Marker::CUBE_LIST;
 
-    std::vector<TLoc>::const_iterator it = obstacle_cells_.begin();
-    while( it != obstacle_cells_.end())
-    {
+    std::vector<Location>::const_iterator it = obstacle_cells_.begin();
+    while (it != obstacle_cells_.end()) {
         geometry_msgs::Point p;
-        TLoc loc = (*it);
+        Location loc = (*it);
         // p.x = loc.x + (cell_size/2.0f);
         // p.y = loc.y + (cell_size/2.0f);
         p.x = loc.x;
@@ -504,91 +474,85 @@ void Scene::publishWalls()
 
 
 
-void Scene::spawnKillAgents() 
+void Scene::spawnKillAgents()
 {
-    for (vector<Ped::Tagent*>::const_iterator iter = all_agents_.begin(); iter != all_agents_.end(); ++iter) 
-    {
+    for (vector<Ped::Tagent *>::const_iterator iter = all_agents_.begin();
+            iter != all_agents_.end(); ++iter) {
         Ped::Tagent *a = (*iter);
         double ax = a->getx();
         double ay = a->gety();
 
-  
-        if (a->gettype() != 2 && timestep_ > 10) 
-        {
-            if (a->getDestination()->gettype() == Ped::Twaypoint::TYPE_DEATH)
-            {
-                // get the agents first ever waypoint and move it there to start over
-                Ped::Twaypoint* wp = a->getBirthWaypoint();
-                Ped::Twaypoint* wc = a->getDeathWaypoint();
+        if (a->gettype() != 2 && timestep_ > 10) {
+            if (a->getDestination()->gettype() == Ped::Twaypoint::TYPE_DEATH) {
+                Ped::Twaypoint *wp = a->getBirthWaypoint();
+                Ped::Twaypoint *wc = a->getDeathWaypoint();
 
                 double wx = wc->getx();
                 double wy = wc->gety();
 
-                if (sqrt( pow(ax-wx, 2.0) + pow(ay-wy, 2.0) )  <= ((wc->getr())) ) 
-                {
-                // if (a->hasreacheddestination) {
+                if (sqrt(pow(ax - wx, 2.0) + pow(ay - wy, 2.0))  <= ((
+                            wc->getr()))) {
+                    // if (a->hasreacheddestination) {
                     double randomizedX = wp->getx();
                     double randomizedY = wp->gety();
                     double dx = wp->getr();
                     double dy = wp->getr();
 
-                    randomizedX += qrand()/(double)RAND_MAX * dx - dx/2;
-                    randomizedY += qrand()/(double)RAND_MAX * dy - dy/2;
+                    randomizedX += qrand() / (double) RAND_MAX * dx - dx / 2;
+                    randomizedY += qrand() / (double) RAND_MAX * dy - dy / 2;
 
                     a->setPosition(randomizedX, randomizedY, 0);
                     moveAgent(a);
                 }
             }
 
-            if (a->getDestination()->gettype() == Ped::Twaypoint::TYPE_BIRTH)
-            {
-                // get the agents first ever waypoint and move it there to start over
-                Ped::Twaypoint* wp = a->getDeathWaypoint();
-                Ped::Twaypoint* wc = a->getBirthWaypoint();
+            if (a->getDestination()->gettype() == Ped::Twaypoint::TYPE_BIRTH) {
+                Ped::Twaypoint *wp = a->getDeathWaypoint();
+                Ped::Twaypoint *wc = a->getBirthWaypoint();
 
                 double wx = wc->getx();
                 double wy = wc->gety();
-                
-                if (sqrt( pow(ax-wx, 2.0) + pow(ay-wy, 2.0) ) <= ((wc->getr()))) 
-                {
-                // if (a->hasreacheddestination) {
+
+                if (sqrt(pow(ax - wx, 2.0) + pow(ay - wy, 2.0)) <= ((
+                            wc->getr()))) {
+                    // if (a->hasreacheddestination) {
                     double randomizedX = wp->getx();
                     double randomizedY = wp->gety();
                     double dx = wp->getr();
                     double dy = wp->getr();
 
-                    randomizedX += qrand()/(double)RAND_MAX * dx - dx/2;
-                    randomizedY += qrand()/(double)RAND_MAX * dy - dy/2;
+                    randomizedX += qrand() / (double) RAND_MAX * dx - dx / 2;
+                    randomizedY += qrand() / (double) RAND_MAX * dy - dy / 2;
 
                     a->setPosition(randomizedX, randomizedY, 0);
                     moveAgent(a);
                 }
             }
 
-        }   
-  
+        }
+
     }
 }
 
-std::set<const Ped::Tagent*> Scene::getNeighbors(double x, double y, double maxDist)
+std::set<const Ped::Tagent *> Scene::getNeighbors(double x, double y, double
+        maxDist)
 {
-    std::set<const Ped::Tagent*> potentialNeighbours = Ped::Tscene::getNeighbors(x, y, maxDist);
+    std::set<const Ped::Tagent *> potentialNeighbours =
+        Ped::Tscene::getNeighbors(
+            x, y, maxDist);
 
     // filter according to euclidean distance
-    std::set<const Ped::Tagent*>::const_iterator agentIter = potentialNeighbours.begin();
-    while(agentIter != potentialNeighbours.end())
-    {
+    std::set<const Ped::Tagent *>::const_iterator agentIter =
+        potentialNeighbours.begin();
+    while (agentIter != potentialNeighbours.end()) {
         double aX = (*agentIter)->getx();
         double aY = (*agentIter)->gety();
-        double distance = sqrt((x-aX)*(x-aX) + (y-aY)*(y-aY));
+        double distance = sqrt((x - aX) * (x - aX) + (y - aY) * (y - aY));
 
         // remove distant neighbors
-        if(distance > maxDist) 
-        {
+        if (distance > maxDist) {
             potentialNeighbours.erase(agentIter++);
-        } 
-        else 
-        {
+        } else {
             ++agentIter;
         }
     }
@@ -597,19 +561,17 @@ std::set<const Ped::Tagent*> Scene::getNeighbors(double x, double y, double maxD
 }
 
 
-bool Scene::readFromFile(const QString& filename) 
+bool Scene::readFromFile(const QString &filename)
 {
     // open file
     QFile file(filename);
-    if(!file.open(QIODevice::ReadOnly | QIODevice::Text)) 
-    {
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
         ROS_WARN("Couldn't open scenario file!");
         return false;
     }
 
     // read input
-    while(!file.atEnd()) 
-    {
+    while (!file.atEnd()) {
         QByteArray line = file.readLine();
         processData(line);
     }
@@ -620,116 +582,114 @@ bool Scene::readFromFile(const QString& filename)
 
 
 /// Called for each line in the file
-void Scene::processData(QByteArray& data) 
+void Scene::processData(QByteArray &data)
 {
     // TODO - switch to tinyxml for reading in the scene files
 
     xmlReader.addData(data);
 
-    while(!xmlReader.atEnd()) 
-    {
+    while (!xmlReader.atEnd()) {
         xmlReader.readNext();
-        if(xmlReader.isStartElement()) 
-        {
+        if (xmlReader.isStartElement()) {
             // start reading elements
-            if ((xmlReader.name() == "scenario") || (xmlReader.name() == "welcome")) 
-            {
+            if ((xmlReader.name() == "scenario") || (xmlReader.name() ==
+                    "welcome")) {
                 // nothing to do
                 ROS_DEBUG("Starting to read elements");
-            }
-            else if (xmlReader.name() == "obstacle") 
-            {
-                double x1 = xmlReader.attributes().value("x1").toString().toDouble();
-                double y1 = xmlReader.attributes().value("y1").toString().toDouble();
-                double x2 = xmlReader.attributes().value("x2").toString().toDouble();
-                double y2 = xmlReader.attributes().value("y2").toString().toDouble();
-                Obstacle* obs = new Obstacle(x1, y1, x2, y2);
+            } else if (xmlReader.name() == "obstacle") {
+                double x1 = xmlReader.attributes().value("x1"
+                                                        ).toString().toDouble();
+                double y1 = xmlReader.attributes().value("y1"
+                                                        ).toString().toDouble();
+                double x2 = xmlReader.attributes().value("x2"
+                                                        ).toString().toDouble();
+                double y2 = xmlReader.attributes().value("y2"
+                                                        ).toString().toDouble();
+                Obstacle *obs = new Obstacle(x1, y1, x2, y2);
                 this->addObstacle(obs);
 
                 // fill the obstacle cells
                 drawObstacles(x1, y1, x2, y2);
-            }
-            else if (xmlReader.name() == "queue")
-            {
+            } else if (xmlReader.name() == "queue") {
                 QString id = xmlReader.attributes().value("id").toString();
-                double x = xmlReader.attributes().value("x").toString().toDouble();
-                double y = xmlReader.attributes().value("y").toString().toDouble();
-                double theta = xmlReader.attributes().value("direction").toString().toDouble();
+                double x = xmlReader.attributes().value("x"
+                                                       ).toString().toDouble();
+                double y = xmlReader.attributes().value("y"
+                                                       ).toString().toDouble();
+                double theta = xmlReader.attributes().value("direction"
+
+
+                                                          
+).toString().toDouble();
 
                 WaitingQueuePtr q;
                 q.reset(new WaitingQueue(x, y, theta, id.toStdString()));
                 waiting_queues_.push_back(q);
 
                 ROS_INFO("Added queue at: (%f, %f)", x, y);
-            }
-            else if (xmlReader.name() == "waypoint") 
-            {
+            } else if (xmlReader.name() == "waypoint") {
                 // TODO - add an explicit waypoint type
                 QString id = xmlReader.attributes().value("id").toString();
-                double x = xmlReader.attributes().value("x").toString().toDouble();
-                double y = xmlReader.attributes().value("y").toString().toDouble();
-                double r = xmlReader.attributes().value("r").toString().toDouble();
+                double x = xmlReader.attributes().value("x"
+                                                       ).toString().toDouble();
+                double y = xmlReader.attributes().value("y"
+                                                       ).toString().toDouble();
+                double r = xmlReader.attributes().value("r"
+                                                       ).toString().toDouble();
 
-                Waypoint* w = new Waypoint(id, x, y, r);
+                Waypoint *w = new Waypoint(id, x, y, r);
 
-                if (boost::starts_with(id, "start")) 
-                {
+                if (boost::starts_with(id, "start")) {
                     w->settype(Ped::Twaypoint::TYPE_BIRTH);
                     ROS_DEBUG("adding a birth waypoint");
                 }
 
-                if (boost::starts_with(id, "stop")) 
-                {
+                if (boost::starts_with(id, "stop")) {
                     w->settype(Ped::Twaypoint::TYPE_DEATH);
                     ROS_DEBUG("adding a death waypoint");
                 }
 
                 this->waypoints[id] = w;
-            }
-            else if (xmlReader.name() == "agent") 
-            {
-                double x = xmlReader.attributes().value("x").toString().toDouble();
-                double y = xmlReader.attributes().value("y").toString().toDouble();
-                int n = xmlReader.attributes().value("n").toString().toDouble();
-                double dx = xmlReader.attributes().value("dx").toString().toDouble();
-                double dy = xmlReader.attributes().value("dy").toString().toDouble();
-                int type = xmlReader.attributes().value("type").toString().toInt();
-                for (int i=0; i<n; i++) 
-                {
-                    Agent* a = new Agent();
+            } else if (xmlReader.name() == "agent") {
+                double x = xmlReader.attributes().value("x"
+                                                       ).toString().toDouble();
+                double y = xmlReader.attributes().value("y"
+                                                       ).toString().toDouble();
+                int n = xmlReader.attributes().value("n"
+                                                    ).toString().toDouble();
+                double dx = xmlReader.attributes().value("dx"
+                                                        ).toString().toDouble();
+                double dy = xmlReader.attributes().value("dy"
+                                                        ).toString().toDouble();
+                int type = xmlReader.attributes().value("type"
+                                                       ).toString().toInt();
+                for (int i = 0; i < n; i++) {
+                    Agent *a = new Agent();
 
                     double randomizedX = x;
                     double randomizedY = y;
                     // handle dx=0 or dy=0 cases
-                    if(dx != 0)
-                        randomizedX += rand()/(double)RAND_MAX * dx - dx/2;
-                    if(dy != 0)
-                        randomizedY += rand()/(double)RAND_MAX * dy - dy/2;
+                    if (dx != 0)
+                        randomizedX += rand() / (double) RAND_MAX * dx - dx / 2;
+                    if (dy != 0)
+                        randomizedY += rand() / (double) RAND_MAX * dy - dy / 2;
                     a->setPosition(randomizedX, randomizedY);
                     a->setType(static_cast<Ped::Tagent::AgentType>(type));
                     this->addAgent(a);
                     currentAgents.append(a);
                 }
-            }
-            else if (xmlReader.name() == "addwaypoint") 
-            {
+            } else if (xmlReader.name() == "addwaypoint") {
                 QString id = xmlReader.attributes().value("id").toString();
-                // add waypoints to current agents, not just those of the current <agent> element
-                BOOST_FOREACH(Agent* a, currentAgents)
-                {
+                // add waypoints to current agents
+                BOOST_FOREACH(Agent * a, currentAgents) {
                     a->addWaypoint(this->waypoints[id]);
                 }
-            }
-            else 
-            {
+            } else {
                 // inform the user about invalid elements
                 ROS_WARN("Unknown element");
             }
-        }
-        else if(xmlReader.isEndElement()) 
-        {
-            if (xmlReader.name() == "agent") 
-            {
+        } else if (xmlReader.isEndElement()) {
+            if (xmlReader.name() == "agent") {
                 currentAgents.clear();
             }
         }
@@ -754,89 +714,75 @@ void Scene::drawObstacles(float x1, float y1, float x2, float y2)
     unit_y = 1;
     // POINT (y1, x1);  // first point
     // NB the last point can't be here, because of its previous point (which has
-	// to be verified)
-    if(dy < 0) 
-	{
+    // to be verified)
+    if (dy < 0) {
         ystep = -unit_y;
         dy = -dy;
-    } 
-    else 
-	{
+    } else {
         ystep = unit_y;
     }
-    if(dx < 0) 
-	{
+    if (dx < 0) {
         xstep = -unit_x;
         dx = -dx;
-    } 
-    else 
-	{
+    } else {
         xstep = unit_x;
     }
 
     ddy = 2 * dy;  // work with double values for full precision
     ddx = 2 * dx;
 
-    obstacle_cells_.push_back(TLoc(x1, y1));
+    obstacle_cells_.push_back(Location(x1, y1));
 
-    if(ddx >= ddy) 
-	{
+    if (ddx >= ddy) {
         // first octant (0 <= slope <= 1)
         // compulsory initialization (even for errorprev, needed when dx==dy)
         errorprev = error = dx;  // start in the middle of the square
-        for(i = 0 ; i < dx ; i++) 
-		{
+        for (i = 0 ; i < dx ; i++) {
             // do not use the first point (already done)
             x += xstep;
             error += ddy;
-            if(error > ddx) 
-			{
+            if (error > ddx) {
                 // increment y if AFTER the middle ( > )
                 y += ystep;
                 error -= ddx;
                 // three cases (octant == right->right-top for directions
-				// below):
-                if(error + errorprev < ddx) 
-				{
+                // below):
+                if (error + errorprev < ddx) {
                     // bottom square also
-                    obstacle_cells_.push_back(TLoc(x, y - ystep));
-                } 
-                else if(error + errorprev > ddx) 
-				{
+                    obstacle_cells_.push_back(Location(x, y - ystep));
+                } else if (error + errorprev > ddx) {
                     // left square also
-                    obstacle_cells_.push_back(TLoc(x - xstep, y));
-                } 
-                else 
-				{
+                    obstacle_cells_.push_back(Location(x - xstep, y));
+                } else {
                     // corner: bottom and left squares also
-                    obstacle_cells_.push_back(TLoc(x, y - ystep));
-                    obstacle_cells_.push_back(TLoc(x - xstep, y));
+                    obstacle_cells_.push_back(Location(x, y - ystep));
+                    obstacle_cells_.push_back(Location(x - xstep, y));
 
                 }
             }
-            obstacle_cells_.push_back(TLoc(x, y));
+            obstacle_cells_.push_back(Location(x, y));
             errorprev = error;
         }
     } else {
         // the same as above
         errorprev = error = dy;
-        for(i = 0 ; i < dy ; i++) {
+        for (i = 0 ; i < dy ; i++) {
             y += ystep;
             error += ddx;
-            if(error > ddy) {
+            if (error > ddy) {
                 x += xstep;
                 error -= ddy;
-                if(error + errorprev < ddy) {
-                    obstacle_cells_.push_back(TLoc(x - xstep, y));
-                } else if(error + errorprev > ddy) {
-                    obstacle_cells_.push_back(TLoc(x, y - ystep));
+                if (error + errorprev < ddy) {
+                    obstacle_cells_.push_back(Location(x - xstep, y));
+                } else if (error + errorprev > ddy) {
+                    obstacle_cells_.push_back(Location(x, y - ystep));
                 } else {
-                    obstacle_cells_.push_back(TLoc(x - xstep, y));
-                    obstacle_cells_.push_back(TLoc(x, y - ystep));
+                    obstacle_cells_.push_back(Location(x - xstep, y));
+                    obstacle_cells_.push_back(Location(x, y - ystep));
                 }
             }
 
-            obstacle_cells_.push_back(TLoc(x, y));
+            obstacle_cells_.push_back(Location(x, y));
             errorprev = error;
         }
     }
@@ -845,10 +791,26 @@ void Scene::drawObstacles(float x1, float y1, float x2, float y2)
 }
 
 
+void Scene::addAgent(Ped::Tagent *a)
+{
+    Ped::Tscene::addAgent(a);
+}
+void Scene::addObstacle(Ped::Tobstacle *o)
+{
+    Ped::Tscene::addObstacle(o);
+}
+void Scene::cleanup()
+{
+    Ped::Tscene::cleanup();
+}
+void Scene::moveAgents(double h)
+{
+    Ped::Tscene::moveAgents(h);
+}
 
 
 
-int main(int argc, char** argv)
+int main(int argc, char **argv)
 {
     // initialize resources
     ros::init(argc, argv, "simulator");
@@ -857,23 +819,21 @@ int main(int argc, char** argv)
 
     ros::NodeHandle node;
 
-    double x1,x2, y1,y2;
-    ros::param::param<double>("/pedsim/x1", x1, 0.0);
-    ros::param::param<double>("/pedsim/x2", x2, 100.0);
-    ros::param::param<double>("/pedsim/y1", y1, 0.0);
-    ros::param::param<double>("/pedsim/y2", y2, 100.0);
+    double x1, x2, y1, y2;
+    ros::param::param<double> ("/pedsim/x1", x1, 0.0);
+    ros::param::param<double> ("/pedsim/x2", x2, 100.0);
+    ros::param::param<double> ("/pedsim/y1", y1, 0.0);
+    ros::param::param<double> ("/pedsim/y2", y2, 100.0);
 
     // Scene sim_scene(0, 0, 45, 45, node);
     // Scene sim_scene(0, 0, 300, 100, node);
     Scene sim_scene(x1, y1, x2, y2, node);
 
-    if (sim_scene.initialize()) 
-    {
+    if (sim_scene.initialize()) {
         ROS_INFO("loaded parameters, starting simulation...");
         sim_scene.runSimulation();
-    }
-    else
+    } else
         return EXIT_FAILURE;
 
-    return EXIT_SUCCESS;    
+    return EXIT_SUCCESS;
 }

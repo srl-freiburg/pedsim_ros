@@ -37,12 +37,16 @@ Config* Config::Config::instance = NULL;
 
 Config::Config() 
 {
-	/// TODO Add all these values into config (rosparam)
-    simWallForce = 10.0;
-    simPedForce = 2.1;
-    simSpeed = 0.05;
-    mlLookAhead = true;
-    simh = 0.1;
+    factor_obstacle_force = 10.0;
+    factor_social_force = 2.1;
+    look_ahead = true;
+    simulation_step = 0.1;
+	
+	cell_width = 1.0;
+    cell_height = 1.0;
+	
+	robot_mode = SOCIAL_DRIVE;
+	robot_wait_time = 100;
 }
 
 Config& Config::getInstance() {

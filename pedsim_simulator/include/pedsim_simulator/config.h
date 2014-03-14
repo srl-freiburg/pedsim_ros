@@ -31,27 +31,15 @@
 #ifndef _config_h_
 #define _config_h_
 
-#include <map>
-#include <vector>
-#include <cmath>
-#include <cstring>
+#include <string>
 
 
-typedef struct Location 
+enum RobotState
 {
-    float x;
-    float y;
-
-    Location(float xx, float yy) : x(xx), y(yy) {}
-
-    bool operator ==(Location a) 
-    {
-        if (x == a.x && y == a.y) return true;
-        else return false;
-    }
-
-} TLoc;
-
+	CONTROLLED = 0,
+	TELEOPERATION = 1,
+	SOCIAL_DRIVE = 2
+};
 
 class Config
 {
@@ -66,13 +54,16 @@ public:
     static Config& getInstance();
 
 public:
-    double simWallForce;
-    double simPedForce;
-    int simSpeed;
-    bool mlLookAhead;
-    double simh;
-    double width;
-    double height;
+    double factor_obstacle_force;
+    double factor_social_force;
+    bool look_ahead;
+    double simulation_step;
+	
+    double cell_width;
+    double cell_height;
+	
+	RobotState robot_mode;
+	int robot_wait_time;
 };
 
 
