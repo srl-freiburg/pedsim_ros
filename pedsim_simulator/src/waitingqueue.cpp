@@ -1,6 +1,6 @@
 
-#include "waitingqueue.h"
-#include "config.h"
+#include <pedsim_simulator/waitingqueue.h>
+#include <pedsim_simulator/config.h>
 
 
 WaitingQueue::WaitingQueue()
@@ -28,7 +28,8 @@ WaitingQueue::WaitingQueue(const double x, const double y)
     name_ = "_";
 }
 
-WaitingQueue::WaitingQueue(const double x, const double y, double theta, std::string name)
+WaitingQueue::WaitingQueue(const double x, const double y, const double
+theta, std::string name)
     : x_(x), y_(y), theta_(theta), name_(name)
 {
     static int staticid = 0;

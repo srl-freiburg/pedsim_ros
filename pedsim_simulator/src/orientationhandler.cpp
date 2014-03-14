@@ -1,4 +1,4 @@
-#include "orientationhandler.h"
+#include <pedsim_simulator/orientationhandler.h>
 
 OrientationHandler::OrientationHandler(double theta)
 {

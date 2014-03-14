@@ -1,5 +1,5 @@
 
-#include "scene.h"
+#include <pedsim_simulator/scene.h>
 
 Scene::Scene(const ros::NodeHandle& node)  
     : Ped::Tscene(), nh_(node)

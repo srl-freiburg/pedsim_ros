@@ -12,7 +12,8 @@ class WaitingQueue
 public:
     WaitingQueue();
     WaitingQueue(const double x, const double y);
-    WaitingQueue(const double x, const double y, double theta, std::string id);
+    WaitingQueue(const double x, const double y, const double theta, std::string
+id);
     ~WaitingQueue();
 
     void enqueueAgent(Ped::Tagent* a);

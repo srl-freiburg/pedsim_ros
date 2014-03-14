@@ -31,8 +31,7 @@ catkin_package(
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/libpedsim2.3)
 
 
-# include_directories(include)
-
+include_directories(include)
 include_directories(${Eigen_INCLUDE_DIRS})
 include_directories(
   ${catkin_INCLUDE_DIRS}

@@ -16,3 +16,6 @@ build
 .svn
 *.log
 CMakelists.txt.user
+
+.kdev4/
+*.kdev4

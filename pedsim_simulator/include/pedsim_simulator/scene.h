@@ -62,9 +62,7 @@ inline double randHeight()
 
     boost::variate_generator<boost::mt19937&, boost::normal_distribution<> > var_nor(generator, nd);
 
-    double d = var_nor();
-
-    return d;
+    return var_nor();
 }
 
 inline double coinFlip()
@@ -72,9 +70,7 @@ inline double coinFlip()
     boost::uniform_real<> uni_dist(0,1);
     boost::variate_generator<boost::mt19937&, boost::uniform_real<> > uni(generator, uni_dist);
 
-    double c = uni();
-
-    return c;
+    return uni();
 }
 
 
@@ -89,7 +85,7 @@ public:
     void clear();
     std::set<const Ped::Tagent*> getNeighbors(double x, double y, double maxDist);
 
-    // overriding methods
+    /// overriding methods
     void addAgent(Ped::Tagent *a) { Ped::Tscene::addAgent(a); }
     void addObstacle(Ped::Tobstacle *o) { Ped::Tscene::addObstacle(o); }
     void cleanup() { Ped::Tscene::cleanup(); }
@@ -149,12 +145,14 @@ private:
     // obstacle cell locations
     std::vector<TLoc> obstacle_cells_;
 
-    // handling quaternions
+    /// handling quaternions for orientations
     OrientationHandlerPtr orientation_handler_;
 
-    // simple waiting queue
+    /// waiting queues in the scene
     std::vector<WaitingQueuePtr> waiting_queues_;
 
+	
+	/// \brief Euclidean distance between two points
     inline double distance(double x1, double x2, double y1, double y2)
     {
         return sqrt( (x1-y1)*(x1-y1) + (x2-y2)*(x2-y2) );

@@ -1,7 +1,6 @@
 
 
-// Includes
-#include "config.h"
+#include <pedsim_simulator/config.h>
 
 
 // initialize static value

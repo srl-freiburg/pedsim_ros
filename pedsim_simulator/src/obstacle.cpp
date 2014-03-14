@@ -8,7 +8,7 @@
 // 		Copyright (c) 2003 - 2012 by Christian Gloor
 
 // Includes
-#include "obstacle.h"
+#include <pedsim_simulator/obstacle.h>
 
 
 Obstacle::Obstacle(double pax, double pay, double pbx, double pby)

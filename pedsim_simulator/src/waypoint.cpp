@@ -9,8 +9,8 @@
 
 
 // Includes
-#include "waypoint.h"
-#include "config.h"
+#include <pedsim_simulator/waypoint.h>
+#include <pedsim_simulator/config.h>
 
 
 

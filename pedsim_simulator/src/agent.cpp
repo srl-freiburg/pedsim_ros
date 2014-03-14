@@ -8,11 +8,9 @@
 // 		Copyright (c) 2003 - 2012 by Christian Gloor
 
 
-// Includes
-#include "agent.h"
-// → SGDiCoP
-#include "config.h"
-#include "waypoint.h"
+#include <pedsim_simulator/agent.h>
+#include <pedsim_simulator/config.h>
+#include <pedsim_simulator/waypoint.h>
 
 
 
