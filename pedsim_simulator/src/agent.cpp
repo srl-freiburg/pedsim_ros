@@ -39,6 +39,7 @@ Agent::Agent(double xIn, double yIn)
 {
     // initialize Ped::Tagent
     Ped::Tagent::setType(Ped::Tagent::ADULT);
+	state_machine_.reset(new StateMachine(StateMachine::WALKING));
 };
 
 Agent::~Agent() 
@@ -96,7 +97,9 @@ void Agent::move(double h)
         Ped::Tagent::setfactordesiredforce(1.5);
     }
 
-    Ped::Tagent::move(h);
+	if (state_machine_->getCurrentState() == StateMachine::WALKING)
+		Ped::Tagent::move(h);
+	
 }
 
 void Agent::addWaypoint(Waypoint* waypointIn) 

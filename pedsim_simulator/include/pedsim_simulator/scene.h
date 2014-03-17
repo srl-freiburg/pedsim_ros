@@ -52,7 +52,6 @@
 #include <boost/foreach.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string/predicate.hpp>
-#include <boost/numeric/ublas/matrix.hpp>
 #include <boost/shared_ptr.hpp>
 
 // ros and big guys
@@ -128,6 +127,8 @@ public:
     void runSimulation();
     void moveAllAgents();
     void cleanupItems();
+	
+// 	const vector<Agent*>& getAllAgents() const { return agents; };
 
 private:
     // robot and agents

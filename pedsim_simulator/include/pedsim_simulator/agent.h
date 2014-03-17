@@ -65,6 +65,9 @@ public:
     void setX(double xIn);
     void setY(double yIn);
     void setType(Ped::Tagent::AgentType t);
+
+private:
+	StateMachinePtr state_machine_;
 };
 
 #endif
