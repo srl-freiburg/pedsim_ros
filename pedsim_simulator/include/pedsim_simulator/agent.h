@@ -37,6 +37,8 @@
 
 #include <QList>
 
+#include <pedsim_simulator/statemachine.h>
+
 // Forward Declarations
 class Scene;
 class Waypoint;

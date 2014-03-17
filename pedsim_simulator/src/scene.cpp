@@ -477,7 +477,8 @@ void Scene::publishWalls()
 void Scene::spawnKillAgents()
 {
     for (vector<Ped::Tagent *>::const_iterator iter = all_agents_.begin();
-            iter != all_agents_.end(); ++iter) {
+            iter != all_agents_.end(); ++iter) 
+	{
         Ped::Tagent *a = (*iter);
         double ax = a->getx();
         double ay = a->gety();
@@ -492,14 +493,12 @@ void Scene::spawnKillAgents()
 
                 if (sqrt(pow(ax - wx, 2.0) + pow(ay - wy, 2.0))  <= ((
                             wc->getr()))) {
-                    // if (a->hasreacheddestination) {
-                    double randomizedX = wp->getx();
-                    double randomizedY = wp->gety();
+                    double randomizedX = wp->getx() + qrand() / (double)
+RAND_MAX * dx - dx / 2;
+                    double randomizedY = wp->gety() + qrand() / (double)
+RAND_MAX * dy - dy / 2;
                     double dx = wp->getr();
                     double dy = wp->getr();
-
-                    randomizedX += qrand() / (double) RAND_MAX * dx - dx / 2;
-                    randomizedY += qrand() / (double) RAND_MAX * dy - dy / 2;
 
                     a->setPosition(randomizedX, randomizedY, 0);
                     moveAgent(a);
@@ -515,14 +514,12 @@ void Scene::spawnKillAgents()
 
                 if (sqrt(pow(ax - wx, 2.0) + pow(ay - wy, 2.0)) <= ((
                             wc->getr()))) {
-                    // if (a->hasreacheddestination) {
-                    double randomizedX = wp->getx();
-                    double randomizedY = wp->gety();
+                    double randomizedX = wp->getx() + qrand() / (double)
+RAND_MAX * dx - dx / 2;
+                    double randomizedY = wp->gety() + qrand() / (double)
+RAND_MAX * dy - dy / 2;
                     double dx = wp->getr();
                     double dy = wp->getr();
-
-                    randomizedX += qrand() / (double) RAND_MAX * dx - dx / 2;
-                    randomizedY += qrand() / (double) RAND_MAX * dy - dy / 2;
 
                     a->setPosition(randomizedX, randomizedY, 0);
                     moveAgent(a);
