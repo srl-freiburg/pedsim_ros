@@ -95,13 +95,48 @@ void Scene::clear()
 }
 
 
+const std::list<Agent*>& Scene::getAgents() const 
+{
+    return agents;
+}
+
+Agent* Scene::getAgentById(int idIn) const 
+{
+    BOOST_FOREACH(Agent* a, agents) 
+	{
+        if(idIn == a->getid())
+            return a;
+    }
+
+    return NULL;
+}
+
+
+void Scene::addAgent(Agent* agent) 
+{
+    // keep track of the agent
+    agents.push_back(agent);
+
+    // add the agent to the PedSim scene
+    Ped::Tscene::addAgent(agent);
+}
+
+bool Scene::removeAgent(Agent* agent) {
+    // don't keep track of agent anymore
+//     agents.removeAll(agent);
+
+    // actually remove it
+    return Ped::Tscene::removeAgent(agent);
+}
+
+
 /// \brief Run the main mode
 /// The core of the application
 void Scene::runSimulation()
 {
     /// setup the agents and the robot
-    all_agents_ = getAllAgents();
-    BOOST_FOREACH(Ped::Tagent * a, all_agents_) {
+//     all_agents_ = getAllAgents();
+    BOOST_FOREACH(Agent* a, agents) {
         if (a->gettype() == Ped::Tagent::ROBOT)
             robot_ = a;
     }
@@ -169,7 +204,7 @@ bool Scene::initialize()
         return false;
     }
 
-    ROS_DEBUG("Loading from %s scene file", scene_file_param.c_str());
+    ROS_INFO("Loading from %s scene file", scene_file_param.c_str());
 
     /// load the remaining parameters
     loadConfigParameters();
@@ -248,15 +283,20 @@ void Scene::updateQueues()
 {
     BOOST_FOREACH(WaitingQueuePtr q, waiting_queues_) {
         /// Add agents into queues
-        BOOST_FOREACH(Ped::Tagent * a, all_agents_) {
-            if (a->gettype() != Ped::Tagent::ROBOT) {
-                if (q->agentInQueue(a) == false) {
+        BOOST_FOREACH(Agent* a, agents) 
+		{
+            if (a->gettype() != Ped::Tagent::ROBOT) 
+			{
+                if (q->agentInQueue(a) == false) 
+				{
                     double d = distance(
                                    q->getX(), q->getY(),
                                    a->getx(), a->gety());
 
-                    if (d < 4.5 && coinFlip() > 0.5) {
-                        // ROS_INFO("Call to enque agent");
+                    if (d < 4.5 && coinFlip() > 0.5) 
+					{
+						// TODO - do state transition
+						
                         q->enqueueAgent(a);
                     }
                 }
@@ -308,7 +348,8 @@ void Scene::publishAgentStatus()
     all_header.stamp = ros::Time::now();
     all_status.header = all_header;
 
-    BOOST_FOREACH(Ped::Tagent * a, all_agents_) {
+    BOOST_FOREACH(Agent* a, agents) 
+	{
         pedsim_msgs::AgentState state;
         std_msgs::Header agent_header;
         agent_header.stamp = ros::Time::now();
@@ -338,7 +379,8 @@ void Scene::publishAgentVisuals()
     // minor optimization with arrays for speedup
     visualization_msgs::MarkerArray marker_array;
 
-    BOOST_FOREACH(Ped::Tagent * a, all_agents_) {
+    BOOST_FOREACH(Agent* a, agents) 
+	{
         visualization_msgs::Marker marker;
         marker.header.frame_id = "world";
         marker.header.stamp = ros::Time();
@@ -482,9 +524,8 @@ void Scene::publishWalls()
 
 void Scene::spawnKillAgents()
 {
-    for (vector<Ped::Tagent *>::const_iterator iter = all_agents_.begin();
-            iter != all_agents_.end(); ++iter) {
-        Ped::Tagent *a = (*iter);
+	BOOST_FOREACH(Agent* a, agents)
+	{
         double ax = a->getx();
         double ay = a->gety();
 
@@ -507,7 +548,7 @@ void Scene::spawnKillAgents()
                     randomizedX += qrand() / (double) RAND_MAX * dx - dx / 2;
                     randomizedY += qrand() / (double) RAND_MAX * dy - dy / 2;
 
-                    a->setPosition(randomizedX, randomizedY, 0);
+                    a->setPosition(randomizedX, randomizedY);
                     moveAgent(a);
                 }
             }
@@ -530,7 +571,7 @@ void Scene::spawnKillAgents()
                     randomizedX += qrand() / (double) RAND_MAX * dx - dx / 2;
                     randomizedY += qrand() / (double) RAND_MAX * dy - dy / 2;
 
-                    a->setPosition(randomizedX, randomizedY, 0);
+                    a->setPosition(randomizedX, randomizedY);
                     moveAgent(a);
                 }
             }
@@ -594,9 +635,11 @@ void Scene::processData(QByteArray &data)
 
     xmlReader.addData(data);
 
-    while (!xmlReader.atEnd()) {
+    while (!xmlReader.atEnd()) 
+	{
         xmlReader.readNext();
-        if (xmlReader.isStartElement()) {
+        if (xmlReader.isStartElement()) 
+		{
             // start reading elements
             if ((xmlReader.name() == "scenario") || (xmlReader.name() ==
                     "welcome")) {
@@ -681,22 +724,17 @@ void Scene::processData(QByteArray &data)
                         randomizedY += rand() / (double) RAND_MAX * dy - dy / 2;
                     a->setPosition(randomizedX, randomizedY);
                     a->setType(static_cast<Ped::Tagent::AgentType>(type));
-                    this->addAgent(a);
-                    currentAgents.append(a);
+                    addAgent(a);
                 }
             } else if (xmlReader.name() == "addwaypoint") {
                 QString id = xmlReader.attributes().value("id").toString();
                 // add waypoints to current agents
-                BOOST_FOREACH(Agent * a, currentAgents) {
+                BOOST_FOREACH(Agent * a, agents) {
                     a->addWaypoint(this->waypoints[id]);
                 }
             } else {
                 // inform the user about invalid elements
                 ROS_WARN("Unknown element");
-            }
-        } else if (xmlReader.isEndElement()) {
-            if (xmlReader.name() == "agent") {
-                currentAgents.clear();
             }
         }
     }
@@ -797,10 +835,6 @@ void Scene::drawObstacles(float x1, float y1, float x2, float y2)
 }
 
 
-void Scene::addAgent(Ped::Tagent *a)
-{
-    Ped::Tscene::addAgent(a);
-}
 void Scene::addObstacle(Ped::Tobstacle *o)
 {
     Ped::Tscene::addObstacle(o);

@@ -93,10 +93,12 @@ public:
 		double x, double y, double maxDist);
 
     /// overriding methods
-    void addAgent(Ped::Tagent *a); 
+    void addAgent(Agent *a); 
     void addObstacle(Ped::Tobstacle *o); 
     void cleanup();
     void moveAgents(double h);
+    virtual bool removeAgent(Agent* agent);
+
 	
 	/// creating artificial flows
     void spawnKillAgents();
@@ -128,11 +130,13 @@ public:
     void moveAllAgents();
     void cleanupItems();
 	
-// 	const vector<Agent*>& getAllAgents() const { return agents; };
+	Agent* getAgentById(int idIn) const;
+	const std::list<Agent*>& getAgents() const;
 
 private:
     // robot and agents
-    Ped::Tagent *robot_;
+    Agent* robot_;
+	std::list<Agent*> agents;
     std::vector<Ped::Tagent *> all_agents_;
 
     ros::NodeHandle nh_;
@@ -151,7 +155,6 @@ private:
     ros::ServiceServer srv_move_agent_;
 
     QXmlStreamReader xmlReader;
-    QList<Agent *> currentAgents;
     QList<Obstacle *> obstacles;
     QMap<QString, Waypoint *> waypoints;
     size_t timestep_;

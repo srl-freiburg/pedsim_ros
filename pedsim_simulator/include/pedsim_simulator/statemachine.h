@@ -58,7 +58,8 @@ public:
 		START_WALKING = 0,
 		STOP_WALKING = 1,
 		JOIN_QUEUE = 2,
-		LEAVE_QUEUE = 3
+		LEAVE_QUEUE = 3,
+		NO_EVENT = 4
 	};
 	
 	
@@ -117,6 +118,12 @@ public:
 	State getCurrentState()
 	{
 		return current_state_;
+	}
+	
+	void reset()
+	{
+		current_state_ = IDLE;
+		previous_state_ = IDLE;
 	}
 	
 	
