@@ -65,7 +65,10 @@ public:
     void setX(double xIn);
     void setY(double yIn);
     void setType(Ped::Tagent::AgentType t);
-	void updateState();
+	void updateState(int event = 0);
+	
+	StateMachine::State status() { return state_machine_->getCurrentState(); }
+	StateMachine::State prevStatus() { return state_machine_->getPreviousState(); }
 
 private:
 	StateMachinePtr state_machine_;

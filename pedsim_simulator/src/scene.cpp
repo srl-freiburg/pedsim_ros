@@ -285,9 +285,9 @@ void Scene::updateQueues()
         /// Add agents into queues
         BOOST_FOREACH ( Agent* a, agents )
         {
-            if ( a->gettype() != Ped::Tagent::ROBOT )
+            if ( a->gettype() != Ped::Tagent::ROBOT && q->agentInQueue ( a ) == false )
             {
-                if ( q->agentInQueue ( a ) == false )
+                if ( a->prevStatus() != StateMachine::QUEUEING )
                 {
                     double d = distance (
                                    q->getX(), q->getY(),
@@ -295,8 +295,6 @@ void Scene::updateQueues()
 
                     if ( d < 4.5 && coinFlip() > 0.5 )
                     {
-                        // TODO - do state transition
-
                         q->enqueueAgent ( a );
                     }
                 }

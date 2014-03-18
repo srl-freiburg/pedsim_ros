@@ -78,7 +78,7 @@ namespace Ped {
         virtual Tvector obstacleForce() const;
         virtual Tvector lookaheadForce(Tvector desired) const;
         virtual Tvector myForce(Tvector desired);
-		virtual void updateState() {}
+		virtual void updateState(int event = 0) {}
 
         void setPosition(double px, double py, double pz);
         void setType(AgentType t) { this->type = t; };

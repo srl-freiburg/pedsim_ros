@@ -87,7 +87,7 @@ void WaitingQueue::enqueueAgent ( Agent *a )
     Ped::Tvector qend = getQueueEnd();
     a->setPosition ( qend.x, qend.y );
 	
-	a->updateState(); /// TODO - add event information here
+	a->updateState( StateMachine::JOIN_QUEUE ); 
 
     queueing_agents_.push_back ( a );
 }
@@ -144,8 +144,10 @@ void WaitingQueue::releaseAgent ( Agent *a )
 {
     // reset the factors for the social forces
     a->setMobile();
-    a->setPosition ( x_ + a->getRadius() + 10, y_ + a->getRadius() + 10 );
-	a->updateState(); /// TODO - add event information here
+    a->setPosition ( x_ + a->getRadius(), y_ + a->getRadius() );
+	a->updateState( StateMachine::LEAVE_QUEUE ); 
+	
+	queueing_agents_.pop_front();
 }
 
 

@@ -55,11 +55,11 @@ public:
     /// \brief Agent events to transition between states
     enum Event
     {
-        START_WALKING = 0,
-        STOP_WALKING = 1,
-        JOIN_QUEUE = 2,
-        LEAVE_QUEUE = 3,
-        NO_EVENT = 4
+		NO_EVENT = 0,
+        START_WALKING = 1,
+        STOP_WALKING = 2,
+        JOIN_QUEUE = 3,
+        LEAVE_QUEUE = 4
     };
 
 
@@ -90,12 +90,15 @@ public:
         /// Walking transitions
         if ( current_state_ == WALKING )
         {
+			if ( previous_state_ == QUEUEING )
+				return;
+			
             if ( triggered_event == JOIN_QUEUE )
             {
                 previous_state_ = WALKING;
                 current_state_ = QUEUEING;
             }
-            else if ( triggered_event == START_WALKING )
+            else if ( triggered_event == STOP_WALKING )
             {
                 previous_state_ = WALKING;
                 current_state_ = IDLE;
@@ -120,6 +123,11 @@ public:
         return current_state_;
     }
 
+    State getPreviousState()
+    {
+        return previous_state_;
+    }
+    
     void reset()
     {
         current_state_ = IDLE;

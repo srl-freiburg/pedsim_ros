@@ -82,13 +82,14 @@ Ped::Tvector Agent::myForce ( Ped::Tvector desired ) const
     return t;
 }
 
-void Agent::updateState()
+void Agent::updateState(int event)
 {
     if ( getteleop() == true )
         state_machine_->reset();
 
     // check state
-    state_machine_->doStateTransition ( StateMachine::NO_EVENT );
+	StateMachine::Event ev = static_cast<StateMachine::Event>(event);
+    state_machine_->doStateTransition ( ev );
 }
 
 /// \brief Move the agents in one time step
