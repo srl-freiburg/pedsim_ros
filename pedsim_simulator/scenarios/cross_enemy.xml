@@ -20,20 +20,6 @@
         <addwaypoint id="robot_start"/>
         <addwaypoint id="robot_goal"/>
     </agent>
-    <!-- <agent x="20" y="50" n="1" dx="0" dy="0" type="2">
-        <addwaypoint id="check_c"/>
-        <addwaypoint id="check_a"/>
-    </agent> -->
-
-
-    <!--AgentClusters-->
-    <!-- flows -->
-    <!-- <agent x="20" y="50" n="50" dx="30" dy="10" type="0">
-        <addwaypoint id="check_b"/>
-        <addwaypoint id="check_c"/>
-        <addwaypoint id="check_b"/>
-        <addwaypoint id="check_a"/>
-    </agent> -->
 
     <agent x="80" y="50" n="50" dx="20" dy="10" type="1">
         <addwaypoint id="check_b"/>
