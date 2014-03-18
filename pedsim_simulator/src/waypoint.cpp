@@ -33,37 +33,43 @@
 #include <pedsim_simulator/config.h>
 
 
-Waypoint::Waypoint(const QString& idIn, double px, double py, double pr)
-	: Twaypoint(px, py, pr), id(idIn) 
+Waypoint::Waypoint ( const QString& idIn, double px, double py, double pr )
+    : Twaypoint ( px, py, pr ), id ( idIn )
 {
 };
 
-Waypoint::~Waypoint() {
-	// clean up
+Waypoint::~Waypoint()
+{
+    // clean up
 }
 
-void Waypoint::setPosition(double xIn, double yIn) {
-	// update position
-	Ped::Twaypoint::setx(xIn);
-	Ped::Twaypoint::sety(yIn);
+void Waypoint::setPosition ( double xIn, double yIn )
+{
+    // update position
+    Ped::Twaypoint::setx ( xIn );
+    Ped::Twaypoint::sety ( yIn );
 }
 
-void Waypoint::setx(double xIn) {
-	// update position
-	Ped::Twaypoint::setx(xIn);
+void Waypoint::setx ( double xIn )
+{
+    // update position
+    Ped::Twaypoint::setx ( xIn );
 }
 
-void Waypoint::sety(double yIn) {
-	// update position
-	Ped::Twaypoint::sety(yIn);
+void Waypoint::sety ( double yIn )
+{
+    // update position
+    Ped::Twaypoint::sety ( yIn );
 }
 
-void Waypoint::setr(double rIn) {
-	// update position
-	Ped::Twaypoint::setr(rIn);
+void Waypoint::setr ( double rIn )
+{
+    // update position
+    Ped::Twaypoint::setr ( rIn );
 }
 
-Ped::Tvector Waypoint::getForce(double myx, double myy, double fromx, double fromy, bool& reached) {	
-	return Twaypoint::getForce(myx, myy, fromx, fromy, &reached);
+Ped::Tvector Waypoint::getForce ( double myx, double myy, double fromx, double fromy, bool& reached )
+{
+    return Twaypoint::getForce ( myx, myy, fromx, fromy, &reached );
 }
 

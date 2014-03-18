@@ -35,22 +35,23 @@
 Config* Config::Config::instance = NULL;
 
 
-Config::Config() 
+Config::Config()
 {
     factor_obstacle_force = 10.0;
     factor_social_force = 2.1;
     look_ahead = true;
     simulation_step = 0.1;
-	
-	cell_width = 1.0;
+
+    cell_width = 1.0;
     cell_height = 1.0;
-	
-	robot_mode = SOCIAL_DRIVE;
-	robot_wait_time = 100;
+
+    robot_mode = SOCIAL_DRIVE;
+    robot_wait_time = 100;
 }
 
-Config& Config::getInstance() {
-    if(instance == NULL)
+Config& Config::getInstance()
+{
+    if ( instance == NULL )
         instance = new Config();
 
     return *instance;

@@ -31,39 +31,40 @@
 #include <pedsim_simulator/obstacle.h>
 
 
-Obstacle::Obstacle(double pax, double pay, double pbx, double pby)
+Obstacle::Obstacle ( double pax, double pay, double pbx, double pby )
 {
-	Ped::Tobstacle(pax, pay, pbx, pby);
+    Ped::Tobstacle ( pax, pay, pbx, pby );
 };
 
-Obstacle::~Obstacle() {
+Obstacle::~Obstacle()
+{
     // clean up
 }
 
 /// moves the obstacle to a new position
 /// \date    2012-01-07
-void Obstacle::setPosition(double pax, double pay, double pbx, double pby) 
+void Obstacle::setPosition ( double pax, double pay, double pbx, double pby )
 {
-    Tobstacle::setPosition(pax, pay, pbx, pby);
+    Tobstacle::setPosition ( pax, pay, pbx, pby );
 };
 
-void Obstacle::setX1(double xIn) 
+void Obstacle::setX1 ( double xIn )
 {
-    setPosition(xIn, getay(), getbx(), getby());
+    setPosition ( xIn, getay(), getbx(), getby() );
 }
 
-void Obstacle::setY1(double yIn) 
+void Obstacle::setY1 ( double yIn )
 {
-    setPosition(getax(), yIn, getbx(), getby());
+    setPosition ( getax(), yIn, getbx(), getby() );
 }
 
-void Obstacle::setX2(double xIn) 
+void Obstacle::setX2 ( double xIn )
 {
-    setPosition(getax(), getay(), xIn, getby());
+    setPosition ( getax(), getay(), xIn, getby() );
 }
 
-void Obstacle::setY2(double yIn) 
+void Obstacle::setY2 ( double yIn )
 {
-    setPosition(getax(), getay(), getbx(), yIn);
+    setPosition ( getax(), getay(), getbx(), yIn );
 }
 

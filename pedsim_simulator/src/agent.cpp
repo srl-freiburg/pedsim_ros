@@ -34,15 +34,15 @@
 #include <pedsim_simulator/waypoint.h>
 
 
-Agent::Agent(double xIn, double yIn)
+Agent::Agent ( double xIn, double yIn )
     : Ped::Tagent()
 {
     // initialize Ped::Tagent
-    Ped::Tagent::setType(Ped::Tagent::ADULT);
-	state_machine_.reset(new StateMachine(StateMachine::WALKING));
+    Ped::Tagent::setType ( Ped::Tagent::ADULT );
+    state_machine_.reset ( new StateMachine ( StateMachine::WALKING ) );
 };
 
-Agent::~Agent() 
+Agent::~Agent()
 {
 }
 
@@ -53,88 +53,89 @@ Ped::Tvector Agent::socialForce() const
 }
 
 /// Calculates the obstacle force. Same as in lib, but adds graphical representation
-Ped::Tvector Agent::obstacleForce() const 
+Ped::Tvector Agent::obstacleForce() const
 {
     return Tagent::obstacleForce();
 }
 
 /// Calculates the desired force. Same as in lib, but adds graphical representation
-Ped::Tvector Agent::desiredForce() 
+Ped::Tvector Agent::desiredForce()
 {
     return Tagent::desiredForce();
 }
 
 /// Calculates the look ahead force. Same as in lib, but adds graphical representation
-Ped::Tvector Agent::lookaheadForce(Ped::Tvector desired) const 
+Ped::Tvector Agent::lookaheadForce ( Ped::Tvector desired ) const
 {
     Ped::Tvector t;
-    if (CONFIG.look_ahead == true)
-	{
-        t = Tagent::lookaheadForce(desired);
+    if ( CONFIG.look_ahead == true )
+    {
+        t = Tagent::lookaheadForce ( desired );
     }
     return t;
 }
 
-Ped::Tvector Agent::myForce(Ped::Tvector desired) const 
+Ped::Tvector Agent::myForce ( Ped::Tvector desired ) const
 {
     Ped::Tvector t;
 
     return t;
 }
 
-void Agent::updateState() {
-	if (getteleop() == true)
-		state_machine_->reset();
-	
-	// check state
-	state_machine_->doStateTransition(StateMachine::NO_EVENT);
+void Agent::updateState()
+{
+    if ( getteleop() == true )
+        state_machine_->reset();
+
+    // check state
+    state_machine_->doStateTransition ( StateMachine::NO_EVENT );
 }
 
 /// \brief Move the agents in one time step
-void Agent::move(double h) 
+void Agent::move ( double h )
 {
     //TODO: add these to rosparam
-    Ped::Tagent::setfactorsocialforce(CONFIG.factor_social_force);
-    Ped::Tagent::setfactorobstacleforce(CONFIG.factor_obstacle_force);
+    Ped::Tagent::setfactorsocialforce ( CONFIG.factor_social_force );
+    Ped::Tagent::setfactorobstacleforce ( CONFIG.factor_obstacle_force );
 
     // use SFM as local controller for the robot
-    if (Tagent::gettype() == Ped::Tagent::ROBOT )
+    if ( Tagent::gettype() == Ped::Tagent::ROBOT )
     {
-        Ped::Tagent::setfactorsocialforce(CONFIG.factor_social_force);
-        Ped::Tagent::setfactorobstacleforce(350);
-        Ped::Tagent::setfactordesiredforce(1.5);
+        Ped::Tagent::setfactorsocialforce ( CONFIG.factor_social_force );
+        Ped::Tagent::setfactorobstacleforce ( 350 );
+        Ped::Tagent::setfactordesiredforce ( 1.5 );
     }
 
-	if (state_machine_->getCurrentState() == StateMachine::WALKING)
-		Ped::Tagent::move(h);
-	
+    if ( state_machine_->getCurrentState() == StateMachine::WALKING )
+        Ped::Tagent::move ( h );
+
 }
 
-void Agent::addWaypoint(Waypoint* waypointIn) 
+void Agent::addWaypoint ( Waypoint* waypointIn )
 {
     // call the original method
-    Ped::Tagent::addWaypoint(waypointIn);
+    Ped::Tagent::addWaypoint ( waypointIn );
 }
 
-void Agent::setPosition(double px, double py) 
+void Agent::setPosition ( double px, double py )
 {
     // call super class' method
-    Ped::Tagent::setPosition(px, py, 0);
+    Ped::Tagent::setPosition ( px, py, 0 );
 }
 
 
-void Agent::setX(double xIn) 
+void Agent::setX ( double xIn )
 {
-    setPosition(xIn, gety());
+    setPosition ( xIn, gety() );
 }
 
-void Agent::setY(double yIn)
+void Agent::setY ( double yIn )
 {
-    setPosition(getx(), yIn);
+    setPosition ( getx(), yIn );
 }
 
-void Agent::setType(Ped::Tagent::AgentType t) 
+void Agent::setType ( Ped::Tagent::AgentType t )
 {
     // call super class' method
-    Ped::Tagent::setType(t);
+    Ped::Tagent::setType ( t );
 }

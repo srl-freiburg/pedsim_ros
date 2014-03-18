@@ -82,31 +82,26 @@
 class Scene : public Ped::Tscene
 {
 public:
-    Scene(const ros::NodeHandle &node);
-    Scene(double left, double up, 
-		  double width, double height, 
-		  const ros::NodeHandle &node);
-    ~Scene() { clear(); waiting_queues_.clear(); }
-
+    Scene ( const ros::NodeHandle &node );
+    Scene ( double left, double up, double width, double height, const ros::NodeHandle &node );
+    ~Scene();
+    
     void clear();
-    std::set<const Ped::Tagent *> getNeighbors(
-		double x, double y, double maxDist);
+    std::set<const Ped::Tagent *> getNeighbors ( double x, double y, double maxDist );
 
     /// overriding methods
-    void addAgent(Agent *a); 
-    void addObstacle(Ped::Tobstacle *o); 
+    void addAgent ( Agent *a );
+    void addObstacle ( Ped::Tobstacle *o );
     void cleanup();
-    void moveAgents(double h);
-    virtual bool removeAgent(Agent* agent);
+    void moveAgents ( double h );
+    virtual bool removeAgent ( Agent* agent );
 
-	
-	/// creating artificial flows
+
+    /// creating artificial flows
     void spawnKillAgents();
 
     /// service handler for moving agents
-    bool srvMoveAgentHandler(
-		pedsim_srvs::SetAgentState::Request &,
-		pedsim_srvs::SetAgentState::Response &);
+    bool srvMoveAgentHandler ( pedsim_srvs::SetAgentState::Request &, pedsim_srvs::SetAgentState::Response & );
 
     /// publisher helpers
     void publishAgentStatus();
@@ -116,28 +111,27 @@ public:
     void updateQueues();
 
     /// subscriber helpers
-    void callbackRobotState(const pedsim_msgs::AgentState::ConstPtr &msg);
+    void callbackRobotCommand ( const pedsim_msgs::AgentState::ConstPtr &msg );
 
     /// helpers related to parsing scene files
-    inline bool readFromFile(const QString &filename);
-    inline void processData(QByteArray &data);
-    inline void drawObstacles(float x1, float y1, float x2, float y2);
+    inline bool readFromFile ( const QString &filename );
+    inline void processData ( QByteArray &data );
+    inline void drawObstacles ( float x1, float y1, float x2, float y2 );
 
     /// simulaition management
     bool initialize();
-	void loadConfigParameters();
+    void loadConfigParameters();
     void runSimulation();
     void moveAllAgents();
     void cleanupItems();
-	
-	Agent* getAgentById(int idIn) const;
-	const std::list<Agent*>& getAgents() const;
+
+    Agent* getAgentById ( int idIn ) const;
+    const std::list<Agent*>& getAgents() const;
 
 private:
     // robot and agents
     Agent* robot_;
-	std::list<Agent*> agents;
-    std::vector<Ped::Tagent *> all_agents_;
+    std::list<Agent*> agents;
 
     ros::NodeHandle nh_;
 
@@ -155,17 +149,16 @@ private:
     ros::ServiceServer srv_move_agent_;
 
     QXmlStreamReader xmlReader;
-    QList<Obstacle *> obstacles;
     QMap<QString, Waypoint *> waypoints;
     size_t timestep_;
 
     // obstacle cell locations
     std::vector<Location> obstacle_cells_;
 
-    /// handling quaternions for orientations
+    // handling quaternions for orientations
     OrientationHandlerPtr orientation_handler_;
 
-    /// waiting queues in the scene
+    // waiting queues in the scene
     std::vector<WaitingQueuePtr> waiting_queues_;
 };
 

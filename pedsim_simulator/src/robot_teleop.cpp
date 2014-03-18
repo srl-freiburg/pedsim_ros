@@ -57,42 +57,42 @@ private:
     ros::Publisher vel_pub_;
 };
 
-Teleop::Teleop():
-    linear_(0),
-    angular_(0),
-    l_scale_(2.0),
-    a_scale_(2.0),
-    rot_angle_(0.0),
-    robot_speed(1.2)
+Teleop::Teleop() :
+    linear_ ( 0 ),
+    angular_ ( 0 ),
+    l_scale_ ( 2.0 ),
+    a_scale_ ( 2.0 ),
+    rot_angle_ ( 0.0 ),
+    robot_speed ( 1.2 )
 {
-    nh_.param("scale_angular", a_scale_, a_scale_);
-    nh_.param("scale_linear", l_scale_, l_scale_);
+    nh_.param ( "scale_angular", a_scale_, a_scale_ );
+    nh_.param ( "scale_linear", l_scale_, l_scale_ );
 
-    vel_pub_ = nh_.advertise<pedsim_msgs::AgentState>("robot_state", 1);
+    vel_pub_ = nh_.advertise<pedsim_msgs::AgentState> ( "robot_state", 1 );
 }
 
 int kfd = 0;
 struct termios cooked, raw;
 
-void quit(int sig)
+void quit ( int sig )
 {
-    tcsetattr(kfd, TCSANOW, &cooked);
+    tcsetattr ( kfd, TCSANOW, &cooked );
     ros::shutdown();
-    exit(0);
+    exit ( 0 );
 }
 
 
 // main
-int main(int argc, char **argv)
+int main ( int argc, char **argv )
 {
-    ros::init(argc, argv, "robot_teleop");
+    ros::init ( argc, argv, "robot_teleop" );
     Teleop robot;
 
-    signal(SIGINT, quit);
+    signal ( SIGINT, quit );
 
     robot.keyLoop();
 
-    return(0);
+    return ( 0 );
 }
 
 
@@ -104,63 +104,71 @@ void Teleop::keyLoop()
 
 
     // get the console in raw mode
-    tcgetattr(kfd, &cooked);
-    memcpy(&raw, &cooked, sizeof(struct termios));
-    raw.c_lflag &= ~(ICANON | ECHO);
+    tcgetattr ( kfd, &cooked );
+    memcpy ( &raw, &cooked, sizeof ( struct termios ) );
+    raw.c_lflag &= ~ ( ICANON | ECHO );
     // Setting a new line, then end of file
     raw.c_cc[VEOL] = 1;
     raw.c_cc[VEOF] = 2;
-    tcsetattr(kfd, TCSANOW, &raw);
+    tcsetattr ( kfd, TCSANOW, &raw );
 
-    puts("Reading from keyboard");
-    puts("---------------------------");
-    puts("Use arrow keys to move the robot.");
+    puts ( "Reading from keyboard" );
+    puts ( "---------------------------" );
+    puts ( "Use arrow keys to move the robot." );
 
 
     // for(;;)
-    while(true) {
+    while ( true )
+    {
         // get the next event from the keyboard
-        if(read(kfd, &c, 1) < 0) {
-            perror("read():");
-            exit(-1);
+        if ( read ( kfd, &c, 1 ) < 0 )
+        {
+            perror ( "read():" );
+            exit ( -1 );
         }
 
         // linear_=angular_=0;
-        ROS_DEBUG("value: 0x%02X\n", c);
+        ROS_DEBUG ( "value: 0x%02X\n", c );
 
-        switch(c) {
+        switch ( c )
+        {
         case KEYCODE_L:
-            ROS_DEBUG("LEFT");
+            ROS_DEBUG ( "LEFT" );
             angular_ = 1.0;
             dirty = true;
             rot_angle_ += 30.0;
             break;
         case KEYCODE_R:
-            ROS_DEBUG("RIGHT");
+            ROS_DEBUG ( "RIGHT" );
             angular_ = -1.0;
             dirty = true;
             rot_angle_ -= 30.0;
             break;
         case KEYCODE_U:
-            ROS_DEBUG("UP");
+            ROS_DEBUG ( "UP" );
             linear_ = 1.0;
             dirty = true;
             robot_speed += 0.1;
             break;
         case KEYCODE_D:
-            ROS_DEBUG("DOWN");
+            ROS_DEBUG ( "DOWN" );
             linear_ = -1.0;
             dirty = true;
             robot_speed -= 0.1;
             break;
+		case KEYCODE_Q:
+			ROS_DEBUG("Stop/Pause");
+			linear_ = 0.0;
+			dirty = true;
+			robot_speed = 0.0;
         }
 
-        ROS_INFO("Set Speed, Angle [%f, %f]", robot_speed, rot_angle_);
+        ROS_INFO ( "Set Speed, Angle [%f, %f]", robot_speed, rot_angle_ );
 
         /// using the code from old cpp project
         double angle = rot_angle_;
-        double vx = cos(angle * M_PI / 180.0);
-        double vy = sin(angle * M_PI / 180.0);
+        double vx = cos ( angle * M_PI / 180.0 );
+        double vy = sin ( angle * M_PI / 180.0 );
 
         double stepx = robot_speed * vx;
         double stepy = robot_speed * vy;
@@ -177,8 +185,9 @@ void Teleop::keyLoop()
         astate.velocity.y = stepy;
 
 
-        if(dirty == true) {
-            vel_pub_.publish(astate);
+        if ( dirty == true )
+        {
+            vel_pub_.publish ( astate );
             dirty = false;
         }
     }
