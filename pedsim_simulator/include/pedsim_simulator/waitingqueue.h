@@ -47,9 +47,9 @@ public:
                    id );
     ~WaitingQueue();
 
-    void enqueueAgent ( Ped::Tagent* a );
+    void enqueueAgent ( Agent* a );
     void serveAgent();
-    bool agentInQueue ( Ped::Tagent* a );
+    bool agentInQueue ( Agent* a );
 
 public:
     // set of quickies
@@ -104,10 +104,10 @@ private:
     // time passed since last service
     int time_passed_;
 
-    std::deque<Ped::Tagent*> queueing_agents_;
+    std::deque<Agent*> queueing_agents_;
 
     void updateQueue ( double px, double py );
-    void releaseAgent ( Ped::Tagent* a );
+    void releaseAgent ( Agent* a );
     Ped::Tvector getQueueEnd();
 };
 

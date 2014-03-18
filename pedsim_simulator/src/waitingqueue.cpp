@@ -58,8 +58,7 @@ WaitingQueue::WaitingQueue ( const double x, const double y )
     name_ = "_";
 }
 
-WaitingQueue::WaitingQueue ( const double x, const double y, const double
-                             theta, std::string name )
+WaitingQueue::WaitingQueue ( const double x, const double y, const double theta, std::string name )
     : x_ ( x ), y_ ( y ), theta_ ( theta ), name_ ( name )
 {
     static int staticid = 0;
@@ -76,7 +75,7 @@ WaitingQueue::~WaitingQueue()
 }
 
 
-void WaitingQueue::enqueueAgent ( Ped::Tagent *a )
+void WaitingQueue::enqueueAgent ( Agent *a )
 {
     if ( queueing_agents_.size() == 15 ) //TEMP limit queue size
         return;
@@ -86,7 +85,9 @@ void WaitingQueue::enqueueAgent ( Ped::Tagent *a )
 
     // set position to the end of the queue
     Ped::Tvector qend = getQueueEnd();
-    a->setPosition ( qend.x, qend.y, qend.z );
+    a->setPosition ( qend.x, qend.y );
+	
+	a->updateState(); /// TODO - add event information here
 
     queueing_agents_.push_back ( a );
 }
@@ -96,7 +97,7 @@ void WaitingQueue::serveAgent()
     if ( time_passed_ >= wait_time_ && queueing_agents_.size() > 0 )
     {
         // remove top agent from queue
-        Ped::Tagent *lucky_one = queueing_agents_.front();
+        Agent *lucky_one = queueing_agents_.front();
         releaseAgent ( lucky_one );
 
         // update queue
@@ -111,10 +112,10 @@ void WaitingQueue::serveAgent()
 }
 
 
-bool WaitingQueue::agentInQueue ( Ped::Tagent *a )
+bool WaitingQueue::agentInQueue ( Agent *a )
 {
     bool inqueue = false;
-    BOOST_FOREACH ( Ped::Tagent * p, queueing_agents_ )
+    BOOST_FOREACH ( Agent * p, queueing_agents_ )
     {
         if ( a->getid() == p->getid() )
             inqueue = true;
@@ -127,23 +128,24 @@ void WaitingQueue::updateQueue ( double px, double py )
     double prevx = px;
     double prevy = py;
 
-    BOOST_FOREACH ( Ped::Tagent * a, queueing_agents_ )
+    BOOST_FOREACH ( Agent * a, queueing_agents_ )
     {
         double ax = a->getx();
         double ay = a->gety();
 
-        a->setPosition ( prevx, prevy, a->getz() );
+        a->setPosition ( prevx, prevy );
 
         prevx = ax;
         prevy = ay;
     }
 }
 
-void WaitingQueue::releaseAgent ( Ped::Tagent *a )
+void WaitingQueue::releaseAgent ( Agent *a )
 {
     // reset the factors for the social forces
     a->setMobile();
-    a->setPosition ( x_ + a->getRadius() + 10, y_ + a->getRadius() + 10, 0 );
+    a->setPosition ( x_ + a->getRadius() + 10, y_ + a->getRadius() + 10 );
+	a->updateState(); /// TODO - add event information here
 }
 
 
