@@ -77,15 +77,28 @@ WaitingQueue::~WaitingQueue()
 
 void WaitingQueue::enqueueAgent ( Agent *a )
 {
-    if ( queueing_agents_.size() == 15 ) //TEMP limit queue size
+    if ( queueing_agents_.size() == 20 ) //TEMP limit queue size
         return;
 
     // make the agent stop
     a->setStationary();
 
     // set position to the end of the queue
+	// NOTE - old way with setting positions
     Ped::Tvector qend = getQueueEnd();
     a->setPosition ( qend.x, qend.y );
+	
+	// NOTE - new way with follow id
+// 	if ( queueing_agents_.size() == 0 )
+// 	{
+// 		Ped::Tvector qend = getQueueEnd();
+// 		a->setPosition ( qend.x, qend.y );
+// 	}
+// 	else
+// 	{
+// 		int follow_id = getLastAgentId();
+// 		a->setFollow(follow_id);
+// 	}
 	
 	a->updateState( StateMachine::JOIN_QUEUE ); 
 
@@ -101,7 +114,7 @@ void WaitingQueue::serveAgent()
         releaseAgent ( lucky_one );
 
         // update queue
-        // updateQueue(lucky_one->getx(), lucky_one->gety());
+        updateQueue(lucky_one->getx(), lucky_one->gety());
 
         time_passed_ = 0;
     }
@@ -157,8 +170,8 @@ Ped::Tvector WaitingQueue::getQueueEnd()
     if ( queueing_agents_.size() == 0 )
     {
         return Ped::Tvector (
-                   x_ + ( buffer * cos ( theta_ ) ),
-                   y_ + ( buffer * sin ( theta_ ) ),
+                   x_ + ( buffer+1 * cos ( theta_ ) ),
+                   y_ + ( buffer+1 * sin ( theta_ ) ),
                    0.0 );
     }
     else
@@ -169,4 +182,12 @@ Ped::Tvector WaitingQueue::getQueueEnd()
                    last_one->gety() + ( buffer * sin ( theta_ ) ),
                    0.0 );
     }
+}
+
+int WaitingQueue::getLastAgentId()
+{
+	if ( queueing_agents_.size() == 0 )
+		return -1;
+	else
+		return queueing_agents_.back()->getid();
 }

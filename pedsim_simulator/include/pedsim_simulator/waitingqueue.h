@@ -109,6 +109,7 @@ private:
     void updateQueue ( double px, double py );
     void releaseAgent ( Agent* a );
     Ped::Tvector getQueueEnd();
+	int getLastAgentId();
 };
 
 

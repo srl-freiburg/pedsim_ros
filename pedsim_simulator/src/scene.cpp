@@ -293,7 +293,7 @@ void Scene::updateQueues()
                                    q->getX(), q->getY(),
                                    a->getx(), a->gety() );
 
-                    if ( d < 4.5 && coinFlip() > 0.5 )
+                    if ( d < 2.5 && coinFlip() > 0.5 )
                     {
                         q->enqueueAgent ( a );
                     }

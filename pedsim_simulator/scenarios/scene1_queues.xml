@@ -28,8 +28,8 @@
     <waypoint id="robot_goal" x="120" y="40" r="5"/>
     <waypoint id="robot_start" x="35" y="40" r="5"/>
 
-    <queue id="infodesk" x="50" y="20" direction="0"/>
-    <queue id="checkpoint" x="90" y="15" direction="180"/>
+    <queue id="infodesk" x="50" y="25" direction="0"/>
+    <queue id="checkpoint" x="90" y="10" direction="3.142"/>
     <!--Attractions-->
     <!--Agents-->
     <agent x="60" y="20" n="1" dx="0" dy="0" type="0">
