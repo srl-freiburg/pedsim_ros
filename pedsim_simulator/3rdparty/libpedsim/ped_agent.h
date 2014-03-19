@@ -64,7 +64,8 @@ namespace Ped {
             ADULT = 0,
             CHILD = 1,
             ROBOT = 2,
-            ELDERLY = 3
+            ELDERLY = 3,
+			STANDING = 4	// to simulate groups of people standing
         };
 
     public:
@@ -125,6 +126,7 @@ namespace Ped {
 
         void assignScene(Tscene* s);
         void addWaypoint(Twaypoint* wp);
+		void insertWaypoint(Twaypoint* wp, int pos);
         bool removeWaypoint(const Twaypoint* wp);
         void clearWaypoints();
         void removeAgentFromNeighbors(const Tagent* agentIn);

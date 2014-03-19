@@ -40,11 +40,6 @@ Ped::Tagent::Tagent() {
     follow = -1;
     mlLookAhead = false;
     scene = NULL;
-
-    // assign random maximal speed in m/s
-    // normal distribution (mean 1.2, std 0.2)
-    // normal_distribution<double> distribution(1.34, 0.26);
-    // vmax = distribution(generator);
     vmax = randSpeed();
 
     factorsocialforce = 2.1;
@@ -76,6 +71,17 @@ void Ped::Tagent::assignScene(Ped::Tscene *s) {
     scene = s;
 }
 
+
+/// \brief Insert a waypoint into the waypoints deque
+/// This is used to interrupt the normal waypoint order to divert
+/// the agent to go to a temporary place before continueing with the 
+/// main course
+/// \param *wp Pointer to the new waypoint 
+/// \param pos Position in the deque to insert the waypoint
+void Ped::Tagent::insertWaypoint(Twaypoint* wp, int pos)
+{
+	// TODO - implement
+}
 
 /// Adds a TWaypoint to an agent's list of waypoints. Twaypoints are stored in a
 /// cyclic queue, the one just visited is pushed to the back again. There will be a

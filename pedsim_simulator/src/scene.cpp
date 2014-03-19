@@ -313,8 +313,8 @@ void Scene::updateQueues()
         marker.color.g = 0.0;
         marker.color.b = 1.0;
 
-        marker.scale.x = 1.0;
-        marker.scale.y = 1.0;
+        marker.scale.x = 0.5;
+        marker.scale.y = 0.5;
         marker.scale.z = 1.0;
 
         marker.pose.position.x = q->getX();
@@ -411,8 +411,8 @@ void Scene::publishAgentVisuals()
                 marker.color.g = 1.0;
                 marker.color.b = 1.0;
 
-                marker.scale.x = 0.2;
-                marker.scale.y = 0.5;
+                marker.scale.x = a->getRadius() / 2.0;
+                marker.scale.y = a->getRadius();
                 marker.scale.z = 1.75; //randHeight();
             }
             else
@@ -422,8 +422,8 @@ void Scene::publishAgentVisuals()
                 marker.color.g = 0.0;
                 marker.color.b = 1.0;
 
-                marker.scale.x = 0.2;
-                marker.scale.y = 0.4;
+                marker.scale.x = a->getRadius() / 2.0;
+                marker.scale.y = a->getRadius();
                 marker.scale.z = 1.55; //randHeight();
             }
 

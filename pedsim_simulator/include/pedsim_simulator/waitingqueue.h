@@ -32,6 +32,7 @@
 #define WAITING_QUEUE_H
 
 #include <pedsim_simulator/agent.h>
+#include <pedsim_simulator/utilities.h>
 
 #include <deque>
 #include <boost/foreach.hpp>

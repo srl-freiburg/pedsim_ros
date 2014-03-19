@@ -107,7 +107,8 @@ void WaitingQueue::enqueueAgent ( Agent *a )
 
 void WaitingQueue::serveAgent()
 {
-    if ( time_passed_ >= wait_time_ && queueing_agents_.size() > 0 )
+	int service_time = wait_time_ + (int)randRange(0, 5);
+    if ( time_passed_ >= service_time && queueing_agents_.size() > 0 )
     {
         // remove top agent from queue
         Agent *lucky_one = queueing_agents_.front();
@@ -118,7 +119,7 @@ void WaitingQueue::serveAgent()
 
         time_passed_ = 0;
     }
-    else if ( time_passed_ < wait_time_ && queueing_agents_.size() > 0 )
+    else if ( time_passed_ < service_time && queueing_agents_.size() > 0 )
     {
         time_passed_++;
     }
@@ -166,20 +167,22 @@ void WaitingQueue::releaseAgent ( Agent *a )
 
 Ped::Tvector WaitingQueue::getQueueEnd()
 {
-    double buffer = 0.5;
+    double buffer = randRange(0.2, 0.5);
+	double theta_diff = randRange(-M_PI/6, M_PI/6);
+	
     if ( queueing_agents_.size() == 0 )
     {
         return Ped::Tvector (
-                   x_ + ( buffer+1 * cos ( theta_ ) ),
-                   y_ + ( buffer+1 * sin ( theta_ ) ),
+                   x_ + ( buffer+0.5 * cos ( theta_ + theta_diff ) ),
+                   y_ + ( buffer+0.5 * sin ( theta_ + theta_diff ) ),
                    0.0 );
     }
     else
     {
         Ped::Tagent *last_one = queueing_agents_.back();
         return Ped::Tvector (
-                   last_one->getx() + ( buffer * cos ( theta_ ) ),
-                   last_one->gety() + ( buffer * sin ( theta_ ) ),
+                   last_one->getx() + ( buffer * cos ( theta_ + theta_diff ) ),
+                   last_one->gety() + ( buffer * sin ( theta_ + theta_diff ) ),
                    0.0 );
     }
 }

@@ -29,6 +29,15 @@ uni(generator, uni_dist);
     return uni();
 }
 
+inline double randRange(double min, double max)
+{
+	boost::uniform_real<> uni_dist(min, max);
+    boost::variate_generator<boost::mt19937 &, boost::uniform_real<> >
+uni(generator, uni_dist);
+
+    return uni();
+}
+
 
 
 /// \brief Euclidean distance between two points

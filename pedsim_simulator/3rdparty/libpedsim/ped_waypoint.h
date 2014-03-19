@@ -30,7 +30,8 @@ namespace Ped {
             TYPE_NORMAL = 0,
             TYPE_POINT = 1,
             TYPE_BIRTH = 2,
-            TYPE_DEATH = 3
+            TYPE_DEATH = 3,
+			TYPE_QUEUE = 4
         };
 
     public:
