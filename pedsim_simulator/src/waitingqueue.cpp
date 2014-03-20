@@ -86,17 +86,18 @@ void WaitingQueue::enqueueAgent ( Agent *a )
 
     // set position to the end of the queue
 	// NOTE - old way with setting positions
-    Ped::Tvector qend = getQueueEnd();
-    a->setPosition ( qend.x, qend.y );
+//     Ped::Tvector qend = getQueueEnd();
+//     a->setPosition ( qend.x, qend.y );
 	
 	// NOTE - new way with follow id
 // 	if ( queueing_agents_.size() == 0 )
 // 	{
-// 		Ped::Tvector qend = getQueueEnd();
+		Ped::Tvector qend = getQueueEnd();
 // 		a->setPosition ( qend.x, qend.y );
 		
-// 		Waypoint *w = new Waypoint ( "-", qend.x, qend.y, 1.0 );
-// 		a->addWaypoint(w);
+		Waypoint *w = new Waypoint ( "-", qend.x, qend.y, 1.0 );
+		w->settype(Ped::Twaypoint::TYPE_QUEUE);
+		a->addWaypoint(w);
 // 	}
 // 	else
 // 	{
@@ -105,6 +106,7 @@ void WaitingQueue::enqueueAgent ( Agent *a )
 // 	}
 // 	
 	a->updateState( StateMachine::JOIN_QUEUE ); 
+	a->setType( Ped::Tagent::STANDING );
 
     queueing_agents_.push_back ( a );
 }
@@ -151,7 +153,10 @@ void WaitingQueue::updateQueue ( double px, double py )
         double ax = a->getx();
         double ay = a->gety();
 
-        a->setPosition ( prevx, prevy );
+//         a->setPosition ( prevx, prevy );
+		Waypoint *w = new Waypoint ( "-", prevx, prevy, 1.0 );
+		w->settype(Ped::Twaypoint::TYPE_QUEUE);
+		a->addWaypoint(w);
 
         prevx = ax;
         prevy = ay;
@@ -161,8 +166,8 @@ void WaitingQueue::updateQueue ( double px, double py )
 void WaitingQueue::releaseAgent ( Agent *a )
 {
     // reset the factors for the social forces
-    a->setMobile();
-    a->setPosition ( x_ + a->getRadius(), y_ + a->getRadius() );
+//     a->setMobile();
+//     a->setPosition ( x_ + a->getRadius(), y_ + a->getRadius() );
 	a->updateState( StateMachine::LEAVE_QUEUE ); 
 	
 	queueing_agents_.pop_front();
@@ -177,17 +182,24 @@ Ped::Tvector WaitingQueue::getQueueEnd()
     if ( queueing_agents_.size() == 0 )
     {
         return Ped::Tvector (
-                   x_ + ( buffer+0.5 * cos ( theta_ + theta_diff ) ),
-                   y_ + ( buffer+0.5 * sin ( theta_ + theta_diff ) ),
+                   x_ + ( ( buffer+0.5 ) * cos ( theta_ + theta_diff ) ),
+                   y_ + ( ( buffer+0.5 ) * sin ( theta_ + theta_diff ) ),
                    0.0 );
     }
     else
     {
-        Ped::Tagent *last_one = queueing_agents_.back();
-        return Ped::Tvector (
-                   last_one->getx() + ( buffer * cos ( theta_ + theta_diff ) ),
-                   last_one->gety() + ( buffer * sin ( theta_ + theta_diff ) ),
+//         Ped::Tagent *last_one = queueing_agents_.back();
+//         return Ped::Tvector (
+//                    last_one->getx() + ( buffer * cos ( theta_ + theta_diff ) ),
+//                    last_one->gety() + ( buffer * sin ( theta_ + theta_diff ) ),
+//                    0.0 );
+		
+		double qlen = queueing_agents_.size() * buffer;
+		return Ped::Tvector (
+                   x_ + ( qlen * cos ( theta_ + theta_diff ) ),
+                   y_ + ( qlen * sin ( theta_ + theta_diff ) ),
                    0.0 );
+		
     }
 }
 

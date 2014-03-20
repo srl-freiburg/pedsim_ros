@@ -40,6 +40,7 @@ Agent::Agent ( double xIn, double yIn )
     // initialize Ped::Tagent
     Ped::Tagent::setType ( Ped::Tagent::ADULT );
     state_machine_.reset ( new StateMachine ( StateMachine::WALKING ) );
+	time_since_queue_ = 0;
 };
 
 Agent::~Agent()
@@ -89,13 +90,21 @@ void Agent::updateState(int event)
 
     // check state
 	StateMachine::Event ev = static_cast<StateMachine::Event>(event);
-    state_machine_->doStateTransition ( ev );
+    if ( ev == StateMachine::LEAVE_QUEUE )
+		time_since_queue_ = 0;
+	
+	state_machine_->doStateTransition ( ev );
+	
+	if (time_since_queue_ > CONFIG.queue_break)
+	{
+		state_machine_->doStateTransition( StateMachine::START_WALKING );
+	}
+	
 }
 
 /// \brief Move the agents in one time step
 void Agent::move ( double h )
 {
-    //TODO: add these to rosparam
     Ped::Tagent::setfactorsocialforce ( CONFIG.factor_social_force );
     Ped::Tagent::setfactorobstacleforce ( CONFIG.factor_obstacle_force );
 
@@ -109,6 +118,8 @@ void Agent::move ( double h )
 
     if ( state_machine_->getCurrentState() == StateMachine::WALKING )
         Ped::Tagent::move ( h );
+	
+	time_since_queue_++;
 
 }
 

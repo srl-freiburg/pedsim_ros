@@ -80,12 +80,14 @@ void Ped::Tagent::assignScene(Ped::Tscene *s) {
 /// \date    2012-01-19
 void Ped::Tagent::addWaypoint(Twaypoint *wp) {
 
-    if (wp->gettype() == Ped::Twaypoint::TYPE_BIRTH) {
+    if (wp->gettype() == Ped::Twaypoint::TYPE_BIRTH) 
+	{
         birth_waypoint = wp;
 		waypoints.push_back(wp);
     }
 
-    if (wp->gettype() == Ped::Twaypoint::TYPE_DEATH) {
+    if (wp->gettype() == Ped::Twaypoint::TYPE_DEATH) 
+	{
         death_waypoint = wp;
 		waypoints.push_back(wp);
     }
@@ -93,6 +95,11 @@ void Ped::Tagent::addWaypoint(Twaypoint *wp) {
     if (wp->gettype() == Ped::Twaypoint::TYPE_QUEUE)
 	{
 		waypoints.push_front(wp);
+	}
+	
+	if (wp->gettype() == Ped::Twaypoint::TYPE_NORMAL || wp->gettype() == Ped::Twaypoint::TYPE_POINT)
+	{
+		waypoints.push_back(wp);
 	}
 }
 

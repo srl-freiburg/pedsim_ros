@@ -427,6 +427,15 @@ void Scene::publishAgentVisuals()
                 marker.scale.z = 1.55; //randHeight();
             }
 
+            
+            if ( a->status() == StateMachine::QUEUEING )
+			{
+				marker.color.a = 1.0;
+                marker.color.r = 1.0;
+                marker.color.g = 1.0;
+                marker.color.b = 1.0;
+			}
+            
             marker.pose.position.z = marker.scale.z / 2.0;
         }
 

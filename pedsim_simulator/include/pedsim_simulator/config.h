@@ -64,6 +64,7 @@ public:
 	
 	RobotState robot_mode;
 	int robot_wait_time;
+	int queue_break;
 };
 
 

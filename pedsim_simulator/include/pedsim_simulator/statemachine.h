@@ -103,6 +103,12 @@ public:
                 previous_state_ = WALKING;
                 current_state_ = IDLE;
             }
+            // to allow rejoining of queues
+            else if (triggered_event == START_WALKING)
+			{
+				previous_state_ = WALKING;
+				current_state_ = WALKING;
+			}
 
             return;
         }

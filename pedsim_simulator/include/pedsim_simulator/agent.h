@@ -72,6 +72,7 @@ public:
 
 private:
 	StateMachinePtr state_machine_;
+	int time_since_queue_;
 };
 
 #endif

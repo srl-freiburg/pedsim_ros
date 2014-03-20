@@ -7,7 +7,8 @@ import numpy as np
 from pedsim_msgs.msg import AllAgentsState
 from std_msgs.msg import String
 
-import sys, os
+import sys
+import os
 
 
 class DataLogger(object):
@@ -34,15 +35,15 @@ class DataLogger(object):
                          dtype=np.float64)
 
             if self.GOAL_REACHED is False:
-                self.agent_trace =  np.vstack((self.agent_trace, v))
+                self.agent_trace = np.vstack((self.agent_trace, v))
 
     def callback_goal_status(self, data):
         if data.data == 'Arrived':
             self.GOAL_REACHED = True
             print self.agent_trace.shape
             cwd = os.getcwd()
-            np.savetxt(cwd+'/traj.txt', self.agent_trace)
-            rospy.loginfo('Saved robot trajectory to %s' % (cwd+'/traj.txt'))
+            np.savetxt(cwd + '/traj.txt', self.agent_trace)
+            rospy.loginfo('Saved robot trajectory to %s' % (cwd + '/traj.txt'))
         else:
             self.GOAL_REACHED = False
 
