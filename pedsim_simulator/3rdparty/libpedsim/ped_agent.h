@@ -126,7 +126,6 @@ namespace Ped {
 
         void assignScene(Tscene* s);
         void addWaypoint(Twaypoint* wp);
-		void insertWaypoint(Twaypoint* wp, int pos);
         bool removeWaypoint(const Twaypoint* wp);
         void clearWaypoints();
         void removeAgentFromNeighbors(const Tagent* agentIn);

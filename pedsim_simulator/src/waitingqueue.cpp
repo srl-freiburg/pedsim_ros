@@ -81,7 +81,8 @@ void WaitingQueue::enqueueAgent ( Agent *a )
         return;
 
     // make the agent stop
-    a->setStationary();
+	// TODO - remove this logic
+//     a->setStationary();
 
     // set position to the end of the queue
 	// NOTE - old way with setting positions
@@ -93,13 +94,16 @@ void WaitingQueue::enqueueAgent ( Agent *a )
 // 	{
 // 		Ped::Tvector qend = getQueueEnd();
 // 		a->setPosition ( qend.x, qend.y );
+		
+// 		Waypoint *w = new Waypoint ( "-", qend.x, qend.y, 1.0 );
+// 		a->addWaypoint(w);
 // 	}
 // 	else
 // 	{
 // 		int follow_id = getLastAgentId();
 // 		a->setFollow(follow_id);
 // 	}
-	
+// 	
 	a->updateState( StateMachine::JOIN_QUEUE ); 
 
     queueing_agents_.push_back ( a );

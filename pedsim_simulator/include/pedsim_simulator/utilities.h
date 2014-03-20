@@ -11,33 +11,25 @@ static boost::mt19937 generator;
 
 inline double randHeight()
 {
-    // generator.seed(static_cast<unsigned int>(42));
     boost::normal_distribution<> nd(1.70, 0.30);
-
-    boost::variate_generator<boost::mt19937 &, boost::normal_distribution<> >
-var_nor(generator, nd);
-
+    boost::variate_generator<boost::mt19937 &, boost::normal_distribution<> > var_nor(generator, nd);
     return var_nor();
 }
 
-inline double coinFlip()
-{
-    boost::uniform_real<> uni_dist(0, 1);
-    boost::variate_generator<boost::mt19937 &, boost::uniform_real<> >
-uni(generator, uni_dist);
-
-    return uni();
-}
 
 inline double randRange(double min, double max)
 {
 	boost::uniform_real<> uni_dist(min, max);
-    boost::variate_generator<boost::mt19937 &, boost::uniform_real<> >
-uni(generator, uni_dist);
+    boost::variate_generator<boost::mt19937 &, boost::uniform_real<> > uni(generator, uni_dist);
 
     return uni();
 }
 
+
+inline double coinFlip()
+{
+	return randRange(0, 1);
+}
 
 
 /// \brief Euclidean distance between two points

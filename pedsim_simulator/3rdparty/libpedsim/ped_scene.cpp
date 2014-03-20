@@ -148,6 +148,8 @@ bool Ped::Tscene::removeWaypoint(Ped::Twaypoint* w) {
     return true;
 }
 
+
+
 /// This is a convenience method. It calls Ped::Tagent::move(double h) for all agents in the Tscene.
 /// \date    2012-02-03
 /// \param   h This tells the simulation how far the agents should proceed.

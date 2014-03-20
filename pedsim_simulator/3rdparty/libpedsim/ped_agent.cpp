@@ -72,17 +72,6 @@ void Ped::Tagent::assignScene(Ped::Tscene *s) {
 }
 
 
-/// \brief Insert a waypoint into the waypoints deque
-/// This is used to interrupt the normal waypoint order to divert
-/// the agent to go to a temporary place before continueing with the 
-/// main course
-/// \param *wp Pointer to the new waypoint 
-/// \param pos Position in the deque to insert the waypoint
-void Ped::Tagent::insertWaypoint(Twaypoint* wp, int pos)
-{
-	// TODO - implement
-}
-
 /// Adds a TWaypoint to an agent's list of waypoints. Twaypoints are stored in a
 /// cyclic queue, the one just visited is pushed to the back again. There will be a
 /// flag to change this behavior soon.
@@ -90,15 +79,21 @@ void Ped::Tagent::insertWaypoint(Twaypoint* wp, int pos)
 /// \author  chgloor
 /// \date    2012-01-19
 void Ped::Tagent::addWaypoint(Twaypoint *wp) {
-    waypoints.push_back(wp);
 
     if (wp->gettype() == Ped::Twaypoint::TYPE_BIRTH) {
         birth_waypoint = wp;
+		waypoints.push_back(wp);
     }
 
     if (wp->gettype() == Ped::Twaypoint::TYPE_DEATH) {
         death_waypoint = wp;
+		waypoints.push_back(wp);
     }
+    
+    if (wp->gettype() == Ped::Twaypoint::TYPE_QUEUE)
+	{
+		waypoints.push_front(wp);
+	}
 }
 
 
