@@ -39,6 +39,7 @@ Config::Config()
 {
     factor_obstacle_force = 10.0;
     factor_social_force = 2.1;
+	factor_desired_force = 1.0;
     look_ahead = true;
     simulation_step = 0.1;
 
@@ -47,7 +48,7 @@ Config::Config()
 
     robot_mode = SOCIAL_DRIVE;
     robot_wait_time = 100;
-	queue_break = 100;
+	queue_break = 50;
 }
 
 Config& Config::getInstance()

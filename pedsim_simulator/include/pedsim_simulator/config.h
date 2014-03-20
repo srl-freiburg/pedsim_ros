@@ -56,6 +56,7 @@ public:
 public:
     double factor_obstacle_force;
     double factor_social_force;
+	double factor_desired_force;
     bool look_ahead;
     double simulation_step;
 	

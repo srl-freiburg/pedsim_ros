@@ -91,7 +91,10 @@ void Agent::updateState(int event)
     // check state
 	StateMachine::Event ev = static_cast<StateMachine::Event>(event);
     if ( ev == StateMachine::LEAVE_QUEUE )
+	{
+		// reset the re-join count
 		time_since_queue_ = 0;
+	}
 	
 	state_machine_->doStateTransition ( ev );
 	
@@ -105,9 +108,6 @@ void Agent::updateState(int event)
 /// \brief Move the agents in one time step
 void Agent::move ( double h )
 {
-    Ped::Tagent::setfactorsocialforce ( CONFIG.factor_social_force );
-    Ped::Tagent::setfactorobstacleforce ( CONFIG.factor_obstacle_force );
-
     // use SFM as local controller for the robot
     if ( Tagent::gettype() == Ped::Tagent::ROBOT )
     {
@@ -115,9 +115,27 @@ void Agent::move ( double h )
         Ped::Tagent::setfactorobstacleforce ( 350 );
         Ped::Tagent::setfactordesiredforce ( 1.5 );
     }
+    else
+	{
+		Ped::Tagent::setfactorsocialforce ( CONFIG.factor_social_force );
+		Ped::Tagent::setfactorobstacleforce ( CONFIG.factor_obstacle_force );
+		Ped::Tagent::setfactordesiredforce ( CONFIG.factor_desired_force );
+    }
 
+    // those in queues behave differently
+    if ( state_machine_->getCurrentState() == StateMachine::QUEUEING )
+	{
+		Ped::Tagent::setfactorsocialforce ( CONFIG.factor_social_force * 3.0 );
+        Ped::Tagent::setfactorobstacleforce ( CONFIG.factor_obstacle_force );
+        Ped::Tagent::setfactordesiredforce ( CONFIG.factor_desired_force / 3.0 );
+	}
+	
+    
     if ( state_machine_->getCurrentState() == StateMachine::WALKING )
+	{
+		// we only work with non-lazy people
         Ped::Tagent::move ( h );
+	}
 	
 	time_since_queue_++;
 
