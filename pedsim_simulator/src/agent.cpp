@@ -130,6 +130,15 @@ void Agent::move ( double h )
         Ped::Tagent::setfactordesiredforce ( CONFIG.factor_desired_force / 3.0 );
 	}
 	
+	
+	// standing ones remain standing
+    if ( Tagent::gettype() == Ped::Tagent::STANDING )
+	{
+		Ped::Tagent::setfactorsocialforce ( CONFIG.factor_social_force / 10.0 );
+        Ped::Tagent::setfactorobstacleforce ( CONFIG.factor_obstacle_force );
+        Ped::Tagent::setfactordesiredforce ( CONFIG.factor_desired_force / 10.0 );
+	}
+	
     
     if ( state_machine_->getCurrentState() == StateMachine::WALKING )
 	{

@@ -21,7 +21,8 @@ using namespace std;
 
 /// Default Constructor
 /// \date    2003-12-29
-Ped::Tagent::Tagent() {
+Ped::Tagent::Tagent()
+{
     static int staticid = 0;
     id = staticid++;
     p.x = 0;
@@ -57,7 +58,8 @@ Ped::Tagent::Tagent() {
 
 /// Destructor
 /// \date    2012-02-04
-Ped::Tagent::~Tagent() {
+Ped::Tagent::~Tagent()
+{
 }
 
 
@@ -67,7 +69,8 @@ Ped::Tagent::~Tagent() {
 /// \date    2012-01-17
 /// \warning Bad things will happen if the agent is not assigned to a scene. But usually, Tscene takes care of that.
 /// \param   *s A valid Tscene initialized earlier.
-void Ped::Tagent::assignScene(Ped::Tscene *s) {
+void Ped::Tagent::assignScene ( Ped::Tscene *s )
+{
     scene = s;
 }
 
@@ -78,46 +81,50 @@ void Ped::Tagent::assignScene(Ped::Tscene *s) {
 /// \todo Add a flag to change the waypoint queue behavior of the Tagents.
 /// \author  chgloor
 /// \date    2012-01-19
-void Ped::Tagent::addWaypoint(Twaypoint *wp) {
+void Ped::Tagent::addWaypoint ( Twaypoint *wp )
+{
 
-    if (wp->gettype() == Ped::Twaypoint::TYPE_BIRTH) 
-	{
+    if ( wp->gettype() == Ped::Twaypoint::TYPE_BIRTH )
+    {
         birth_waypoint = wp;
-		waypoints.push_back(wp);
+        waypoints.push_back ( wp );
     }
 
-    if (wp->gettype() == Ped::Twaypoint::TYPE_DEATH) 
-	{
+    if ( wp->gettype() == Ped::Twaypoint::TYPE_DEATH )
+    {
         death_waypoint = wp;
-		waypoints.push_back(wp);
+        waypoints.push_back ( wp );
     }
-    
-    if (wp->gettype() == Ped::Twaypoint::TYPE_QUEUE)
-	{
-		waypoints.push_front(wp);
-	}
-	
-	if (wp->gettype() == Ped::Twaypoint::TYPE_NORMAL || wp->gettype() == Ped::Twaypoint::TYPE_POINT)
-	{
-		waypoints.push_back(wp);
-	}
+
+    if ( wp->gettype() == Ped::Twaypoint::TYPE_QUEUE )
+    {
+        waypoints.push_front ( wp );
+    }
+
+    if ( wp->gettype() == Ped::Twaypoint::TYPE_NORMAL || wp->gettype() == Ped::Twaypoint::TYPE_POINT )
+    {
+        waypoints.push_back ( wp );
+    }
 }
 
 
-bool Ped::Tagent::removeWaypoint(const Twaypoint *wp) {
+bool Ped::Tagent::removeWaypoint ( const Twaypoint *wp )
+{
     // unset references
-    if(destination == wp)
+    if ( destination == wp )
         destination = NULL;
-    if(lastdestination == wp)
+    if ( lastdestination == wp )
         lastdestination = NULL;
 
     // remove waypoint from list of destinations
     bool removed = false;
-    for(int i = waypoints.size(); i > 0; --i) {
+    for ( int i = waypoints.size(); i > 0; --i )
+    {
         Twaypoint* currentWaypoint = waypoints.front();
         waypoints.pop_front();
-        if(currentWaypoint != wp) {
-            waypoints.push_back(currentWaypoint);
+        if ( currentWaypoint != wp )
+        {
+            waypoints.push_back ( currentWaypoint );
             removed = true;
         }
     }
@@ -126,23 +133,26 @@ bool Ped::Tagent::removeWaypoint(const Twaypoint *wp) {
 }
 
 
-void Ped::Tagent::clearWaypoints() {
+void Ped::Tagent::clearWaypoints()
+{
     // unset references
     destination = NULL;
     lastdestination = NULL;
 
     // remove all references to the waypoints
     // note: don't delete waypoints, because the scene is responsible
-    for(int i = waypoints.size(); i > 0; --i)
+	// TODO - remove C++11 fetures and use boost
+    for ( int i = waypoints.size(); i > 0; --i )
         waypoints.pop_front();
 }
 
 
-void Ped::Tagent::removeAgentFromNeighbors(const Ped::Tagent* agentIn) {
+void Ped::Tagent::removeAgentFromNeighbors ( const Ped::Tagent* agentIn )
+{
     // search agent in neighbors, and remove him
-    set<const Ped::Tagent*>::iterator foundNeighbor = neighbors.find(agentIn);
-    if(foundNeighbor != neighbors.end())
-        neighbors.erase(foundNeighbor);
+    set<const Ped::Tagent*>::iterator foundNeighbor = neighbors.find ( agentIn );
+    if ( foundNeighbor != neighbors.end() )
+        neighbors.erase ( foundNeighbor );
 }
 
 
@@ -151,7 +161,8 @@ void Ped::Tagent::removeAgentFromNeighbors(const Ped::Tagent* agentIn) {
 /// \date    2012-01-08
 /// \param   id is the agent to follow (must exist, obviously)
 /// \todo    Add a method that takes a Tagent* as argument
-void Ped::Tagent::setFollow(int id) {
+void Ped::Tagent::setFollow ( int id )
+{
     follow = id;
 }
 
@@ -160,7 +171,8 @@ void Ped::Tagent::setFollow(int id) {
 /// \date    2012-01-18
 /// \return  int, the agent id of the agent
 /// \todo    Add a method that returns a Tagent*
-int Ped::Tagent::getFollow() const {
+int Ped::Tagent::getFollow() const
+{
     return follow;
 }
 
@@ -169,7 +181,8 @@ int Ped::Tagent::getFollow() const {
 /// agents, it will not move faster than this.
 /// \date    2012-01-08
 /// \param pvmax The maximum velocity. In scene units per timestep, multiplied by the simulation's precision h.
-void Ped::Tagent::setVmax(double pvmax) {
+void Ped::Tagent::setVmax ( double pvmax )
+{
     vmax = pvmax;
 }
 
@@ -180,7 +193,8 @@ void Ped::Tagent::setVmax(double pvmax) {
 /// \param   px Position x
 /// \param   py Position y
 /// \param   pz Position z
-void Ped::Tagent::setPosition(double px, double py, double pz) {
+void Ped::Tagent::setPosition ( double px, double py, double pz )
+{
     p.x = px;
     p.y = py;
     p.z = pz;
@@ -191,7 +205,8 @@ void Ped::Tagent::setPosition(double px, double py, double pz) {
 /// and about 10 do make sense.
 /// \date    2012-01-20
 /// \param   f The factor
-void Ped::Tagent::setfactorsocialforce(double f) {
+void Ped::Tagent::setfactorsocialforce ( double f )
+{
     factorsocialforce = f;
 }
 
@@ -199,7 +214,7 @@ void Ped::Tagent::setfactorsocialforce(double f) {
 /// and about 10 do make sense.
 /// \date    2012-01-20
 /// \param   f The factor
-void Ped::Tagent::setfactorobstacleforce(double f) 
+void Ped::Tagent::setfactorobstacleforce ( double f )
 {
     factorobstacleforce = f;
 }
@@ -208,7 +223,7 @@ void Ped::Tagent::setfactorobstacleforce(double f)
 /// and about 10 do make sense.
 /// \date    2012-01-20
 /// \param   f The factor
-void Ped::Tagent::setfactordesiredforce(double f) 
+void Ped::Tagent::setfactordesiredforce ( double f )
 {
     factordesiredforce = f;
 }
@@ -217,29 +232,23 @@ void Ped::Tagent::setfactordesiredforce(double f)
 /// 0 and about 10 do make sense.
 /// \date    2012-01-20
 /// \param   f The factor
-void Ped::Tagent::setfactorlookaheadforce(double f) 
+void Ped::Tagent::setfactorlookaheadforce ( double f )
 {
     factorlookaheadforce = f;
 }
 
 /// Set an agent to be stationary/immobile
 /// useful for modelling contexts like queues and people standing
-void Ped::Tagent::setStationary() {
-    // setfactorobstacleforce(0.0);
-    // setfactordesiredforce(0.0);
-    // setfactorsocialforce(0.0);
-    // setfactorlookaheadforce(0.0);
+void Ped::Tagent::setStationary()
+{
     vmax = 0.0;
 }
 
 
-/// Set an agent to be mobile 
+/// Set an agent to be mobile
 /// Restoring default social force behaviour
-void Ped::Tagent::setMobile() {
-    // setfactorobstacleforce(10.0);
-    // setfactordesiredforce(1.0);
-    // setfactorsocialforce(2.1);
-    // setfactorlookaheadforce(1.0);
+void Ped::Tagent::setMobile()
+{
     vmax = randSpeed();
 }
 
@@ -251,16 +260,16 @@ void Ped::Tagent::setMobile() {
 /// \date    2012-01-17
 /// \todo    move this destination handling into a separate method called by move(). then mark this method as const
 /// \return  Tvector: the calculated force
-Ped::Tvector Ped::Tagent::desiredForce() 
+Ped::Tvector Ped::Tagent::desiredForce()
 {
     // following behavior
-    if(follow >= 0) 
+    if ( follow >= 0 )
     {
-        Tagent* followedAgent = scene->agents.at(follow);
-        Twaypoint newDestination(followedAgent->getx(), followedAgent->gety(), 0);
-        newDestination.settype(Ped::Twaypoint::TYPE_POINT);
-        Ped::Tvector ef = newDestination.getForce(p.x, p.y, 0, 0);
-        desiredDirection = Ped::Tvector(followedAgent->getx(), followedAgent->gety());
+        Tagent* followedAgent = scene->agents.at ( follow );
+        Twaypoint newDestination ( followedAgent->getx(), followedAgent->gety(), 0 );
+        newDestination.settype ( Ped::Twaypoint::TYPE_POINT );
+        Ped::Tvector ef = newDestination.getForce ( p.x, p.y, 0, 0 );
+        desiredDirection = Ped::Tvector ( followedAgent->getx(), followedAgent->gety() );
 
         // walk with full speed if nothing else affects me
         return vmax * ef;
@@ -268,17 +277,17 @@ Ped::Tvector Ped::Tagent::desiredForce()
 
     // waypoint management (fetch new destination if available)
     // consider: replace hasreacheddestination with destination==NULL
-    if((hasreacheddestination == true) && (!waypoints.empty())) 
+    if ( ( hasreacheddestination == true ) && ( !waypoints.empty() ) )
     {
         destination = waypoints.front();
         // round queue
         waypoints.pop_front();
-        waypoints.push_back(destination);
+        waypoints.push_back ( destination );
         hasreacheddestination = false;
     }
 
     // if there is no destination, don't move
-    if(destination == NULL) 
+    if ( destination == NULL )
     {
         desiredDirection = Ped::Tvector();
         Tvector antiMove = -v / relaxationTime;
@@ -286,22 +295,23 @@ Ped::Tvector Ped::Tagent::desiredForce()
     }
 
     bool reached;
-    if(lastdestination == NULL) 
+    if ( lastdestination == NULL )
     {
         // create a temporary destination of type point, since no normal from last dest is available
-        Twaypoint tempDestination(destination->getx(), destination->gety(), destination->getr());
-        tempDestination.settype(Ped::Twaypoint::TYPE_POINT);
+        Twaypoint tempDestination ( destination->getx(), destination->gety(), destination->getr() );
+        tempDestination.settype ( Ped::Twaypoint::TYPE_POINT );
 
-        desiredDirection = tempDestination.getForce(p.x, p.y, 0, 0, &reached);
+        desiredDirection = tempDestination.getForce ( p.x, p.y, 0, 0, &reached );
     }
-    else 
+    else
     {
-        desiredDirection = destination->getForce(p.x, p.y, lastdestination->getx(), lastdestination->gety(), &reached);
+        desiredDirection = destination->getForce ( p.x, p.y, lastdestination->getx(), lastdestination->gety(), &reached
+);
     }
 
 
     // mark destination as reached for next time step
-    if((hasreacheddestination == false) && (reached == true)) 
+    if ( ( hasreacheddestination == false ) && ( reached == true ) )
     {
         hasreacheddestination = true;
         lastdestination = destination;
@@ -321,7 +331,7 @@ Ped::Tvector Ped::Tagent::desiredForce()
 /// this is just fine.
 /// \date    2012-01-17
 /// \return  Tvector: the calculated force
-Ped::Tvector Ped::Tagent::socialForce() const 
+Ped::Tvector Ped::Tagent::socialForce() const
 {
     // define relative importance of position vs velocity vector
     // (set according to Moussaid-Helbing 2009)
@@ -340,16 +350,17 @@ Ped::Tvector Ped::Tagent::socialForce() const
     const double n_prime = 3;
 
     Tvector force;
-    for (const Ped::Tagent* other: neighbors) {
+    for ( const Ped::Tagent* other: neighbors )
+    {
         // don't compute social force to yourself
-        if (other->id == id) continue;
+        if ( other->id == id ) continue;
 
         // compute difference between both agents' positions
         Tvector diff = other->p - p;
 
         // skip futher computation if they are too far away from each
         // other. Should speed up things.
-        if (diff.lengthSquared() > 4.0) continue;
+        if ( diff.lengthSquared() > 4.0 ) continue;
 
         Tvector diffDirection = diff.normalized();
 
@@ -363,14 +374,14 @@ Ped::Tvector Ped::Tagent::socialForce() const
         Tvector interactionDirection = interactionVector / interactionLength;
 
         // compute angle theta (between interaction and position difference vector)
-        double theta = interactionDirection.angleTo(diffDirection);
-        int thetaSign = (theta == 0) ? (0) : (theta/abs(theta));
+        double theta = interactionDirection.angleTo ( diffDirection );
+        int thetaSign = ( theta == 0 ) ? ( 0 ) : ( theta/abs ( theta ) );
 
         // compute model parameter B = gamma * ||D||
         double B = gamma * interactionLength;
 
-        double forceVelocityAmount = -exp(-diff.length()/B - (n_prime*B*theta)*(n_prime*B*theta));
-        double forceAngleAmount = -thetaSign * exp(-diff.length()/B - (n*B*theta)*(n*B*theta));
+        double forceVelocityAmount = -exp ( -diff.length() /B - ( n_prime*B*theta ) * ( n_prime*B*theta ) );
+        double forceAngleAmount = -thetaSign * exp ( -diff.length() /B - ( n*B*theta ) * ( n*B*theta ) );
 
         Tvector forceVelocity = forceVelocityAmount * interactionDirection;
         Tvector forceAngle = forceAngleAmount * interactionDirection.leftNormalVector();
@@ -386,23 +397,26 @@ Ped::Tvector Ped::Tagent::socialForce() const
 /// Iterates over all obstacles == O(N).
 /// \date    2012-01-17
 /// \return  Tvector: the calculated force
-Ped::Tvector Ped::Tagent::obstacleForce() const {
+Ped::Tvector Ped::Tagent::obstacleForce() const
+{
     // obstacle which is closest only
     Ped::Tvector minDiff;
     double minDistanceSquared = INFINITY;
 
-    for(const Tobstacle* obstacle : scene->obstacles) {
-        Ped::Tvector closestPoint = obstacle->closestPoint(p);
+    for ( const Tobstacle* obstacle : scene->obstacles )
+    {
+        Ped::Tvector closestPoint = obstacle->closestPoint ( p );
         Ped::Tvector diff = p - closestPoint;
         double distanceSquared = diff.lengthSquared();  // use squared distance to avoid computing square root
-        if(distanceSquared < minDistanceSquared) {
+        if ( distanceSquared < minDistanceSquared )
+        {
             minDistanceSquared = distanceSquared;
             minDiff = diff;
         }
     }
 
-    double distance = sqrt(minDistanceSquared) - agentRadius;
-    double forceAmount = exp(-distance/obstacleForceSigma);
+    double distance = sqrt ( minDistanceSquared ) - agentRadius;
+    double forceAmount = exp ( -distance/obstacleForceSigma );
     return forceAmount * minDiff.normalized();
 }
 
@@ -414,44 +428,47 @@ Ped::Tvector Ped::Tagent::obstacleForce() const {
 /// \return  Tvector: the calculated force
 /// \param e is a vector defining the direction in which the agent should look
 ///          ahead to. Usually, this is the direction he wants to walk to.
-Ped::Tvector Ped::Tagent::lookaheadForce(Ped::Tvector e) const {
+Ped::Tvector Ped::Tagent::lookaheadForce ( Ped::Tvector e ) const
+{
     const double pi = 3.14159265;
     int lookforwardcount = 0;
-    for(set<const Ped::Tagent*>::iterator iter = neighbors.begin(); iter!=neighbors.end(); ++iter) {
+    for ( set<const Ped::Tagent*>::iterator iter = neighbors.begin(); iter!=neighbors.end(); ++iter )
+    {
         const Ped::Tagent* other = *iter;
 
         // don't compute this force for the agent himself
-        if(other->id == id)
+        if ( other->id == id )
             continue;
 
         double distancex = other->p.x - p.x;
         double distancey = other->p.y - p.y;
-        // double dist2 = (distancex * distancex + distancey * distancey); // 2D
-        // if (dist2 < 400) { // look ahead feature
-        double at2v = atan2(-e.x, -e.y); // was vx, vy  --chgloor 2012-01-15
-        double at2d = atan2(-distancex, -distancey);
-        double at2v2 = atan2(-other->v.x, -other->v.y);
+        double at2v = atan2 ( -e.x, -e.y ); // was vx, vy  --chgloor 2012-01-15
+        double at2d = atan2 ( -distancex, -distancey );
+        double at2v2 = atan2 ( -other->v.x, -other->v.y );
         double s = at2d - at2v;
-        if (s > pi) s -= 2*pi;
-        if (s < -pi) s += 2*pi;
+		
+        if ( s > pi ) s -= 2*pi;
+        if ( s < -pi ) s += 2*pi;
         double vv = at2v - at2v2;
-        if (vv > pi) vv -= 2*pi;
-        if (vv < -pi) vv += 2*pi;
-        if (abs(vv) > 2.5) { // opposite direction
-            if ((s < 0) && (s > -0.3)) // position vor mir, in meine richtung
+        if ( vv > pi ) vv -= 2*pi;
+        if ( vv < -pi ) vv += 2*pi;
+        if ( abs ( vv ) > 2.5 ) // opposite direction
+        {
+            if ( ( s < 0 ) && ( s > -0.3 ) ) // position vor mir, in meine richtung
                 lookforwardcount--;
-            if ((s > 0) && (s < 0.3))
+            if ( ( s > 0 ) && ( s < 0.3 ) )
                 lookforwardcount++;
         }
-        // }
     }
 
     Ped::Tvector lf;
-    if (lookforwardcount < 0) {
+    if ( lookforwardcount < 0 )
+    {
         lf.x = 0.5f *  e.y; // was vx, vy  --chgloor 2012-01-15
         lf.y = 0.5f * -e.x;
     }
-    if (lookforwardcount > 0) {
+    if ( lookforwardcount > 0 )
+    {
         lf.x = 0.5f * -e.y;
         lf.y = 0.5f *  e.x;
     }
@@ -465,21 +482,23 @@ Ped::Tvector Ped::Tagent::lookaheadForce(Ped::Tvector e) const {
 /// \date    2012-02-12
 /// \return  Tvector: the calculated force
 /// \param   e is a vector defining the direction in which the agent wants to walk to.
-Ped::Tvector Ped::Tagent::myForce(Ped::Tvector e) {
+Ped::Tvector Ped::Tagent::myForce ( Ped::Tvector e )
+{
     Ped::Tvector lf;
     return lf;
 }
 
 
-void Ped::Tagent::computeForces() {
+void Ped::Tagent::computeForces()
+{
     const double neighborhoodRange = 20.0;
 
     desiredforce = desiredForce();
-    neighbors = scene->getNeighbors(p.x, p.y, neighborhoodRange);
-    if (factorlookaheadforce > 0) lookaheadforce = lookaheadForce(desiredDirection);
-    if (factorsocialforce > 0) socialforce = socialForce();
-    if (factorobstacleforce > 0) obstacleforce = obstacleForce();
-    myforce = myForce(desiredDirection);
+    neighbors = scene->getNeighbors ( p.x, p.y, neighborhoodRange );
+    if ( factorlookaheadforce > 0 ) lookaheadforce = lookaheadForce ( desiredDirection );
+    if ( factorsocialforce > 0 ) socialforce = socialForce();
+    if ( factorobstacleforce > 0 ) obstacleforce = obstacleForce();
+    myforce = myForce ( desiredDirection );
 }
 
 
@@ -488,26 +507,27 @@ void Ped::Tagent::computeForces() {
 /// which is applied to the agents velocity, and then to its position.
 /// \date    2003-12-29
 /// \param   stepSizeIn This tells the simulation how far the agent should proceed
-void Ped::Tagent::move(double stepSizeIn) {
+void Ped::Tagent::move ( double stepSizeIn )
+{
     // sum of all forces --> acceleration
     a = factordesiredforce * desiredforce
-            + factorsocialforce * socialforce
-            + factorobstacleforce * obstacleforce
-            + factorlookaheadforce * lookaheadforce
-            + myforce;
+        + factorsocialforce * socialforce
+        + factorobstacleforce * obstacleforce
+        + factorlookaheadforce * lookaheadforce
+        + myforce;
 
     // calculate the new velocity
-    if (getteleop() == false)
+    if ( getteleop() == false )
     {
         v = v + stepSizeIn * a;
     }
 
     // don't exceed maximal speed
-    if (v.length() > vmax) v = v.normalized() * vmax;
+    if ( v.length() > vmax ) v = v.normalized() * vmax;
 
     // internal position update = actual move
     p = p + stepSizeIn * v;
 
     // notice scene of movement
-    scene->moveAgent(this);
+    scene->moveAgent ( this );
 }

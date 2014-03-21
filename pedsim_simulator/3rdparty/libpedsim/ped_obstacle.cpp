@@ -14,7 +14,8 @@ int Ped::Tobstacle::staticid = 0;
 
 /// Default constructor, places a wall from 0/0 to 1/1
 /// \date    2012-01-07
-Ped::Tobstacle::Tobstacle() {
+Ped::Tobstacle::Tobstacle()
+{
     id = staticid++;
     ax = 0;
     ay = 0;
@@ -30,7 +31,8 @@ Ped::Tobstacle::Tobstacle() {
 /// \param pay y coordinate of the first corner of the obstacle.
 /// \param pbx x coordinate of the second corner of the obstacle.
 /// \param pby y coordinate of the second corner of the obstacle.
-Ped::Tobstacle::Tobstacle(double pax, double pay, double pbx, double pby) {
+Ped::Tobstacle::Tobstacle ( double pax, double pay, double pbx, double pby )
+{
     id = staticid++;
     ax = pax;
     ay = pay;
@@ -44,7 +46,8 @@ Ped::Tobstacle::Tobstacle(double pax, double pay, double pbx, double pby) {
 /// \date    2013-08-02
 /// \param startIn The first corner of the obstacle.
 /// \param endIn The second corner of the obstacle.
-Ped::Tobstacle::Tobstacle(const Tvector& startIn, const Tvector& endIn) {
+Ped::Tobstacle::Tobstacle ( const Tvector& startIn, const Tvector& endIn )
+{
     id = staticid++;
     ax = startIn.x;
     ay = startIn.y;
@@ -55,18 +58,21 @@ Ped::Tobstacle::Tobstacle(const Tvector& startIn, const Tvector& endIn) {
 
 
 /// Destructor
-Ped::Tobstacle::~Tobstacle() {
+Ped::Tobstacle::~Tobstacle()
+{
     // clean up
 }
 
 
-Ped::Tvector Ped::Tobstacle::getStartPoint() const {
-    return Tvector(ax, ay);
+Ped::Tvector Ped::Tobstacle::getStartPoint() const
+{
+    return Tvector ( ax, ay );
 }
 
 
-Ped::Tvector Ped::Tobstacle::getEndPoint() const {
-    return Tvector(bx, by);
+Ped::Tvector Ped::Tobstacle::getEndPoint() const
+{
+    return Tvector ( bx, by );
 }
 
 
@@ -76,39 +82,44 @@ Ped::Tvector Ped::Tobstacle::getEndPoint() const {
 /// \param pay y coordinate of the first corner of the obstacle.
 /// \param pbx x coordinate of the second corner of the obstacle.
 /// \param pby y coordinate of the second corner of the obstacle.
-void Ped::Tobstacle::setPosition(double pax, double pay, double pbx, double pby) {
+void Ped::Tobstacle::setPosition ( double pax, double pay, double pbx, double pby )
+{
     ax = pax;
     ay = pay;
     bx = pbx;
     by = pby;
 }
 
-void Ped::Tobstacle::setPosition(const Tvector& startIn, const Tvector& endIn) {
-    setPosition(startIn.x, startIn.y, endIn.x, endIn.y);
+void Ped::Tobstacle::setPosition ( const Tvector& startIn, const Tvector& endIn )
+{
+    setPosition ( startIn.x, startIn.y, endIn.x, endIn.y );
 }
 
-void Ped::Tobstacle::setStartPoint(const Tvector& startIn) {
+void Ped::Tobstacle::setStartPoint ( const Tvector& startIn )
+{
     ax = startIn.x;
     ay = startIn.y;
 }
 
-void Ped::Tobstacle::setEndPoint(const Tvector& endIn) {
+void Ped::Tobstacle::setEndPoint ( const Tvector& endIn )
+{
     bx = endIn.x;
     by = endIn.y;
 }
 
-Ped::Tvector Ped::Tobstacle::closestPoint(const Tvector& pointIn) const {
-    Tvector startPoint(ax, ay);
-    Tvector endPoint(bx, by);
+Ped::Tvector Ped::Tobstacle::closestPoint ( const Tvector& pointIn ) const
+{
+    Tvector startPoint ( ax, ay );
+    Tvector endPoint ( bx, by );
     Tvector relativeEndPoint = endPoint - startPoint;
 
     Tvector relativePoint = pointIn - startPoint;
-    double lambda = (Tvector::dotProduct(relativePoint, relativeEndPoint))
-        / relativeEndPoint.lengthSquared();
+    double lambda = ( Tvector::dotProduct ( relativePoint, relativeEndPoint ) )
+                    / relativeEndPoint.lengthSquared();
 
-    if(lambda <= 0)
+    if ( lambda <= 0 )
         return startPoint;
-    else if(lambda >= 1)
+    else if ( lambda >= 1 )
         return endPoint;
     else
         return startPoint + lambda*relativeEndPoint;
@@ -122,8 +133,9 @@ Ped::Tvector Ped::Tobstacle::closestPoint(const Tvector& pointIn) const {
 /// \return  Tvector forces
 /// \param   double x: The x coordinate of the point
 /// \param   double y: The y coordinate of the point
-Ped::Tvector Ped::Tobstacle::closestPoint(double p1, double p2) const {
-    return closestPoint(Tvector(p1, p2));
+Ped::Tvector Ped::Tobstacle::closestPoint ( double p1, double p2 ) const
+{
+    return closestPoint ( Tvector ( p1, p2 ) );
 }
 
 /// rot phi around x/y
@@ -134,9 +146,10 @@ Ped::Tvector Ped::Tobstacle::closestPoint(double p1, double p2) const {
 /// \param   x The x coordinate of the point the obstacle will be rotated around.
 /// \param   y The y coordinate of the point the obstacle will be rotated around.
 /// \param   r The angle the obstacle will be rotated, where phi is given in radians
-void Ped::Tobstacle::rotate(double x, double y, double phi) {
-    double sinPhi = sin(phi);
-    double cosPhi = cos(phi);
+void Ped::Tobstacle::rotate ( double x, double y, double phi )
+{
+    double sinPhi = sin ( phi );
+    double cosPhi = cos ( phi );
 
     double anx = ax*cosPhi - x*cosPhi - ay*sinPhi + y*sinPhi + x;
     double any = ax*sinPhi - x*sinPhi + ay*cosPhi - y*cosPhi + y;
@@ -144,5 +157,5 @@ void Ped::Tobstacle::rotate(double x, double y, double phi) {
     double bnx = bx*cosPhi - x*cosPhi - by*sinPhi + y*sinPhi + x;
     double bny = bx*sinPhi - x*sinPhi + by*cosPhi - y*cosPhi + y;
 
-    setPosition(anx, any, bnx, bny);
+    setPosition ( anx, any, bnx, bny );
 }
