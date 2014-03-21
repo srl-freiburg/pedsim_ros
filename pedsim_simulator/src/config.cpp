@@ -49,6 +49,7 @@ Config::Config()
     robot_mode = SOCIAL_DRIVE;
     robot_wait_time = 100;
 	queue_break = 50;
+	queue_max_length = 20;
 }
 
 Config& Config::getInstance()

@@ -40,6 +40,17 @@ SET(SRC_FILES
     ped_scene.cpp
     ped_tree.cpp
 )
+
+SET(HEADER_FILES
+	ped_agent.h
+	ped_includes.h
+	ped_obstacle.h
+	ped_scene.h
+	ped_tree.h
+	ped_vector.h
+	ped_waypoint.h
+)
+
 #--------------------- End Files -------------------#
 
 # FIND_PACKAGE(Boost REQUIRED)
@@ -61,6 +72,5 @@ INSTALL(TARGETS pedsim
     RUNTIME DESTINATION bin
     LIBRARY DESTINATION lib
     ARCHIVE DESTINATION lib)
-INSTALL(FILES ${CMAKE_CURRENT_SOURCE_DIR}/*.h
-    DESTINATION include)
+INSTALL(FILES ${HEADER_FILES} DESTINATION include)
 #---------------- End Installation -----------------#

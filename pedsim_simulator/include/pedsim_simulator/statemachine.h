@@ -47,7 +47,8 @@ public:
     {
         IDLE = 0,
         WALKING = 1,
-        QUEUEING = 2
+        QUEUEING = 2,
+		STANDING = 3
     };
 
 
@@ -59,7 +60,8 @@ public:
         START_WALKING = 1,
         STOP_WALKING = 2,
         JOIN_QUEUE = 3,
-        LEAVE_QUEUE = 4
+        LEAVE_QUEUE = 4,
+		SPAWN = 5
     };
 
 
@@ -79,6 +81,14 @@ public:
 
     void doStateTransition ( Event triggered_event )
     {
+		/// Spawning transitions
+		// TODO - allow spawning into idle/standing states
+		if ( triggered_event == SPAWN )
+		{
+			current_state_ = WALKING;
+			previous_state_ = IDLE;
+		}
+		
         /// Idle transitions
         if ( current_state_ == IDLE && triggered_event == START_WALKING )
         {
@@ -86,10 +96,18 @@ public:
             current_state_ = WALKING;
             return;
         }
+        
+        if ( current_state_ == IDLE && triggered_event == STOP_WALKING )
+        {
+            previous_state_ = IDLE;
+            current_state_ = STANDING;
+            return;
+        }
 
         /// Walking transitions
         if ( current_state_ == WALKING )
         {
+			// avoid immediate re-joining of queues
 			if ( previous_state_ == QUEUEING )
 				return;
 			
@@ -101,7 +119,7 @@ public:
             else if ( triggered_event == STOP_WALKING )
             {
                 previous_state_ = WALKING;
-                current_state_ = IDLE;
+                current_state_ = STANDING;
             }
             // to allow rejoining of queues
             else if (triggered_event == START_WALKING)
@@ -117,6 +135,14 @@ public:
         if ( current_state_ == QUEUEING && triggered_event == LEAVE_QUEUE )
         {
             previous_state_ = QUEUEING;
+            current_state_ = WALKING;
+            return;
+        }
+        
+        /// Standing transitions
+        if ( current_state_ == STANDING && triggered_event == START_WALKING )
+        {
+            previous_state_ = STANDING;
             current_state_ = WALKING;
             return;
         }

@@ -64,8 +64,7 @@ namespace Ped {
             ADULT = 0,
             CHILD = 1,
             ROBOT = 2,
-            ELDERLY = 3,
-			STANDING = 4	// to simulate groups of people standing
+            ELDERLY = 3
         };
 
     public:

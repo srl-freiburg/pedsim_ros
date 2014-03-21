@@ -41,6 +41,9 @@ Agent::Agent ( double xIn, double yIn )
     Ped::Tagent::setType ( Ped::Tagent::ADULT );
     state_machine_.reset ( new StateMachine ( StateMachine::WALKING ) );
 	time_since_queue_ = 0;
+	
+	// everyone spawns once
+	state_machine_->doStateTransition( StateMachine::SPAWN );
 };
 
 Agent::~Agent()
@@ -103,6 +106,12 @@ void Agent::updateState(int event)
 		state_machine_->doStateTransition( StateMachine::START_WALKING );
 	}
 	
+	
+	/// NOTE - temporary check for standing agents
+	if ( gettype() == Ped::Tagent::ELDERLY )
+	{
+		state_machine_->doStateTransition( StateMachine::STOP_WALKING );
+	}
 }
 
 /// \brief Move the agents in one time step
@@ -115,28 +124,28 @@ void Agent::move ( double h )
         Ped::Tagent::setfactorobstacleforce ( 350 );
         Ped::Tagent::setfactordesiredforce ( 1.5 );
     }
-    else
-	{
-		Ped::Tagent::setfactorsocialforce ( CONFIG.factor_social_force );
-		Ped::Tagent::setfactorobstacleforce ( CONFIG.factor_obstacle_force );
-		Ped::Tagent::setfactordesiredforce ( CONFIG.factor_desired_force );
-    }
+//     else
+// 	{
+// 		Ped::Tagent::setfactorsocialforce ( CONFIG.factor_social_force );
+// 		Ped::Tagent::setfactorobstacleforce ( CONFIG.factor_obstacle_force );
+// 		Ped::Tagent::setfactordesiredforce ( CONFIG.factor_desired_force );
+//     }
 
     // those in queues behave differently
     if ( state_machine_->getCurrentState() == StateMachine::QUEUEING )
 	{
-		Ped::Tagent::setfactorsocialforce ( CONFIG.factor_social_force * 3.0 );
-        Ped::Tagent::setfactorobstacleforce ( CONFIG.factor_obstacle_force );
-        Ped::Tagent::setfactordesiredforce ( CONFIG.factor_desired_force / 3.0 );
-	}
-	
-	
-	// standing ones remain standing
-    if ( Tagent::gettype() == Ped::Tagent::STANDING )
-	{
-		Ped::Tagent::setfactorsocialforce ( CONFIG.factor_social_force / 10.0 );
+		Ped::Tagent::setfactorsocialforce ( CONFIG.factor_social_force );
         Ped::Tagent::setfactorobstacleforce ( CONFIG.factor_obstacle_force );
         Ped::Tagent::setfactordesiredforce ( CONFIG.factor_desired_force / 10.0 );
+	}
+	
+	// standing ones remain standing
+    if ( state_machine_->getCurrentState() == StateMachine::STANDING )
+	{
+		Ped::Tagent::setfactorsocialforce ( 0.0 );
+        Ped::Tagent::setfactorobstacleforce ( 0.0 );
+        Ped::Tagent::setfactordesiredforce ( 0.0 );
+		Ped::Tagent::setVmax( 0.01 );
 	}
 	
     

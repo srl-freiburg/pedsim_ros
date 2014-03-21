@@ -403,6 +403,10 @@ void Scene::publishAgentVisuals()
         else
         {
             marker.type = visualization_msgs::Marker::CUBE;
+			
+			marker.scale.x = a->getRadius() / 2.0;
+            marker.scale.y = a->getRadius();
+            marker.scale.z = 1.75; //randHeight();
 
             if ( a->gettype() == Ped::Tagent::ADULT )
             {
@@ -410,12 +414,8 @@ void Scene::publishAgentVisuals()
                 marker.color.r = 0.0;
                 marker.color.g = 1.0;
                 marker.color.b = 1.0;
-
-                marker.scale.x = a->getRadius() / 2.0;
-                marker.scale.y = a->getRadius();
-                marker.scale.z = 1.75; //randHeight();
             }
-            else
+            else if ( a->gettype() == Ped::Tagent::CHILD )
             {
                 marker.color.a = 1.0;
                 marker.color.r = 1.0;
@@ -425,6 +425,13 @@ void Scene::publishAgentVisuals()
                 marker.scale.x = a->getRadius() / 2.0;
                 marker.scale.y = a->getRadius();
                 marker.scale.z = 1.55; //randHeight();
+            }
+            else if ( a->gettype() == Ped::Tagent::ELDERLY )
+            {
+                marker.color.a = 1.0;
+                marker.color.r = 0.0;
+                marker.color.g = 0.0;
+                marker.color.b = 0.0;
             }
 
             

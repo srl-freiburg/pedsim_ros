@@ -77,7 +77,7 @@ WaitingQueue::~WaitingQueue()
 
 void WaitingQueue::enqueueAgent ( Agent *a )
 {
-    if ( queueing_agents_.size() == 20 ) //TEMP limit queue size
+    if ( queueing_agents_.size() == CONFIG.queue_max_length ) 
         return;
 
     // make the agent stop
@@ -89,24 +89,15 @@ void WaitingQueue::enqueueAgent ( Agent *a )
 //     Ped::Tvector qend = getQueueEnd();
 //     a->setPosition ( qend.x, qend.y );
 	
-	// NOTE - new way with follow id
-// 	if ( queueing_agents_.size() == 0 )
-// 	{
-		Ped::Tvector qend = getQueueEnd();
-// 		a->setPosition ( qend.x, qend.y );
 		
-		Waypoint *w = new Waypoint ( "-", qend.x, qend.y, 1.0 );
-		w->settype(Ped::Twaypoint::TYPE_QUEUE);
-		a->addWaypoint(w);
-// 	}
-// 	else
-// 	{
-// 		int follow_id = getLastAgentId();
-// 		a->setFollow(follow_id);
-// 	}
-// 	
+	// NOTE - new way with follow id
+    Ped::Tvector qend = getQueueEnd();
+
+    Waypoint *w = new Waypoint ( "-", qend.x, qend.y, 0.1 );
+    w->settype ( Ped::Twaypoint::TYPE_QUEUE );
+	
+    a->addWaypoint ( w );
 	a->updateState( StateMachine::JOIN_QUEUE ); 
-	a->setType( Ped::Tagent::STANDING );
 
     queueing_agents_.push_back ( a );
 }
@@ -154,6 +145,13 @@ void WaitingQueue::updateQueue ( double px, double py )
         double ay = a->gety();
 
 //         a->setPosition ( prevx, prevy );
+		
+		Ped::Twaypoint* d1 = a->getDestination();
+		a->removeWaypoint(d1);
+
+		Ped::Twaypoint* d2 = a->getDestination();
+		a->removeWaypoint(d2);
+		
 		Waypoint *w = new Waypoint ( "-", prevx, prevy, 1.0 );
 		w->settype(Ped::Twaypoint::TYPE_QUEUE);
 		a->addWaypoint(w);

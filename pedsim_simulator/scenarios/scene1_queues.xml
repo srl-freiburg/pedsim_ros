@@ -62,4 +62,14 @@
         <addwaypoint id="left_top"/>
         <addwaypoint id="left_bottom"/>
     </agent>
+	
+	
+	<!-- Add some standing agents (type 4)	 -->
+	<agent x="80" y="20" n="5" dx="5" dy="5" type="3">
+        <!-- <addwaypoint id="right_bottom"/> -->
+        <addwaypoint id="right_top"/>
+        <addwaypoint id="left_top"/>
+        <addwaypoint id="left_bottom"/>
+    </agent>
+	
 </scenario>
