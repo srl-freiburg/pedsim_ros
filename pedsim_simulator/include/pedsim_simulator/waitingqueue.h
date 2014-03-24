@@ -107,11 +107,12 @@ private:
     int time_passed_;
 
     std::deque<Agent*> queueing_agents_;
+	
+	// NOTE - maybe keep a list of 'queue' waypoints?
 
     void updateQueue ( double px, double py );
     void releaseAgent ( Agent* a );
     Ped::Tvector getQueueEnd();
-	int getLastAgentId();
 };
 
 

@@ -191,6 +191,7 @@ bool Scene::initialize()
     std::string scene_file_param;
     ros::param::param<std::string> ( "/simulator/scene_file", scene_file_param, "scene.xml" );
     // load scenario file
+	// TODO - convert qstrings to std::strings
     QString scenefile = QString::fromStdString ( scene_file_param );
     if ( !readFromFile ( scenefile ) )
     {
@@ -264,7 +265,6 @@ void Scene::callbackRobotCommand ( const pedsim_msgs::AgentState::ConstPtr &msg 
         {
             robot_->setvx ( vx );
             robot_->setvy ( vy );
-            // robot_->setVmax( 1.34 );
             robot_->setVmax ( sqrt ( vx * vx + vy * vy ) );
         }
         else
@@ -272,7 +272,6 @@ void Scene::callbackRobotCommand ( const pedsim_msgs::AgentState::ConstPtr &msg 
             robot_->setvx ( vx );
             robot_->setvy ( vy );
             robot_->setVmax ( sqrt ( vx * vx + vy * vy ) );
-            // robot_->setVmax( 1.5 );
         }
     }
 }
@@ -293,7 +292,7 @@ void Scene::updateQueues()
                                    q->getX(), q->getY(),
                                    a->getx(), a->gety() );
 
-                    if ( d < 2.5 && coinFlip() > 0.5 )
+                    if ( d < 1.5 && coinFlip() > 0.5 )
                     {
                         q->enqueueAgent ( a );
                     }
@@ -406,7 +405,7 @@ void Scene::publishAgentVisuals()
 			
 			marker.scale.x = a->getRadius() / 2.0;
             marker.scale.y = a->getRadius();
-            marker.scale.z = 1.75; //randHeight();
+            marker.scale.z = 1.75; 
 
             if ( a->gettype() == Ped::Tagent::ADULT )
             {
@@ -424,7 +423,7 @@ void Scene::publishAgentVisuals()
 
                 marker.scale.x = a->getRadius() / 2.0;
                 marker.scale.y = a->getRadius();
-                marker.scale.z = 1.55; //randHeight();
+                marker.scale.z = 1.55; 
             }
             else if ( a->gettype() == Ped::Tagent::ELDERLY )
             {
@@ -457,7 +456,6 @@ void Scene::publishAgentVisuals()
             double theta = atan2 ( a->getvy(), a->getvx() );
             Eigen::Quaternionf q = orientation_handler_->angle2Quaternion ( theta
                                                                           );
-
             marker.pose.orientation.x = q.x();
             marker.pose.orientation.y = q.y();
             marker.pose.orientation.z = q.z();
@@ -530,8 +528,6 @@ void Scene::publishWalls()
     {
         geometry_msgs::Point p;
         Location loc = ( *it );
-        // p.x = loc.x + (cell_size/2.0f);
-        // p.y = loc.y + (cell_size/2.0f);
         p.x = loc.x;
         p.y = loc.y;
         p.z = 0.0;
@@ -565,7 +561,6 @@ void Scene::spawnKillAgents()
 
                 if ( sqrt ( pow ( ax - wx, 2.0 ) + pow ( ay - wy, 2.0 ) )  <= ( ( wc->getr() ) ) )
                 {
-                    // if (a->hasreacheddestination) {
                     double randomizedX = wp->getx();
                     double randomizedY = wp->gety();
                     double dx = wp->getr();
@@ -589,7 +584,6 @@ void Scene::spawnKillAgents()
 
                 if ( sqrt ( pow ( ax - wx, 2.0 ) + pow ( ay - wy, 2.0 ) ) <= ( ( wc->getr() ) ) )
                 {
-                    // if (a->hasreacheddestination) {
                     double randomizedX = wp->getx();
                     double randomizedY = wp->gety();
                     double dx = wp->getr();

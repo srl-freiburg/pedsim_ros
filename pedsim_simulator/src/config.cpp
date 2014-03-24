@@ -37,9 +37,13 @@ Config* Config::Config::instance = NULL;
 
 Config::Config()
 {
-    factor_obstacle_force = 10.0;
-    factor_social_force = 2.1;
-	factor_desired_force = 1.0;
+//     factor_obstacle_force = 10.0;
+//     factor_social_force = 2.1;
+// 	factor_desired_force = 1.0;
+// 	
+	
+	force_weights.reset();
+	
     look_ahead = true;
     simulation_step = 0.1;
 

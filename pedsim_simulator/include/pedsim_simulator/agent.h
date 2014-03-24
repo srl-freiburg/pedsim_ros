@@ -57,7 +57,13 @@ public:
     Ped::Tvector desiredForce();
     Ped::Tvector lookaheadForce(Ped::Tvector desired) const;
     Ped::Tvector myForce(Ped::Tvector desired) const;
-
+	void computeForces();
+	
+	/// Group forces
+	Ped::Tvector groupGazeForce();
+	Ped::Tvector groupCoherenceForce();
+	Ped::Tvector groupRepulsionForce();
+	
     /// Ped::Tagent Overrides/Overloads
 public:
     void addWaypoint(Waypoint* waypointIn);

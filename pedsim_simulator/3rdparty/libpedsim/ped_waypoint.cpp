@@ -108,19 +108,19 @@ Ped::Tvector Ped::Twaypoint::getForce ( double agentX, double agentY, double fro
         }
         return diff.normalized();
     }
-    else if ( type == Ped::Twaypoint::TYPE_QUEUE )
-    {
-        Tvector diff ( x - agentX, y - agentY );
-
-        if ( reached != NULL )
-        {
-            if ( diff.length() < r )
-                *reached = true;
-            else
-                *reached = false;
-        }
-        return diff.normalized() / 10.0;
-    }
+//     else if ( type == Ped::Twaypoint::TYPE_QUEUE )
+//     {
+//         Tvector diff ( x - agentX, y - agentY );
+// 
+//         if ( reached != NULL )
+//         {
+//             if ( diff.length() < r )
+//                 *reached = true;
+//             else
+//                 *reached = false;
+//         }
+//         return diff.normalized() / 10.0;
+//     }
     else
     {
         // unknown waypoint type

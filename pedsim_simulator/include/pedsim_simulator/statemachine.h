@@ -82,7 +82,6 @@ public:
     void doStateTransition ( Event triggered_event )
     {
 		/// Spawning transitions
-		// TODO - allow spawning into idle/standing states
 		if ( triggered_event == SPAWN )
 		{
 			current_state_ = WALKING;
@@ -177,88 +176,6 @@ private:
 
 typedef boost::shared_ptr<StateMachine> StateMachinePtr;
 typedef boost::shared_ptr<StateMachine const> StateMachineConstPtr;
-
-
-
-// #include <boost/statechart/event.hpp>
-// #include <boost/statechart/state_machine.hpp>
-// #include <boost/statechart/simple_state.hpp>
-// #include <boost/statechart/transition.hpp>
-//
-// #include <boost/config.hpp>
-// #include <boost/mpl/list.hpp>
-//
-// #ifdef BOOST_NO_STDC_NAMESPACE
-// namespace std
-// {
-//   using ::time;
-//   using ::difftime;
-//   using ::time_t;
-// }
-// #endif
-//
-// #ifdef BOOST_INTEL
-// #  pragma warning( disable: 304 ) // access control not specified
-// #  pragma warning( disable: 444 ) // destructor for base is not virtual
-// #  pragma warning( disable: 981 ) // operands are evaluated in unspecified order
-// #endif
-//
-// namespace sc = boost::statechart;
-//
-// /// Events across states
-// struct StartWalking : sc::event<StartWalking> {};
-// struct StopWalking : sc::event<StopWalking> {};
-// struct JoinQueue : sc::event<JoinQueue> {};
-// struct LeaveQueue : sc::event<LeaveQueue> {};
-//
-//
-// /// States the agents transition over
-// struct Stationary;
-// struct Walking;
-// struct Alive;
-// // struct Dead;
-// struct Queuing;
-//
-//
-// /// state machine
-// struct AgentMachine : sc::state_machine< AgentMachine, Alive > {};
-//
-//
-// /// Ask Schroedinger???
-// // struct Dead : sc::simple_state<Dead, Alive>
-// // {};
-//
-//
-// /// Agent start as being alive and occasionally die (no joke)
-// struct Alive: sc::simple_state<Alive, AgentMachine, Alive >
-// {};
-//
-// /// When alive and idle, one can only start walking
-// struct Stationary : sc::simple_state<Stationary, Alive>
-// {
-// public:
-// 	typedef sc::transition<StartWalking, Walking> wake_up;
-// };
-//
-// /// When walking, one can either queue of stop walking
-// struct Walking : sc::simple_state<Walking, Alive>
-// {
-// public:
-// 	// can either transition into idle or queuing
-// 	typedef boost::mpl::list<sc::transition<JoinQueue, Queuing>,
-// sc::transition<StopWalking, Stationary> > make_life_choices;
-// };
-//
-// /// When queuing, one can only switch to walking
-// struct Queuing : sc::simple_state<Queuing, Alive>
-// {
-// public:
-// 	// can only leave queue to go back to walking
-// 	typedef sc::transition<LeaveQueue, Walking> reaction;
-// };
-//
-//
-
 
 
 

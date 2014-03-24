@@ -249,6 +249,7 @@ void Ped::Tagent::setStationary()
 /// Restoring default social force behaviour
 void Ped::Tagent::setMobile()
 {
+	// TODO - cache the original speed and restore it
     vmax = randSpeed();
 }
 
@@ -510,17 +511,14 @@ void Ped::Tagent::computeForces()
 void Ped::Tagent::move ( double stepSizeIn )
 {
     // sum of all forces --> acceleration
+    // TODO - move this the agent.cpp
     a = factordesiredforce * desiredforce
         + factorsocialforce * socialforce
         + factorobstacleforce * obstacleforce
         + factorlookaheadforce * lookaheadforce
         + myforce;
 
-    // calculate the new velocity
-    if ( getteleop() == false )
-    {
-        v = v + stepSizeIn * a;
-    }
+    v = v + stepSizeIn * a;
 
     // don't exceed maximal speed
     if ( v.length() > vmax ) v = v.normalized() * vmax;

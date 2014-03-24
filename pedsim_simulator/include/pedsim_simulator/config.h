@@ -32,6 +32,7 @@
 #define _config_h_
 
 #include <string>
+#include <boost/shared_ptr.hpp>
 
 
 enum RobotState
@@ -40,6 +41,31 @@ enum RobotState
 	TELEOPERATION = 1,
 	SOCIAL_DRIVE = 2
 };
+
+struct ForceWeight
+{
+	float desired;
+	float social;
+	float obstacle;
+	float group_gaze;
+	float group_cohesion;
+	float group_repulsion;
+	
+	ForceWeight()
+	{
+		desired = 1.0;
+		obstacle = 10.0;
+		social = 2.1;
+		group_cohesion = 1.0;
+		group_gaze = 1.0;
+		group_repulsion = 1.0;
+	}
+};
+
+typedef boost::shared_ptr<ForceWeight> ForceWeightPtr;
+typedef boost::shared_ptr<ForceWeight const> ForceWeightConstPtr;
+
+
 
 class Config
 {
@@ -54,9 +80,12 @@ public:
     static Config& getInstance();
 
 public:
-    double factor_obstacle_force;
-    double factor_social_force;
-	double factor_desired_force;
+//     double factor_obstacle_force;
+//     double factor_social_force;
+// 	double factor_desired_force;
+	
+	ForceWeightPtr force_weights;
+	
     bool look_ahead;
     double simulation_step;
 	
@@ -67,6 +96,7 @@ public:
 	int robot_wait_time;
 	int queue_break;
 	int queue_max_length;
+	
 };
 
 

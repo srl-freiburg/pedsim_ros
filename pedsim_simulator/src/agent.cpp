@@ -79,6 +79,32 @@ Ped::Tvector Agent::lookaheadForce ( Ped::Tvector desired ) const
     return t;
 }
 
+/// \brief Group gaze force 
+/// Defined according to Helbing et. al paper
+Ped::Tvector Agent::groupGazeForce ()
+{
+	Ped::Tvector t;
+
+    return t;
+}
+
+Ped::Tvector Agent::groupCoherenceForce ()
+{
+	Ped::Tvector t;
+
+    return t;
+}
+
+Ped::Tvector Agent::groupRepulsionForce ()
+{
+	Ped::Tvector t;
+
+    return t;
+}
+	
+
+/// \brief Place holder to adding forces for controlling agents
+/// Use for group forces and other behaviours
 Ped::Tvector Agent::myForce ( Ped::Tvector desired ) const
 {
     Ped::Tvector t;
@@ -114,29 +140,40 @@ void Agent::updateState(int event)
 	}
 }
 
+/// \brief Compute the forces that drive the agent
+/// Overload in the internal method to allow to add 
+/// additional forces into the control game
+void Agent::computeForces ()
+{
+	// compute the basic social forces
+	Ped::Tagent::computeForces();
+	
+	// add additionan group and flock forces here
+	myForce (Ped::Tvector (0,10,0) );
+}
+
 /// \brief Move the agents in one time step
 void Agent::move ( double h )
 {
+	computeForces();
+	
     // use SFM as local controller for the robot
     if ( Tagent::gettype() == Ped::Tagent::ROBOT )
     {
-        Ped::Tagent::setfactorsocialforce ( CONFIG.factor_social_force );
+        Ped::Tagent::setfactorsocialforce ( CONFIG.force_weights->social );
         Ped::Tagent::setfactorobstacleforce ( 350 );
         Ped::Tagent::setfactordesiredforce ( 1.5 );
     }
-//     else
-// 	{
-// 		Ped::Tagent::setfactorsocialforce ( CONFIG.factor_social_force );
-// 		Ped::Tagent::setfactorobstacleforce ( CONFIG.factor_obstacle_force );
-// 		Ped::Tagent::setfactordesiredforce ( CONFIG.factor_desired_force );
-//     }
 
     // those in queues behave differently
     if ( state_machine_->getCurrentState() == StateMachine::QUEUEING )
 	{
-		Ped::Tagent::setfactorsocialforce ( CONFIG.factor_social_force );
-        Ped::Tagent::setfactorobstacleforce ( CONFIG.factor_obstacle_force );
-        Ped::Tagent::setfactordesiredforce ( CONFIG.factor_desired_force / 10.0 );
+		Ped::Tagent::setfactorsocialforce ( CONFIG.force_weights->social / 10.0 );
+        Ped::Tagent::setfactorobstacleforce ( CONFIG.force_weights->obstacle );
+        Ped::Tagent::setfactordesiredforce ( CONFIG.force_weights->desired );
+		Ped::Tagent::setVmax( 0.1 );
+		
+		Ped::Tagent::move ( h );
 	}
 	
 	// standing ones remain standing

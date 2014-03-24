@@ -168,8 +168,8 @@ bool Ped::Tscene::removeWaypoint ( Ped::Twaypoint* w )
 void Ped::Tscene::moveAgents ( double h )
 {
     // first update forces
-    for ( Tagent* agent : agents )
-        agent->computeForces();
+//     for ( Tagent* agent : agents )
+//         agent->computeForces();
 
     // then move agents according to their forces
     for ( Tagent* agent : agents )
