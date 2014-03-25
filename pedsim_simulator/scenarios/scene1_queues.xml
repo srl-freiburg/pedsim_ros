@@ -29,7 +29,7 @@
     <waypoint id="robot_start" x="35" y="40" r="5"/>
 
     <queue id="infodesk" x="50" y="25" direction="0"/>
-    <queue id="checkpoint" x="90" y="10" direction="3.142"/>
+<!--     <queue id="checkpoint" x="90" y="10" direction="1.57"/> -->
     <!--Attractions-->
     <!--Agents-->
     <agent x="60" y="20" n="1" dx="0" dy="0" type="0">

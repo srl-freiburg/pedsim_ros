@@ -4,6 +4,7 @@
 #include <boost/random.hpp>
 #include <boost/random/normal_distribution.hpp>
 #include <boost/random/uniform_real.hpp>
+#include <boost/random/exponential_distribution.hpp>
 #include <ctime>
 
 
@@ -32,12 +33,22 @@ inline double coinFlip()
 }
 
 
+
+inline double randService(double service_rate)
+{
+	boost::exponential_distribution<> exp_dist(service_rate);
+    boost::variate_generator<boost::mt19937 &, boost::exponential_distribution<> > expd(generator, exp_dist);
+
+    return expd();
+}
+
+
 /// --------------------------------------
 /// \brief Euclidean distance between two points
 /// --------------------------------------
-inline double distance(double x1, double x2, double y1, double y2)
+inline double distance(double x1, double y1, double x2, double y2)
 {
-    return sqrt((x1 - y1) * (x1 - y1) + (x2 - y2) * (x2 - y2));
+    return sqrt( ((x1 - x2) * (x1 - x2)) + ((y1 - y2) * (y1 - y2)) );
 }
 
 

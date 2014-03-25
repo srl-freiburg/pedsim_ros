@@ -282,23 +282,25 @@ void Scene::updateQueues()
     BOOST_FOREACH ( WaitingQueuePtr q, waiting_queues_ )
     {
         /// Add agents into queues
-        BOOST_FOREACH ( Agent* a, agents )
-        {
-            if ( a->gettype() != Ped::Tagent::ROBOT && q->agentInQueue ( a ) == false )
-            {
-                if ( a->prevStatus() != StateMachine::QUEUEING )
-                {
-                    double d = distance (
-                                   q->getX(), q->getY(),
-                                   a->getx(), a->gety() );
+		if ( q->length() == 0 )
+		{
+			Agent* a = q->pickAgent( agents, q->getX(), q->getY() );
+				
+			if (a != NULL)
+				q->enqueueAgent ( a );
 
-                    if ( d < 1.5 && coinFlip() > 0.5 )
-                    {
-                        q->enqueueAgent ( a );
-                    }
-                }
-            }
-        }
+		}
+		else
+		{
+			Agent* last_person = q->lastPedestrian();
+			std::list<Agent*> neighbors = last_person->getNeighbors();
+			
+			Agent* a = q->pickAgent( neighbors , last_person->getx(), last_person->gety() );
+				
+			if (a != NULL)
+				q->enqueueAgent ( a );
+		}
+		
 
         // visualize the queues
         visualization_msgs::Marker marker;
@@ -307,13 +309,13 @@ void Scene::updateQueues()
         marker.ns = "pedsim";
         marker.id = q->getId();
 
-        marker.color.a = 1.0;
+        marker.color.a = 0.7;
         marker.color.r = 0.0;
         marker.color.g = 0.0;
         marker.color.b = 1.0;
 
         marker.scale.x = 0.5;
-        marker.scale.y = 0.5;
+        marker.scale.y = 1.0;
         marker.scale.z = 1.0;
 
         marker.pose.position.x = q->getX();
@@ -420,9 +422,7 @@ void Scene::publishAgentVisuals()
                 marker.color.r = 1.0;
                 marker.color.g = 0.0;
                 marker.color.b = 1.0;
-
-                marker.scale.x = a->getRadius() / 2.0;
-                marker.scale.y = a->getRadius();
+				
                 marker.scale.z = 1.55; 
             }
             else if ( a->gettype() == Ped::Tagent::ELDERLY )

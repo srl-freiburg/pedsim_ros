@@ -168,12 +168,12 @@ void Agent::move ( double h )
     // those in queues behave differently
     if ( state_machine_->getCurrentState() == StateMachine::QUEUEING )
 	{
-		Ped::Tagent::setfactorsocialforce ( CONFIG.force_weights->social / 10.0 );
-        Ped::Tagent::setfactorobstacleforce ( CONFIG.force_weights->obstacle );
-        Ped::Tagent::setfactordesiredforce ( CONFIG.force_weights->desired );
-		Ped::Tagent::setVmax( 0.1 );
+// 		Ped::Tagent::setfactorsocialforce ( CONFIG.force_weights->social / 10.0 );
+//         Ped::Tagent::setfactorobstacleforce ( CONFIG.force_weights->obstacle );
+//         Ped::Tagent::setfactordesiredforce ( CONFIG.force_weights->desired );
+// 		Ped::Tagent::setVmax( 0.05 );
 		
-		Ped::Tagent::move ( h );
+// 		Ped::Tagent::move ( h );
 	}
 	
 	// standing ones remain standing
@@ -223,4 +223,19 @@ void Agent::setType ( Ped::Tagent::AgentType t )
 {
     // call super class' method
     Ped::Tagent::setType ( t );
+}
+
+
+std::list<Agent*> Agent::getNeighbors () const 
+{
+	// upcast neighbors
+	std::list<Agent*> output;
+	BOOST_FOREACH ( const Ped::Tagent* neighbor, neighbors ) 
+	{
+		Agent* upNeighbor = const_cast<Agent*>( dynamic_cast<const Agent*>( neighbor ) );
+		if ( upNeighbor != NULL )
+			output.push_back( upNeighbor );
+	}
+
+	return output;
 }

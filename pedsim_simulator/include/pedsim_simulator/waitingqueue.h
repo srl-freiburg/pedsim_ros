@@ -58,6 +58,7 @@ public:
     void enqueueAgent ( Agent* a );
     void serveAgent();
     bool agentInQueue ( Agent* a );
+	Agent* pickAgent( std::list<Agent*> neighbors, double x, double y );
 
 public:
     // set of quickies
@@ -95,6 +96,29 @@ public:
     {
         return id_;
     }
+    double getRadius()
+	{
+		return radius_;
+	}
+	
+	double getThreshold()
+	{
+		return threshold_;
+	}
+	double getAlpha()
+	{
+		return alpha_;
+	}
+	
+	int length()
+	{
+		return queueing_agents_.size();
+	}
+	
+	Agent* lastPedestrian()
+	{
+		return queueing_agents_.back();
+	}
 
 private:
     // queue service location
@@ -103,8 +127,15 @@ private:
     std::string name_;
     int id_;
 
-    // queue direction
+    // queue direction and angular range
     double theta_;
+	double alpha_;
+	
+	// queue radius
+	double radius_;
+	
+	// queue pick threshold
+	double threshold_;
 
     // average wait time per person
     int wait_time_;

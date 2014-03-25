@@ -35,6 +35,8 @@
 #include <libpedsim/ped_agent.h>
 #include <libpedsim/ped_vector.h>
 
+#include <boost/foreach.hpp>
+
 #include <QList>
 
 #include <pedsim_simulator/statemachine.h>
@@ -58,6 +60,7 @@ public:
     Ped::Tvector lookaheadForce(Ped::Tvector desired) const;
     Ped::Tvector myForce(Ped::Tvector desired) const;
 	void computeForces();
+	std::list<Agent*> getNeighbors() const;
 	
 	/// Group forces
 	Ped::Tvector groupGazeForce();
