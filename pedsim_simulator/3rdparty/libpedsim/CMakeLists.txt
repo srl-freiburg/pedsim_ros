@@ -4,7 +4,7 @@ PROJECT(PedSim)
 
 #------------------ Configuration ------------------#
 #Debugging (enable: ON, disable: OFF)
-OPTION(SHALL_DEBUG "Enable debug features" ON)
+OPTION(SHALL_DEBUG "Enable debug features" OFF)
 
 #Profiling (enable: ON, disable: OFF)
 OPTION(SHALL_PROFILE "Enable the code profiling feature" OFF)

@@ -73,12 +73,13 @@ public:
     void setType(Ped::Tagent::AgentType t);
 	void updateState(int event = 0);
 	
+public:
 	StateMachine::State status() { return state_machine_->getCurrentState(); }
 	StateMachine::State prevStatus() { return state_machine_->getPreviousState(); }
 
 private:
 	StateMachinePtr state_machine_;
-	int time_since_queue_;
+	int time_since_queue_;	// time since an agent left the queue (updating state)
 };
 
 #endif

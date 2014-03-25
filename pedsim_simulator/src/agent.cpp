@@ -149,7 +149,7 @@ void Agent::computeForces ()
 	Ped::Tagent::computeForces();
 	
 	// add additionan group and flock forces here
-	myForce (Ped::Tvector (0,10,0) );
+	myForce (Ped::Tvector (0,0,0) );
 }
 
 /// \brief Move the agents in one time step

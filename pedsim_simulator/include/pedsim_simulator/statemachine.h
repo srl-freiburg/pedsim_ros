@@ -35,8 +35,11 @@
 
 
 
+/// -----------------------------------------------------------------
 /// \class AgentState
 /// \brief Simple agent state machine
+/// \details Agents transition between states based on events triggered 
+/// -----------------------------------------------------------------
 class StateMachine
 {
 public:
@@ -48,7 +51,8 @@ public:
         IDLE = 0,
         WALKING = 1,
         QUEUEING = 2,
-		STANDING = 3
+		STANDING = 3,
+		GROUPING = 4
     };
 
 
@@ -66,104 +70,24 @@ public:
 
 
     StateMachine()
-    {
-        current_state_ = IDLE;
-        previous_state_ = IDLE;
-    }
+	{
+		current_state_ = IDLE;
+		previous_state_ = IDLE;
+	}
 
-    StateMachine ( State st )
-        : current_state_ ( st )
-    {
-        previous_state_ = IDLE;
-    }
+	StateMachine ( State st )
+		: current_state_ ( st )
+	{
+		previous_state_ = IDLE;
+	}
 
-    virtual ~StateMachine() {}
-
-    void doStateTransition ( Event triggered_event )
-    {
-		/// Spawning transitions
-		if ( triggered_event == SPAWN )
-		{
-			current_state_ = WALKING;
-			previous_state_ = IDLE;
-		}
-		
-        /// Idle transitions
-        if ( current_state_ == IDLE && triggered_event == START_WALKING )
-        {
-            previous_state_ = IDLE;
-            current_state_ = WALKING;
-            return;
-        }
-        
-        if ( current_state_ == IDLE && triggered_event == STOP_WALKING )
-        {
-            previous_state_ = IDLE;
-            current_state_ = STANDING;
-            return;
-        }
-
-        /// Walking transitions
-        if ( current_state_ == WALKING )
-        {
-			// avoid immediate re-joining of queues
-			if ( previous_state_ == QUEUEING )
-				return;
-			
-            if ( triggered_event == JOIN_QUEUE )
-            {
-                previous_state_ = WALKING;
-                current_state_ = QUEUEING;
-            }
-            else if ( triggered_event == STOP_WALKING )
-            {
-                previous_state_ = WALKING;
-                current_state_ = STANDING;
-            }
-            // to allow rejoining of queues
-            else if (triggered_event == START_WALKING)
-			{
-				previous_state_ = WALKING;
-				current_state_ = WALKING;
-			}
-
-            return;
-        }
-
-        /// Queueing transitions
-        if ( current_state_ == QUEUEING && triggered_event == LEAVE_QUEUE )
-        {
-            previous_state_ = QUEUEING;
-            current_state_ = WALKING;
-            return;
-        }
-        
-        /// Standing transitions
-        if ( current_state_ == STANDING && triggered_event == START_WALKING )
-        {
-            previous_state_ = STANDING;
-            current_state_ = WALKING;
-            return;
-        }
-
-        return;
-    }
-
-    State getCurrentState()
-    {
-        return current_state_;
-    }
-
-    State getPreviousState()
-    {
-        return previous_state_;
-    }
-    
-    void reset()
-    {
-        current_state_ = IDLE;
-        previous_state_ = IDLE;
-    }
+	virtual ~StateMachine() {}
+	
+	
+    inline void doStateTransition ( Event triggered_event );
+    inline State getCurrentState();
+    inline State getPreviousState();
+    inline void reset();
 
 
 private:
@@ -177,6 +101,103 @@ private:
 typedef boost::shared_ptr<StateMachine> StateMachinePtr;
 typedef boost::shared_ptr<StateMachine const> StateMachineConstPtr;
 
+
+
+
+
+
+
+
+/// -----------------------------------------------------------------
+/// \brief State Transitions
+/// \details Change the agent state based on a triggered event
+/// \param[in] triggered_event event for changing state
+/// -----------------------------------------------------------------
+void StateMachine::doStateTransition ( Event triggered_event )
+{
+    /// Spawning transitions
+    if ( triggered_event == SPAWN )
+    {
+        current_state_ = WALKING;
+        previous_state_ = IDLE;
+    }
+
+    /// Idle transitions
+    if ( current_state_ == IDLE && triggered_event == START_WALKING )
+    {
+        previous_state_ = IDLE;
+        current_state_ = WALKING;
+        return;
+    }
+
+    if ( current_state_ == IDLE && triggered_event == STOP_WALKING )
+    {
+        previous_state_ = IDLE;
+        current_state_ = STANDING;
+        return;
+    }
+
+    /// Walking transitions
+    if ( current_state_ == WALKING )
+    {
+        // avoid immediate re-joining of queues
+        if ( previous_state_ == QUEUEING )
+            return;
+
+        if ( triggered_event == JOIN_QUEUE )
+        {
+            previous_state_ = WALKING;
+            current_state_ = QUEUEING;
+        }
+        else if ( triggered_event == STOP_WALKING )
+        {
+            previous_state_ = WALKING;
+            current_state_ = STANDING;
+        }
+        // to allow rejoining of queues
+        else if ( triggered_event == START_WALKING )
+        {
+            previous_state_ = WALKING;
+            current_state_ = WALKING;
+        }
+
+        return;
+    }
+
+    /// Queueing transitions
+    if ( current_state_ == QUEUEING && triggered_event == LEAVE_QUEUE )
+    {
+        previous_state_ = QUEUEING;
+        current_state_ = WALKING;
+        return;
+    }
+
+    /// Standing transitions
+    if ( current_state_ == STANDING && triggered_event == START_WALKING )
+    {
+        previous_state_ = STANDING;
+        current_state_ = WALKING;
+        return;
+    }
+
+    return;
+}
+
+StateMachine::State StateMachine::getCurrentState()
+{
+    return current_state_;
+}
+
+StateMachine::State StateMachine::getPreviousState()
+{
+    return previous_state_;
+}
+
+void StateMachine::reset()
+{
+    current_state_ = IDLE;
+    previous_state_ = IDLE;
+}
 
 
 #endif // STATEMACHINE_H

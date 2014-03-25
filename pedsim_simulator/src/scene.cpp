@@ -224,7 +224,7 @@ void Scene::loadConfigParameters()
 
     double teleop_state;
     ros::param::param<double> ( "/pedsim/teleop_state", teleop_state, 0.0 );
-    CONFIG.robot_mode = static_cast<RobotState> ( teleop_state );
+    CONFIG.robot_mode = static_cast<RobotMode> ( teleop_state );
 }
 
 

@@ -511,7 +511,6 @@ void Ped::Tagent::computeForces()
 void Ped::Tagent::move ( double stepSizeIn )
 {
     // sum of all forces --> acceleration
-    // TODO - move this the agent.cpp
     a = factordesiredforce * desiredforce
         + factorsocialforce * socialforce
         + factorobstacleforce * obstacleforce

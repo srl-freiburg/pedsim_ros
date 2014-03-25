@@ -40,6 +40,12 @@
 #include <boost/shared_ptr.hpp>
 
 
+/// -----------------------------------------------------------------
+/// \class WaitingQueue
+/// \brief Simple queue model for pedestrians
+/// Queues are modelled as locations which attract pedestrians and 
+/// 'serve them' after a random wait time.
+/// -----------------------------------------------------------------
 class WaitingQueue
 {
 public:
