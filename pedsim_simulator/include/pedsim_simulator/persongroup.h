@@ -55,10 +55,26 @@ public:
     bool isEmpty () const;
     bool isMember ( Agent* agent );
     size_t memberCount () const;
+	
+	void computeGroupForces ();
+	Ped::Tvector gazeForce();
+	Ped::Tvector coherenceForce();
+	Ped::Tvector repulsionForce();
 
 private:
 
     std::list<Agent*> members_;
+	
+	Ped::Tvector force_gaze_;
+	Ped::Tvector force_coherence_;
+	Ped::Tvector force_repulsion_;
 };
+
+
+/// helpful typedefs
+typedef boost::shared_ptr<PersonGroup> PersonGroupPtr;
+typedef boost::shared_ptr<PersonGroup const> PersonGroupConstPtr;
+
+
 
 #endif // PERSONGROUP_H

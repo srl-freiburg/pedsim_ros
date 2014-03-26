@@ -61,9 +61,9 @@ public:
 	std::list<Agent*> getNeighbors() const;
 	
 	/// Group forces
-	Ped::Tvector groupGazeForce();
-	Ped::Tvector groupCoherenceForce();
-	Ped::Tvector groupRepulsionForce();
+	void setGroupGazeForce( Ped::Tvector f );
+	void setGroupCoherenceForce( Ped::Tvector f );
+	void setGroupRepulsionForce( Ped::Tvector f );
 	
     /// Ped::Tagent Overrides/Overloads
 public:
@@ -77,10 +77,17 @@ public:
 public:
 	StateMachine::State status() { return state_machine_->getCurrentState(); }
 	StateMachine::State prevStatus() { return state_machine_->getPreviousState(); }
+	bool inGroup() { return in_group_; }
+	void enableGroupFlag() { in_group_ = true; }
 
 private:
 	StateMachinePtr state_machine_;
 	int time_since_queue_;	// time since an agent left the queue (updating state)
+	bool in_group_;
+	
+	Ped::Tvector force_gaze_;
+	Ped::Tvector force_coherence_;
+	Ped::Tvector force_repulsion_;
 };
 
 #endif

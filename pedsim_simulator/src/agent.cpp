@@ -41,6 +41,7 @@ Agent::Agent ( double xIn, double yIn )
     Ped::Tagent::setType ( Ped::Tagent::ADULT );
     state_machine_.reset ( new StateMachine ( StateMachine::WALKING ) );
 	time_since_queue_ = 0;
+	in_group_ = false;
 	
 	// everyone spawns once
 	state_machine_->doStateTransition( StateMachine::SPAWN );
@@ -79,27 +80,20 @@ Ped::Tvector Agent::lookaheadForce ( Ped::Tvector desired ) const
     return t;
 }
 
-/// \brief Group gaze force 
-/// Defined according to Helbing et. al paper
-Ped::Tvector Agent::groupGazeForce ()
-{
-	Ped::Tvector t;
 
-    return t;
+void Agent::setGroupGazeForce( Ped::Tvector f )
+{
+	force_gaze_ = f;
 }
 
-Ped::Tvector Agent::groupCoherenceForce ()
+void Agent::setGroupCoherenceForce( Ped::Tvector f )
 {
-	Ped::Tvector t;
-
-    return t;
+	force_coherence_ = f;
 }
 
-Ped::Tvector Agent::groupRepulsionForce ()
+void Agent::setGroupRepulsionForce( Ped::Tvector f )
 {
-	Ped::Tvector t;
-
-    return t;
+	force_repulsion_ = f;
 }
 	
 
@@ -149,7 +143,7 @@ void Agent::computeForces ()
 	Ped::Tagent::computeForces();
 	
 	// compute group forces
-	Ped::Tvector gforce = groupGazeForce() + groupCoherenceForce() + groupRepulsionForce();
+	Ped::Tvector gforce =force_gaze_ + force_coherence_ + force_repulsion_;
 	
 	// add additionan group and flock forces here
 	myForce ( gforce );
