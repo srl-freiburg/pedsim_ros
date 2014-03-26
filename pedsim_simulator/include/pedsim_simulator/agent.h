@@ -35,8 +35,6 @@
 #include <libpedsim/ped_agent.h>
 #include <libpedsim/ped_vector.h>
 
-#include <boost/foreach.hpp>
-
 #include <QList>
 
 #include <pedsim_simulator/statemachine.h>

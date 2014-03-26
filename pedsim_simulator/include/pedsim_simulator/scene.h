@@ -49,10 +49,8 @@
 #include <pedsim_simulator/obstacle.h>
 #include <pedsim_simulator/waypoint.h>
 
-#include <boost/foreach.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string/predicate.hpp>
-#include <boost/shared_ptr.hpp>
 
 // ros and big guys
 #include <ros/ros.h>

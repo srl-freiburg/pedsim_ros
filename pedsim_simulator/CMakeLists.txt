@@ -46,6 +46,7 @@ set(SOURCES
     src/config.cpp 
     src/waitingqueue.cpp 
     src/orientationhandler.cpp
+    src/persongroup.cpp 
 ) 
 
 add_executable(simulator ${SOURCES} ${QT_RESOURCES_CPP} ${QT_FORMS_HPP} ${QT_MOC_HPP})

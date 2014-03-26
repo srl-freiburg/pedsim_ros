@@ -148,8 +148,11 @@ void Agent::computeForces ()
 	// compute the basic social forces
 	Ped::Tagent::computeForces();
 	
+	// compute group forces
+	Ped::Tvector gforce = groupGazeForce() + groupCoherenceForce() + groupRepulsionForce();
+	
 	// add additionan group and flock forces here
-	myForce (Ped::Tvector (0,0,0) );
+	myForce ( gforce );
 }
 
 /// \brief Move the agents in one time step
@@ -161,20 +164,9 @@ void Agent::move ( double h )
     if ( Tagent::gettype() == Ped::Tagent::ROBOT )
     {
         Ped::Tagent::setfactorsocialforce ( CONFIG.force_weights->social );
-        Ped::Tagent::setfactorobstacleforce ( 350 );
-        Ped::Tagent::setfactordesiredforce ( 1.5 );
+        Ped::Tagent::setfactorobstacleforce ( 1000 );
+        Ped::Tagent::setfactordesiredforce ( 1.0 );
     }
-
-    // those in queues behave differently
-    if ( state_machine_->getCurrentState() == StateMachine::QUEUEING )
-	{
-// 		Ped::Tagent::setfactorsocialforce ( CONFIG.force_weights->social / 10.0 );
-//         Ped::Tagent::setfactorobstacleforce ( CONFIG.force_weights->obstacle );
-//         Ped::Tagent::setfactordesiredforce ( CONFIG.force_weights->desired );
-// 		Ped::Tagent::setVmax( 0.05 );
-		
-// 		Ped::Tagent::move ( h );
-	}
 	
 	// standing ones remain standing
     if ( state_machine_->getCurrentState() == StateMachine::STANDING )

@@ -5,6 +5,10 @@
 #include <boost/random/normal_distribution.hpp>
 #include <boost/random/uniform_real.hpp>
 #include <boost/random/exponential_distribution.hpp>
+
+#include <boost/shared_ptr.hpp>
+#include <boost/foreach.hpp>
+
 #include <ctime>
 
 

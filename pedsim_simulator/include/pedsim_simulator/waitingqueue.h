@@ -36,8 +36,6 @@
 #include <pedsim_simulator/waypoint.h>
 
 #include <deque>
-#include <boost/foreach.hpp>
-#include <boost/shared_ptr.hpp>
 
 
 /// -----------------------------------------------------------------
