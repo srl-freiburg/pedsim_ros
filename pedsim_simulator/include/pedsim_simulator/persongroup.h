@@ -61,9 +61,11 @@ public:
 	void repulsionForce();
 	
 	Ped::Tvector computeCenterOfMass();
+	int getId() { return id_; }
 
 private:
 
+	int id_;
     std::list<Agent*> members_;
 	
 };

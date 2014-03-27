@@ -34,11 +34,17 @@
 
 PersonGroup::PersonGroup ()
 {
+	static int staticid = 0;
+    id_ = staticid++;
+	
     members_.clear();
 }
 
 PersonGroup::PersonGroup ( const std::list<Agent*>& agents )
 {
+	static int staticid = 0;
+    id_ = staticid++;
+	
     members_.clear();
 
     BOOST_FOREACH ( Agent* a, agents )
@@ -249,7 +255,7 @@ void PersonGroup::gazeForce()
 /// -----------------------------------------------------------------
 void PersonGroup::coherenceForce ()
 {
-	double beta_2 = 1.0;
+	double beta_2 = 11.0;
 	
 	// compute the center of mass of group
 	Ped::Tvector com = computeCenterOfMass();
@@ -281,7 +287,7 @@ void PersonGroup::coherenceForce ()
 /// -----------------------------------------------------------------
 void PersonGroup::repulsionForce ()
 {
-	double beta_3 = 1.0;
+	double beta_3 = 12.0;
 	
 	/// for all agents
 	BOOST_FOREACH ( Agent* a_i, members_ )

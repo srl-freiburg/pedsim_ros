@@ -159,7 +159,7 @@ void Scene::runSimulation()
 		
         updateQueues();
 		
-		if ( timestep_ < 30 )
+// 		if ( timestep_ < 30 )
 			processGroups();
 
         // only publish the obstacles in the beginning
@@ -199,6 +199,8 @@ bool Scene::initialize()
     pub_obstacles_ = nh_.advertise<nav_msgs::GridCells> ( "static_obstacles", 0 );
     pub_walls_ = nh_.advertise<visualization_msgs::Marker> ( "walls", 0 );
     pub_queues_ = nh_.advertise<visualization_msgs::Marker> ( "queues", 0 );
+	pub_group_centers_ = nh_.advertise<visualization_msgs::Marker> ( "group_centers", 0 );
+	pub_group_lines_ = nh_.advertise<visualization_msgs::Marker> ( "group_lines", 0 );
 
     /// subscribers
     sub_robot_state_ = nh_.subscribe ( "robot_state", 1, &Scene::callbackRobotCommand, this );
@@ -325,24 +327,119 @@ void Scene::callbackRobotCommand ( const pedsim_msgs::AgentState::ConstPtr &msg 
 /// -----------------------------------------------------------------
 void Scene::processGroups()
 {	
-	BOOST_FOREACH ( PersonGroupPtr g, agent_groups_ )
+// 	BOOST_FOREACH ( PersonGroupPtr g, agent_groups_ )
+// 	{
+// 		// just small groups for testing
+// 		if ( g->memberCount() >= 3)
+// 			continue;
+// 		
+// // 		ROS_INFO(" adding agents to groups");
+// 		
+// 		BOOST_FOREACH ( Agent* a, agents )
+// 		{
+// 			if ( coinFlip() > 0.5 && a->gettype() != Ped::Tagent::ROBOT )
+// 				g->addMember( a );
+// 		}
+// 			
+// 	
+// 	}
+
+
+	/// Just testing with one group
+	
+	// get some random agent
+	Agent* a = agents.front();
+	
+	PersonGroupPtr g = agent_groups_.at(0);
+	if ( g->memberCount() < 1)
+		g->addMember( a );
+	
+	
+	// add neighbors or the existing agent
+	std::list<Agent*> neighbors = a->getNeighbors();
+	BOOST_FOREACH ( Agent* n, neighbors )
 	{
-		// just small groups for testing
-		if ( g->memberCount() >= 3)
+		if ( g->memberCount() >= 3 )
+			break;
+		
+		if ( n->gettype() != Ped::Tagent::ROBOT )
+			g->addMember( n );
+	}
+		
+	
+	/// visualize groups (sketchy)
+	BOOST_FOREACH ( PersonGroupPtr ag, agent_groups_ )
+	{
+		// skip empty ones
+		if ( ag->memberCount() < 1)
 			continue;
 		
-// 		ROS_INFO(" adding agents to groups");
+		Ped::Tvector gcom = ag->computeCenterOfMass();
 		
-		BOOST_FOREACH ( Agent* a, agents )
+		// center
+		visualization_msgs::Marker center_marker;
+        center_marker.header.frame_id = "world";
+        center_marker.header.stamp = ros::Time();
+        center_marker.ns = "pedsim";
+        center_marker.id = ag->getId();
+
+        center_marker.color.a = 0.7;
+        center_marker.color.r = 0.0;
+        center_marker.color.g = 0.0;
+        center_marker.color.b = 1.0;
+
+        center_marker.scale.x = 0.5;
+        center_marker.scale.y = 1.0;
+        center_marker.scale.z = 1.0;
+
+        center_marker.pose.position.x = gcom.x;
+        center_marker.pose.position.y = gcom.y;
+        center_marker.pose.position.z = center_marker.scale.z / 2.0;
+
+        center_marker.pose.orientation.x = 0;
+        center_marker.pose.orientation.y = 0;
+        center_marker.pose.orientation.z = 0;
+        center_marker.pose.orientation.w = 1;
+
+        center_marker.type = visualization_msgs::Marker::CYLINDER;
+
+        pub_group_centers_.publish ( center_marker );
+		
+		// members
+		geometry_msgs::Point p1;
+		p1.x = gcom.x;
+		p1.y = gcom.y;
+		p1.z = 0.0;
+			
+		BOOST_FOREACH ( Agent* m, ag->getMembers() )
 		{
-			if ( coinFlip() > 0.5 && a->gettype() != Ped::Tagent::ROBOT )
-				g->addMember( a );
+			visualization_msgs::Marker marker;
+            marker.header.frame_id = "world";
+            marker.header.stamp = ros::Time();
+            marker.ns = "pedsim";
+            marker.id = m->getid()+1000;
+
+            marker.color.a = 0.7;
+            marker.color.r = 0.0;
+            marker.color.g = 0.0;
+            marker.color.b = 1.0;
+
+            marker.scale.x = 0.5;
+            marker.scale.y = 1.0;
+            marker.scale.z = 1.0;
+
+            marker.type = visualization_msgs::Marker::ARROW;
+
+			geometry_msgs::Point p2;
+			p2.x = m->getx();
+			p2.y = m->gety();
+			p2.z = 0.0;
+			
+			marker.points.push_back ( p1 );
+			marker.points.push_back ( p2 );
+			
+            pub_group_lines_.publish ( marker );
 		}
-		
-		
-		
-		/// visualize the group agents
-		
 	
 	}
 }

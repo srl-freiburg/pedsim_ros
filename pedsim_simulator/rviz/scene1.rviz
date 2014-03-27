@@ -6,7 +6,7 @@ Panels:
       Expanded:
         - /Grid1/Offset1
       Splitter Ratio: 0.5
-    Tree Height: 356
+    Tree Height: 817
   - Class: rviz/Selection
     Name: Selection
   - Class: rviz/Tool Properties
@@ -101,6 +101,22 @@ Visualization Manager:
         pedsim: true
       Queue Size: 1
       Value: true
+    - Class: rviz/Marker
+      Enabled: true
+      Marker Topic: /group_centers
+      Name: Marker
+      Namespaces:
+        {}
+      Queue Size: 0
+      Value: true
+    - Class: rviz/Marker
+      Enabled: true
+      Marker Topic: /group_lines
+      Name: Marker
+      Namespaces:
+        {}
+      Queue Size: 0
+      Value: true
   Enabled: true
   Global Options:
     Background Color: 208; 208; 208
@@ -125,7 +141,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/XYOrbit
-      Distance: 18.0789
+      Distance: 47.3083
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.06
         Stereo Focal Distance: 1
@@ -137,10 +153,10 @@ Visualization Manager:
         Z: 8.5793e-06
       Name: Current View
       Near Clip Distance: 0.01
-      Pitch: 0.680401
+      Pitch: 0.925401
       Target Frame: <Fixed Frame>
       Value: XYOrbit (rviz)
-      Yaw: 1.58854
+      Yaw: 1.55354
     Saved: ~
 Window Geometry:
   Displays:

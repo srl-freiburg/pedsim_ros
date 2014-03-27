@@ -146,7 +146,7 @@ void Agent::computeForces ()
 	Ped::Tvector gforce =force_gaze_ + force_coherence_ + force_repulsion_;
 	
 	// add additionan group and flock forces here
-	myForce ( gforce );
+	myForce ( 10.0 * gforce );
 }
 
 /// \brief Move the agents in one time step
