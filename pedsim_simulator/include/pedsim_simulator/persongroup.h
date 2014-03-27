@@ -57,17 +57,16 @@ public:
     size_t memberCount () const;
 	
 	void computeGroupForces ();
-	Ped::Tvector gazeForce();
-	Ped::Tvector coherenceForce();
-	Ped::Tvector repulsionForce();
+	void gazeForce();
+	void coherenceForce();
+	void repulsionForce();
+	
+	Ped::Tvector computeCenterOfMass();
 
 private:
 
     std::list<Agent*> members_;
 	
-	Ped::Tvector force_gaze_;
-	Ped::Tvector force_coherence_;
-	Ped::Tvector force_repulsion_;
 };
 
 

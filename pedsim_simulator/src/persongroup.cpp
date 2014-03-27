@@ -203,17 +203,17 @@ size_t PersonGroup::memberCount() const
 void  PersonGroup::computeGroupForces ()
 {
 	// call individual force functions here
-	force_gaze_ = gazeForce();
-	force_coherence_ = coherenceForce();
-	force_repulsion_ = repulsionForce();
+	gazeForce();
+	coherenceForce();
+	repulsionForce();
 	
 	// assign forces to members
-	BOOST_FOREACH ( Agent* a, members_ )
-	{
-		a->setGroupGazeForce( force_gaze_ );
-		a->setGroupCoherenceForce( force_coherence_ );
-		a->setGroupRepulsionForce( force_repulsion_ );
-	}
+// 	BOOST_FOREACH ( Agent* a, members_ )
+// 	{
+// 		a->setGroupGazeForce( force_gaze_ );
+// 		a->setGroupCoherenceForce( force_coherence_ );
+// 		a->setGroupRepulsionForce( force_repulsion_ );
+// 	}
 }
 
 
@@ -221,13 +221,34 @@ void  PersonGroup::computeGroupForces ()
 /// \brief gazeForce
 /// \details Compute the gaze force for the group which corresponds 
 /// to \f$ f^{vis}_i = -\beta_1 \alpha_i V_i \f$ in Moussaid et. al.
-/// \returns Ped::Tvector - The force in all axes
 /// -----------------------------------------------------------------
-Ped::Tvector PersonGroup::gazeForce()
+void PersonGroup::gazeForce()
 {
-	Ped::Tvector g;
+	// a value of 0 would make groups stick together with no 
+	// communication to make 'inverse V shapes'. The value of
+	// 4 should create normal V shapes.
+	double beta_1 = 4.0;
 	
-	return g;
+	// compute center of mass c
+	Ped::Tvector com = computeCenterOfMass();
+	
+	/// for each agent
+	BOOST_FOREACH ( Agent* a, members_ )
+	{
+		// compute gazing direction H
+		Ped::Tvector H( a->getvx(), a->getvy(), a->getvz());
+	
+		// compute alpha for rotating H
+		Ped::Tvector los( com.x - a->getx(), com.y - a->gety(), 0.0 );
+		double theta = angleBetween( H, los );
+		double alpha = ( M_PI / 2.0 ) - theta;
+		
+		// compute force from alpha, V and beta_1
+		Ped::Tvector f_i = -beta_1 * alpha * a->getVelocity();
+		
+		// assign force to agent
+		a->setGroupGazeForce( f_i );
+	}
 }
 
 
@@ -235,13 +256,31 @@ Ped::Tvector PersonGroup::gazeForce()
 /// \brief coherenceForce
 /// \details Compute the coherence force for the group which is given 
 /// by \f$ f^{att}_i = q_A \beta_2 U_i \f$ in Moussaid et. al.
-/// \returns Ped::Tvector - The force in all axes
 /// -----------------------------------------------------------------
-Ped::Tvector PersonGroup::coherenceForce()
+void PersonGroup::coherenceForce ()
 {
-	Ped::Tvector g;
+	double beta_2 = 1.0;
 	
-	return g;
+	// compute the center of mass of group
+	Ped::Tvector com = computeCenterOfMass();
+	
+	/// for each member
+	BOOST_FOREACH ( Agent* a, members_ )
+	{
+		// compute the unit vector pointing to the center of mass
+		Ped::Tvector U( com.x - a->getx(), com.y - a->gety(), 0.0 );
+		
+		// compute threshold for q and its value
+		double q_thresh = ( memberCount() - 1 ) / 2.0;
+		
+		double q_A = ( distance( com.x, com.y, a->getx(), a->gety() ) > q_thresh ) ? 0.0 : 1.0;
+		
+		// compute the force from q_A, U and beta_2
+		Ped::Tvector f_i = q_A * beta_2 * U;
+		
+		// assign force to agent
+		a->setGroupCoherenceForce( f_i );
+	}
 }
 
 
@@ -249,12 +288,68 @@ Ped::Tvector PersonGroup::coherenceForce()
 /// \brief repulsionForce
 /// \details Compute the resulsion force for the group which is given 
 /// by \f$ f^{rep}_i = \sum_k q_R \beta_3 W_ik \f$ in Moussaid et. al.
-/// \returns Ped::Tvector - The force in all axes
 /// -----------------------------------------------------------------
-Ped::Tvector PersonGroup::repulsionForce()
+void PersonGroup::repulsionForce ()
 {
-	Ped::Tvector g;
+	double beta_3 = 1.0;
 	
-	return g;
+	/// for all agents
+	BOOST_FOREACH ( Agent* a_i, members_ )
+	{
+		// compute q_R threshold
+		double d_0 = ( a_i->getRadius() * 2.5 );
+		
+		Ped::Tvector f_i( 0.0, 0.0, 0.0 );
+		
+		// early exit if only single person group
+		if ( memberCount() == 1)
+		{
+			a_i->setGroupRepulsionForce( f_i );
+			return;
+		}
+		
+		// for all neighbors within q_R
+		BOOST_FOREACH ( Agent* a_k, members_ )
+		{
+			if ( a_i->getid() == a_k->getid() ) 
+				continue;
+			else
+			{
+				// compute unit vector W pointing to neighbor 
+				Ped::Tvector W = a_k->getPosition() - a_i->getPosition();
+			
+				// compute repulsion component
+				double q_R = ( distanceBetween( a_i->getPosition(), a_k->getPosition() ) > d_0 ) ? 0.0 : 1.0;
+				
+				f_i += q_R * beta_3 * W;
+			}
+		}
+		
+		// assign force to agent
+		a_i->setGroupRepulsionForce( f_i );
+	}
 }
 	
+
+/// -----------------------------------------------------------------
+/// \brief computeCenterOfMass
+/// \details Compute the group center of mass based on the individual
+/// agent postitions
+/// \returns Ped::Tvector - center of mass
+/// -----------------------------------------------------------------
+Ped::Tvector PersonGroup::computeCenterOfMass ()
+{
+	Ped::Tvector com;
+	
+	if ( memberCount() > 0 )
+	{
+		BOOST_FOREACH ( Agent* a, members_ )
+		{
+			com += a->getPosition();
+		}
+	
+		com /= memberCount();
+	}
+	
+	return com;
+}

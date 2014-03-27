@@ -76,34 +76,40 @@ Ped::Tvector operator*(double factor, const Ped::Tvector& vector);
 
 
 // Puts angle alpha into the interval [min..min+2*pi[
-inline double normAngle(double alpha, double min) 
+inline double normAngle ( double alpha, double min )
 {
-    while (alpha >= min+2.0*M_PI) {
+    while ( alpha >= min+2.0*M_PI )
+    {
         alpha -= 2.0*M_PI;
     }
-    while (alpha < min) {
+    while ( alpha < min )
+    {
         alpha += 2.0*M_PI;
     }
     return alpha;
 };
 
-inline double diffAngle(double alpha1, double alpha2) 
+inline double diffAngle ( double alpha1, double alpha2 )
 {
     double delta;
 
     // normalize angles alpha1 and alpha2
-    alpha1 = normAngle(alpha1, 0);
-    alpha2 = normAngle(alpha2, 0);
+    alpha1 = normAngle ( alpha1, 0 );
+    alpha2 = normAngle ( alpha2, 0 );
 
     // take difference and unwrap
     delta = alpha1 - alpha2;
-    if (alpha1 > alpha2) {
-        while (delta > M_PI) {
+    if ( alpha1 > alpha2 )
+    {
+        while ( delta > M_PI )
+        {
             delta -= 2.0*M_PI;
         }
     }
-    else if (alpha2 > alpha1) {
-        while (delta < -M_PI) {
+    else if ( alpha2 > alpha1 )
+    {
+        while ( delta < -M_PI )
+        {
             delta += 2.0*M_PI;
         }
     }
@@ -111,26 +117,29 @@ inline double diffAngle(double alpha1, double alpha2)
 };
 
 // angle utils
-inline double angleBetween(Ped::Tvector a, Ped::Tvector b)
+inline double angleBetween ( Ped::Tvector a, Ped::Tvector b )
 {
     a.normalize();
     b.normalize();
 
-    double dt = (a.x * b.x) + (a.y * b.y);
-    double angle_dot =  acos(dt);
-    angle_dot = normAngle(angle_dot, 0);
+    double dt = ( a.x * b.x ) + ( a.y * b.y );
+    double angle_dot =  acos ( dt );
+    angle_dot = normAngle ( angle_dot, 0 );
 
     double ac1, ac2;
-    ac1 = atan2(a.y, a.x);
-    ac2 = atan2(b.y, b.x);
+    ac1 = atan2 ( a.y, a.x );
+    ac2 = atan2 ( b.y, b.x );
 
-    double dangle = diffAngle(ac1, ac2);
-    dangle = normAngle(dangle, 0);
+    double dangle = diffAngle ( ac1, ac2 );
+    dangle = normAngle ( dangle, 0 );
 
     return dangle;
 }
 
-
+inline double distanceBetween ( Ped::Tvector a, Ped::Tvector b )
+{
+    return sqrt ( ( a.x-b.x ) * ( a.x-b.x ) + ( a.y-b.y ) * ( a.y-b.y ) + ( a.z-b.z ) * ( a.z-b.z ) );
+}
 
 
 #endif
