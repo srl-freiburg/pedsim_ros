@@ -65,16 +65,6 @@ std::list<Agent*>& PersonGroup::getMembers ()
 }
 
 
-/// -----------------------------------------------------------------
-/// \brief getMembers
-/// \details Return the members of a group
-/// \returns list<const Agent*> group members (const)
-/// -----------------------------------------------------------------
-const std::list<Agent*>& PersonGroup::getMembers () const
-{
-    return members_;
-}
-
 
 /// -----------------------------------------------------------------
 /// \brief addMember
@@ -84,7 +74,7 @@ const std::list<Agent*>& PersonGroup::getMembers () const
 /// -----------------------------------------------------------------
 bool PersonGroup::addMember ( Agent* agent )
 {
-    if ( isMember ( agent ) )
+    if ( isMember ( agent ) || agent->inGroup() )
         return false;
     else
     {
@@ -176,7 +166,7 @@ bool PersonGroup::isMember ( Agent* agent )
 /// \details Test if group has not agents
 /// \returns flag - True if member, false otherwise
 /// -----------------------------------------------------------------
-bool PersonGroup::isEmpty() const
+bool PersonGroup::isEmpty()
 {
     if ( memberCount() == 0 )
         return true;
@@ -190,7 +180,7 @@ bool PersonGroup::isEmpty() const
 /// \details Count the number of agents in the group
 /// \returns uint8 - number of agents in the group \f$ \[0, N \] \f$
 /// -----------------------------------------------------------------
-size_t PersonGroup::memberCount() const
+size_t PersonGroup::memberCount()
 {
     return members_.size();
 }

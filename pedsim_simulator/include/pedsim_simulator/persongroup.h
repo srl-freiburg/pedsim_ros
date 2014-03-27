@@ -48,13 +48,12 @@ public:
     virtual ~PersonGroup ();
 
     std::list<Agent*>& getMembers ();
-    const std::list<Agent*>& getMembers () const;
     bool addMember ( Agent* agent );
     bool removeMember ( Agent* agent );
     bool setMembers ( const std::list<Agent*>& agents );
-    bool isEmpty () const;
+    bool isEmpty ();
     bool isMember ( Agent* agent );
-    size_t memberCount () const;
+    size_t memberCount ();
 	
 	void computeGroupForces ();
 	void gazeForce();

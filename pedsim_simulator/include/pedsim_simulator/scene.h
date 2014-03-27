@@ -76,6 +76,7 @@
 
 #include <pedsim_simulator/utilities.h>
 
+#include <pedsim_simulator/persongroup.h>
 
 class Scene : public Ped::Tscene
 {
@@ -107,6 +108,8 @@ public:
     void publishObstacles();
     void publishWalls();
     void updateQueues();
+	
+	void processGroups();
 
     /// subscriber helpers
     void callbackRobotCommand ( const pedsim_msgs::AgentState::ConstPtr &msg );
@@ -158,6 +161,9 @@ private:
 
     // waiting queues in the scene
     std::vector<WaitingQueuePtr> waiting_queues_;
+	
+	// groups in the crowd
+	std::vector<PersonGroupPtr> agent_groups_;
 };
 
 

@@ -128,8 +128,13 @@ bool Scene::removeAgent ( Agent* agent )
 }
 
 
-/// \brief Run the main mode
-/// The core of the application
+
+/// -----------------------------------------------------------------
+/// \brief runSimulation
+/// \details Run the application
+/// The core of the application. Executes each of the utilities in a 
+/// sequence.
+/// -----------------------------------------------------------------
 void Scene::runSimulation()
 {
     // setup the agents and the robot
@@ -147,9 +152,15 @@ void Scene::runSimulation()
         // spawnKillAgents();
 
         publishAgentStatus();
+		
         publishAgentVisuals();
+		
         publishWalls();
+		
         updateQueues();
+		
+		if ( timestep_ < 30 )
+			processGroups();
 
         // only publish the obstacles in the beginning
         if ( timestep_ < CONFIG.robot_wait_time )
@@ -164,6 +175,14 @@ void Scene::runSimulation()
     }
 }
 
+
+
+/// -----------------------------------------------------------------
+/// \brief initialize
+/// \details Set up the application, loading all the needed parameters,
+/// setting up publishers, subscribers etc
+/// \returns flag - True is succeeded, false otherwise
+/// -----------------------------------------------------------------
 bool Scene::initialize()
 {
     // start the time steps
@@ -172,6 +191,7 @@ bool Scene::initialize()
     /// setup the list of all agents and the robot agent
     obstacle_cells_.clear();
     waiting_queues_.clear();
+	agent_groups_.clear();
 
     /// setup publishers
     pub_all_agents_ = nh_.advertise<pedsim_msgs::AllAgentsState> ( "dynamic_obstacles", 0 );
@@ -207,6 +227,16 @@ bool Scene::initialize()
     /// further objects
     orientation_handler_.reset ( new OrientationHandler() );
 
+	
+	/// NOTE - temporary hack
+	// create some five groups
+	for ( int i = 0; i < 3; i++ )
+	{
+		PersonGroupPtr g;
+		g.reset( new PersonGroup() );
+		agent_groups_.push_back( g );
+	}
+	
     return true;
 }
 
@@ -228,6 +258,12 @@ void Scene::loadConfigParameters()
 }
 
 
+
+/// -----------------------------------------------------------------
+/// \brief moveAllAgents
+/// \details Move all the agents in the simulation for one simulation
+/// time step. This includes advancing those in queues as well.
+/// -----------------------------------------------------------------
 void Scene::moveAllAgents()
 {
     timestep_++;
@@ -249,7 +285,12 @@ void Scene::moveAllAgents()
 }
 
 
-
+/// -----------------------------------------------------------------
+/// \brief callbackRobotCommand
+/// \details Control the robot based on the set velocity command
+/// Listens to incoming messages and manipulates the robot.
+/// \param[in] msg Message containing the pos and vel for the robot
+/// -----------------------------------------------------------------
 void Scene::callbackRobotCommand ( const pedsim_msgs::AgentState::ConstPtr &msg )
 {
     double vx = msg->velocity.x;
@@ -277,6 +318,43 @@ void Scene::callbackRobotCommand ( const pedsim_msgs::AgentState::ConstPtr &msg 
 }
 
 
+
+/// -----------------------------------------------------------------
+/// \brief processGroups
+/// \details Assign agents to groups based on some probabilities.
+/// -----------------------------------------------------------------
+void Scene::processGroups()
+{	
+	BOOST_FOREACH ( PersonGroupPtr g, agent_groups_ )
+	{
+		// just small groups for testing
+		if ( g->memberCount() >= 3)
+			continue;
+		
+// 		ROS_INFO(" adding agents to groups");
+		
+		BOOST_FOREACH ( Agent* a, agents )
+		{
+			if ( coinFlip() > 0.5 && a->gettype() != Ped::Tagent::ROBOT )
+				g->addMember( a );
+		}
+		
+		
+		
+		/// visualize the group agents
+		
+	
+	}
+}
+
+
+
+/// -----------------------------------------------------------------
+/// \brief updateQueues
+/// \details Assign agents into queues based on their proximity to 
+/// to the queue focal point or last member of queue. Additionally
+/// publishes the visual elements of the queue for Rviz
+/// -----------------------------------------------------------------
 void Scene::updateQueues()
 {
     BOOST_FOREACH ( WaitingQueuePtr q, waiting_queues_ )
@@ -337,9 +415,12 @@ void Scene::updateQueues()
 }
 
 
-/// \brief publish the status messages of all the agents
-/// each containing position and velocity. This is updated
-/// at the rate of running the node
+/// -----------------------------------------------------------------
+/// \brief publishAgentStatus
+/// \details publish the status messages of all the agents each 
+/// containing position and velocity. This is updated at the rate of 
+/// running the node
+/// -----------------------------------------------------------------
 void Scene::publishAgentStatus()
 {
     pedsim_msgs::AllAgentsState all_status;
@@ -371,8 +452,13 @@ void Scene::publishAgentStatus()
 }
 
 
-/// \brief publish visual markers for the agents and the robot
+
+
+/// -----------------------------------------------------------------
+/// \brief publishAgentVisuals
+/// \details publish visual markers for the agents and the robot
 /// for visualizing in rviz
+/// -----------------------------------------------------------------
 void Scene::publishAgentVisuals()
 {
     // minor optimization with arrays for speedup
@@ -442,6 +528,15 @@ void Scene::publishAgentVisuals()
                 marker.color.b = 1.0;
 			}
             
+            
+            if ( a->inGroup() == true )
+			{
+				marker.color.a = 1.0;
+                marker.color.r = 1.0;
+                marker.color.g = 0.0;
+                marker.color.b = 0.0;
+			}
+            
             marker.pose.position.z = marker.scale.z / 2.0;
         }
 
@@ -476,6 +571,12 @@ void Scene::publishAgentVisuals()
 }
 
 
+
+/// -----------------------------------------------------------------
+/// \brief publishObstacles
+/// \details publish obstacle cells with information about their 
+/// positions and cell sizes. Useful for path planning.
+/// -----------------------------------------------------------------
 void Scene::publishObstacles()
 {
     nav_msgs::GridCells obstacles;
@@ -502,6 +603,12 @@ void Scene::publishObstacles()
 }
 
 
+
+/// -----------------------------------------------------------------
+/// \brief publishWalls
+/// \details publish visual markers for obstacle given as 3D cells
+/// for visualizing in rviz. Useful for visual plan inspection
+/// -----------------------------------------------------------------
 void Scene::publishWalls()
 {
     visualization_msgs::Marker marker;
