@@ -155,12 +155,14 @@ void Scene::runSimulation()
 		
         publishAgentVisuals();
 		
+		// visuals for walls
         publishWalls();
 		
+		// serve agents in queues
         updateQueues();
 		
-// 		if ( timestep_ < 30 )
-			processGroups();
+		// handle groups
+		processGroups();
 
         // only publish the obstacles in the beginning
         if ( timestep_ < CONFIG.robot_wait_time )
@@ -327,45 +329,43 @@ void Scene::callbackRobotCommand ( const pedsim_msgs::AgentState::ConstPtr &msg 
 /// -----------------------------------------------------------------
 void Scene::processGroups()
 {	
-// 	BOOST_FOREACH ( PersonGroupPtr g, agent_groups_ )
-// 	{
-// 		// just small groups for testing
-// 		if ( g->memberCount() >= 3)
-// 			continue;
-// 		
-// // 		ROS_INFO(" adding agents to groups");
-// 		
-// 		BOOST_FOREACH ( Agent* a, agents )
-// 		{
-// 			if ( coinFlip() > 0.5 && a->gettype() != Ped::Tagent::ROBOT )
-// 				g->addMember( a );
-// 		}
-// 			
-// 	
-// 	}
+	BOOST_FOREACH ( PersonGroupPtr g, agent_groups_ )
+	{
+		// just small groups for testing
+		if ( g->memberCount() >= 5)
+			continue;
+		
+// 		ROS_INFO(" adding agents to groups");
+		
+		BOOST_FOREACH ( Agent* a, agents )
+		{
+			if ( a->gettype() != Ped::Tagent::ROBOT )
+				g->addMember( a );
+		}
+	}
 
 
 	/// Just testing with one group
 	
-	// get some random agent
-	Agent* a = agents.front();
-	
-	PersonGroupPtr g = agent_groups_.at(0);
-	if ( g->memberCount() < 1)
-		g->addMember( a );
-	
-	
-	// add neighbors or the existing agent
-	std::list<Agent*> neighbors = a->getNeighbors();
-	BOOST_FOREACH ( Agent* n, neighbors )
-	{
-		if ( g->memberCount() >= 3 )
-			break;
-		
-		if ( n->gettype() != Ped::Tagent::ROBOT )
-			g->addMember( n );
-	}
-		
+// 	// get some random agent
+// 	Agent* a = agents.front();
+// 	
+// 	PersonGroupPtr g = agent_groups_.at(0);
+// 	if ( g->memberCount() < 1 )
+// 		g->addMember( a );
+// 	
+// 	
+// 	// add neighbors or the existing agent
+// 	std::list<Agent*> neighbors = a->getNeighbors();
+// 	BOOST_FOREACH ( Agent* n, neighbors )
+// 	{
+// 		if ( g->memberCount() >= 5 )
+// 			break;
+// 		
+// 		if ( n->gettype() != Ped::Tagent::ROBOT )
+// 			g->addMember( n );
+// 	}
+// 		
 	
 	/// visualize groups (sketchy)
 	BOOST_FOREACH ( PersonGroupPtr ag, agent_groups_ )
@@ -424,9 +424,9 @@ void Scene::processGroups()
             marker.color.g = 0.0;
             marker.color.b = 1.0;
 
-            marker.scale.x = 0.5;
-            marker.scale.y = 1.0;
-            marker.scale.z = 1.0;
+            marker.scale.x = 0.1;
+            marker.scale.y = 0.2;
+            marker.scale.z = 0.2;
 
             marker.type = visualization_msgs::Marker::ARROW;
 
@@ -440,7 +440,6 @@ void Scene::processGroups()
 			
             pub_group_lines_.publish ( marker );
 		}
-	
 	}
 }
 

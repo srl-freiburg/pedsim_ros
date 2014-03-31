@@ -143,10 +143,11 @@ void Agent::computeForces ()
 	Ped::Tagent::computeForces();
 	
 	// compute group forces
-	Ped::Tvector gforce =force_gaze_ + force_coherence_ + force_repulsion_;
+	// TODO - tune weights for different group forces
+	Ped::Tvector gforce = force_gaze_ + 100*force_coherence_ + force_repulsion_;
 	
-	// add additionan group and flock forces here
-	myForce ( 10.0 * gforce );
+	// add additional group force
+	myForce ( gforce );
 }
 
 /// \brief Move the agents in one time step
@@ -179,7 +180,6 @@ void Agent::move ( double h )
 	}
 	
 	time_since_queue_++;
-
 }
 
 void Agent::addWaypoint ( Waypoint* waypointIn )

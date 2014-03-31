@@ -80,7 +80,8 @@ std::list<Agent*>& PersonGroup::getMembers ()
 /// -----------------------------------------------------------------
 bool PersonGroup::addMember ( Agent* agent )
 {
-    if ( isMember ( agent ) || agent->inGroup() )
+	// NOTE - temporarily limit group sizes
+    if ( isMember ( agent ) || agent->inGroup() || memberCount() >= 5 )
         return false;
     else
     {
