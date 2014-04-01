@@ -49,6 +49,12 @@ Config::Config()
     robot_wait_time = 100;
 	queue_break = 50;
 	queue_max_length = 20;
+	
+	enable_groups = true;
+	avr_group_size = 5;
+	avr_group_radius = 4.5;
+	
+	enable_queues = true;
 }
 
 Config& Config::getInstance()

@@ -38,6 +38,32 @@
 #include <deque>
 
 
+/// ------------------------------------
+/// \struct QueueParameters
+/// \brief Queue modelling parameters
+/// ------------------------------------
+struct QueueParameters
+{
+	// duration for serving one agent
+	int service_time; 
+	
+	// overall direction of the queue
+	double theta;
+	
+	// queue 'view'/angle variation
+	double alpha;
+	
+	// queue attraction radius
+	double radius;
+	
+	// queue join threshold
+	double threshold;
+	
+	// maximum agents the queue can have
+	int capacity;
+};
+
+
 /// -----------------------------------------------------------------
 /// \class WaitingQueue
 /// \brief Simple queue model for pedestrians

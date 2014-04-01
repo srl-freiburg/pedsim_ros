@@ -256,7 +256,7 @@ void PersonGroup::gazeForce()
 /// -----------------------------------------------------------------
 void PersonGroup::coherenceForce ()
 {
-	double beta_2 = 11.0;
+	double beta_2 = 1.0;
 	
 	// compute the center of mass of group
 	Ped::Tvector com = computeCenterOfMass();
@@ -288,7 +288,8 @@ void PersonGroup::coherenceForce ()
 /// -----------------------------------------------------------------
 void PersonGroup::repulsionForce ()
 {
-	double beta_3 = 12.0;
+	// TODO - find empirical value
+	double beta_3 = 1.0;
 	
 	/// for all agents
 	BOOST_FOREACH ( Agent* a_i, members_ )

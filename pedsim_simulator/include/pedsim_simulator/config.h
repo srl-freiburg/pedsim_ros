@@ -63,6 +63,14 @@ public:
 	int queue_break;
 	int queue_max_length;
 	
+	// groups related
+	bool enable_groups;
+	int avr_group_size;
+	double avr_group_radius;
+	
+	// queues
+	bool enable_queues;
+	
 };
 
 

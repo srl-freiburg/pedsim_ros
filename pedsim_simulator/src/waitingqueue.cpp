@@ -39,6 +39,8 @@ WaitingQueue::WaitingQueue()
     id_ = staticid++;
 
     queueing_agents_.clear();
+	
+	// TODO - change these to use QueueParameters struct
     wait_time_ = 30;
     time_passed_ = 0;
     theta_ = -M_PI / 6;
@@ -266,22 +268,11 @@ Ped::Tvector WaitingQueue::getQueueEnd()
 	double theta_diff = randRange(0, M_PI/15.0);
 	
     if ( queueing_agents_.size() == 0 )
-    {
-//         return Ped::Tvector (
-//                    x_ + ( ( buffer ) * cos ( theta_ + theta_diff ) ),
-//                    y_ + ( ( buffer ) * sin ( theta_ + theta_diff ) ),
-//                    0.0 );
-		
+    {	
 		return Ped::Tvector (x_ , y_ , 0.0 );
     }
     else
     {
-//         Ped::Tagent *last_one = queueing_agents_.back();
-//         return Ped::Tvector (
-//                    last_one->getx() + ( buffer * cos ( theta_ + theta_diff ) ),
-//                    last_one->gety() + ( buffer * sin ( theta_ + theta_diff ) ),
-//                    0.0 );
-		
 		double qlen = queueing_agents_.size() * buffer;
 		return Ped::Tvector (
                    x_ + ( qlen * cos ( theta_ + theta_diff ) ),

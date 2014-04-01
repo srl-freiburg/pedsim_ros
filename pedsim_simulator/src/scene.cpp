@@ -159,10 +159,12 @@ void Scene::runSimulation()
         publishWalls();
 		
 		// serve agents in queues
-        updateQueues();
+		if ( CONFIG.enable_queues ) 
+			updateQueues();
 		
 		// handle groups
-		processGroups();
+		if ( CONFIG.enable_groups )
+			processGroups();
 
         // only publish the obstacles in the beginning
         if ( timestep_ < CONFIG.robot_wait_time )
@@ -332,14 +334,21 @@ void Scene::processGroups()
 	BOOST_FOREACH ( PersonGroupPtr g, agent_groups_ )
 	{
 		// just small groups for testing
-		if ( g->memberCount() >= 5)
+		if ( g->memberCount() >= CONFIG.avr_group_size )
 			continue;
 		
 // 		ROS_INFO(" adding agents to groups");
 		
 		BOOST_FOREACH ( Agent* a, agents )
 		{
-			if ( a->gettype() != Ped::Tagent::ROBOT )
+			// check distance to center group
+			Ped::Tvector com = g->computeCenterOfMass();
+			double d = distance( com.x, com.y, a->getx(), a->gety() );
+			
+			// add the initial one without checking distance
+			if ( g->memberCount() < 1 && a->gettype() != Ped::Tagent::ROBOT )
+				g->addMember( a );
+			else if ( a->gettype() != Ped::Tagent::ROBOT && d < CONFIG.avr_group_radius )
 				g->addMember( a );
 		}
 	}
