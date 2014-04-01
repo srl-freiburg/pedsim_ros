@@ -54,7 +54,7 @@ Config::Config()
 	avr_group_size = 5;
 	avr_group_radius = 4.5;
 	
-	enable_queues = true;
+	enable_queues = false;
 }
 
 Config& Config::getInstance()

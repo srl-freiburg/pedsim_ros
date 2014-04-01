@@ -144,10 +144,10 @@ void Agent::computeForces ()
 	
 	// compute group forces
 	// TODO - tune weights for different group forces
-	Ped::Tvector gforce = force_gaze_ + 100*force_coherence_ + force_repulsion_;
+	Ped::Tvector gforce = force_gaze_ + force_coherence_ + force_repulsion_;
 	
 	// add additional group force
-	myForce ( gforce );
+	myForce ( 100*gforce );
 }
 
 /// \brief Move the agents in one time step
