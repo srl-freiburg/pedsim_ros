@@ -5,9 +5,9 @@
 // Includes
 #include <pedsim_simulator/force/alongwallforce.h>
 // → SGDiCoP
-#include "config.h"
+#include <pedsim_simulator/config.h>
 // #include "logging.h"
-#include "scene.h"
+#include <pedsim_simulator/scene.h>
 #include <pedsim_simulator/element/agent.h>
 #include <pedsim_simulator/element/obstacle.h>
 // → Qt

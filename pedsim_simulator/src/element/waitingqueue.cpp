@@ -8,7 +8,7 @@
 // → SGDiCoP
 // #include "logging.h"
 #include <pedsim_simulator/rng.h>
-#include "scene.h"
+#include <pedsim_simulator/scene.h>
 #include <pedsim_simulator/element/agent.h>
 
 // #include "visual/waitingqueuerepresentation.h"
@@ -144,14 +144,14 @@ bool WaitingQueue::dequeueAgent(Agent* agentIn) {
 		dequeueSuccess = true;
 	}
 	else {
-		WARN_LOG("Dequeueing agent from queue (%1), although it isn't at the front of the queue",
-			agentIn->toString());
+// 		WARN_LOG("Dequeueing agent from queue (%1), although it isn't at the front of the queue",
+// 			agentIn->toString());
 		int removedCount = queuedAgents.removeAll(agentIn);
 		dequeueSuccess = (removedCount >= 1);
 		
 		if(dequeueSuccess == false) {
 // 			ERROR_LOG("Agent isn't waiting in queue! (Agent: %1, Queue: %2)",
-				agentIn->toString(), this->toString());
+// 				agentIn->toString(), this->toString());
 			return false;
 		}
 	}

@@ -21,7 +21,7 @@
 
 
 // Forward Declarations
-class ObstacleRepresentation;
+// class ObstacleRepresentation;
 
 
 class Obstacle : public ScenarioElement, public Ped::Tobstacle {

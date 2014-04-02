@@ -5,7 +5,7 @@
 // Includes
 #include <pedsim_simulator/force/groupcoherenceforce.h>
 // → SGDiCoP
-#include "config.h"
+#include <pedsim_simulator/config.h>
 // #include "logging.h"
 #include <pedsim_simulator/element/agent.h>
 // → Qt

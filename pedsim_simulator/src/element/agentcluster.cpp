@@ -8,7 +8,7 @@
 // → SGDiCoP
 #include <pedsim_simulator/rng.h>
 
-#include "scene.h"
+#include <pedsim_simulator/scene.h>
 #include <pedsim_simulator/element/waitingqueue.h>
 
 // #include "visual/agentclusterrepresentation.h"
@@ -28,12 +28,12 @@ AgentCluster::AgentCluster(double xIn, double yIn, int countIn) {
 	shallCreateGroups = true;
 
 	// graphical representation
-	representation = new AgentClusterRepresentation(this);
+// 	representation = new AgentClusterRepresentation(this);
 };
 
 AgentCluster::~AgentCluster() {
 	// clean up
-	delete representation;
+// 	delete representation;
 }
 
 QList<Agent*> AgentCluster::dissolve() {

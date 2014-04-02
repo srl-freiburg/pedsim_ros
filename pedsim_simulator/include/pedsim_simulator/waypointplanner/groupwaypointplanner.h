@@ -2,46 +2,46 @@
 // Author: Sven Wehner <mail@svenwehner.de>
 // Copyright (c) 2013 by Sven Wehner
 
-#ifndef _individualwaypointplanner_h_
-#define _individualwaypointplanner_h_
+#ifndef _groupwaypointplanner_h_
+#define _groupwaypointplanner_h_
 
 // Includes
 // → SGDiCoP
-#include "waypointplanner.h"
+#include <pedsim_simulator/waypointplanner/waypointplanner.h>
 
 // Forward Declarations
 class AgentGroup;
 
 
-class IndividualWaypointPlanner : public WaypointPlanner {
+class GroupWaypointPlanner : public WaypointPlanner {
 	Q_OBJECT
 
 	// Constructor and Destructor
 public:
-	IndividualWaypointPlanner();
+	GroupWaypointPlanner();
 
 
 	// Methods
 public:
-	bool setAgent(Agent* agentIn);
-
-	// → Waypoints
+	// → Waypoint
 	Waypoint* getDestination() const;
 	void setDestination(Waypoint* waypointIn);
 
 	// → WaypointPlanner Overrides
 public:
-	static Type getPlannerType() { return WaypointPlanner::Individual; };
+	static Type getPlannerType() { return WaypointPlanner::Group; };
 	virtual Waypoint* getCurrentWaypoint();
 	virtual bool hasCompletedDestination() const;
-	
+
 	virtual QString name() const;
 	virtual QString toString() const;
+
+	virtual bool setGroup(AgentGroup* groupIn);
 
 
 	// Attributes
 protected:
-	Agent* agent;
+	AgentGroup* group;
 
 	// → Waypoints
 	Waypoint* destination;

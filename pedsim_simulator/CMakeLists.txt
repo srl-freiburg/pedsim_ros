@@ -41,14 +41,12 @@ include_directories(
 )
 
 set(SOURCES 
-#     src/scene.cpp 
-#     src/agent.cpp 
-#     src/obstacle.cpp 
-#     src/waypoint.cpp 
+	src/simulator.cpp
+    src/scene.cpp
     src/config.cpp 
-#     src/waitingqueue.cpp 
     src/orientationhandler.cpp
-#     src/persongroup.cpp 
+    src/agentstatemachine.cpp 
+    src/scenarioreader.cpp
 	src/rng.cpp
 	
 	# elements
@@ -70,9 +68,50 @@ set(SOURCES
 	src/force/groupgazeforce.cpp
 	src/force/grouprepulsionforce.cpp
 	src/force/randomforce.cpp
+	
+	# waypointplanner
+	src/waypointplanner/waypointplanner.cpp
+	src/waypointplanner/individualwaypointplanner.cpp
+	src/waypointplanner/queueingplanner.cpp
+	src/waypointplanner/shoppingplanner.cpp
+	src/waypointplanner/groupwaypointplanner.cpp
 ) 
 
-add_executable(simulator ${SOURCES} ${QT_RESOURCES_CPP} ${QT_FORMS_HPP} ${QT_MOC_HPP})
+
+set(MOC_FILES
+	include/pedsim_simulator/config.h
+	include/pedsim_simulator/scene.h
+	include/pedsim_simulator/agentstatemachine.h
+	
+	include/pedsim_simulator/element/scenarioelement.h
+	include/pedsim_simulator/element/agent.h
+	include/pedsim_simulator/element/agentcluster.h
+	include/pedsim_simulator/element/agentgroup.h
+	include/pedsim_simulator/element/attractionarea.h
+	include/pedsim_simulator/element/obstacle.h
+	include/pedsim_simulator/element/waypoint.h
+	include/pedsim_simulator/element/areawaypoint.h
+	include/pedsim_simulator/element/waitingqueue.h
+	include/pedsim_simulator/element/queueingwaypoint.h
+	
+	include/pedsim_simulator/force/force.h
+	include/pedsim_simulator/force/randomforce.h
+	include/pedsim_simulator/force/groupgazeforce.h
+	include/pedsim_simulator/force/groupcoherenceforce.h
+	include/pedsim_simulator/force/grouprepulsionforce.h
+	include/pedsim_simulator/force/alongwallforce.h
+
+	include/pedsim_simulator/waypointplanner/waypointplanner.h
+	include/pedsim_simulator/waypointplanner/individualwaypointplanner.h
+	include/pedsim_simulator/waypointplanner/groupwaypointplanner.h
+	include/pedsim_simulator/waypointplanner/shoppingplanner.h
+	include/pedsim_simulator/waypointplanner/queueingplanner.h
+)
+
+
+QT4_WRAP_CPP(MOC_SRCS_UI ${MOC_FILES})
+
+add_executable(simulator ${SOURCES}  ${MOC_SRCS_UI} ${QT_RESOURCES_CPP} ${QT_FORMS_HPP} ${QT_MOC_HPP})
 add_executable(teleop src/robot_teleop.cpp)
 
 TARGET_LINK_LIBRARIES(simulator 

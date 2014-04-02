@@ -3,12 +3,12 @@
 // Copyright (c) 2013 by Sven Wehner
 
 // Includes
-#include "queueingplanner.h"
+#include <pedsim_simulator/waypointplanner/queueingplanner.h>
 // → SGDiCoP
-#include "logging.h"
-#include "element/agent.h"
-#include "element/queueingwaypoint.h"
-#include "element/waitingqueue.h"
+// #include "logging.h"
+#include <pedsim_simulator/element/agent.h>
+#include <pedsim_simulator/element/queueingwaypoint.h>
+#include <pedsim_simulator/element/waitingqueue.h>
 
 
 QueueingWaypointPlanner::QueueingWaypointPlanner() {
@@ -23,7 +23,7 @@ QueueingWaypointPlanner::QueueingWaypointPlanner() {
 void QueueingWaypointPlanner::onFollowedAgentPositionChanged(double xIn, double yIn) {
 	// sanity checks
 	if(currentWaypoint == nullptr) {
-		ERROR_LOG("Queued agent cannot update queueing position, because there's no waypoint set!");
+// 		ERROR_LOG("Queued agent cannot update queueing position, because there's no waypoint set!");
 		return;
 	}
 
@@ -127,8 +127,8 @@ void QueueingWaypointPlanner::setDestination(Waypoint* waypointIn) {
 
 	// sanity checks
 	if(queue == nullptr) {
-		ERROR_LOG("Waypoint provided to QueueingWaypointPlanner isn't a waiting queue! (%1)",
-			(waypointIn==nullptr)?"null":waypointIn->toString());
+// 		ERROR_LOG("Waypoint provided to QueueingWaypointPlanner isn't a waiting queue! (%1)",
+// 			(waypointIn==nullptr)?"null":waypointIn->toString());
 		return;
 	}
 
@@ -173,7 +173,7 @@ bool QueueingWaypointPlanner::hasReachedQueueEnd() const {
 }
 
 void QueueingWaypointPlanner::activateApproachingMode() {
-	DEBUG_LOG("Agent %1 enters Approaching Mode", agent->getId());
+// 	DEBUG_LOG("Agent %1 enters Approaching Mode", agent->getId());
 
 	// update mode
 	status = QueueingWaypointPlanner::Approaching;
@@ -188,7 +188,7 @@ void QueueingWaypointPlanner::activateApproachingMode() {
 }
 
 void QueueingWaypointPlanner::activateQueueingMode() {
-	DEBUG_LOG("Agent %1 enters Queueing Mode", agent->getId());
+// 	DEBUG_LOG("Agent %1 enters Queueing Mode", agent->getId());
 
 	// update mode
 	status = QueueingWaypointPlanner::Queued;
@@ -240,11 +240,11 @@ Waypoint* QueueingWaypointPlanner::getCurrentWaypoint() {
 Waypoint* QueueingWaypointPlanner::getNextWaypoint() {
 	// sanity checks
 	if(agent == nullptr) {
-		ERROR_LOG("Cannot determine queueing waypoint without agent!");
+// 		ERROR_LOG("Cannot determine queueing waypoint without agent!");
 		return nullptr;
 	}
 	if(waitingQueue == nullptr) {
-		WARN_LOG("Cannot determine queueing waypoint without waiting queues!");
+// 		WARN_LOG("Cannot determine queueing waypoint without waiting queues!");
 		return nullptr;
 	}
 
@@ -274,7 +274,7 @@ bool QueueingWaypointPlanner::hasCompletedWaypoint() const {
 
 bool QueueingWaypointPlanner::hasCompletedDestination() const {
 	if(waitingQueue == nullptr) {
-		WARN_LOG("QueueingWaypointPlanner: No waiting queue set!");
+// 		WARN_LOG("QueueingWaypointPlanner: No waiting queue set!");
 		return true;
 	}
 

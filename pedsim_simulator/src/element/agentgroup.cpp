@@ -16,6 +16,9 @@
 
 
 AgentGroup::AgentGroup() {
+	static int staticid = 0;
+    id_ = staticid++;
+
 	// initialize values
 	dirty = true;
 	dirtyMaxDistance = true;
@@ -33,6 +36,9 @@ AgentGroup::AgentGroup() {
 }
 
 AgentGroup::AgentGroup(const QList<Agent*>& agentsIn) {
+	static int staticid = 0;
+    id_ = staticid++;
+
 	// initialize values
 	dirty = true;
 	dirtyMaxDistance = true;
@@ -55,13 +61,16 @@ AgentGroup::AgentGroup(const QList<Agent*>& agentsIn) {
 }
 
 AgentGroup::AgentGroup(std::initializer_list<Agent*>& agentsIn) {
+	static int staticid = 0;
+    id_ = staticid++;
+
 	// initialize values
 	dirty = true;
 	dirtyMaxDistance = true;
 	comUpdateTimer.setSingleShot(true);
 	comUpdateTimer.setInterval(0);
 	connect(&comUpdateTimer, SIGNAL(timeout()), this, SLOT(updateCenterOfMass()));
-	
+
 	// add agents from initializer_list to the member list
 	for(Agent* currentAgent : agentsIn) {
 		members.append(currentAgent);
@@ -71,7 +80,7 @@ AgentGroup::AgentGroup(std::initializer_list<Agent*>& agentsIn) {
 
 	// compute center of mass
 	updateCenterOfMass();
-	
+
 	// graphical representation
 // 	representation = new AgentGroupRepresentation(this);
 }
@@ -92,7 +101,7 @@ void AgentGroup::onPositionChanged(double x, double y) {
 QList<AgentGroup*> AgentGroup::divideAgents(const QList<Agent*>& agentsIn) {
 	QList<AgentGroup*> groups;
 	QList<Agent*> unassignedAgents = agentsIn;
-	
+
 	// initialize Poisson distribution
 	// → read settings
 	QSettings settings;
@@ -141,13 +150,13 @@ QList<AgentGroup*> AgentGroup::divideAgents(const QList<Agent*>& agentsIn) {
 			Agent* groupLeader = unassignedAgents.takeFirst();
 			Ped::Tvector leaderPosition = groupLeader->getPosition();
 			newGroup->addMember(groupLeader);
-			
+
 			// add other agents to group
 			QList<QPair<Agent*,double> > distanceList;
 			foreach(Agent* potentialMember, unassignedAgents) {
 				Ped::Tvector position = potentialMember->getPosition();
 				double distance = (leaderPosition - position).length();
-				
+
 				// add potential group member to the list according to the distance
 				auto iter = distanceList.begin();
 				while(iter < distanceList.end()) {
@@ -163,11 +172,11 @@ QList<AgentGroup*> AgentGroup::divideAgents(const QList<Agent*>& agentsIn) {
 				if(distanceList.size() > groupSize-1)
 					distanceList.removeFirst();
 			}
-			
+
 			// add neighbors to the group
 			foreach(const auto& member, distanceList) {
 				newGroup->addMember(member.first);
-				
+
 				// don't consider the group member as part of another group
 				unassignedAgents.removeOne(member.first);
 			}
@@ -196,7 +205,7 @@ bool AgentGroup::addMember(Agent* agentIn) {
 	dirty = true;
 	dirtyMaxDistance = true;
 	comUpdateTimer.start();
-	
+
 	// connect signals
 	connect(agentIn, SIGNAL(positionChanged(double,double)),
 		this, SLOT(onPositionChanged(double,double)));
@@ -209,7 +218,7 @@ bool AgentGroup::addMember(Agent* agentIn) {
 
 bool AgentGroup::removeMember(Agent* agentIn) {
 	bool hasRemovedMember = members.removeOne(agentIn);
-	
+
 	// mark cache invalid, if the agent has been removed
 	if(hasRemovedMember == true) {
 		// disconnect signals
@@ -220,7 +229,7 @@ bool AgentGroup::removeMember(Agent* agentIn) {
 		dirty = true;
 		dirtyMaxDistance = true;
 		comUpdateTimer.start();
-		
+
 		// inform users
 		emit memberRemoved(agentIn->getId());
 
@@ -264,14 +273,14 @@ Ped::Tvector AgentGroup::getCenterOfMass() const {
 		AgentGroup* nonConstThis = const_cast<AgentGroup*>(this);
 		nonConstThis->updateCenterOfMass();
 	}
-	
+
 	return cacheCoM;
 }
 
 Ped::Tvector AgentGroup::updateCenterOfMass() {
 	if(!dirty)
 		return cacheCoM;
-	
+
 	// compute center of mass
 	Ped::Tvector com;
 	foreach(const Agent* member, members)
@@ -352,6 +361,6 @@ QString AgentGroup::toString() const {
 		agentString += agent->toString();
 		firstMember = false;
 	}
-	
+
 	return tr("AgentGroup (CoM: @%1,%2; Members:%3)").arg(cacheCoM.x).arg(cacheCoM.y).arg(agentString);
 }

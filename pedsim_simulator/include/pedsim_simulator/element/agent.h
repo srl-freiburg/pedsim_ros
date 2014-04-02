@@ -12,7 +12,7 @@
 
 // Includes
 // → SGDiCoP
-#include "scenarioelement.h"
+#include <pedsim_simulator/element/scenarioelement.h>
 // → PedSim
 #include <libpedsim/ped_agent.h>
 // → Qt
@@ -20,7 +20,7 @@
 
 // Forward Declarations
 class AgentGroup;
-class AgentRepresentation;
+// class AgentRepresentation;
 class AgentStateMachine;
 class Force;
 class Waypoint;
@@ -123,7 +123,7 @@ public:
 	// Attributes
 protected:
 	// → graphical representation
-	AgentRepresentation* representation;
+// 	AgentRepresentation* representation;
 
 	// → state machine
 	AgentStateMachine* stateMachine;

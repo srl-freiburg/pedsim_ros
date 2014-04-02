@@ -1,77 +1,121 @@
-/**
-* Copyright 2014 Social Robotics Lab, University of Freiburg
-*
-* Redistribution and use in source and binary forms, with or without
-* modification, are permitted provided that the following conditions are met:
-*
-*    # Redistributions of source code must retain the above copyright
-*       notice, this list of conditions and the following disclaimer.
-*    # Redistributions in binary form must reproduce the above copyright
-*       notice, this list of conditions and the following disclaimer in the
-*       documentation and/or other materials provided with the distribution.
-*    # Neither the name of the University of Freiburg nor the names of its
-*       contributors may be used to endorse or promote products derived from
-*       this software without specific prior written permission.
-*
-* THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-* AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-* IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-* ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
-* LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-* CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-* SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-* INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-* CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-* ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-* POSSIBILITY OF SUCH DAMAGE.
-*
-* \author Billy Okal <okal@cs.uni-freiburg.de>
-*/
+// Simulating Group Dynamics in Crowds of Pedestrians (SGDiCoP)
+// Author: Sven Wehner <mail@svenwehner.de>
+//
+// Forked from: PedSim's demo application (version 2.2).
+// (http://pedsim.silmaril.org/)
+// Copyright text:
+// 		pedsim - A microscopic pedestrian simulation system.
+// 		Copyright (c) 2011 by Christian Gloor
 
 #ifndef _config_h_
 #define _config_h_
 
-#include <string>
-#include <boost/shared_ptr.hpp>
-#include <pedsim_simulator/utilities.h>
+// Includes
+// → Qt
+#include <QObject>
+#include <QMap>
 
 
+class Config : public QObject {
+	Q_OBJECT
 
-class Config
-{
+	// Constructor and Destructor
 protected:
-    Config();
+	Config(QObject* parent = 0);
 
-    // Singleton Design Pattern
-#define CONFIG Config::getInstance()
+	// Singleton Design Pattern
+	#define CONFIG Config::getInstance()
 protected:
-    static Config* instance;
+	static Config* instance;
 public:
-    static Config& getInstance();
+	static Config& getInstance();
+	
 
+	// Signals
+signals:
+	// → GUI
+	void waypointVisibilityChanged(bool show);
+	void attractionVisibilityChanged(bool show);
+	void directionVisibilityChanged(bool show);
+	void accelerationVisibilityChanged(bool show);
+	void forcesVisibilityChanged(bool show);
+	void groupsVisibilityChanged(bool show);
+	void forceVisibilityChanged(QString force, bool show);
+	void gridVisibilityChanged(bool show);
+	// → Simulation
+	void timeStepSizeChanged(double value);
+	void simulationSpeedChanged(int value);
+	// → Forces
+	void forceFactorChanged(QString name, double value);
+	void forceFactorObstacleChanged(double value);
+	void forceSigmaObstacleChanged(double value);
+	void forceFactorSocialChanged(double value);
+	void forceFactorGroupGazeChanged(double value);
+	void forceFactorGroupCoherenceChanged(double value);
+	void forceFactorGroupRepulsionChanged(double value);
+	void forceFactorRandomChanged(double value);
+	void forceFactorAlongWallChanged(double value);
+
+
+	// Slots
+public slots:
+	void setShowWaypoints(bool valueIn);
+	void setShowAttractions(bool valueIn);
+	void setShowDirection(bool valueIn);
+	void setShowAcceleration(bool valueIn);
+	void setShowForces(bool valueIn);
+	void setShowGroups(bool valueIn);
+	void setForceVisibility(const QString& forceIn, bool visibleIn);
+	void setShowGrid(bool valueIn);
+	void setSimSpeed(int valueIn);
+	void decreaseSimSpeed();
+	void increaseSimSpeed();
+	void halveSimSpeed();
+	void doubleSimSpeed();
+	void setTimeStepSize(double valueIn);
+	// → Forces
+	void setObstacleForce(double valueIn);
+	void setObstacleSigma(double valueIn);
+	void setSocialForce(double valueIn);
+	void setGroupGazeForce(double valueIn);
+	void setGroupCoherenceForce(double valueIn);
+	void setGroupRepulsionForce(double valueIn);
+	void setRandomForce(double valueIn);
+	void setAlongWallForce(double valueIn);
+
+
+	// Methods
 public:
-	ForceWeightPtr force_weights;
+	QMap<QString,double> getForceMap() const;
+	bool isForceVisible(const QString& forceNameIn) const;
 	
-    bool look_ahead;
-    double simulation_step;
-	
-    double cell_width;
-    double cell_height;
-	
-	RobotMode robot_mode;
-	int robot_wait_time;
-	int queue_break;
-	int queue_max_length;
-	
-	// groups related
-	bool enable_groups;
-	int avr_group_size;
-	double avr_group_radius;
-	
-	// queues
-	bool enable_queues;
-	
+	//TODO: make member variables protected and add getter functions
+
+
+	// Attributes
+public:
+	// → Visualization
+	bool showWaypoints;
+	bool showAttractions;
+	bool showDirection;
+	bool showAcceleration;
+	bool showForces;
+	bool showGroups;
+	bool showGrid;
+	// → Visibility of individual forces
+	QMap<QString,bool> forceVisibilityMap;
+	// → Simulation
+	double timeStepSize;
+	int simSpeed;
+	// → Forces
+	double forceObstacle;
+	double sigmaObstacle;
+	double forceSocial;
+	double forceGroupGaze;
+	double forceGroupCoherence;
+	double forceGroupRepulsion;
+	double forceRandom;
+	double forceAlongWall;
 };
-
 
 #endif

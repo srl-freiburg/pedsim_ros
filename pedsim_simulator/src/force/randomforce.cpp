@@ -5,10 +5,10 @@
 // Includes
 #include <pedsim_simulator/force/randomforce.h>
 // → SGDiCoP
-#include "config.h"
+#include <pedsim_simulator/config.h>
 // #include "logging.h"
 #include <pedsim_simulator/rng.h>
-#include "scene.h"
+#include <pedsim_simulator/scene.h>
 // → Qt
 #include <QSettings>
 
@@ -33,7 +33,7 @@ void RandomForce::onForceFactorChanged(double valueIn) {
 void RandomForce::setFadingTime(double durationIn) {
 	// sanity checks
 	if(durationIn < 0) {
-		ERROR_LOG("Cannot set fading time to invalid value: %1", durationIn);
+// 		ERROR_LOG("Cannot set fading time to invalid value: %1", durationIn);
 		return;
 	}
 	

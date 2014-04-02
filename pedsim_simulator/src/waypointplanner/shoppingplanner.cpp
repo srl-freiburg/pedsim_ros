@@ -3,13 +3,14 @@
 // Copyright (c) 2013 by Sven Wehner
 
 // Includes
-#include "shoppingplanner.h"
+#include <pedsim_simulator/waypointplanner/shoppingplanner.h>
 // → SGDiCoP
-#include "rng.h"
-#include "scene.h"
-#include "element/agent.h"
-#include "element/attractionarea.h"
-#include "element/areawaypoint.h"
+#include <pedsim_simulator/rng.h>
+#include <pedsim_simulator/scene.h>
+
+#include <pedsim_simulator/element/agent.h>
+#include <pedsim_simulator/element/attractionarea.h>
+#include <pedsim_simulator/element/areawaypoint.h>
 // → Qt
 #include <QSettings>
 

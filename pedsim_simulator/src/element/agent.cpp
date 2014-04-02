@@ -12,16 +12,16 @@
 #include <pedsim_simulator/element/agent.h>
 
 // → SGDiCoP
-#include "config.h"
+#include <pedsim_simulator/config.h>
 // #include "logging.h"
-#include "mainwindow.h"
-#include "scene.h"
-#include "agentstatemachine.h"
+// #include "mainwindow.h"
+#include <pedsim_simulator/scene.h>
+#include <pedsim_simulator/agentstatemachine.h>
 
 #include <pedsim_simulator/element/waypoint.h>
 #include <pedsim_simulator/force/force.h>
 
-#include "waypointplanner/waypointplanner.h"
+#include <pedsim_simulator/waypointplanner/waypointplanner.h>
 // #include "visual/agentrepresentation.h"
 // → Qt
 #include <QSettings>
@@ -43,7 +43,7 @@ Agent::Agent() {
 	group = nullptr;
 
 	// graphical representation
-	representation = new AgentRepresentation(this);
+// 	representation = new AgentRepresentation(this);
 	
 	// connect signals
 	connect(&CONFIG, SIGNAL(forceFactorObstacleChanged(double)), this, SLOT(onForceFactorObstacleChanged(double)));
@@ -54,7 +54,7 @@ Agent::Agent() {
 Agent::~Agent() {
 	// clean up
 	// → remove graphical representation
-	delete representation;
+// 	delete representation;
 	// → remove forces
 	foreach(Force* currentForce, forces) {
 		delete currentForce;
@@ -127,7 +127,7 @@ Ped::Tvector Agent::myForce(Ped::Tvector desired) const {
 		Ped::Tvector currentForce = force->getForce(desired);
 		// → sanity checks
 		if(!currentForce.isValid()) {
-			WARN_LOG("Invalid Force: %1", force->getName());
+// 			WARN_LOG("Invalid Force: %1", force->getName());
 			currentForce = Ped::Tvector();
 		}
 		forceValue += currentForce;

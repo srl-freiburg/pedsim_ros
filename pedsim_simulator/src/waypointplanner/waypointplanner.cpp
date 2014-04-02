@@ -3,7 +3,7 @@
 // Copyright (c) 2013 by Sven Wehner
 
 // Includes
-#include "waypointplanner.h"
+#include <pedsim_simulator/waypointplanner/waypointplanner.h>
 
 
 WaypointPlanner::WaypointPlanner() {

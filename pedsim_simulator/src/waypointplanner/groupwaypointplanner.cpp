@@ -3,13 +3,13 @@
 // Copyright (c) 2013 by Sven Wehner
 
 // Includes
-#include "groupwaypointplanner.h"
+#include <pedsim_simulator/waypointplanner/groupwaypointplanner.h>
 // → SGDiCoP
-#include "logging.h"
-#include "element/agent.h"
-#include "element/agentgroup.h"
-#include "element/areawaypoint.h"
-#include "element/waitingqueue.h"
+// #include "logging.h"
+#include <pedsim_simulator/element/agent.h>
+#include <pedsim_simulator/element/agentgroup.h>
+#include <pedsim_simulator/element/areawaypoint.h>
+#include <pedsim_simulator/element/waitingqueue.h>
 
 
 GroupWaypointPlanner::GroupWaypointPlanner() {
@@ -38,7 +38,7 @@ Waypoint* GroupWaypointPlanner::getCurrentWaypoint() {
 
 bool GroupWaypointPlanner::hasCompletedDestination() const {
 	if(destination == nullptr) {
-		WARN_LOG("GroupWaypointPlanner: No destination set!");
+// 		WARN_LOG("GroupWaypointPlanner: No destination set!");
 		return true;
 	}
 
@@ -49,7 +49,7 @@ bool GroupWaypointPlanner::hasCompletedDestination() const {
 		return areaWaypoint->isWithinArea(com);
 	}
 	else {
-		ERROR_LOG("Unknown Waypoint type: %1", destination->toString());
+// 		ERROR_LOG("Unknown Waypoint type: %1", destination->toString());
 		return true;
 	}
 }

@@ -1,177 +1,147 @@
-/**
-* Copyright 2014 Social Robotics Lab, University of Freiburg
-*
-* Redistribution and use in source and binary forms, with or without
-* modification, are permitted provided that the following conditions are met:
-*
-*    # Redistributions of source code must retain the above copyright
-*       notice, this list of conditions and the following disclaimer.
-*    # Redistributions in binary form must reproduce the above copyright
-*       notice, this list of conditions and the following disclaimer in the
-*       documentation and/or other materials provided with the distribution.
-*    # Neither the name of the University of Freiburg nor the names of its
-*       contributors may be used to endorse or promote products derived from
-*       this software without specific prior written permission.
-*
-* THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-* AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-* IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-* ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
-* LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-* CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-* SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-* INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-* CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-* ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-* POSSIBILITY OF SUCH DAMAGE.
-*
-* \author Billy Okal <okal@cs.uni-freiburg.de>
-*/
+// Simulating Group Dynamics in Crowds of Pedestrians (SGDiCoP)
+// Author: Sven Wehner <mail@svenwehner.de>
+//
+// Forked from: PedSim's demo application (version 2.2).
+// (http://pedsim.silmaril.org/)
+// Copyright text:
+// 		pedsim - A microscopic pedestrian simulation system.
+// 		Copyright (c) 2003 - 2012 by Christian Gloor
 
+#ifndef _scene_h_
+#define _scene_h_
 
-#ifndef SCENE_H
-#define SCENE_H
-
-#include <cstdlib>
-
+// Includes
+// → PedSim
 #include <libpedsim/ped_scene.h>
-#include <libpedsim/ped_tree.h>
-
+#include <libpedsim/ped_vector.h>
+// → Qt
 #include <QMap>
-#include <QTimer>
-#include <QKeyEvent>
-#include <QFile>
-#include <QXmlStreamReader>
-#include <QRect>
+#include <QRectF>
+#include <QObject>
 
-#include <pedsim_simulator/config.h>
-#include <pedsim_simulator/agent.h>
-#include <pedsim_simulator/obstacle.h>
-#include <pedsim_simulator/waypoint.h>
 
-#include <boost/lexical_cast.hpp>
-#include <boost/algorithm/string/predicate.hpp>
 
-// ros and big guys
-#include <ros/ros.h>
-#include <ros/console.h>
 
-// messages and services
-#include <pedsim_msgs/AgentState.h>
-#include <pedsim_msgs/AllAgentsState.h>
+// Forward Declarations
+class QGraphicsScene;
+class Agent;
+class Obstacle;
+class Waypoint;
+class AttractionArea;
+class AgentCluster;
+class AgentGroup;
+class WaitingQueue;
+// class Grid;
 
-#include <pedsim_srvs/SetAgentState.h>
-#include <pedsim_srvs/SetAllAgentsState.h>
-#include <pedsim_srvs/GetAgentState.h>
-#include <pedsim_srvs/GetAllAgentsState.h>
 
-#include <visualization_msgs/Marker.h>
-#include <visualization_msgs/MarkerArray.h>
-#include <std_msgs/Header.h>
-#include <nav_msgs/GridCells.h>
-#include <geometry_msgs/Point.h>
+class Scene : public QObject, protected Ped::Tscene {
+	Q_OBJECT
 
-#include <pedsim_simulator/orientationhandler.h>
-// #include <pedsim_simulator/waitingqueue.h>
-
-#include <pedsim_simulator/utilities.h>
-
-// #include <pedsim_simulator/persongroup.h>
-
-class Scene : public Ped::Tscene
-{
 public:
-    Scene ( const ros::NodeHandle &node );
-    Scene ( double left, double up, double width, double height, const ros::NodeHandle &node );
-    ~Scene();
-    
-    void clear();
-    std::set<const Ped::Tagent *> getNeighbors ( double x, double y, double maxDist );
-
-    /// overriding methods
-    void addAgent ( Agent *a );
-    void addObstacle ( Ped::Tobstacle *o );
-    void cleanup();
-    void moveAgents ( double h );
-    virtual bool removeAgent ( Agent* agent );
+	Scene(QObject* parent = 0);
+	virtual ~Scene();
 
 
-    /// creating artificial flows
-    void spawnKillAgents();
+    // Singleton Design Pattern
+	#define SCENE Scene::getInstance()
+protected:
+	static Scene* instance;
+public:
+	static Scene& getInstance();
 
-    /// service handler for moving agents
-    bool srvMoveAgentHandler ( pedsim_srvs::SetAgentState::Request &, pedsim_srvs::SetAgentState::Response & );
 
-    /// publisher helpers
-    void publishAgentStatus();
-    void publishAgentVisuals();
-    void publishObstacles();
-    void publishWalls();
-    void updateQueues();
-	
-	void processGroups();
+	// Signals
+signals:
+	void aboutToStart();
+	void aboutToMoveAgents();
+	void movedAgents();
+	void sceneTimeChanged(double time);
 
-    /// subscriber helpers
-    void callbackRobotCommand ( const pedsim_msgs::AgentState::ConstPtr &msg );
+	// → added/removed elements
+	void agentAdded(int id);
+	void agentRemoved(int id);
+	void obstacleAdded(int id);
+	void obstacleRemoved(int id);
+	void waypointAdded(int id);
+	void waypointRemoved(int id);
+	void agentClusterAdded(int id);
+	void agentClusterRemoved(int id);
+	void waitingQueueAdded(QString name);
+	void waitingQueueRemoved(QString name);
+	void attractionAdded(QString name);
+	void attractionRemoved(QString name);
 
-    /// helpers related to parsing scene files
-    inline bool readFromFile ( const QString &filename );
-    inline void processData ( QByteArray &data );
-    inline void drawObstacles ( float x1, float y1, float x2, float y2 );
 
-    /// simulaition management
-    bool initialize();
-    void loadConfigParameters();
-    void runSimulation();
-    void moveAllAgents();
-    void cleanupItems();
+	// Slots
+public slots:
+	void onSimulationSpeedChanged(int simSpeed);
+	void moveAllAgents();
+protected slots:
+	void cleanupScene();
 
-    Agent* getAgentById ( int idIn ) const;
-    const std::list<Agent*>& getAgents() const;
 
-private:
-    // robot and agents
-    Agent* robot_;
-    std::list<Agent*> agents;
+	// Methods
+public:
+// 	bool isPaused() const;
+// 	void pauseUpdates();
+// 	void unpauseUpdates();
+	void clear();
 
-    ros::NodeHandle nh_;
+	QRectF itemsBoundingRect() const;
 
-    // publishers
-    ros::Publisher pub_all_agents_;
-    ros::Publisher pub_agent_visuals_;
-    ros::Publisher pub_obstacles_;
-    ros::Publisher pub_walls_;
-    ros::Publisher pub_queues_;
-	ros::Publisher pub_group_centers_;
-	ros::Publisher pub_group_lines_;
+	// → elements
+	const QList<Agent*>& getAgents() const;
+	Agent* getAgentById(int idIn) const;
+	QList<AgentGroup*> getGroups();
+	const QList<Obstacle*>& getObstacles() const;
+	const QMap<QString, Waypoint*>& getWaypoints() const;
+	const QMap<QString, AttractionArea*>& getAttractions() const;
+	Waypoint* getWaypointById(int idIn) const;
+	Waypoint* getWaypointByName(const QString& nameIn) const;
+	WaitingQueue* getWaitingQueueByName(const QString& nameIn) const;
+	const QList<AgentCluster*>& getAgentClusters() const;
+	AttractionArea* getAttractionByName(const QString& nameIn) const;
+	AttractionArea* getClosestAttraction(const Ped::Tvector& positionIn, double* distanceOut = nullptr) const;
 
-    // subscribers
-    ros::Subscriber sub_robot_state_;
+	// → simulation time
+	double getTime() const;
+	bool hasStarted() const;
 
-    // service servers
-    ros::ServiceServer srv_move_agent_;
+	// → Cluster→Agents
+protected:
+	void dissolveClusters();
 
-    QXmlStreamReader xmlReader;
-    QMap<QString, Waypoint *> waypoints;
-    size_t timestep_;
+	// → libPedSim overrides
+public:
+	virtual void addAgent(Agent* agent);
+	virtual void addObstacle(Obstacle* obstacle);
+	virtual void addWaypoint(Waypoint* waypoint);
+	virtual void addAgentCluster(AgentCluster* clusterIn);
+	virtual void addWaitingQueue(WaitingQueue* queueIn);
+	virtual void addAttraction(AttractionArea* attractionIn);
+	virtual bool removeAgent(Agent* agent);
+	virtual bool removeObstacle(Obstacle* obstacle);
+	virtual bool removeWaypoint(Waypoint* waypoint);
+	virtual bool removeAgentCluster(AgentCluster* clusterIn);
+	virtual bool removeWaitingQueue(WaitingQueue* queueIn);
+	virtual bool removeAttraction(AttractionArea* attractionInIn);
 
-    // obstacle cell locations
-    std::vector<Location> obstacle_cells_;
+	virtual std::set<const Ped::Tagent*> getNeighbors(double x, double y, double maxDist);
 
-    // handling quaternions for orientations
-    OrientationHandlerPtr orientation_handler_;
 
-    // waiting queues in the scene
-//     std::vector<WaitingQueuePtr> waiting_queues_;
-	
-	// groups in the crowd
-// 	std::vector<PersonGroupPtr> agent_groups_;
+	// Attributes
+protected:
+	QList<Agent*> agents;
+	QList<Obstacle*> obstacles;
+	QMap<QString, Waypoint*> waypoints;
+	QMap<QString, AttractionArea*> attractions;
+	QList<AgentCluster*> agentClusters;
+	QList<AgentGroup*> agentGroups;
+// 	Grid* grid;
+
+	// → simulated time
+	double sceneTime;
+// 	QTimer moveTimer;
 };
 
-
-/// helpful typedefs
-typedef boost::shared_ptr<Scene> ScenePtr;
-typedef boost::shared_ptr<Scene const> SceneConstPtr;
-
-
-#endif // SCENE_H
+#endif

@@ -7,9 +7,9 @@
 
 // Includes
 // → SGDiCoP
-#include "waypointplanner.h"
+#include <pedsim_simulator/waypointplanner/waypointplanner.h>
 // → PedSim
-#include "ped_vector.h"
+#include <libpedsim/ped_vector.h>
 
 
 // Forward Declarations

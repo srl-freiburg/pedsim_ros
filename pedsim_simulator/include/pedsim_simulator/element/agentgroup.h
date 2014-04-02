@@ -24,7 +24,7 @@ class Agent;
 
 class AgentGroup : public ScenarioElement {
 	Q_OBJECT
-	
+
 	// Constructor and Destructor
 public:
 	AgentGroup();
@@ -64,7 +64,7 @@ public:
 	bool setMembers(const QList<Agent*>& agentsIn);
 	bool isEmpty() const;
 	int memberCount() const;
-	
+
 	// → Center of Mass
 public:
 // 	QPointF getCenterOfMass() const;
@@ -77,6 +77,7 @@ public:
 	void setRecollect(bool recollectIn);
 	bool isRecollecting() const;
 	double getMaxDistance();
+	int getId() { return id_; }
 protected:
 	void updateMaxDistance();
 
@@ -99,6 +100,10 @@ protected:
 	bool recollecting;
 	bool dirtyMaxDistance;
 	double cacheMaxDistance;
+
+
+
+	int id_;
 
 	// → graphical representation
 // 	AgentGroupRepresentation* representation;
