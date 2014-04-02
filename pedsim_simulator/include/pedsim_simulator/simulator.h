@@ -34,15 +34,23 @@ public:
 	Simulator(const ros::NodeHandle &node);
 	virtual ~Simulator();
 
+	bool initializeSimulation();
 	void runSimulation();
 
+	/// publishers
 	void publishAgentVisuals();
 	void publishGroupVisuals();
 	void publishObstacles();
 	void publishWalls();
+	
+	/// subscriber helpers
+    void callbackRobotCommand ( const pedsim_msgs::AgentState::ConstPtr &msg );
 
 private:
 
+	// robot agent
+	Agent* robot_;
+	
 	ros::NodeHandle nh_;
 
 	// publishers
@@ -51,6 +59,10 @@ private:
     ros::Publisher pub_group_centers_;
 	ros::Publisher pub_group_lines_;
 	ros::Publisher pub_walls_;
+	ros::Publisher pub_all_agents_;
+	
+	// subscribers
+    ros::Subscriber sub_robot_command_;
 
     OrientationHandlerPtr orientation_handler_;
 

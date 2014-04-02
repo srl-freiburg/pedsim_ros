@@ -11,17 +11,30 @@
 Simulator::Simulator(const ros::NodeHandle &node)
 	: nh_(node)
 {
+	// nothing to do here
+}
+
+Simulator::~Simulator()
+{
+
+}
+
+bool Simulator::initializeSimulation()
+{
+	/// setup ros publishers
 	pub_agent_visuals_ = nh_.advertise<visualization_msgs::MarkerArray> ( "agents_markers", 0 );
     pub_group_centers_ = nh_.advertise<visualization_msgs::Marker> ( "group_centers", 0 );
     pub_group_lines_ = nh_.advertise<visualization_msgs::Marker> ( "group_lines", 0 );
-
     pub_obstacles_ = nh_.advertise<nav_msgs::GridCells> ( "static_obstacles", 0 );
     pub_walls_ = nh_.advertise<visualization_msgs::Marker> ( "walls", 0 );
+	pub_all_agents_ = nh_.advertise<pedsim_msgs::AllAgentsState> ( "dynamic_obstacles", 0 );
+	
+	/// setup any pointers
+	orientation_handler_.reset ( new OrientationHandler() );
+	
+	/// subscribers
+    sub_robot_command_ = nh_.subscribe ( "robot_state", 1, &Simulator::callbackRobotCommand, this );
 
-    orientation_handler_.reset ( new OrientationHandler() );
-
-	//NOTE - temporary
-	// load scene file
 	/// load parameters
     std::string scene_file_param;
     ros::param::param<std::string> ( "/simulator/scene_file", scene_file_param, "scene.xml" );
@@ -33,26 +46,26 @@ Simulator::Simulator(const ros::NodeHandle &node)
 	bool readResult = scenarioReader.readFromFile(scenefile);
 	if(readResult == false) {
 		ROS_WARN ( "Could not load the scene file, check paths" );
+		return false;
 	}
 
     ROS_INFO ( "Loading from %s scene file", scene_file_param.c_str() );
-
-// 	SCENE.unpauseUpdates();
-
-	// foreach(AgentCluster* cluster, SCENE.getAgentClusters()) {
-	// 	QList<Agent*> newAgents = cluster->dissolve();
-	// }
-
-}
-
-Simulator::~Simulator()
-{
-
+	
+	robot_ = nullptr;
+	
+	return true;
 }
 
 
 void Simulator::runSimulation()
 {
+	// setup the robot 
+    BOOST_FOREACH ( Agent* a, SCENE.getAgents() )
+    {
+		// TODO - convert back to robot type enum
+        if ( a->getType() == 2 )
+            robot_ = a;
+    }
 
     ros::Rate r ( 10 ); // 10 Hz
 
@@ -77,21 +90,58 @@ void Simulator::runSimulation()
     }
 }
 
+/// -----------------------------------------------------------------
+/// \brief callbackRobotCommand
+/// \details Control the robot based on the set velocity command
+/// Listens to incoming messages and manipulates the robot.
+/// \param[in] msg Message containing the pos and vel for the robot
+/// -----------------------------------------------------------------
+void Simulator::callbackRobotCommand ( const pedsim_msgs::AgentState::ConstPtr &msg )
+{
+    double vx = msg->velocity.x;
+    double vy = msg->velocity.y;
+
+//     if ( CONFIG.robot_mode == TELEOPERATION )
+//         robot_->setteleop ( true );
+
+    if ( robot_->getType() == msg->type )
+    {
+
+        if ( robot_->getTeleop() == false )
+        {
+            robot_->setvx ( vx );
+            robot_->setvy ( vy );
+            robot_->setVmax ( sqrt ( vx * vx + vy * vy ) );
+        }
+        else
+        {
+            robot_->setvx ( vx );
+            robot_->setvy ( vy );
+            robot_->setVmax ( sqrt ( vx * vx + vy * vy ) );
+        }
+    }
+}
 
 
-
+/// -----------------------------------------------------------------
+/// \brief publishAgentVisuals
+/// \details publish agent status information and the visual markers
+/// -----------------------------------------------------------------
 void Simulator::publishAgentVisuals()
 {
     // minor optimization with arrays for speedup
     visualization_msgs::MarkerArray marker_array;
 
+	// status message
+	pedsim_msgs::AllAgentsState all_status;
+    std_msgs::Header all_header;
+    all_header.stamp = ros::Time::now();
+    all_status.header = all_header;
 
-	QList<Agent*> agents = SCENE.getAgents();
 
-	// ROS_INFO("no of agents %d", agents.size());
-
-    BOOST_FOREACH ( Agent* a, agents )
+    BOOST_FOREACH ( Agent* a, SCENE.getAgents() )
     {
+		/// visual marker message
         visualization_msgs::Marker marker;
         marker.header.frame_id = "world";
         marker.header.stamp = ros::Time();
@@ -142,13 +192,36 @@ void Simulator::publishAgentVisuals()
             marker.pose.orientation.w = 1.0;
         }
         marker_array.markers.push_back ( marker );
+		
+		/// status message 
+		pedsim_msgs::AgentState state;
+        std_msgs::Header agent_header;
+        agent_header.stamp = ros::Time::now();
+        state.header = agent_header;
+
+        state.id = a->getId();
+        state.type = a->getType();
+        state.position.x = a->getx();
+        state.position.y = a->gety();
+        state.position.z = a->getz();
+
+        state.velocity.x = a->getvx();
+        state.velocity.y = a->getvy();
+        state.velocity.z = a->getvz();
+
+        all_status.agent_states.push_back ( state );
     }
 
     // publish the marker array
     pub_agent_visuals_.publish ( marker_array );
+	pub_all_agents_.publish ( all_status );
 }
 
 
+/// -----------------------------------------------------------------
+/// \brief publishGroupVisuals
+/// \details publish visualization of groups within the crowd
+/// -----------------------------------------------------------------
 void Simulator::publishGroupVisuals()
 {
     QList<AgentGroup*> groups = SCENE.getGroups();
@@ -308,7 +381,10 @@ void Simulator::publishWalls()
 
 
 
-
+/// -----------------------------------------------------------------
+/// \brief main
+/// Hub of the application
+/// -----------------------------------------------------------------
 int main ( int argc, char **argv )
 {
 
@@ -323,8 +399,16 @@ int main ( int argc, char **argv )
 
 
 	Simulator sm(node);
+	
+	if ( sm.initializeSimulation() )
+	{
+		sm.runSimulation();
+	}
+	else
+	{
+		return EXIT_FAILURE;
+	}
 
-	sm.runSimulation();
 
 //     double x1, x2, y1, y2;
 //     ros::param::param<double> ( "/pedsim/x1", x1, 0.0 );
@@ -335,15 +419,7 @@ int main ( int argc, char **argv )
 //     // Scene sim_scene(0, 0, 45, 45, node);
 //     // Scene sim_scene(0, 0, 300, 100, node);
 //     Scene sim_scene ( x1, y1, x2, y2, node );
-//
-//     if ( sim_scene.initialize() )
-//     {
-//         ROS_INFO ( "loaded parameters, starting simulation..." );
-//         sim_scene.runSimulation();
-//     }
-//     else
-//         return EXIT_FAILURE;
+
 
 	return app.exec();
-//     return EXIT_SUCCESS;
 }

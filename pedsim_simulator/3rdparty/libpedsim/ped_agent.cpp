@@ -31,6 +31,7 @@ Ped::Tagent::Tagent() {
 	v.z = 0;
 	type = 0;
 	scene = NULL;
+	teleop = false;
 
 	// assign random maximal speed in m/s
 	// normal distribution (mean 1.2, std 0.2)

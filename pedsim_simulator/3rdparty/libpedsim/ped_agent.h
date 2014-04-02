@@ -52,11 +52,14 @@ namespace Ped {
 		virtual void setPosition(double px, double py, double pz = 0);
 		virtual void setType(int typeIn) { type = typeIn; };
 		virtual void setVmax(double vmax);
+		
+		void setTeleop( bool opstatus ) { teleop = opstatus; } 
 
 		int getId() const { return id; };
 		int getType() const { return type; };
 		double getVmax() const { return vmax; };
 		double getRelaxationTime() const { return relaxationTime; };
+		bool getTeleop() { return teleop; }
 
 		// these getter should replace the ones later (returning the individual vector values)
 		const Tvector& getPosition() const { return p; }
@@ -72,6 +75,9 @@ namespace Ped {
 		double getax() const { return a.x; };
 		double getay() const { return a.y; };
 		double getaz() const { return a.z; };
+		
+		void setvx( double vv ) { v.x = vv; }
+		void setvy( double vv ) { v.y = vv; }
 
 		virtual void setForceFactorDesired(double f);
 		virtual void setForceFactorSocial(double f);
@@ -89,6 +95,7 @@ namespace Ped {
 		double vmax;                                      ///< individual max velocity per agent
 		double agentRadius;
 		double relaxationTime;
+		bool teleop;
 
 		double forceFactorDesired;
 		double forceFactorSocial;
