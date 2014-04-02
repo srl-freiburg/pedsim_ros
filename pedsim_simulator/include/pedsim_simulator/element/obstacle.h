@@ -12,16 +12,12 @@
 
 // Includes
 // → SGDiCoP
-#include "scenarioelement.h"
+#include <pedsim_simulator/element/scenarioelement.h>
 // #include "visual/obstaclerepresentation.h"
 // → PedSim
 #include <libpedsim/ped_obstacle.h>
 // → Qt
 #include <QGraphicsLineItem>
-
-
-// Forward Declarations
-// class ObstacleRepresentation;
 
 
 class Obstacle : public ScenarioElement, public Ped::Tobstacle {
@@ -54,9 +50,6 @@ public:
 	QString toString() const;
 
 
-	// Attributes
-protected:
-// 	ObstacleRepresentation* representation;
 };
 
 #endif

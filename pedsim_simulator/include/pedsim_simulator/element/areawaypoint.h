@@ -7,13 +7,10 @@
 
 // Includes
 // → SGDiCoP
-#include "waypoint.h"
+#include <pedsim_simulator/element/waypoint.h>
 // → Qt
 #include <QPointF>
 
-
-// Forward Declarations
-class AreaWaypointRepresentation;
 
 
 class AreaWaypoint : public Waypoint {
@@ -52,7 +49,6 @@ public:
 
 	// Attributes
 public:
-// 	AreaWaypointRepresentation* representation;
 	double radius;
 };
 

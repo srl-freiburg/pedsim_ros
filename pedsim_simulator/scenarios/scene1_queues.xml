@@ -28,9 +28,24 @@
     <waypoint id="robot_goal" x="120" y="40" r="5"/>
     <waypoint id="robot_start" x="35" y="40" r="5"/>
 
-    <queue id="infodesk" x="50" y="25" direction="0"/>
+    <queue id="Checkpoint1" x="50" y="30" direction="0"/>
+    <waypoint id="Checkpoint1Post" x="50" y="30" r="9"/>
+    <waypoint id="Checkpoint1Pre" x="80" y="30" r="9"/>
+
+<!--     <queue id="Checkpoint2" x="-60" y="-50" direction="0"/>
+    <waypoint id="Checkpoint2Post" x="-45" y="-50" r="9"/>
+    <waypoint id="Checkpoint2Pre" x="-75" y="-50" r="9"/> -->
+
+    <queue id="Checkpoint3" x="100" y="20" direction="90"/>
+    <queue id="Checkpoint4" x="10" y="10" direction="90"/>
+
+    <!-- <queue id="infodesk" x="50" y="25" direction="0"/> -->
 <!--     <queue id="checkpoint" x="90" y="10" direction="1.57"/> -->
+
     <!--Attractions-->
+    <attraction id="Shop1" x="30" y="20" width="14" height="20" strength="3"/>
+
+
     <!--Agents-->
     <agent x="60" y="20" n="1" dx="0" dy="0" type="0">
         <addwaypoint id="left_top"/>

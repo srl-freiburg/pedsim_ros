@@ -15,6 +15,9 @@ Simulator::Simulator(const ros::NodeHandle &node)
     pub_group_centers_ = nh_.advertise<visualization_msgs::Marker> ( "group_centers", 0 );
     pub_group_lines_ = nh_.advertise<visualization_msgs::Marker> ( "group_lines", 0 );
 
+    pub_obstacles_ = nh_.advertise<nav_msgs::GridCells> ( "static_obstacles", 0 );
+    pub_walls_ = nh_.advertise<visualization_msgs::Marker> ( "walls", 0 );
+
     orientation_handler_.reset ( new OrientationHandler() );
 
 	//NOTE - temporary
@@ -61,6 +64,13 @@ void Simulator::runSimulation()
 
         publishGroupVisuals();
 
+        // visuals for walls
+        publishWalls();
+
+        // only publish the obstacles in the beginning
+        if ( SCENE.getTime() < 100 )
+            publishObstacles();
+
         ros::spinOnce();
 
         r.sleep();
@@ -104,6 +114,14 @@ void Simulator::publishAgentVisuals()
         marker.pose.position.x = a->getx();
         marker.pose.position.y = a->gety();
 
+        if ( a->getStateMachine()->getCurrentState() == AgentStateMachine::AgentState::StateQueueing)
+        {
+            marker.color.a = 1.0;
+            marker.color.r = 1.0;
+            marker.color.g = 0.0;
+            marker.color.b = 1.0;
+        }
+
 
         if ( a->getvx() != 0.0 )
         {
@@ -135,20 +153,18 @@ void Simulator::publishGroupVisuals()
 {
     QList<AgentGroup*> groups = SCENE.getGroups();
 
-    ROS_INFO("Number of groups %d", groups.size());
-
     /// visualize groups (sketchy)
     BOOST_FOREACH ( AgentGroup* ag, groups )
     {
-     // skip empty ones
-     if ( ag->memberCount() < 1)
+        // skip empty ones
+        if ( ag->memberCount() < 1)
          continue;
 
-     // ag->updateCenterOfMass();
-     Ped::Tvector gcom = ag->getCenterOfMass();
+        // ag->updateCenterOfMass();
+        Ped::Tvector gcom = ag->getCenterOfMass();
 
-     // center
-     visualization_msgs::Marker center_marker;
+        // center
+        visualization_msgs::Marker center_marker;
         center_marker.header.frame_id = "world";
         center_marker.header.stamp = ros::Time();
         center_marker.ns = "pedsim";
@@ -176,15 +192,15 @@ void Simulator::publishGroupVisuals()
 
         pub_group_centers_.publish ( center_marker );
 
-     // members
-     geometry_msgs::Point p1;
-     p1.x = gcom.x;
-     p1.y = gcom.y;
-     p1.z = 0.0;
+        // members
+        geometry_msgs::Point p1;
+        p1.x = gcom.x;
+        p1.y = gcom.y;
+        p1.z = 0.0;
 
-     BOOST_FOREACH ( Agent* m, ag->getMembers() )
-     {
-         visualization_msgs::Marker marker;
+        BOOST_FOREACH ( Agent* m, ag->getMembers() )
+        {
+            visualization_msgs::Marker marker;
             marker.header.frame_id = "world";
             marker.header.stamp = ros::Time();
             marker.ns = "pedsim";
@@ -201,18 +217,96 @@ void Simulator::publishGroupVisuals()
 
             marker.type = visualization_msgs::Marker::ARROW;
 
-         geometry_msgs::Point p2;
-         p2.x = m->getx();
-         p2.y = m->gety();
-         p2.z = 0.0;
+            geometry_msgs::Point p2;
+            p2.x = m->getx();
+            p2.y = m->gety();
+            p2.z = 0.0;
 
-         marker.points.push_back ( p1 );
-         marker.points.push_back ( p2 );
+            marker.points.push_back ( p1 );
+            marker.points.push_back ( p2 );
 
             pub_group_lines_.publish ( marker );
-     }
+        }
     }
 }
+
+
+/// -----------------------------------------------------------------
+/// \brief publishObstacles
+/// \details publish obstacle cells with information about their
+/// positions and cell sizes. Useful for path planning.
+/// -----------------------------------------------------------------
+void Simulator::publishObstacles()
+{
+    nav_msgs::GridCells obstacles;
+    obstacles.header.frame_id = "world";
+    obstacles.cell_width = 1.0;
+    obstacles.cell_height = 1.0;
+
+    std::vector<Location>::const_iterator it = SCENE.obstacle_cells_.begin();
+    while ( it != SCENE.obstacle_cells_.end() )
+    {
+        geometry_msgs::Point p;
+        Location loc = ( *it );
+        // p.x = loc.x + (cell_size/2.0f);
+        // p.y = loc.y + (cell_size/2.0f);
+        p.x = loc.x;
+        p.y = loc.y;
+        p.z = 0.0;
+        obstacles.cells.push_back ( p );
+
+        it++;
+    }
+
+    pub_obstacles_.publish ( obstacles );
+}
+
+
+/// -----------------------------------------------------------------
+/// \brief publishWalls
+/// \details publish visual markers for obstacle given as 3D cells
+/// for visualizing in rviz. Useful for visual plan inspection
+/// -----------------------------------------------------------------
+void Simulator::publishWalls()
+{
+    visualization_msgs::Marker marker;
+    marker.header.frame_id = "world";
+    marker.header.stamp = ros::Time();
+    marker.ns = "pedsim";
+    marker.id = 10000;
+
+    marker.color.a = 1.0;
+    marker.color.r = 1.0;
+    marker.color.g = 0.0;
+    marker.color.b = 0.0;
+
+    marker.scale.x = 1.0;
+    marker.scale.y = 1.0;
+    marker.scale.z = 3.0;
+
+    marker.pose.position.z = marker.scale.z / 2.0;
+
+    marker.type = visualization_msgs::Marker::CUBE_LIST;
+
+    std::vector<Location>::const_iterator it = SCENE.obstacle_cells_.begin();
+    while ( it != SCENE.obstacle_cells_.end() )
+    {
+        geometry_msgs::Point p;
+        Location loc = ( *it );
+        p.x = loc.x;
+        p.y = loc.y;
+        p.z = 0.0;
+        marker.points.push_back ( p );
+
+        it++;
+    }
+
+    pub_walls_.publish ( marker );
+}
+
+
+
+
 
 
 int main ( int argc, char **argv )

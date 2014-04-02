@@ -12,7 +12,7 @@
 
 // Includes
 // → SGDiCoP
-#include "scenarioelement.h"
+#include <pedsim_simulator/element/scenarioelement.h>
 // → PedSim
 #include <libpedsim/ped_waypoint.h>
 

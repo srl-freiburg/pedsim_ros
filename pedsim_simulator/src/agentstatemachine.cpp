@@ -79,7 +79,7 @@ void AgentStateMachine::doStateTransition() {
 				double maxAttractionDistance = settings.value("AgentStateMachine/MaxAttractionDistance", 7).toDouble();
 				// → probability dependents on strength, distance,
 				//   and whether another group member are attracted
-				double probability = baseProbability 
+				double probability = baseProbability
 					* attraction->getStrength()
 					* ((distance<maxAttractionDistance)?(1-(distance/maxAttractionDistance)):0)
 					* CONFIG.timeStepSize;
@@ -100,7 +100,7 @@ void AgentStateMachine::doStateTransition() {
 		QSettings settings;
 		double probability = settings.value("AgentStateMachine/AttractionLoseProbability", 0.03).toDouble();
 		std::bernoulli_distribution isAttracted(probability * CONFIG.timeStepSize);
-		
+
 		if(shallLoseAttraction || isAttracted(RNG())) {
 			// reactivate previous state
 			activateState(normalState);
@@ -116,7 +116,7 @@ void AgentStateMachine::doStateTransition() {
 		Waypoint* waypoint = dynamic_cast<Waypoint*>(destination);
 		//TODO: move this to the agent
 		WaitingQueue* waitingQueue = dynamic_cast<WaitingQueue*>(waypoint);
-		
+
 		if(destination == nullptr)
 			activateState(StateWaiting);
 		else if(waitingQueue != nullptr)
@@ -124,7 +124,7 @@ void AgentStateMachine::doStateTransition() {
 		else {
 			if(agent->isInGroup())
 				activateState(StateGroupWalking);
-			else 
+			else
 				activateState(StateWalking);
 		}
 	}
@@ -297,4 +297,9 @@ QString AgentStateMachine::stateToName(AgentState stateIn) const {
 		default:
 			return "UnknownState";
 	}
+}
+
+AgentStateMachine::AgentState AgentStateMachine::getCurrentState()
+{
+	return state;
 }

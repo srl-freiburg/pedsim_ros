@@ -11,14 +11,13 @@
 #include <pedsim_simulator/scene.h>
 #include <pedsim_simulator/element/waitingqueue.h>
 
-// #include "visual/agentclusterrepresentation.h"
 // → Qt
 #include <QSettings>
 
 
 AgentCluster::AgentCluster(double xIn, double yIn, int countIn) {
 	static int lastID = 0;
-	
+
 	// initialize values
 	id = ++lastID;
 	position = Ped::Tvector(xIn, yIn);
@@ -26,14 +25,9 @@ AgentCluster::AgentCluster(double xIn, double yIn, int countIn) {
 	distribution = QSizeF(0, 0);
 	agentType = 0;
 	shallCreateGroups = true;
-
-	// graphical representation
-// 	representation = new AgentClusterRepresentation(this);
 };
 
 AgentCluster::~AgentCluster() {
-	// clean up
-// 	delete representation;
 }
 
 QList<Agent*> AgentCluster::dissolve() {
@@ -45,7 +39,7 @@ QList<Agent*> AgentCluster::dissolve() {
 	// create and initialize agents
 	for(int i = 0; i < count; ++i) {
 		Agent* a = new Agent();
-		
+
 		double randomizedX = position.x;
 		double randomizedY = position.y;
 		// handle dx=0 or dy=0 cases
@@ -59,14 +53,14 @@ QList<Agent*> AgentCluster::dissolve() {
 		// add waypoints to the agent
 		foreach(Waypoint* waypoint, waypoints)
 			a->addWaypoint(waypoint);
-		
+
 		// add agent to the scene
 		SCENE.addAgent(a);
-		
+
 		// add agent to the return list
 		agents.append(a);
 	}
-	
+
 	return agents;
 }
 
@@ -94,7 +88,7 @@ void AgentCluster::addWaypoint(Waypoint* waypointIn) {
 bool AgentCluster::removeWaypoint(Waypoint* waypointIn) {
 	// don't keep track of waypoint anymore
 	int removedWaypoints = waypoints.removeAll(waypointIn);
-	
+
 	// inform user about successful removal
 	if(removedWaypoints > 0)
 		return true;
@@ -114,7 +108,7 @@ bool AgentCluster::removeWaitingQueue(WaitingQueue* queueIn) {
 
 	// don't keep track of waypoint anymore
 	int removedWaitingQueues = waypoints.removeAll(waypoint);
-	
+
 	// inform user about successful removal
 	return (removedWaitingQueues > 0);
 }

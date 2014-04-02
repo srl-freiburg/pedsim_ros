@@ -13,8 +13,6 @@
 
 // → SGDiCoP
 #include <pedsim_simulator/config.h>
-// #include "logging.h"
-// #include "mainwindow.h"
 #include <pedsim_simulator/scene.h>
 #include <pedsim_simulator/agentstatemachine.h>
 
@@ -22,7 +20,6 @@
 #include <pedsim_simulator/force/force.h>
 
 #include <pedsim_simulator/waypointplanner/waypointplanner.h>
-// #include "visual/agentrepresentation.h"
 // → Qt
 #include <QSettings>
 
@@ -42,9 +39,7 @@ Agent::Agent() {
 	// → group
 	group = nullptr;
 
-	// graphical representation
-// 	representation = new AgentRepresentation(this);
-	
+
 	// connect signals
 	connect(&CONFIG, SIGNAL(forceFactorObstacleChanged(double)), this, SLOT(onForceFactorObstacleChanged(double)));
 	connect(&CONFIG, SIGNAL(forceSigmaObstacleChanged(double)), this, SLOT(onForceSigmaObstacleChanged(double)));
@@ -53,8 +48,6 @@ Agent::Agent() {
 
 Agent::~Agent() {
 	// clean up
-	// → remove graphical representation
-// 	delete representation;
 	// → remove forces
 	foreach(Force* currentForce, forces) {
 		delete currentForce;

@@ -5,8 +5,6 @@
 // Includes
 #include <pedsim_simulator/element/queueingwaypoint.h>
 
-// → SGDiCoP
-// #include "visual/areawaypointrepresentation.h"
 // → PedSim
 #include <libpedsim/ped_agent.h>
 // → Qt
@@ -15,13 +13,11 @@
 
 QueueingWaypoint::QueueingWaypoint(const QString& nameIn, const Ped::Tvector& positionIn)
 	: Waypoint(nameIn, positionIn) {
-	// graphical representation
-// 	representation = new QueueingWaypointRepresentation(this);
+
 }
 
 QueueingWaypoint::~QueueingWaypoint() {
-	// clean up
-// 	delete representation;
+
 }
 
 QString QueueingWaypoint::getName() const {

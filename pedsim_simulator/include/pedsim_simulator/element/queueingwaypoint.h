@@ -42,10 +42,6 @@ public:
 	virtual void setVisiblePosition(const QPointF& positionIn);
 	QString toString() const;
 
-
-	// Attributes
-public:
-// 	AreaWaypointRepresentation* representation;
 };
 
 #endif

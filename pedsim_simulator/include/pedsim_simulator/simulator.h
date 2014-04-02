@@ -25,6 +25,7 @@
 #include <pedsim_simulator/element/agent.h>
 #include <pedsim_simulator/element/agentgroup.h>
 #include <pedsim_simulator/scenarioreader.h>
+#include <pedsim_simulator/agentstatemachine.h>
 
 
 class Simulator
@@ -37,15 +38,19 @@ public:
 
 	void publishAgentVisuals();
 	void publishGroupVisuals();
+	void publishObstacles();
+	void publishWalls();
 
 private:
 
 	ros::NodeHandle nh_;
 
 	// publishers
+	ros::Publisher pub_obstacles_;
     ros::Publisher pub_agent_visuals_;
     ros::Publisher pub_group_centers_;
 	ros::Publisher pub_group_lines_;
+	ros::Publisher pub_walls_;
 
     OrientationHandlerPtr orientation_handler_;
 

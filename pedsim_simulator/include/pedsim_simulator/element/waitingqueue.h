@@ -18,7 +18,6 @@
 
 // Forward Declarations
 class Agent;
-// class WaitingQueueRepresentation;
 
 
 class WaitingQueue : public Waypoint {
@@ -88,9 +87,6 @@ protected:
 	double waitDurationMean;
 	double waitDurationStd;
 	double dequeueTime;
-	
-	// → graphical representation
-// 	WaitingQueueRepresentation* representation;
 };
 
 #endif

@@ -10,10 +10,7 @@
 // Includes
 #include <pedsim_simulator/scene.h>
 // → SGDiCoP
-// #include "logging.h"
 #include <pedsim_simulator/config.h>
-
-// #include "grid.h"
 
 #include <pedsim_simulator/element/agent.h>
 #include <pedsim_simulator/element/agentcluster.h>
@@ -22,16 +19,13 @@
 #include <pedsim_simulator/element/waitingqueue.h>
 #include <pedsim_simulator/element/attractionarea.h>
 #include <pedsim_simulator/force/groupgazeforce.h>
-// #include <pedsim_simulator/force/groupgazeforce2.h>
 #include <pedsim_simulator/force/groupcoherenceforce.h>
-// #include <pedsim_simulator/force/groupcoherenceforce2.h>
 #include <pedsim_simulator/force/grouprepulsionforce.h>
 #include <pedsim_simulator/force/randomforce.h>
 #include <pedsim_simulator/force/alongwallforce.h>
 // → PedSim
 #include <libpedsim/ped_tree.h>
 // → Qt
-#include <QSettings>
 #include <QGraphicsScene>
 
 
@@ -44,21 +38,16 @@ Scene::Scene(QObject* parent)  {
 	sceneTime = 0;
 
 	//TODO: create this dynamically according to scenario
-	QRect area(-500, -500, 1000, 1000);
+	QRect area(-50, -50, 500, 500);
 // 	grid = new Grid(area);
 
 	// we need to add a tree to the scene to be able to search for neighbours
 	tree = new Ped::Ttree(this, 0, area.x(), area.y(), area.width(), area.height());
 
-	// initialize timers
-// 	moveTimer.setInterval(1000.0 / CONFIG.simSpeed);
+	connect(&CONFIG, SIGNAL(simulationSpeedChanged(int)),
+		this, SLOT(onSimulationSpeedChanged(int)));
 
-	// connect signals
-// 	connect(&moveTimer, SIGNAL(timeout()),
-// 		this, SLOT(moveAllAgents()));
-
-// 	connect(&CONFIG, SIGNAL(simulationSpeedChanged(int)),
-// 		this, SLOT(onSimulationSpeedChanged(int)));
+	obstacle_cells_.clear();
 }
 
 Scene::~Scene() {
@@ -73,17 +62,6 @@ Scene& Scene::getInstance() {
 	return *instance;
 }
 
-// bool Scene::isPaused() const {
-// 	return !moveTimer.isActive();
-// }
-
-// void Scene::pauseUpdates() {
-// 	moveTimer.stop();
-// }
-// //
-// void Scene::unpauseUpdates() {
-// 	moveTimer.start();
-// }
 
 void Scene::clear() {
 	// remove all elements from the scene
@@ -557,8 +535,7 @@ void Scene::moveAllAgents() {
 		emit aboutToStart();
 
 	// clean up scene if necessary
-	QSettings settings;
-	double cleanupInterval = settings.value("Scene/CleanupInterval", 2.0).toDouble();
+	double cleanupInterval = 2.0;
 	if(fmod(sceneTime, cleanupInterval) < CONFIG.timeStepSize)
 		cleanupScene();
 
@@ -584,6 +561,118 @@ void Scene::cleanupScene() {
 	Ped::Tscene::cleanup();
 }
 
+void Scene::drawObstacles ( float x1, float y1, float x2, float y2 )
+{
+    int i;               // loop counter
+    int ystep, xstep;    // the step on y and x axis
+    int error;           // the error accumulated during the increment
+    int errorprev;       // *vision the previous value of the error variable
+    int y = y1, x = x1;  // the line points
+    int ddy, ddx;        // compulsory variables: the double values of dy and dx
+    int dx = x2 - x1;
+    int dy = y2 - y1;
+    double unit_x, unit_y;
+    unit_x = 1;
+    unit_y = 1;
+    // POINT (y1, x1);  // first point
+    // NB the last point can't be here, because of its previous point (which has
+    // to be verified)
+    if ( dy < 0 )
+    {
+        ystep = -unit_y;
+        dy = -dy;
+    }
+    else
+    {
+        ystep = unit_y;
+    }
+    if ( dx < 0 )
+    {
+        xstep = -unit_x;
+        dx = -dx;
+    }
+    else
+    {
+        xstep = unit_x;
+    }
 
+    ddy = 2 * dy;  // work with double values for full precision
+    ddx = 2 * dx;
+
+    obstacle_cells_.push_back ( Location ( x1, y1 ) );
+
+    if ( ddx >= ddy )
+    {
+        // first octant (0 <= slope <= 1)
+        // compulsory initialization (even for errorprev, needed when dx==dy)
+        errorprev = error = dx;  // start in the middle of the square
+        for ( i = 0 ; i < dx ; i++ )
+        {
+            // do not use the first point (already done)
+            x += xstep;
+            error += ddy;
+            if ( error > ddx )
+            {
+                // increment y if AFTER the middle ( > )
+                y += ystep;
+                error -= ddx;
+                // three cases (octant == right->right-top for directions
+                // below):
+                if ( error + errorprev < ddx )
+                {
+                    // bottom square also
+                    obstacle_cells_.push_back ( Location ( x, y - ystep ) );
+                }
+                else if ( error + errorprev > ddx )
+                {
+                    // left square also
+                    obstacle_cells_.push_back ( Location ( x - xstep, y ) );
+                }
+                else
+                {
+                    // corner: bottom and left squares also
+                    obstacle_cells_.push_back ( Location ( x, y - ystep ) );
+                    obstacle_cells_.push_back ( Location ( x - xstep, y ) );
+
+                }
+            }
+            obstacle_cells_.push_back ( Location ( x, y ) );
+            errorprev = error;
+        }
+    }
+    else
+    {
+        // the same as above
+        errorprev = error = dy;
+        for ( i = 0 ; i < dy ; i++ )
+        {
+            y += ystep;
+            error += ddx;
+            if ( error > ddy )
+            {
+                x += xstep;
+                error -= ddy;
+                if ( error + errorprev < ddy )
+                {
+                    obstacle_cells_.push_back ( Location ( x - xstep, y ) );
+                }
+                else if ( error + errorprev > ddy )
+                {
+                    obstacle_cells_.push_back ( Location ( x, y - ystep ) );
+                }
+                else
+                {
+                    obstacle_cells_.push_back ( Location ( x - xstep, y ) );
+                    obstacle_cells_.push_back ( Location ( x, y - ystep ) );
+                }
+            }
+
+            obstacle_cells_.push_back ( Location ( x, y ) );
+            errorprev = error;
+        }
+    }
+
+    // ROS_DEBUG("loaded %d obstacle cells", (int)obstacle_cells_.size());
+}
 
 

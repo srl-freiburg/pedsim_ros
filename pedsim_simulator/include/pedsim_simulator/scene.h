@@ -19,7 +19,7 @@
 #include <QRectF>
 #include <QObject>
 
-
+#include <pedsim_simulator/utilities.h>
 
 
 // Forward Declarations
@@ -31,7 +31,6 @@ class AttractionArea;
 class AgentCluster;
 class AgentGroup;
 class WaitingQueue;
-// class Grid;
 
 
 class Scene : public QObject, protected Ped::Tscene {
@@ -82,10 +81,8 @@ protected slots:
 
 	// Methods
 public:
-// 	bool isPaused() const;
-// 	void pauseUpdates();
-// 	void unpauseUpdates();
 	void clear();
+	void drawObstacles ( float x1, float y1, float x2, float y2 );
 
 	QRectF itemsBoundingRect() const;
 
@@ -128,6 +125,8 @@ public:
 
 	virtual std::set<const Ped::Tagent*> getNeighbors(double x, double y, double maxDist);
 
+	// obstacle cell locations
+    std::vector<Location> obstacle_cells_;
 
 	// Attributes
 protected:
@@ -137,11 +136,11 @@ protected:
 	QMap<QString, AttractionArea*> attractions;
 	QList<AgentCluster*> agentClusters;
 	QList<AgentGroup*> agentGroups;
-// 	Grid* grid;
 
 	// → simulated time
 	double sceneTime;
-// 	QTimer moveTimer;
+
+
 };
 
 #endif

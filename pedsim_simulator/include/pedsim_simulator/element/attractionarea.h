@@ -7,15 +7,13 @@
 
 // Includes
 // → SGDiCoP
-#include "scenarioelement.h"
+#include <pedsim_simulator/element/scenarioelement.h>
 // → PedSim
 #include <libpedsim/ped_vector.h>
 // → Qt
 #include <QSizeF>
 
 
-// Forward Declarations
-// class AttractionAreaRepresentation;
 
 
 class AttractionArea : public ScenarioElement {
@@ -67,8 +65,6 @@ protected:
 	QSizeF size;
 	double attractionStrength;
 
-	// → Graphical Representation
-// 	AttractionAreaRepresentation* representation;
 };
 
 #endif

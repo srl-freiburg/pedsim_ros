@@ -52,6 +52,7 @@ public slots:
 	// Methods
 public:
 	void doStateTransition();
+	AgentState getCurrentState();
 protected:
 	void activateState(AgentState stateIn);
 	void deactivateState(AgentState stateIn);

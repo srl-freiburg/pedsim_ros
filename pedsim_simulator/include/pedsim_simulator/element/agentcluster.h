@@ -7,7 +7,7 @@
 
 // Includes
 // → SGDiCoP
-#include "agent.h"
+#include <pedsim_simulator/element/agent.h>
 
 
 // Forward Declarations

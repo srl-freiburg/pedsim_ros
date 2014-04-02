@@ -5,22 +5,17 @@
 // Includes
 #include <pedsim_simulator/element/attractionarea.h>
 
-// → SGDiCoP
-// #include "visual/attractionarearepresentation.h"
-
 
 AttractionArea::AttractionArea(const QString& nameIn)
 	: name(nameIn) {
 	// initialize values
-// 	representation = new AttractionAreaRepresentation(this);
 	size.setWidth(0);
 	size.setHeight(0);
 	attractionStrength = 0;
 }
 
 AttractionArea::~AttractionArea() {
-	// clean up
-// 	delete representation;
+
 }
 
 QString AttractionArea::getName() const {

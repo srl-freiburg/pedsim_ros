@@ -5,8 +5,6 @@
 // Includes
 #include <pedsim_simulator/element/areawaypoint.h>
 
-// → SGDiCoP
-// #include "visual/areawaypointrepresentation.h"
 // → Qt
 #include <QSettings>
 
@@ -16,22 +14,15 @@ AreaWaypoint::AreaWaypoint(const QString& nameIn, const Ped::Tvector& positionIn
 	// initialize values
 	radius = rIn;
 
-	// graphical representation
-// 	representation = new AreaWaypointRepresentation(this);
 }
 
 AreaWaypoint::AreaWaypoint(const QString& nameIn, double xIn, double yIn, double rIn)
 	: Waypoint(nameIn, Ped::Tvector(xIn, yIn)) {
 	// initialize values
 	radius = rIn;
-
-	// graphical representation
-// 	representation = new AreaWaypointRepresentation(this);
 }
 
 AreaWaypoint::~AreaWaypoint() {
-	// clean up
-// 	delete representation;
 }
 
 QString AreaWaypoint::getName() const {

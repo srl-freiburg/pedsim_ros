@@ -31,7 +31,7 @@ ScenarioReader::ScenarioReader() {
 
 bool ScenarioReader::readFromFile(const QString& filename) {
 // 	INFO_LOG("Loading scenario file '%1'.", filename);
-	
+
 	// open file
 	QFile file(filename);
 	if(!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
@@ -41,7 +41,7 @@ bool ScenarioReader::readFromFile(const QString& filename) {
 
 	// read input
 	xmlReader.setDevice(&file);
-	
+
 	while(!xmlReader.atEnd()) {
 		xmlReader.readNext();
 		processData();
@@ -63,7 +63,7 @@ void ScenarioReader::processData() {
 		const QString elementName = xmlReader.name().toString();
 		const QXmlStreamAttributes elementAttributes = xmlReader.attributes();
 
-		if((elementName == "scenario") 
+		if((elementName == "scenario")
 			|| (elementName == "welcome")) {
 			// nothing to do
 		}
@@ -74,13 +74,14 @@ void ScenarioReader::processData() {
 			double y2 = elementAttributes.value("y2").toString().toDouble();
 			Obstacle* obs = new Obstacle(x1, y1, x2, y2);
 			SCENE.addObstacle(obs);
+			SCENE.drawObstacles ( x1, y1, x2, y2 );
 		}
 		else if(elementName == "waypoint") {
 			QString id = elementAttributes.value("id").toString();
 			double x = elementAttributes.value("x").toString().toDouble();
 			double y = elementAttributes.value("y").toString().toDouble();
 			double r = elementAttributes.value("r").toString().toDouble();
-			AreaWaypoint* w = new AreaWaypoint(id, x, y, r); 
+			AreaWaypoint* w = new AreaWaypoint(id, x, y, r);
 			SCENE.addWaypoint(w);
 		}
 		else if(elementName == "queue") {
@@ -88,11 +89,11 @@ void ScenarioReader::processData() {
 			double x = elementAttributes.value("x").toString().toDouble();
 			double y = elementAttributes.value("y").toString().toDouble();
 			double directionValue = elementAttributes.value("direction").toString().toDouble();
-			
+
 			Ped::Tvector position(x, y);
 			Ped::Tangle direction = Ped::Tangle::fromDegree(directionValue);
-			
-			WaitingQueue* queue = new WaitingQueue(id, position, direction); 
+
+			WaitingQueue* queue = new WaitingQueue(id, position, direction);
 			SCENE.addWaitingQueue(queue);
 		}
 		else if(elementName == "attraction") {
@@ -105,7 +106,7 @@ void ScenarioReader::processData() {
 
 			AttractionArea* attraction = new AttractionArea(id);
 			attraction->setPosition(x, y);
-			attraction->setSize(width, height); 
+			attraction->setSize(width, height);
 			attraction->setStrength(strength);
 			SCENE.addAttraction(attraction);
 		}
@@ -121,7 +122,7 @@ void ScenarioReader::processData() {
 			agentCluster->setType(type);
 			SCENE.addAgentCluster(agentCluster);
 			currentAgents = agentCluster;
-			
+
 			std::cout << "Added agent cluster size " << n << std::endl;
 		}
 		// → agent's inner elements

@@ -10,27 +10,21 @@
 // Includes
 #include <pedsim_simulator/element/obstacle.h>
 
-// → SGDiCoP
-// #include "visual/obstaclerepresentation.h"
 // → Qt
 #include <QSettings>
 
 
 Obstacle::Obstacle(double pax, double pay, double pbx, double pby)
 	: Tobstacle(pax, pay, pbx, pby) {
-	// add graphical representation
-// 	representation = new ObstacleRepresentation(this);
 };
 
 Obstacle::~Obstacle() {
-	// clean up
-// 	delete representation;
 }
 
 /// moves the obstacle to a new position
 void Obstacle::setPosition(double pax, double pay, double pbx, double pby) {
 	Tobstacle::setPosition(pax, pay, pbx, pby);
-	
+
 	// inform users
 	emit positionChanged();
 }

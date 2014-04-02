@@ -6,11 +6,9 @@
 #include <pedsim_simulator/element/agentgroup.h>
 
 // → SGDiCoP
-// #include "logging.h"
 #include <pedsim_simulator/rng.h>
 #include <pedsim_simulator/element/agent.h>
 
-// #include "visual/agentgrouprepresentation.h"
 // → Qt
 #include <QSettings>
 
@@ -30,9 +28,6 @@ AgentGroup::AgentGroup() {
 
 	// compute center of mass
 	updateCenterOfMass();
-
-	// graphical representation
-// 	representation = new AgentGroupRepresentation(this);
 }
 
 AgentGroup::AgentGroup(const QList<Agent*>& agentsIn) {
@@ -50,9 +45,6 @@ AgentGroup::AgentGroup(const QList<Agent*>& agentsIn) {
 
 	// compute center of mass
 	updateCenterOfMass();
-
-	// graphical representation
-// 	representation = new AgentGroupRepresentation(this);
 
 	// connect signals
 	foreach(Agent* agent, members)
@@ -81,14 +73,10 @@ AgentGroup::AgentGroup(std::initializer_list<Agent*>& agentsIn) {
 	// compute center of mass
 	updateCenterOfMass();
 
-	// graphical representation
-// 	representation = new AgentGroupRepresentation(this);
 }
 
 AgentGroup::~AgentGroup() {
-	// clean up
-	// → remove graphical representation
-// 	delete representation;
+
 }
 
 void AgentGroup::onPositionChanged(double x, double y) {
