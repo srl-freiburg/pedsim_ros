@@ -1,6 +1,6 @@
 //
-// pedsim - A microscopic pedestrian simulation system.
-// Copyright (c) 2003 - 2014 by Christian Gloor
+// pedsim - A microscopic pedestrian simulation system. 
+// Copyright (c) 2003 - 2012 by Christian Gloor
 //
 
 #ifndef _ped_tree_h_
@@ -17,57 +17,57 @@
 using namespace std;
 
 namespace Ped {
-    class Tagent;
-    class Tscene;
+	class Tagent;
+	class Tscene;
+	
+	class LIBEXPORT Ttree {
+		friend class Tscene;
 
-    class LIBEXPORT Ttree {
-        friend class Tscene;
+	public:
+		Ttree(Ped::Tscene *scene, int depth, double x, double y, double w, double h);
+		virtual ~Ttree();
 
-    public:
-        Ttree(Ped::Tscene *scene, int depth, double x, double y, double w, double h);
-        virtual ~Ttree();
+		virtual void clear();
 
-        virtual void clear();
+		virtual void addAgent(const Ped::Tagent *a);
+		virtual void moveAgent(const Ped::Tagent *a);
+		virtual bool removeAgent(const Ped::Tagent *a);
 
-        virtual void addAgent(const Ped::Tagent *a);
-        virtual void moveAgent(const Ped::Tagent *a);
-        virtual bool removeAgent(const Ped::Tagent *a);
+		virtual set<const Ped::Tagent*> getAgents() const;
+		virtual void getAgents(vector<const Ped::Tagent*>& outputList) const;
+		
+		virtual bool intersects(double px, double py, double pr) const;
 
-        virtual set<const Ped::Tagent*> getAgents() const;
-        virtual void getAgents(list<const Ped::Tagent*>& outputList) const;
+		double getx() const { return x; };
+		double gety() const { return y; };
+		double getw() const { return w; };
+		double geth() const { return h; };
 
-        virtual bool intersects(double px, double py, double pr) const;
+		double getdepth() const { return depth; };
 
-        double getx() const { return x; };
-        double gety() const { return y; };
-        double getw() const { return w; };
-        double geth() const { return h; };
+	protected:
+		virtual int cut();
+		virtual void addChildren();
+		Ttree* getChildByPosition(double x, double y);
 
-        double getdepth() const { return depth; };
+	protected:
+		set<const Ped::Tagent*> agents;	// set and not vector, since we need to delete elements from the middle very often
+										// set and not list, since deletion is based on pointer (search O(log n) instead of O(n)).
 
-    protected:
-        virtual int cut();
-        virtual void addChildren();
-        Ttree* getChildByPosition(double x, double y);
+		bool isleaf;
+		double x;
+		double y;
+		double w;
+		double h;
+		int depth;
 
-    protected:
-        set<const Ped::Tagent*> agents;	// set and not vector, since we need to delete elements from the middle very often
-                                        // set and not list, since deletion is based on pointer (search O(log n) instead of O(n)).
+		Ttree* tree1;
+		Ttree* tree2;
+		Ttree* tree3;
+		Ttree* tree4;
 
-        bool isleaf;
-        double x;
-        double y;
-        double w;
-        double h;
-        int depth;
-
-        Ttree *tree1;
-        Ttree *tree2;
-        Ttree *tree3;
-        Ttree *tree4;
-
-        Ped::Tscene *scene;
-    };
+		Ped::Tscene *scene;
+	};
 }
 
 #endif

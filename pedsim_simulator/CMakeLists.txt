@@ -1,6 +1,8 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
 PROJECT(pedsim_simulator)
 
+ADD_DEFINITIONS(-Wall -Wunused -std=c++0x -pipe)
+
 set( PEDSIM_CORE_DEPENDENCIES
     roscpp
     rospy
@@ -39,14 +41,35 @@ include_directories(
 )
 
 set(SOURCES 
-    src/scene.cpp 
-    src/agent.cpp 
-    src/obstacle.cpp 
-    src/waypoint.cpp 
+#     src/scene.cpp 
+#     src/agent.cpp 
+#     src/obstacle.cpp 
+#     src/waypoint.cpp 
     src/config.cpp 
-    src/waitingqueue.cpp 
+#     src/waitingqueue.cpp 
     src/orientationhandler.cpp
-    src/persongroup.cpp 
+#     src/persongroup.cpp 
+	src/rng.cpp
+	
+	# elements
+	src/element/agent.cpp
+	src/element/agentgroup.cpp
+	src/element/agentcluster.cpp
+	src/element/areawaypoint.cpp
+	src/element/attractionarea.cpp
+	src/element/queueingwaypoint.cpp
+	src/element/waitingqueue.cpp
+	src/element/waypoint.cpp
+	src/element/obstacle.cpp
+	src/element/scenarioelement.cpp
+	
+	# forces
+	src/force/alongwallforce.cpp
+	src/force/force.cpp
+	src/force/groupcoherenceforce.cpp
+	src/force/groupgazeforce.cpp
+	src/force/grouprepulsionforce.cpp
+	src/force/randomforce.cpp
 ) 
 
 add_executable(simulator ${SOURCES} ${QT_RESOURCES_CPP} ${QT_FORMS_HPP} ${QT_MOC_HPP})

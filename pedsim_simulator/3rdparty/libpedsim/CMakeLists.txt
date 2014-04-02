@@ -33,6 +33,7 @@ ENDIF(SHALL_DEBUG)
 #----------------------- Files ---------------------#
 #source code files
 SET(SRC_FILES
+	ped_angle.cpp
     ped_vector.cpp
     ped_obstacle.cpp
     ped_waypoint.cpp
@@ -42,6 +43,7 @@ SET(SRC_FILES
 )
 
 SET(HEADER_FILES
+	ped_agent.h
 	ped_agent.h
 	ped_includes.h
 	ped_obstacle.h

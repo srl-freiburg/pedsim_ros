@@ -48,7 +48,7 @@ Scene::Scene ( double left, double up, double width, double height, const ros::N
 Scene::~Scene()
 {
     clear();
-    waiting_queues_.clear();
+//     waiting_queues_.clear();
 }
 
 bool Scene::srvMoveAgentHandler ( pedsim_srvs::SetAgentState::Request &req, pedsim_srvs::SetAgentState::Response &res )
@@ -194,8 +194,8 @@ bool Scene::initialize()
 
     /// setup the list of all agents and the robot agent
     obstacle_cells_.clear();
-    waiting_queues_.clear();
-	agent_groups_.clear();
+//     waiting_queues_.clear();
+// 	agent_groups_.clear();
 
     /// setup publishers
     pub_all_agents_ = nh_.advertise<pedsim_msgs::AllAgentsState> ( "dynamic_obstacles", 0 );
@@ -236,12 +236,12 @@ bool Scene::initialize()
 	
 	/// NOTE - temporary hack
 	// create some five groups
-	for ( int i = 0; i < 3; i++ )
-	{
-		PersonGroupPtr g;
-		g.reset( new PersonGroup() );
-		agent_groups_.push_back( g );
-	}
+// 	for ( int i = 0; i < 3; i++ )
+// 	{
+// 		PersonGroupPtr g;
+// 		g.reset( new PersonGroup() );
+// 		agent_groups_.push_back( g );
+// 	}
 	
     return true;
 }
@@ -275,10 +275,10 @@ void Scene::moveAllAgents()
     timestep_++;
 
     /// serve agents in queues (if any)
-    BOOST_FOREACH ( WaitingQueuePtr q, waiting_queues_ )
-    {
-        q->serveAgent();
-    }
+//     BOOST_FOREACH ( WaitingQueuePtr q, waiting_queues_ )
+//     {
+//         q->serveAgent();
+//     }
 
     // Make the robot wait
     if ( ( double ) timestep_ >= CONFIG.robot_wait_time )
@@ -331,27 +331,27 @@ void Scene::callbackRobotCommand ( const pedsim_msgs::AgentState::ConstPtr &msg 
 /// -----------------------------------------------------------------
 void Scene::processGroups()
 {	
-	BOOST_FOREACH ( PersonGroupPtr g, agent_groups_ )
-	{
-		// just small groups for testing
-		if ( g->memberCount() >= CONFIG.avr_group_size )
-			continue;
-		
-// 		ROS_INFO(" adding agents to groups");
-		
-		BOOST_FOREACH ( Agent* a, agents )
-		{
-			// check distance to center group
-			Ped::Tvector com = g->computeCenterOfMass();
-			double d = distance( com.x, com.y, a->getx(), a->gety() );
-			
-			// add the initial one without checking distance
-			if ( g->memberCount() < 1 && a->gettype() != Ped::Tagent::ROBOT )
-				g->addMember( a );
-			else if ( a->gettype() != Ped::Tagent::ROBOT && d < CONFIG.avr_group_radius )
-				g->addMember( a );
-		}
-	}
+// 	BOOST_FOREACH ( PersonGroupPtr g, agent_groups_ )
+// 	{
+// 		// just small groups for testing
+// 		if ( g->memberCount() >= CONFIG.avr_group_size )
+// 			continue;
+// 		
+// // 		ROS_INFO(" adding agents to groups");
+// 		
+// 		BOOST_FOREACH ( Agent* a, agents )
+// 		{
+// 			// check distance to center group
+// 			Ped::Tvector com = g->computeCenterOfMass();
+// 			double d = distance( com.x, com.y, a->getx(), a->gety() );
+// 			
+// 			// add the initial one without checking distance
+// 			if ( g->memberCount() < 1 && a->gettype() != Ped::Tagent::ROBOT )
+// 				g->addMember( a );
+// 			else if ( a->gettype() != Ped::Tagent::ROBOT && d < CONFIG.avr_group_radius )
+// 				g->addMember( a );
+// 		}
+// 	}
 
 
 	/// Just testing with one group
@@ -377,79 +377,79 @@ void Scene::processGroups()
 // 		
 	
 	/// visualize groups (sketchy)
-	BOOST_FOREACH ( PersonGroupPtr ag, agent_groups_ )
-	{
-		// skip empty ones
-		if ( ag->memberCount() < 1)
-			continue;
-		
-		Ped::Tvector gcom = ag->computeCenterOfMass();
-		
-		// center
-		visualization_msgs::Marker center_marker;
-        center_marker.header.frame_id = "world";
-        center_marker.header.stamp = ros::Time();
-        center_marker.ns = "pedsim";
-        center_marker.id = ag->getId();
-
-        center_marker.color.a = 0.7;
-        center_marker.color.r = 0.0;
-        center_marker.color.g = 0.0;
-        center_marker.color.b = 1.0;
-
-        center_marker.scale.x = 0.5;
-        center_marker.scale.y = 1.0;
-        center_marker.scale.z = 1.0;
-
-        center_marker.pose.position.x = gcom.x;
-        center_marker.pose.position.y = gcom.y;
-        center_marker.pose.position.z = center_marker.scale.z / 2.0;
-
-        center_marker.pose.orientation.x = 0;
-        center_marker.pose.orientation.y = 0;
-        center_marker.pose.orientation.z = 0;
-        center_marker.pose.orientation.w = 1;
-
-        center_marker.type = visualization_msgs::Marker::CYLINDER;
-
-        pub_group_centers_.publish ( center_marker );
-		
-		// members
-		geometry_msgs::Point p1;
-		p1.x = gcom.x;
-		p1.y = gcom.y;
-		p1.z = 0.0;
-			
-		BOOST_FOREACH ( Agent* m, ag->getMembers() )
-		{
-			visualization_msgs::Marker marker;
-            marker.header.frame_id = "world";
-            marker.header.stamp = ros::Time();
-            marker.ns = "pedsim";
-            marker.id = m->getid()+1000;
-
-            marker.color.a = 0.7;
-            marker.color.r = 0.0;
-            marker.color.g = 0.0;
-            marker.color.b = 1.0;
-
-            marker.scale.x = 0.1;
-            marker.scale.y = 0.2;
-            marker.scale.z = 0.2;
-
-            marker.type = visualization_msgs::Marker::ARROW;
-
-			geometry_msgs::Point p2;
-			p2.x = m->getx();
-			p2.y = m->gety();
-			p2.z = 0.0;
-			
-			marker.points.push_back ( p1 );
-			marker.points.push_back ( p2 );
-			
-            pub_group_lines_.publish ( marker );
-		}
-	}
+// 	BOOST_FOREACH ( PersonGroupPtr ag, agent_groups_ )
+// 	{
+// 		// skip empty ones
+// 		if ( ag->memberCount() < 1)
+// 			continue;
+// 		
+// 		Ped::Tvector gcom = ag->computeCenterOfMass();
+// 		
+// 		// center
+// 		visualization_msgs::Marker center_marker;
+//         center_marker.header.frame_id = "world";
+//         center_marker.header.stamp = ros::Time();
+//         center_marker.ns = "pedsim";
+//         center_marker.id = ag->getId();
+// 
+//         center_marker.color.a = 0.7;
+//         center_marker.color.r = 0.0;
+//         center_marker.color.g = 0.0;
+//         center_marker.color.b = 1.0;
+// 
+//         center_marker.scale.x = 0.5;
+//         center_marker.scale.y = 1.0;
+//         center_marker.scale.z = 1.0;
+// 
+//         center_marker.pose.position.x = gcom.x;
+//         center_marker.pose.position.y = gcom.y;
+//         center_marker.pose.position.z = center_marker.scale.z / 2.0;
+// 
+//         center_marker.pose.orientation.x = 0;
+//         center_marker.pose.orientation.y = 0;
+//         center_marker.pose.orientation.z = 0;
+//         center_marker.pose.orientation.w = 1;
+// 
+//         center_marker.type = visualization_msgs::Marker::CYLINDER;
+// 
+//         pub_group_centers_.publish ( center_marker );
+// 		
+// 		// members
+// 		geometry_msgs::Point p1;
+// 		p1.x = gcom.x;
+// 		p1.y = gcom.y;
+// 		p1.z = 0.0;
+// 			
+// 		BOOST_FOREACH ( Agent* m, ag->getMembers() )
+// 		{
+// 			visualization_msgs::Marker marker;
+//             marker.header.frame_id = "world";
+//             marker.header.stamp = ros::Time();
+//             marker.ns = "pedsim";
+//             marker.id = m->getid()+1000;
+// 
+//             marker.color.a = 0.7;
+//             marker.color.r = 0.0;
+//             marker.color.g = 0.0;
+//             marker.color.b = 1.0;
+// 
+//             marker.scale.x = 0.1;
+//             marker.scale.y = 0.2;
+//             marker.scale.z = 0.2;
+// 
+//             marker.type = visualization_msgs::Marker::ARROW;
+// 
+// 			geometry_msgs::Point p2;
+// 			p2.x = m->getx();
+// 			p2.y = m->gety();
+// 			p2.z = 0.0;
+// 			
+// 			marker.points.push_back ( p1 );
+// 			marker.points.push_back ( p2 );
+// 			
+//             pub_group_lines_.publish ( marker );
+// 		}
+// 	}
 }
 
 
@@ -462,61 +462,61 @@ void Scene::processGroups()
 /// -----------------------------------------------------------------
 void Scene::updateQueues()
 {
-    BOOST_FOREACH ( WaitingQueuePtr q, waiting_queues_ )
-    {
-        /// Add agents into queues
-		if ( q->length() == 0 )
-		{
-			Agent* a = q->pickAgent( agents, q->getX(), q->getY() );
-				
-			if (a != NULL)
-				q->enqueueAgent ( a );
-
-		}
-		else
-		{
-			Agent* last_person = q->lastPedestrian();
-			std::list<Agent*> neighbors = last_person->getNeighbors();
-			
-			Agent* a = q->pickAgent( neighbors , last_person->getx(), last_person->gety() );
-				
-			if (a != NULL)
-				q->enqueueAgent ( a );
-		}
+//     BOOST_FOREACH ( WaitingQueuePtr q, waiting_queues_ )
+//     {
+//         /// Add agents into queues
+// 		if ( q->length() == 0 )
+// 		{
+// 			Agent* a = q->pickAgent( agents, q->getX(), q->getY() );
+// 				
+// 			if (a != NULL)
+// 				q->enqueueAgent ( a );
+// 
+// 		}
+// 		else
+// 		{
+// 			Agent* last_person = q->lastPedestrian();
+// 			std::list<Agent*> neighbors = last_person->getNeighbors();
+// 			
+// 			Agent* a = q->pickAgent( neighbors , last_person->getx(), last_person->gety() );
+// 				
+// 			if (a != NULL)
+// 				q->enqueueAgent ( a );
+// 		}
 		
 
         // visualize the queues
-        visualization_msgs::Marker marker;
-        marker.header.frame_id = "world";
-        marker.header.stamp = ros::Time();
-        marker.ns = "pedsim";
-        marker.id = q->getId();
-
-        marker.color.a = 0.7;
-        marker.color.r = 0.0;
-        marker.color.g = 0.0;
-        marker.color.b = 1.0;
-
-        marker.scale.x = 0.5;
-        marker.scale.y = 1.0;
-        marker.scale.z = 1.0;
-
-        marker.pose.position.x = q->getX();
-        marker.pose.position.y = q->getY();
-        marker.pose.position.z = marker.scale.z / 2.0;
-
-        double theta = q->getOrientation();
-        Eigen::Quaternionf q = orientation_handler_->angle2Quaternion ( theta );
-
-        marker.pose.orientation.x = q.x();
-        marker.pose.orientation.y = q.y();
-        marker.pose.orientation.z = q.z();
-        marker.pose.orientation.w = q.w();
-
-        marker.type = visualization_msgs::Marker::CUBE;
-
-        pub_queues_.publish ( marker );
-    }
+//         visualization_msgs::Marker marker;
+//         marker.header.frame_id = "world";
+//         marker.header.stamp = ros::Time();
+//         marker.ns = "pedsim";
+//         marker.id = q->getId();
+// 
+//         marker.color.a = 0.7;
+//         marker.color.r = 0.0;
+//         marker.color.g = 0.0;
+//         marker.color.b = 1.0;
+// 
+//         marker.scale.x = 0.5;
+//         marker.scale.y = 1.0;
+//         marker.scale.z = 1.0;
+// 
+//         marker.pose.position.x = q->getX();
+//         marker.pose.position.y = q->getY();
+//         marker.pose.position.z = marker.scale.z / 2.0;
+// 
+//         double theta = q->getOrientation();
+//         Eigen::Quaternionf q = orientation_handler_->angle2Quaternion ( theta );
+// 
+//         marker.pose.orientation.x = q.x();
+//         marker.pose.orientation.y = q.y();
+//         marker.pose.orientation.z = q.z();
+//         marker.pose.orientation.w = q.w();
+// 
+//         marker.type = visualization_msgs::Marker::CUBE;
+// 
+//         pub_queues_.publish ( marker );
+//     }
 }
 
 
@@ -897,20 +897,20 @@ void Scene::processData ( QByteArray &data )
                 drawObstacles ( x1, y1, x2, y2 );
 
             }
-            else if ( xmlReader.name() == "queue" )
-            {
-                QString id = xmlReader.attributes().value ( "id" ).toString();
-                double x = xmlReader.attributes().value ( "x" ).toString().toDouble();
-                double y = xmlReader.attributes().value ( "y" ).toString().toDouble();
-                double theta = xmlReader.attributes().value ( "direction" ).toString().toDouble();
-
-                WaitingQueuePtr q;
-                q.reset ( new WaitingQueue ( x, y, theta, id.toStdString() ) );
-                waiting_queues_.push_back ( q );
-
-                ROS_INFO ( "Added queue at: (%f, %f)", x, y );
-
-            }
+//             else if ( xmlReader.name() == "queue" )
+//             {
+//                 QString id = xmlReader.attributes().value ( "id" ).toString();
+//                 double x = xmlReader.attributes().value ( "x" ).toString().toDouble();
+//                 double y = xmlReader.attributes().value ( "y" ).toString().toDouble();
+//                 double theta = xmlReader.attributes().value ( "direction" ).toString().toDouble();
+// 
+//                 WaitingQueuePtr q;
+//                 q.reset ( new WaitingQueue ( x, y, theta, id.toStdString() ) );
+//                 waiting_queues_.push_back ( q );
+// 
+//                 ROS_INFO ( "Added queue at: (%f, %f)", x, y );
+// // 
+//             }
             else if ( xmlReader.name() == "waypoint" )
             {
                 // TODO - add an explicit waypoint type xml parameter

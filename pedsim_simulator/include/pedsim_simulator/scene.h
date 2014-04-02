@@ -72,11 +72,11 @@
 #include <geometry_msgs/Point.h>
 
 #include <pedsim_simulator/orientationhandler.h>
-#include <pedsim_simulator/waitingqueue.h>
+// #include <pedsim_simulator/waitingqueue.h>
 
 #include <pedsim_simulator/utilities.h>
 
-#include <pedsim_simulator/persongroup.h>
+// #include <pedsim_simulator/persongroup.h>
 
 class Scene : public Ped::Tscene
 {
@@ -162,10 +162,10 @@ private:
     OrientationHandlerPtr orientation_handler_;
 
     // waiting queues in the scene
-    std::vector<WaitingQueuePtr> waiting_queues_;
+//     std::vector<WaitingQueuePtr> waiting_queues_;
 	
 	// groups in the crowd
-	std::vector<PersonGroupPtr> agent_groups_;
+// 	std::vector<PersonGroupPtr> agent_groups_;
 };
 
 
