@@ -168,6 +168,11 @@ QList<AgentGroup*> Scene::getGroups()
 	return agentGroups;
 }
 
+QMap<QString, AttractionArea*> Scene::getAttractions()
+{
+	return attractions;
+}
+
 Agent* Scene::getAgentById(int idIn) const {
 	foreach(Agent* currentAgent, agents) {
 		if(idIn == currentAgent->getId())

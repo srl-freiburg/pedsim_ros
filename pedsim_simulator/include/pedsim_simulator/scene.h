@@ -112,6 +112,7 @@ public:
 	const QList<Agent*>& getAgents() const;
 	Agent* getAgentById(int idIn) const;
 	QList<AgentGroup*> getGroups();
+	QMap<QString, AttractionArea*> getAttractions();
 	const QList<Obstacle*>& getObstacles() const;
 	const QMap<QString, Waypoint*>& getWaypoints() const;
 	const QMap<QString, AttractionArea*>& getAttractions() const;

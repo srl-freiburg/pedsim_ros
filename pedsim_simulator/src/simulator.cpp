@@ -28,6 +28,8 @@ bool Simulator::initializeSimulation()
     pub_obstacles_ = nh_.advertise<nav_msgs::GridCells> ( "static_obstacles", 0 );
     pub_walls_ = nh_.advertise<visualization_msgs::Marker> ( "walls", 0 );
 	pub_all_agents_ = nh_.advertise<pedsim_msgs::AllAgentsState> ( "dynamic_obstacles", 0 );
+	pub_attractions_ = nh_.advertise<visualization_msgs::Marker> ( "attractions", 0 );
+	pub_queues_ = nh_.advertise<visualization_msgs::Marker> ( "queues", 0 );
 	
 	/// setup any pointers
 	orientation_handler_.reset ( new OrientationHandler() );
@@ -147,7 +149,10 @@ void Simulator::publishAgentVisuals()
         marker.ns = "pedsim";
         marker.id = a->getId();
 
-        marker.type = visualization_msgs::Marker::CUBE;
+        marker.type = visualization_msgs::Marker::CYLINDER;
+// 		marker.type = visualization_msgs::Marker::MESH_RESOURCE;
+//         marker.mesh_resource = "package://pedsim_simulator/images/zoey/girl.dae";
+		
 		marker.action = 0;  // add or modify
 
 		marker.scale.x = 0.3 / 2.0;
@@ -156,7 +161,7 @@ void Simulator::publishAgentVisuals()
 
         marker.color.a = 1.0;
         marker.color.r = 0.0;
-        marker.color.g = 1.0;
+        marker.color.g = 0.7;
         marker.color.b = 1.0;
 
         marker.pose.position.z = marker.scale.z / 2.0;
@@ -164,9 +169,7 @@ void Simulator::publishAgentVisuals()
         marker.pose.position.y = a->gety();
 
         if ( a->getStateMachine()->getCurrentState() == AgentStateMachine::AgentState::StateQueueing)
-        {
-// 			ROS_INFO("Found a queueing agent ");
-			
+        {			
             marker.color.a = 1.0;
             marker.color.r = 1.0;
             marker.color.g = 0.0;
@@ -379,6 +382,45 @@ void Simulator::publishWalls()
 }
 
 
+/// -----------------------------------------------------------------
+/// \brief publishAttractions
+/// \details publish visual markers for attractions given as 3D cells
+/// for visualizing in rviz. 
+/// -----------------------------------------------------------------
+void Simulator::publishAttractions()
+{
+	QMap<QString, AttractionArea*>::iterator it = SCENE.getAttractions().begin();
+	
+	while ( it !=  SCENE.getAttractions().end() )
+	{
+		AttractionArea* atr = it.value();
+		
+		visualization_msgs::Marker marker;
+		marker.header.frame_id = "world";
+		marker.header.stamp = ros::Time();
+		marker.ns = "pedsim";
+		marker.id = 2000;
+
+		marker.color.a = 1.0;
+		marker.color.r = 0.0;
+		marker.color.g = 1.0;
+		marker.color.b = 0.0;
+
+		marker.scale.x = 1.0;
+		marker.scale.y = 1.0;
+		marker.scale.z = 3.0;
+
+		marker.pose.position.x = atr->getPosition().x;
+		marker.pose.position.y = atr->getPosition().y;
+		marker.pose.position.z = marker.scale.z / 2.0;
+
+		marker.type = visualization_msgs::Marker::CUBE;
+		
+		pub_attractions_.publish( marker );
+		
+		it++;
+	}
+}
 
 
 

@@ -56,6 +56,7 @@
 #include <pedsim_simulator/element/agentgroup.h>
 #include <pedsim_simulator/scenarioreader.h>
 #include <pedsim_simulator/agentstatemachine.h>
+#include <pedsim_simulator/element/attractionarea.h>
 
 
 class Simulator
@@ -72,6 +73,7 @@ public:
 	void publishGroupVisuals();
 	void publishObstacles();
 	void publishWalls();
+	void publishAttractions();
 	
 	/// subscriber helpers
     void callbackRobotCommand ( const pedsim_msgs::AgentState::ConstPtr &msg );
@@ -90,6 +92,8 @@ private:
 	ros::Publisher pub_group_lines_;
 	ros::Publisher pub_walls_;
 	ros::Publisher pub_all_agents_;
+	ros::Publisher pub_attractions_;
+	ros::Publisher pub_queues_;
 	
 	// subscribers
     ros::Subscriber sub_robot_command_;
