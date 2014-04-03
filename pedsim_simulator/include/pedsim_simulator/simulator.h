@@ -50,6 +50,7 @@
 #include <pedsim_simulator/orientationhandler.h>
 
 #include <boost/foreach.hpp>
+#include <functional>
 
 #include <pedsim_simulator/scene.h>
 #include <pedsim_simulator/element/agent.h>

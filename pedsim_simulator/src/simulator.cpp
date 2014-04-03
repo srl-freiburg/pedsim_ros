@@ -84,7 +84,10 @@ void Simulator::runSimulation()
 
         // only publish the obstacles in the beginning
         if ( SCENE.getTime() < 100 )
+		{
             publishObstacles();
+// 			publishAttractions();
+		}
 
         ros::spinOnce();
 
@@ -392,14 +395,21 @@ void Simulator::publishAttractions()
 	QMap<QString, AttractionArea*>::iterator it = SCENE.getAttractions().begin();
 	
 	while ( it !=  SCENE.getAttractions().end() )
+	
+// 	QString s;
+// 	AttractionArea* atr;
+	
+// 	BOOST_FOREACH( std::tie(s, atr), SCENE.getAttractions() )
 	{
 		AttractionArea* atr = it.value();
+		
+		ROS_INFO("Got value");
 		
 		visualization_msgs::Marker marker;
 		marker.header.frame_id = "world";
 		marker.header.stamp = ros::Time();
 		marker.ns = "pedsim";
-		marker.id = 2000;
+		marker.id = 20000;
 
 		marker.color.a = 1.0;
 		marker.color.r = 0.0;
