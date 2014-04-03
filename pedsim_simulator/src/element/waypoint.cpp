@@ -34,48 +34,56 @@
 
 
 
-Waypoint::Waypoint(const QString& nameIn)
-	: name(nameIn) {
+Waypoint::Waypoint ( const QString& nameIn )
+    : name ( nameIn )
+{
 }
 
-Waypoint::Waypoint(const QString& nameIn, const Ped::Tvector& positionIn)
-	: Ped::Twaypoint(positionIn),
-		name(nameIn) {
+Waypoint::Waypoint ( const QString& nameIn, const Ped::Tvector& positionIn )
+    : Ped::Twaypoint ( positionIn ),
+      name ( nameIn )
+{
 }
 
-Waypoint::~Waypoint() {
-	// clean up
+Waypoint::~Waypoint()
+{
+    // clean up
 }
 
-QString Waypoint::getName() const {
-	return name;
+QString Waypoint::getName() const
+{
+    return name;
 }
 
-void Waypoint::setPosition(double xIn, double yIn) {
-	// update position
-	Ped::Twaypoint::setx(xIn);
-	Ped::Twaypoint::sety(yIn);
+void Waypoint::setPosition ( double xIn, double yIn )
+{
+    // update position
+    Ped::Twaypoint::setx ( xIn );
+    Ped::Twaypoint::sety ( yIn );
 
-	// inform users
-	emit positionChanged(getx(), gety());
+    // inform users
+    emit positionChanged ( getx(), gety() );
 }
 
-void Waypoint::setPosition(const Ped::Tvector& posIn) {
-	setPosition(posIn.x, posIn.y);
+void Waypoint::setPosition ( const Ped::Tvector& posIn )
+{
+    setPosition ( posIn.x, posIn.y );
 }
 
-void Waypoint::setx(double xIn) {
-	// update position
-	Ped::Twaypoint::setx(xIn);
+void Waypoint::setx ( double xIn )
+{
+    // update position
+    Ped::Twaypoint::setx ( xIn );
 
-	// inform user
-	emit positionChanged(getx(), gety());
+    // inform user
+    emit positionChanged ( getx(), gety() );
 }
 
-void Waypoint::sety(double yIn) {
-	// update position
-	Ped::Twaypoint::sety(yIn);
+void Waypoint::sety ( double yIn )
+{
+    // update position
+    Ped::Twaypoint::sety ( yIn );
 
-	// inform user
-	emit positionChanged(getx(), gety());
+    // inform user
+    emit positionChanged ( getx(), gety() );
 }

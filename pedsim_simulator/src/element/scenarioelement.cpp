@@ -34,6 +34,7 @@
 
 
 
-ScenarioElement::ScenarioElement(QObject* parent) 
-	: QObject(parent) {
+ScenarioElement::ScenarioElement ( QObject* parent )
+    : QObject ( parent )
+{
 }

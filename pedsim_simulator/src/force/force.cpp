@@ -36,14 +36,17 @@
 #include <pedsim_simulator/element/agent.h>
 
 
-Force::Force(Agent* agentIn)
-	: agent(agentIn), factor(1) {
+Force::Force ( Agent* agentIn )
+    : agent ( agentIn ), factor ( 1 )
+{
 }
 
-void Force::setFactor(double factorIn) {
-	factor = factorIn;
+void Force::setFactor ( double factorIn )
+{
+    factor = factorIn;
 }
 
-double Force::getFactor() const {
-	return factor;
+double Force::getFactor() const
+{
+    return factor;
 }

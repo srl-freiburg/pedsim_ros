@@ -36,63 +36,74 @@
 #include <QSettings>
 
 
-Obstacle::Obstacle(double pax, double pay, double pbx, double pby)
-	: Tobstacle(pax, pay, pbx, pby) {
+Obstacle::Obstacle ( double pax, double pay, double pbx, double pby )
+    : Tobstacle ( pax, pay, pbx, pby )
+{
 };
 
-Obstacle::~Obstacle() {
+Obstacle::~Obstacle()
+{
 }
 
 /// moves the obstacle to a new position
-void Obstacle::setPosition(double pax, double pay, double pbx, double pby) {
-	Tobstacle::setPosition(pax, pay, pbx, pby);
+void Obstacle::setPosition ( double pax, double pay, double pbx, double pby )
+{
+    Tobstacle::setPosition ( pax, pay, pbx, pby );
 
-	// inform users
-	emit positionChanged();
+    // inform users
+    emit positionChanged();
 }
 
-void Obstacle::setPosition(const QPointF& startIn, const QPointF& endIn) {
-	setPosition(startIn.x(), startIn.y(), endIn.x(), endIn.y());
+void Obstacle::setPosition ( const QPointF& startIn, const QPointF& endIn )
+{
+    setPosition ( startIn.x(), startIn.y(), endIn.x(), endIn.y() );
 }
 
-void Obstacle::setX1(double xIn) {
-	// update x1, keep the other values
-	setPosition(xIn, getay(), getbx(), getby());
+void Obstacle::setX1 ( double xIn )
+{
+    // update x1, keep the other values
+    setPosition ( xIn, getay(), getbx(), getby() );
 }
 
-void Obstacle::setY1(double yIn) {
-	// update y1, keep the other values
-	setPosition(getax(), yIn, getbx(), getby());
+void Obstacle::setY1 ( double yIn )
+{
+    // update y1, keep the other values
+    setPosition ( getax(), yIn, getbx(), getby() );
 }
 
-void Obstacle::setX2(double xIn) {
-	// update y2, keep the other values
-	setPosition(getax(), getay(), xIn, getby());
+void Obstacle::setX2 ( double xIn )
+{
+    // update y2, keep the other values
+    setPosition ( getax(), getay(), xIn, getby() );
 }
 
-void Obstacle::setY2(double yIn) {
-	// update x2, keep the other values
-	setPosition(getax(), getay(), getbx(), yIn);
+void Obstacle::setY2 ( double yIn )
+{
+    // update x2, keep the other values
+    setPosition ( getax(), getay(), getbx(), yIn );
 }
 
-QPointF Obstacle::getVisiblePosition() const {
-	return QPointF(getax(), getay());
+QPointF Obstacle::getVisiblePosition() const
+{
+    return QPointF ( getax(), getay() );
 }
 
-void Obstacle::setVisiblePosition(const QPointF& positionIn) {
-	// compute new end position
-	QPointF deltaPos(positionIn.x() - getax(), positionIn.y() - getay());
-	QPointF endPos = QPointF(getbx(), getby()) + deltaPos;
+void Obstacle::setVisiblePosition ( const QPointF& positionIn )
+{
+    // compute new end position
+    QPointF deltaPos ( positionIn.x() - getax(), positionIn.y() - getay() );
+    QPointF endPos = QPointF ( getbx(), getby() ) + deltaPos;
 
-	// set new position
-	setPosition(positionIn.x(), positionIn.y(), endPos.x(), endPos.y());
+    // set new position
+    setPosition ( positionIn.x(), positionIn.y(), endPos.x(), endPos.y() );
 
-	// inform users
-	emit positionChanged();
+    // inform users
+    emit positionChanged();
 }
 
-QString Obstacle::toString() const {
-	return tr("Obstacle (%1,%2 - %3,%4)")
-		.arg(getax()).arg(getay())
-		.arg(getbx()).arg(getby());
+QString Obstacle::toString() const
+{
+    return tr ( "Obstacle (%1,%2 - %3,%4)" )
+           .arg ( getax() ).arg ( getay() )
+           .arg ( getbx() ).arg ( getby() );
 }

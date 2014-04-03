@@ -55,15 +55,9 @@ public:
 
 	// Signals
 signals:
-	// → GUI
-	void waypointVisibilityChanged(bool show);
-	void attractionVisibilityChanged(bool show);
-	void directionVisibilityChanged(bool show);
-	void accelerationVisibilityChanged(bool show);
-	void forcesVisibilityChanged(bool show);
-	void groupsVisibilityChanged(bool show);
+	// TODO - eliminate this
 	void forceVisibilityChanged(QString force, bool show);
-	void gridVisibilityChanged(bool show);
+	
 	// → Simulation
 	void timeStepSizeChanged(double value);
 	void simulationSpeedChanged(int value);

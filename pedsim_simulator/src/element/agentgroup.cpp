@@ -125,9 +125,7 @@ QList<AgentGroup*> AgentGroup::divideAgents ( const QList<Agent*>& agentsIn )
     QList<Agent*> unassignedAgents = agentsIn;
 
     // initialize Poisson distribution
-    // → read settings
-    QSettings settings;
-    const double poissonLambda = settings.value ( "GroupSizeDistribution/Lambda", 3 ).toDouble();
+    const double poissonLambda = 3.0;
     // → initialize distribution
     std::poisson_distribution<int> distribution ( poissonLambda );
 
