@@ -86,7 +86,7 @@ void Simulator::runSimulation()
         if ( SCENE.getTime() < 100 )
 		{
             publishObstacles();
-// 			publishAttractions();
+			publishAttractions();
 		}
 
         ros::spinOnce();
@@ -392,19 +392,9 @@ void Simulator::publishWalls()
 /// -----------------------------------------------------------------
 void Simulator::publishAttractions()
 {
-	QMap<QString, AttractionArea*>::iterator it = SCENE.getAttractions().begin();
-	
-	while ( it !=  SCENE.getAttractions().end() )
-	
-// 	QString s;
-// 	AttractionArea* atr;
-	
-// 	BOOST_FOREACH( std::tie(s, atr), SCENE.getAttractions() )
+	foreach( AttractionArea* atr, SCENE.getAttractions() )
 	{
-		AttractionArea* atr = it.value();
-		
-		ROS_INFO("Got value");
-		
+				
 		visualization_msgs::Marker marker;
 		marker.header.frame_id = "world";
 		marker.header.stamp = ros::Time();
@@ -416,8 +406,8 @@ void Simulator::publishAttractions()
 		marker.color.g = 1.0;
 		marker.color.b = 0.0;
 
-		marker.scale.x = 1.0;
-		marker.scale.y = 1.0;
+		marker.scale.x = atr->getSize().width();
+		marker.scale.y = atr->getSize().height();
 		marker.scale.z = 3.0;
 
 		marker.pose.position.x = atr->getPosition().x;
@@ -427,8 +417,6 @@ void Simulator::publishAttractions()
 		marker.type = visualization_msgs::Marker::CUBE;
 		
 		pub_attractions_.publish( marker );
-		
-		it++;
 	}
 }
 
