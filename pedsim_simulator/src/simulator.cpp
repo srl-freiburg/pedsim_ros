@@ -67,7 +67,7 @@ void Simulator::runSimulation()
             robot_ = a;
     }
 
-    ros::Rate r ( 10 ); // 10 Hz
+    ros::Rate r ( 30 ); // Hz
 
     while ( ros::ok() )
     {
@@ -106,7 +106,6 @@ void Simulator::callbackRobotCommand ( const pedsim_msgs::AgentState::ConstPtr &
 
     if ( robot_->getType() == msg->type )
     {
-
         if ( robot_->getTeleop() == false )
         {
             robot_->setvx ( vx );
@@ -166,6 +165,8 @@ void Simulator::publishAgentVisuals()
 
         if ( a->getStateMachine()->getCurrentState() == AgentStateMachine::AgentState::StateQueueing)
         {
+// 			ROS_INFO("Found a queueing agent ");
+			
             marker.color.a = 1.0;
             marker.color.r = 1.0;
             marker.color.g = 0.0;

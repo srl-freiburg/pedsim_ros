@@ -40,7 +40,7 @@ Config::Config(QObject* parent) {
 	}
 	
 	timeStepSize = settings.value("Simulation/TimeStepSize", 0.05).toDouble();
-	simSpeed = settings.value("Simulation/Speed", round(1000.0/20)).toInt();
+	simSpeed = settings.value("Simulation/Speed", round(1000.0/50)).toInt();
 	forceObstacle = settings.value("Forces/Obstacle", 10).toDouble();
 	sigmaObstacle = settings.value("Forces/ObstacleSigma", 0.2).toDouble();
 	forceSocial = settings.value("Forces/Social", 5).toDouble();
@@ -49,6 +49,8 @@ Config::Config(QObject* parent) {
 	forceGroupRepulsion = settings.value("Forces/GroupRepulsion", 1).toDouble();
 	forceRandom = settings.value("Forces/Random", 0.1).toDouble();
 	forceAlongWall = settings.value("Forces/AlongWall", 2).toDouble();
+	
+	// TODO - add utility to switch off group forces and behaviours
 }
 
 Config& Config::getInstance() {
