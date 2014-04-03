@@ -77,6 +77,8 @@ public:
 	// → Attraction
 	virtual double getStrength() const;
 	virtual void setStrength(double strengthIn);
+	
+	int getId() { return id_; }
 
 	// → ScenarioElement Overrides/Overloads
 public:
@@ -91,6 +93,7 @@ protected:
 	Ped::Tvector position;
 	QSizeF size;
 	double attractionStrength;
+	int id_;
 
 };
 

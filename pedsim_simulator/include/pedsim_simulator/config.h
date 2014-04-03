@@ -81,14 +81,7 @@ signals:
 
 	// Slots
 public slots:
-	void setShowWaypoints(bool valueIn);
-	void setShowAttractions(bool valueIn);
-	void setShowDirection(bool valueIn);
-	void setShowAcceleration(bool valueIn);
-	void setShowForces(bool valueIn);
-	void setShowGroups(bool valueIn);
 	void setForceVisibility(const QString& forceIn, bool visibleIn);
-	void setShowGrid(bool valueIn);
 	void setSimSpeed(int valueIn);
 	void decreaseSimSpeed();
 	void increaseSimSpeed();
@@ -116,14 +109,6 @@ public:
 
 	// Attributes
 public:
-	// → Visualization
-	bool showWaypoints;
-	bool showAttractions;
-	bool showDirection;
-	bool showAcceleration;
-	bool showForces;
-	bool showGroups;
-	bool showGrid;
 	// → Visibility of individual forces
 	QMap<QString,bool> forceVisibilityMap;
 	// → Simulation

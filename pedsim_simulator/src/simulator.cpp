@@ -1,4 +1,33 @@
-
+/**
+* Copyright 2014 Social Robotics Lab, University of Freiburg
+*
+* Redistribution and use in source and binary forms, with or without
+* modification, are permitted provided that the following conditions are met:
+*
+*    # Redistributions of source code must retain the above copyright
+*       notice, this list of conditions and the following disclaimer.
+*    # Redistributions in binary form must reproduce the above copyright
+*       notice, this list of conditions and the following disclaimer in the
+*       documentation and/or other materials provided with the distribution.
+*    # Neither the name of the University of Freiburg nor the names of its
+*       contributors may be used to endorse or promote products derived from
+*       this software without specific prior written permission.
+*
+* THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+* AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+* IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+* ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+* LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+* CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+* SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+* INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+* CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+* ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+* POSSIBILITY OF SUCH DAMAGE.
+*
+* \author Billy Okal <okal@cs.uni-freiburg.de>
+* \author Sven Wehner <mail@svenwehner.de>
+*/
 
 #include <pedsim_simulator/scene.h>
 
@@ -8,10 +37,10 @@
 
 #include <QApplication>
 
-Simulator::Simulator(const ros::NodeHandle &node)
-	: nh_(node)
+Simulator::Simulator ( const ros::NodeHandle &node )
+    : nh_ ( node )
 {
-	// nothing to do here
+    // nothing to do here
 }
 
 Simulator::~Simulator()
@@ -21,50 +50,51 @@ Simulator::~Simulator()
 
 bool Simulator::initializeSimulation()
 {
-	/// setup ros publishers
-	pub_agent_visuals_ = nh_.advertise<visualization_msgs::MarkerArray> ( "agents_markers", 0 );
+    /// setup ros publishers
+    pub_agent_visuals_ = nh_.advertise<visualization_msgs::MarkerArray> ( "agents_markers", 0 );
     pub_group_centers_ = nh_.advertise<visualization_msgs::Marker> ( "group_centers", 0 );
     pub_group_lines_ = nh_.advertise<visualization_msgs::Marker> ( "group_lines", 0 );
     pub_obstacles_ = nh_.advertise<nav_msgs::GridCells> ( "static_obstacles", 0 );
     pub_walls_ = nh_.advertise<visualization_msgs::Marker> ( "walls", 0 );
-	pub_all_agents_ = nh_.advertise<pedsim_msgs::AllAgentsState> ( "dynamic_obstacles", 0 );
-	pub_attractions_ = nh_.advertise<visualization_msgs::Marker> ( "attractions", 0 );
-	pub_queues_ = nh_.advertise<visualization_msgs::Marker> ( "queues", 0 );
-	
-	/// setup any pointers
-	orientation_handler_.reset ( new OrientationHandler() );
-	
-	/// subscribers
+    pub_all_agents_ = nh_.advertise<pedsim_msgs::AllAgentsState> ( "dynamic_obstacles", 0 );
+    pub_attractions_ = nh_.advertise<visualization_msgs::Marker> ( "attractions", 0 );
+    pub_queues_ = nh_.advertise<visualization_msgs::Marker> ( "queues", 0 );
+
+    /// setup any pointers
+    orientation_handler_.reset ( new OrientationHandler() );
+
+    /// subscribers
     sub_robot_command_ = nh_.subscribe ( "robot_state", 1, &Simulator::callbackRobotCommand, this );
 
-	/// load parameters
+    /// load parameters
     std::string scene_file_param;
     ros::param::param<std::string> ( "/simulator/scene_file", scene_file_param, "scene.xml" );
     // load scenario file
-	// TODO - convert qstrings to std::strings
+    // TODO - convert qstrings to std::strings
     QString scenefile = QString::fromStdString ( scene_file_param );
 
-	ScenarioReader scenarioReader;
-	bool readResult = scenarioReader.readFromFile(scenefile);
-	if(readResult == false) {
-		ROS_WARN ( "Could not load the scene file, check paths" );
-		return false;
-	}
+    ScenarioReader scenarioReader;
+    bool readResult = scenarioReader.readFromFile ( scenefile );
+    if ( readResult == false )
+    {
+        ROS_WARN ( "Could not load the scene file, check paths" );
+        return false;
+    }
 
     ROS_INFO ( "Loading from %s scene file", scene_file_param.c_str() );
-	
-	robot_ = nullptr;
-	
-	return true;
+
+    robot_ = nullptr;
+
+    return true;
 }
 
 
 void Simulator::runSimulation()
 {
-	// setup the robot 
+    // setup the robot
     BOOST_FOREACH ( Agent* a, SCENE.getAgents() )
     {
-		// TODO - convert back to robot type enum
+        // TODO - convert back to robot type enum
         if ( a->getType() == 2 )
             robot_ = a;
     }
@@ -73,9 +103,9 @@ void Simulator::runSimulation()
 
     while ( ros::ok() )
     {
-		SCENE.moveAllAgents();
+        SCENE.moveAllAgents();
 
-		publishAgentVisuals();
+        publishAgentVisuals();
 
         publishGroupVisuals();
 
@@ -84,10 +114,10 @@ void Simulator::runSimulation()
 
         // only publish the obstacles in the beginning
         if ( SCENE.getTime() < 100 )
-		{
+        {
             publishObstacles();
-			publishAttractions();
-		}
+            publishAttractions();
+        }
 
         ros::spinOnce();
 
@@ -136,8 +166,8 @@ void Simulator::publishAgentVisuals()
     // minor optimization with arrays for speedup
     visualization_msgs::MarkerArray marker_array;
 
-	// status message
-	pedsim_msgs::AllAgentsState all_status;
+    // status message
+    pedsim_msgs::AllAgentsState all_status;
     std_msgs::Header all_header;
     all_header.stamp = ros::Time::now();
     all_status.header = all_header;
@@ -145,7 +175,7 @@ void Simulator::publishAgentVisuals()
 
     BOOST_FOREACH ( Agent* a, SCENE.getAgents() )
     {
-		/// visual marker message
+        /// visual marker message
         visualization_msgs::Marker marker;
         marker.header.frame_id = "world";
         marker.header.stamp = ros::Time();
@@ -155,10 +185,10 @@ void Simulator::publishAgentVisuals()
         marker.type = visualization_msgs::Marker::CYLINDER;
 // 		marker.type = visualization_msgs::Marker::MESH_RESOURCE;
 //         marker.mesh_resource = "package://pedsim_simulator/images/zoey/girl.dae";
-		
-		marker.action = 0;  // add or modify
 
-		marker.scale.x = 0.3 / 2.0;
+        marker.action = 0;  // add or modify
+
+        marker.scale.x = 0.3 / 2.0;
         marker.scale.y = 0.3;
         marker.scale.z = 1.75;
 
@@ -171,10 +201,18 @@ void Simulator::publishAgentVisuals()
         marker.pose.position.x = a->getx();
         marker.pose.position.y = a->gety();
 
-        if ( a->getStateMachine()->getCurrentState() == AgentStateMachine::AgentState::StateQueueing)
-        {			
+        if ( a->getStateMachine()->getCurrentState() == AgentStateMachine::AgentState::StateQueueing )
+        {
             marker.color.a = 1.0;
             marker.color.r = 1.0;
+            marker.color.g = 0.0;
+            marker.color.b = 1.0;
+        }
+
+        if ( a->getStateMachine()->getCurrentState() == AgentStateMachine::AgentState::StateShopping )
+        {
+            marker.color.a = 1.0;
+            marker.color.r = 0.0;
             marker.color.g = 0.0;
             marker.color.b = 1.0;
         }
@@ -199,9 +237,9 @@ void Simulator::publishAgentVisuals()
             marker.pose.orientation.w = 1.0;
         }
         marker_array.markers.push_back ( marker );
-		
-		/// status message 
-		pedsim_msgs::AgentState state;
+
+        /// status message
+        pedsim_msgs::AgentState state;
         std_msgs::Header agent_header;
         agent_header.stamp = ros::Time::now();
         state.header = agent_header;
@@ -221,7 +259,7 @@ void Simulator::publishAgentVisuals()
 
     // publish the marker array
     pub_agent_visuals_.publish ( marker_array );
-	pub_all_agents_.publish ( all_status );
+    pub_all_agents_.publish ( all_status );
 }
 
 
@@ -237,8 +275,8 @@ void Simulator::publishGroupVisuals()
     BOOST_FOREACH ( AgentGroup* ag, groups )
     {
         // skip empty ones
-        if ( ag->memberCount() < 1)
-         continue;
+        if ( ag->memberCount() < 1 )
+            continue;
 
         // ag->updateCenterOfMass();
         Ped::Tvector gcom = ag->getCenterOfMass();
@@ -284,7 +322,7 @@ void Simulator::publishGroupVisuals()
             marker.header.frame_id = "world";
             marker.header.stamp = ros::Time();
             marker.ns = "pedsim";
-            marker.id = m->getId()+1000;
+            marker.id = m->getId() +1000;
 
             marker.color.a = 0.7;
             marker.color.r = 0.0;
@@ -388,36 +426,36 @@ void Simulator::publishWalls()
 /// -----------------------------------------------------------------
 /// \brief publishAttractions
 /// \details publish visual markers for attractions given as 3D cells
-/// for visualizing in rviz. 
+/// for visualizing in rviz.
 /// -----------------------------------------------------------------
 void Simulator::publishAttractions()
 {
-	foreach( AttractionArea* atr, SCENE.getAttractions() )
-	{
-				
-		visualization_msgs::Marker marker;
-		marker.header.frame_id = "world";
-		marker.header.stamp = ros::Time();
-		marker.ns = "pedsim";
-		marker.id = 20000;
+    foreach ( AttractionArea* atr, SCENE.getAttractions() )
+    {
 
-		marker.color.a = 1.0;
-		marker.color.r = 0.0;
-		marker.color.g = 1.0;
-		marker.color.b = 0.0;
+        visualization_msgs::Marker marker;
+        marker.header.frame_id = "world";
+        marker.header.stamp = ros::Time();
+        marker.ns = "pedsim";
+        marker.id = atr->getId();
 
-		marker.scale.x = atr->getSize().width();
-		marker.scale.y = atr->getSize().height();
-		marker.scale.z = 3.0;
+        marker.color.a = 0.25;
+        marker.color.r = 1.0;
+        marker.color.g = 1.0;
+        marker.color.b = 0.0;
 
-		marker.pose.position.x = atr->getPosition().x;
-		marker.pose.position.y = atr->getPosition().y;
-		marker.pose.position.z = marker.scale.z / 2.0;
+        marker.scale.x = atr->getSize().width();
+        marker.scale.y = atr->getSize().height();
+        marker.scale.z = 3.0;
 
-		marker.type = visualization_msgs::Marker::CUBE;
-		
-		pub_attractions_.publish( marker );
-	}
+        marker.pose.position.x = atr->getPosition().x;
+        marker.pose.position.y = atr->getPosition().y;
+        marker.pose.position.z = marker.scale.z / 2.0;
+
+        marker.type = visualization_msgs::Marker::CUBE;
+
+        pub_attractions_.publish ( marker );
+    }
 }
 
 
@@ -429,7 +467,7 @@ void Simulator::publishAttractions()
 int main ( int argc, char **argv )
 {
 
-	QApplication app(argc, argv);
+    QApplication app ( argc, argv );
 
     // initialize resources
     ros::init ( argc, argv, "simulator" );
@@ -439,16 +477,16 @@ int main ( int argc, char **argv )
     ros::NodeHandle node;
 
 
-	Simulator sm(node);
-	
-	if ( sm.initializeSimulation() )
-	{
-		sm.runSimulation();
-	}
-	else
-	{
-		return EXIT_FAILURE;
-	}
+    Simulator sm ( node );
+
+    if ( sm.initializeSimulation() )
+    {
+        sm.runSimulation();
+    }
+    else
+    {
+        return EXIT_FAILURE;
+    }
 
 
 //     double x1, x2, y1, y2;
@@ -462,5 +500,5 @@ int main ( int argc, char **argv )
 //     Scene sim_scene ( x1, y1, x2, y2, node );
 
 
-	return app.exec();
+    return app.exec();
 }

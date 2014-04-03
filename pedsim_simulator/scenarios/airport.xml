@@ -129,16 +129,16 @@
     <waypoint id="MainhallWestSouth" x="-85" y="-35" r="8"/>
     <waypoint id="NonAirport" x="-200" y="0" r="50"/>
     <!--Attractions-->
-    <attraction id="Shop1" x="-13" y="60" width="14" height="40" strength="1"/>
+    <attraction id="Shop1" x="-13" y="60" width="14" height="40" strength="2"/>
     <attraction id="Shop10" x="-335" y="295" width="30" height="10" strength="1"/>
-    <attraction id="Shop11" x="-175" y="255" width="30" height="10" strength="1"/>
+    <attraction id="Shop11" x="-175" y="255" width="30" height="10" strength="4"/>
     <attraction id="Shop2" x="235" y="0" width="10" height="40" strength="1"/>
     <attraction id="Shop3" x="-45" y="20" width="10" height="20" strength="1"/>
     <attraction id="Shop4" x="-13" y="125" width="14" height="30" strength="1"/>
-    <attraction id="Shop5" x="-15" y="95" width="10" height="10" strength="1"/>
+    <attraction id="Shop5" x="-15" y="95" width="10" height="10" strength="2"/>
     <attraction id="Shop6" x="85" y="275" width="10" height="10" strength="1"/>
     <attraction id="Shop7" x="-145" y="435" width="10" height="10" strength="1"/>
-    <attraction id="Shop8" x="-195" y="285" width="30" height="10" strength="1"/>
+    <attraction id="Shop8" x="-195" y="285" width="30" height="10" strength="6"/>
     <attraction id="Shop9" x="-255" y="285" width="30" height="10" strength="1"/>
     <attraction id="WindowGateDNorth" x="100" y="19" width="160" height="2" strength="1"/>
     <attraction id="WindowGateDSouth" x="100" y="-19" width="160" height="2" strength="1"/>
