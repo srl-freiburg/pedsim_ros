@@ -50,7 +50,7 @@ AgentCluster::AgentCluster(double xIn, double yIn, int countIn) {
 	position = Ped::Tvector(xIn, yIn);
 	count = countIn;
 	distribution = QSizeF(0, 0);
-	agentType = 0;
+	agentType = Ped::Tagent::ADULT;
 	shallCreateGroups = true;
 };
 
@@ -173,7 +173,7 @@ int AgentCluster::getType() const {
 	return agentType;
 }
 
-void AgentCluster::setType(int typeIn) {
+void AgentCluster::setType(Ped::Tagent::AgentType typeIn) {
 	agentType = typeIn;
 
 	// inform users

@@ -91,18 +91,21 @@ bool Simulator::initializeSimulation()
 
 void Simulator::runSimulation()
 {
-    // setup the robot
-    BOOST_FOREACH ( Agent* a, SCENE.getAgents() )
-    {
-        // TODO - convert back to robot type enum
-        if ( a->getType() == 2 )
-            robot_ = a;
-    }
-
     ros::Rate r ( 30 ); // Hz
 
     while ( ros::ok() )
     {
+		if ( SCENE.getTime() < 20 )
+		{
+			// setup the robot
+			BOOST_FOREACH ( Agent* a, SCENE.getAgents() )
+			{
+				// TODO - convert back to robot type enum
+				if ( a->getType() == Ped::Tagent::ROBOT )
+					robot_ = a;
+			}
+		}
+		
         SCENE.moveAllAgents();
 
         publishAgentVisuals();
@@ -136,23 +139,14 @@ void Simulator::callbackRobotCommand ( const pedsim_msgs::AgentState::ConstPtr &
     double vx = msg->velocity.x;
     double vy = msg->velocity.y;
 
-//     if ( CONFIG.robot_mode == TELEOPERATION )
-//         robot_->setteleop ( true );
+    if ( CONFIG.robot_mode == TELEOPERATION )
+        robot_->setTeleop ( true );
 
-    if ( robot_->getType() == msg->type )
+    if ( robot_->getType() == static_cast<Ped::Tagent::AgentType> ( msg->type ) )
     {
-        if ( robot_->getTeleop() == false )
-        {
-            robot_->setvx ( vx );
-            robot_->setvy ( vy );
-            robot_->setVmax ( sqrt ( vx * vx + vy * vy ) );
-        }
-        else
-        {
-            robot_->setvx ( vx );
-            robot_->setvy ( vy );
-            robot_->setVmax ( sqrt ( vx * vx + vy * vy ) );
-        }
+		robot_->setvx ( vx );
+		robot_->setvy ( vy );
+		robot_->setVmax ( sqrt ( vx * vx + vy * vy ) );
     }
 }
 
@@ -182,24 +176,40 @@ void Simulator::publishAgentVisuals()
         marker.ns = "pedsim";
         marker.id = a->getId();
 
-        marker.type = visualization_msgs::Marker::CYLINDER;
-// 		marker.type = visualization_msgs::Marker::MESH_RESOURCE;
-//         marker.mesh_resource = "package://pedsim_simulator/images/zoey/girl.dae";
-
-        marker.action = 0;  // add or modify
-
-        marker.scale.x = 0.3 / 2.0;
-        marker.scale.y = 0.3;
-        marker.scale.z = 1.75;
-
-        marker.color.a = 1.0;
-        marker.color.r = 0.0;
-        marker.color.g = 0.7;
-        marker.color.b = 1.0;
-
         marker.pose.position.z = marker.scale.z / 2.0;
         marker.pose.position.x = a->getx();
         marker.pose.position.y = a->gety();
+		marker.action = 0;  // add or modify
+		
+		if ( robot_ != nullptr &&  a->getType() == robot_->getType() )
+        {
+            marker.type = visualization_msgs::Marker::MESH_RESOURCE;
+            marker.mesh_resource = "package://pedsim_simulator/images/darylbot_rotated_shifted.dae";
+			
+            marker.color.a = 1.0;
+            marker.color.r = 0.5;
+            marker.color.g = 1.0;
+            marker.color.b = 0.5;
+
+            marker.scale.x = 1.0;
+            marker.scale.y = 1.0;
+            marker.scale.z = 1.0;
+        }
+        else
+		{
+			marker.type = visualization_msgs::Marker::CYLINDER;
+
+			marker.scale.x = 0.3 / 2.0;
+			marker.scale.y = 0.3;
+			marker.scale.z = 1.75;
+
+			marker.color.a = 1.0;
+			marker.color.r = 0.0;
+			marker.color.g = 0.7;
+			marker.color.b = 1.0;
+		}
+		
+		
 
         if ( a->getStateMachine()->getCurrentState() == AgentStateMachine::AgentState::StateQueueing )
         {

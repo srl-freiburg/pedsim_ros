@@ -58,6 +58,7 @@
 #include <pedsim_simulator/scenarioreader.h>
 #include <pedsim_simulator/agentstatemachine.h>
 #include <pedsim_simulator/element/attractionarea.h>
+#include <pedsim_simulator/config.h>
 
 
 class Simulator

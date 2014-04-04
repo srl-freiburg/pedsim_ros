@@ -37,6 +37,15 @@ namespace Ped {
 	class LIBEXPORT Tagent {
 
 	public:
+		enum AgentType
+		{
+			ADULT = 0,
+			CHILD = 1,
+			ROBOT = 2,
+			ELDER = 3
+		};
+		
+		
 		Tagent(); 
 		virtual ~Tagent();
 
@@ -50,13 +59,13 @@ namespace Ped {
 		virtual Twaypoint* getCurrentWaypoint() const = 0;
 
 		virtual void setPosition(double px, double py, double pz = 0);
-		virtual void setType(int typeIn) { type = typeIn; };
+		virtual void setType(AgentType typeIn) { type = typeIn; };
 		virtual void setVmax(double vmax);
 		
 		void setTeleop( bool opstatus ) { teleop = opstatus; } 
 
 		int getId() const { return id; };
-		int getType() const { return type; };
+		AgentType getType() const { return type; };
 		double getVmax() const { return vmax; };
 		double getRelaxationTime() const { return relaxationTime; };
 		bool getTeleop() { return teleop; }
@@ -91,7 +100,7 @@ namespace Ped {
 		Tvector p;                                        ///< current position of the agent 
 		Tvector v;                                        ///< current velocity of the agent
 		Tvector a;                                        ///< current acceleration of the agent
-		int type;
+		AgentType type;
 		double vmax;                                      ///< individual max velocity per agent
 		double agentRadius;
 		double relaxationTime;

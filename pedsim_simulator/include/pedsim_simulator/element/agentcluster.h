@@ -75,7 +75,7 @@ public:
 	void setX(double xIn);
 	void setY(double yIn);
 	int getType() const;
-	void setType(int typeIn);
+	void setType(Ped::Tagent::AgentType typeIn);
 	bool getShallCreateGroups() const;
 	void setShallCreateGroups(bool shallCreateGroupsIn);
 	QSizeF getDistribution() const;
@@ -96,7 +96,7 @@ protected:
 	Ped::Tvector position;
 	int count;
 	QSizeF distribution;
-	int agentType;
+	Ped::Tagent::AgentType agentType;
 	bool shallCreateGroups;
 	QList<Waypoint*> waypoints;
 };

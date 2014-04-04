@@ -32,12 +32,8 @@
 #ifndef _agent_h_
 #define _agent_h_
 
-// Includes
-// → SGDiCoP
 #include <pedsim_simulator/element/scenarioelement.h>
-// → PedSim
 #include <libpedsim/ped_agent.h>
-// → Qt
 #include <QGraphicsRectItem>
 
 // Forward Declarations
@@ -132,7 +128,7 @@ public:
 	void setPosition(double xIn, double yIn);
 	void setX(double xIn);
 	void setY(double yIn);
-	void setType(int typeIn);
+	void setType(Ped::Tagent::AgentType typeIn);
 
 	// → VisibleScenarioElement Overrides/Overloads
 public:

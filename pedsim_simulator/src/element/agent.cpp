@@ -30,27 +30,20 @@
 */
 
 
-// Includes
 #include <pedsim_simulator/element/agent.h>
-
-// → SGDiCoP
 #include <pedsim_simulator/config.h>
 #include <pedsim_simulator/scene.h>
 #include <pedsim_simulator/agentstatemachine.h>
-
 #include <pedsim_simulator/element/waypoint.h>
 #include <pedsim_simulator/force/force.h>
-
 #include <pedsim_simulator/waypointplanner/waypointplanner.h>
-// → Qt
-#include <QSettings>
 
 
 Agent::Agent()
 {
     // initialize
     // → Ped::Tagent
-    Ped::Tagent::setType ( 0 );
+    Ped::Tagent::setType ( Ped::Tagent::ADULT );
     Ped::Tagent::setForceFactorObstacle ( CONFIG.forceObstacle );
     forceSigmaObstacle = CONFIG.sigmaObstacle;
     Ped::Tagent::setForceFactorSocial ( CONFIG.forceSocial );
@@ -204,10 +197,26 @@ void Agent::updateState()
 void Agent::move ( double h )
 {
     // TODO -add robot exeptions and teleop
-
-
-    // move the agent
-    Ped::Tagent::move ( h );
+	if ( getType() == Ped::Tagent::ROBOT && CONFIG.robot_mode == TELEOPERATION)
+	{
+		Ped::Tagent::setForceFactorSocial ( 0.1 );
+		Ped::Tagent::setForceFactorObstacle ( 0.1 );
+		Ped::Tagent::setForceFactorDesired ( 0.1 );
+		Ped::Tagent::move ( h );
+	}
+	else if ( getType() == Ped::Tagent::ROBOT && CONFIG.robot_mode == CONTROLLED )
+	{
+		Ped::Tagent::setForceFactorSocial ( CONFIG.forceSocial );
+		Ped::Tagent::setForceFactorObstacle ( 350 );
+		Ped::Tagent::setForceFactorDesired ( 1.5 );
+		
+		Ped::Tagent::move ( h );
+	}
+	else if ( getType() != Ped::Tagent::ROBOT || CONFIG.robot_mode == SOCIAL_DRIVE )
+	{
+		// just move the agent via SF
+		Ped::Tagent::move ( h );
+	}
 
     // inform users
     emit positionChanged ( getx(), gety() );
@@ -359,7 +368,7 @@ void Agent::setY ( double yIn )
     setPosition ( getx(), yIn );
 }
 
-void Agent::setType ( int typeIn )
+void Agent::setType ( Ped::Tagent::AgentType typeIn )
 {
     // call super class' method
     Ped::Tagent::setType ( typeIn );
