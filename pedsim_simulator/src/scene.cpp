@@ -334,13 +334,11 @@ void Scene::dissolveClusters()
                     currentAgent->setGroup ( currentGroup );
                     // → Gaze Force
                     GroupGazeForce* gazeForce = new GroupGazeForce ( currentAgent );
-// 					GroupGazeForce2* gazeForce = new GroupGazeForce2(currentAgent);
                     gazeForce->setGroup ( currentGroup );
                     currentAgent->addForce ( gazeForce );
 
                     // → Coherence Force
                     GroupCoherenceForce* coherenceForce = new GroupCoherenceForce ( currentAgent );
-// 					GroupCoherenceForce2* coherenceForce = new GroupCoherenceForce2(currentAgent);
                     coherenceForce->setGroup ( currentGroup );
                     currentAgent->addForce ( coherenceForce );
 
@@ -612,9 +610,7 @@ std::set<const Ped::Tagent*> Scene::getNeighbors ( double x, double y, double ma
     return potentialNeighbours;
 }
 
-void Scene::onSimulationSpeedChanged ( int simSpeed )
-{
-}
+
 
 void Scene::moveAllAgents()
 {

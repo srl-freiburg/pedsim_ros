@@ -95,7 +95,6 @@ signals:
 
 	// Slots
 public slots:
-	void onSimulationSpeedChanged(int simSpeed);
 	void moveAllAgents();
 protected slots:
 	void cleanupScene();
@@ -127,7 +126,6 @@ public:
 	double getTime() const;
 	bool hasStarted() const;
 
-	// → Cluster→Agents
 protected:
 	void dissolveClusters();
 

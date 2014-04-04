@@ -196,7 +196,6 @@ void Agent::updateState()
 
 void Agent::move ( double h )
 {
-    // TODO -add robot exeptions and teleop
 	if ( getType() == Ped::Tagent::ROBOT && CONFIG.robot_mode == TELEOPERATION)
 	{
 		Ped::Tagent::setForceFactorSocial ( 0.1 );

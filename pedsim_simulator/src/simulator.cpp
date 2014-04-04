@@ -73,8 +73,8 @@ bool Simulator::initializeSimulation()
     // TODO - convert qstrings to std::strings
     QString scenefile = QString::fromStdString ( scene_file_param );
 
-    ScenarioReader scenarioReader;
-    bool readResult = scenarioReader.readFromFile ( scenefile );
+    ScenarioReader scenario_reader;
+    bool readResult = scenario_reader.readFromFile ( scenefile );
     if ( readResult == false )
     {
         ROS_WARN ( "Could not load the scene file, check paths" );
@@ -110,11 +110,11 @@ void Simulator::loadConfigParameters()
 
 void Simulator::runSimulation()
 {
-    ros::Rate r ( 30 ); // Hz
+    ros::Rate r ( 25 ); // Hz
 
     while ( ros::ok() )
     {
-		if ( SCENE.getTime() < 20 )
+		if ( SCENE.getTime() < 0.1 )
 		{
 			// setup the robot
 			BOOST_FOREACH ( Agent* a, SCENE.getAgents() )
@@ -135,7 +135,7 @@ void Simulator::runSimulation()
         publishWalls();
 
         // only publish the obstacles in the beginning
-        if ( SCENE.getTime() < 100 )
+        if ( SCENE.getTime() < 0.1 )
         {
             publishObstacles();
             publishAttractions();
@@ -158,7 +158,7 @@ void Simulator::callbackRobotCommand ( const pedsim_msgs::AgentState::ConstPtr &
     double vx = msg->velocity.x;
     double vy = msg->velocity.y;
 
-    if ( CONFIG.robot_mode == TELEOPERATION )
+    if ( CONFIG.robot_mode == TELEOPERATION || CONFIG.robot_mode == CONTROLLED )
         robot_->setTeleop ( true );
 
     if ( robot_->getType() == static_cast<Ped::Tagent::AgentType> ( msg->type ) )
@@ -307,7 +307,6 @@ void Simulator::publishGroupVisuals()
         if ( ag->memberCount() < 1 )
             continue;
 
-        // ag->updateCenterOfMass();
         Ped::Tvector gcom = ag->getCenterOfMass();
 
         // center
@@ -322,9 +321,9 @@ void Simulator::publishGroupVisuals()
         center_marker.color.g = 0.0;
         center_marker.color.b = 1.0;
 
-        center_marker.scale.x = 0.2;
-        center_marker.scale.y = 0.2;
-        center_marker.scale.z = 0.2;
+        center_marker.scale.x = 0.1;
+        center_marker.scale.y = 0.1;
+        center_marker.scale.z = 0.1;
 
         center_marker.pose.position.x = gcom.x;
         center_marker.pose.position.y = gcom.y;
@@ -359,8 +358,8 @@ void Simulator::publishGroupVisuals()
             marker.color.b = 1.0;
 
             marker.scale.x = 0.1;
-            marker.scale.y = 0.2;
-            marker.scale.z = 0.2;
+            marker.scale.y = 0.1;
+            marker.scale.z = 0.1;
 
             marker.type = visualization_msgs::Marker::ARROW;
 
@@ -395,8 +394,6 @@ void Simulator::publishObstacles()
     {
         geometry_msgs::Point p;
         Location loc = ( *it );
-        // p.x = loc.x + (cell_size/2.0f);
-        // p.y = loc.y + (cell_size/2.0f);
         p.x = loc.x;
         p.y = loc.y;
         p.z = 0.0;
@@ -461,7 +458,6 @@ void Simulator::publishAttractions()
 {
     foreach ( AttractionArea* atr, SCENE.getAttractions() )
     {
-
         visualization_msgs::Marker marker;
         marker.header.frame_id = "world";
         marker.header.stamp = ros::Time();

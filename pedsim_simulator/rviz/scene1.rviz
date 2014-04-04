@@ -5,6 +5,7 @@ Panels:
     Property Tree Widget:
       Expanded:
         - /Grid1/Offset1
+        - /Marker1
       Splitter Ratio: 0.5
     Tree Height: 817
   - Class: rviz/Selection
@@ -91,14 +92,14 @@ Visualization Manager:
       Name: Marker
       Namespaces:
         pedsim: true
-      Queue Size: 1
+      Queue Size: 0
       Value: true
     - Class: rviz/Marker
       Enabled: true
       Marker Topic: /queues
       Name: Marker
       Namespaces:
-        pedsim: true
+        {}
       Queue Size: 1
       Value: true
     - Class: rviz/Marker
@@ -106,7 +107,7 @@ Visualization Manager:
       Marker Topic: /group_centers
       Name: Marker
       Namespaces:
-        {}
+        pedsim: true
       Queue Size: 0
       Value: true
     - Class: rviz/Marker
@@ -114,7 +115,7 @@ Visualization Manager:
       Marker Topic: /group_lines
       Name: Marker
       Namespaces:
-        {}
+        pedsim: true
       Queue Size: 0
       Value: true
   Enabled: true
@@ -141,22 +142,22 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/XYOrbit
-      Distance: 47.3083
+      Distance: 81.9505
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.06
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: 60.1689
-        Y: 25.3799
+        X: 77.6597
+        Y: 16.2657
         Z: 8.5793e-06
       Name: Current View
       Near Clip Distance: 0.01
-      Pitch: 0.925401
+      Pitch: 0.800401
       Target Frame: <Fixed Frame>
       Value: XYOrbit (rviz)
-      Yaw: 1.55354
+      Yaw: 4.71353
     Saved: ~
 Window Geometry:
   Displays:

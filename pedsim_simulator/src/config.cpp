@@ -72,7 +72,6 @@ Config::Config ( QObject* parent )
     robot_mode = SOCIAL_DRIVE;
     robot_wait_time = 100;	
 
-    // TODO - add utility to switch off group forces and behaviours
 	groups_enabled = true;
 }
 
