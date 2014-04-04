@@ -29,9 +29,7 @@
 * \author Sven Wehner <mail@svenwehner.de>
 */
 
-// Includes
 #include <pedsim_simulator/scene.h>
-// → SGDiCoP
 #include <pedsim_simulator/config.h>
 
 #include <pedsim_simulator/element/agent.h>
@@ -45,11 +43,10 @@
 #include <pedsim_simulator/force/grouprepulsionforce.h>
 #include <pedsim_simulator/force/randomforce.h>
 #include <pedsim_simulator/force/alongwallforce.h>
-// → PedSim
 #include <libpedsim/ped_tree.h>
-// → Qt
 #include <QGraphicsScene>
 
+#include <ros/ros.h>
 
 // initialize static value
 Scene* Scene::Scene::instance = nullptr;
@@ -182,7 +179,7 @@ QRectF Scene::itemsBoundingRect() const
         // → unknown waypoint type
         else
         {
-// 			WARN_LOG("Unknown Waypoint type: %1", (waypoint!=nullptr)?waypoint->toString():"null");
+// 			ROS_DEBUG("Unknown Waypoint type: %1", (waypoint!=nullptr)?waypoint->toString():"null");
         }
     }
     // → agent clusters
@@ -420,7 +417,7 @@ void Scene::addWaitingQueue ( WaitingQueue* queueIn )
     // sanity checks
     if ( queueIn == nullptr )
     {
-// 		ERROR_LOG("Cannot add null to the list of waiting queues!");
+		ROS_DEBUG("Cannot add null to the list of waiting queues!");
         return;
     }
 
@@ -436,7 +433,7 @@ void Scene::addAttraction ( AttractionArea* attractionIn )
     // sanity checks
     if ( attractionIn == nullptr )
     {
-// 		ERROR_LOG("Cannot add null to the list of attractions!");
+		ROS_DEBUG("Cannot add null to the list of attractions!");
         return;
     }
 
@@ -531,7 +528,7 @@ bool Scene::removeWaitingQueue ( WaitingQueue* queueIn )
     // sanity checks
     if ( queueIn == nullptr )
     {
-// 		ERROR_LOG("Cannot remove null from the list of waiting queues!");
+		ROS_DEBUG("Cannot remove null from the list of waiting queues!");
         return false;
     }
 
@@ -560,7 +557,7 @@ bool Scene::removeAttraction ( AttractionArea* attractionInIn )
     // sanity checks
     if ( attractionInIn == nullptr )
     {
-// 		ERROR_LOG("Cannot remove null from the list of attractions!");
+		ROS_DEBUG("Cannot remove null from the list of attractions!");
         return false;
     }
 
@@ -597,7 +594,7 @@ std::set<const Ped::Tagent*> Scene::getNeighbors ( double x, double y, double ma
         Ped::Tvector candidatePos = candidate.getPosition();
 
         double distance = ( candidatePos - position ).length();
-// 		DEBUG_LOG("Neighbor: @(%1, %2) -> Distance=%3", aX, aY, distance);
+		//ROS_DEBUG("Neighbor: @(%f, %f) -> Distance=%f", aX, aY, distance);
 
         // remove distant neighbors
         if ( distance > maxDist )

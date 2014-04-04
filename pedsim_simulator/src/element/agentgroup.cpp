@@ -29,15 +29,10 @@
 * \author Sven Wehner <mail@svenwehner.de>
 */
 
-// Includes
 #include <pedsim_simulator/element/agentgroup.h>
-
-// → SGDiCoP
 #include <pedsim_simulator/rng.h>
 #include <pedsim_simulator/element/agent.h>
-
-// → Qt
-#include <QSettings>
+#include <pedsim_simulator/config.h>
 
 
 AgentGroup::AgentGroup()
@@ -159,56 +154,61 @@ QList<AgentGroup*> AgentGroup::divideAgents ( const QList<Agent*>& agentsIn )
     // → report group size distribution
     reportSizeDistribution ( sizeDistribution );
 
-    // → iterate over all group sizes and create groups accordingly
-    //   (start with the largest size to receive contiguous groups)
-    for ( int groupSize = sizeDistribution.count(); groupSize > 0; --groupSize )
-    {
-        // create groups of given size
-        for ( int groupIter = 0; groupIter < sizeDistribution[groupSize-1]; ++groupIter )
+	
+	if ( CONFIG.groups_enabled )
+	{
+        // → iterate over all group sizes and create groups accordingly
+        //   (start with the largest size to receive contiguous groups)
+        for ( int groupSize = sizeDistribution.count(); groupSize > 0; --groupSize )
         {
-            // create a group
-            AgentGroup* newGroup = new AgentGroup();
-            // and add it to result set
-            groups.append ( newGroup );
-
-            // add first agent to the group
-            Agent* groupLeader = unassignedAgents.takeFirst();
-            Ped::Tvector leaderPosition = groupLeader->getPosition();
-            newGroup->addMember ( groupLeader );
-
-            // add other agents to group
-            QList<QPair<Agent*,double> > distanceList;
-            foreach ( Agent* potentialMember, unassignedAgents )
+            // create groups of given size
+            for ( int groupIter = 0; groupIter < sizeDistribution[groupSize-1]; ++groupIter )
             {
-                Ped::Tvector position = potentialMember->getPosition();
-                double distance = ( leaderPosition - position ).length();
+                // create a group
+                AgentGroup* newGroup = new AgentGroup();
+                // and add it to result set
+                groups.append ( newGroup );
 
-                // add potential group member to the list according to the distance
-                auto iter = distanceList.begin();
-                while ( iter < distanceList.end() )
+                // add first agent to the group
+                Agent* groupLeader = unassignedAgents.takeFirst();
+                Ped::Tvector leaderPosition = groupLeader->getPosition();
+                newGroup->addMember ( groupLeader );
+
+                // add other agents to group
+                QList<QPair<Agent*,double> > distanceList;
+                foreach ( Agent* potentialMember, unassignedAgents )
                 {
-                    if ( distance > iter->second )
-                        break;
-                    else
-                        ++iter;
+                    Ped::Tvector position = potentialMember->getPosition();
+                    double distance = ( leaderPosition - position ).length();
+
+                    // add potential group member to the list according to the distance
+                    auto iter = distanceList.begin();
+                    while ( iter < distanceList.end() )
+                    {
+                        if ( distance > iter->second )
+                            break;
+                        else
+                            ++iter;
+                    }
+                    // → insert candidate
+                    distanceList.insert ( iter, qMakePair ( potentialMember, distance ) );
+
+                    // reduce list if necessary
+                    if ( distanceList.size() > groupSize-1 )
+                        distanceList.removeFirst();
                 }
-                // → insert candidate
-                distanceList.insert ( iter, qMakePair ( potentialMember, distance ) );
 
-                // reduce list if necessary
-                if ( distanceList.size() > groupSize-1 )
-                    distanceList.removeFirst();
-            }
+                // add neighbors to the group
+                foreach ( const auto& member, distanceList )
+                {
+                    newGroup->addMember ( member.first );
 
-            // add neighbors to the group
-            foreach ( const auto& member, distanceList )
-            {
-                newGroup->addMember ( member.first );
-
-                // don't consider the group member as part of another group
-                unassignedAgents.removeOne ( member.first );
+                    // don't consider the group member as part of another group
+                    unassignedAgents.removeOne ( member.first );
+                }
             }
         }
+
     }
 
     return groups;

@@ -59,7 +59,7 @@ void RandomForce::setFadingTime ( double durationIn )
     // sanity checks
     if ( durationIn < 0 )
     {
-		ROS_DEBUG("Cannot set fading time to invalid value: %1", durationIn);
+		ROS_DEBUG("Cannot set fading time to invalid value: %f", durationIn);
         return;
     }
 

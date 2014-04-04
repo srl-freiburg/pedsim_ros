@@ -59,13 +59,17 @@ Config::Config ( QObject* parent )
     forceObstacle = 10.0;
     sigmaObstacle = 0.2;
     forceSocial = 5.0;
+	
     forceGroupGaze = 3.0;
     forceGroupCoherence = 2.0;
     forceGroupRepulsion = 1.0;
     forceRandom = 0.1;
     forceAlongWall = 2.0;
+	
+	robot_mode = SOCIAL_DRIVE;
 
     // TODO - add utility to switch off group forces and behaviours
+	groups_enabled = true;
 }
 
 Config& Config::getInstance()

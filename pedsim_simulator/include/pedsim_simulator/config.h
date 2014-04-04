@@ -32,16 +32,15 @@
 #ifndef _config_h_
 #define _config_h_
 
-// Includes
-// → Qt
 #include <QObject>
 #include <QMap>
+
+#include <pedsim_simulator/utilities.h>
 
 
 class Config : public QObject {
 	Q_OBJECT
 
-	// Constructor and Destructor
 protected:
 	Config(QObject* parent = 0);
 
@@ -117,6 +116,12 @@ public:
 	double forceGroupRepulsion;
 	double forceRandom;
 	double forceAlongWall;
+	
+	// robot control 
+	RobotMode robot_mode;
+	
+	// enable/disable groups behaviour
+	bool groups_enabled;
 };
 
 #endif
