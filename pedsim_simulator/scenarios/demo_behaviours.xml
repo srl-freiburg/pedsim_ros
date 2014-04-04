@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--This scenario file was created by SGDiCoP on 2014-04-04T18:39:11-->
+<scenario>
+    <!--Obstacles-->
+    <obstacle x1="0" y1="0" x2="100" y2="0"/>
+    <obstacle x1="0" y1="100" x2="100" y2="100"/>
+    <obstacle x1="0" y1="0" x2="0" y2="100"/>
+    <obstacle x1="100" y1="0" x2="100" y2="100"/>
+    <!--Waypoints (incl. WaitingQueues)-->
+    <waypoint id="check_a" x="15" y="33" r="7"/>
+    <waypoint id="check_b" x="52" y="33" r="7"/>
+    <waypoint id="check_c" x="89" y="35" r="7"/>
+	
+    <waypoint id="cross_a" x="15" y="44" r="7"/>
+    <waypoint id="cross_b" x="51" y="46" r="7"/>
+    <waypoint id="cross_c" x="87" y="47" r="7"/>
+	
+    <queue id="info_desk" x="63" y="35" direction="0"/>
+	
+    <waypoint id="robot_goal" x="88" y="90" r="5"/>
+    <waypoint id="robot_start" x="14" y="11" r="5"/>
+    <waypoint id="stand_a" x="89" y="74" r="5"/>
+    <waypoint id="stand_b" x="76" y="75" r="5"/>
+    <!--Attractions-->
+    <!--Agents-->
+    <!--AgentClusters-->
+    <agent x="14" y="10" n="1" dx="0" dy="0" type="2">
+        <addwaypoint id="robot_start"/>
+        <addwaypoint id="robot_goal"/>
+    </agent>
+    <agent x="23" y="33" n="50" dx="20" dy="10" type="1">
+        <addwaypoint id="check_b"/>
+        <addwaypoint id="check_a"/>
+        <addwaypoint id="check_b"/>
+        <addwaypoint id="check_c"/>
+        <addwaypoint id="cross_c"/>
+        <addwaypoint id="cross_b"/>
+        <addwaypoint id="cross_a"/>
+        <addwaypoint id="check_a"/>
+    </agent>
+    <agent x="89" y="73" n="10" dx="5" dy="5" type="3">
+        <addwaypoint id="stand_b"/>
+        <addwaypoint id="stand_a"/>
+    </agent>
+    <agent x="80" y="57" n="50" dx="10" dy="10" type="0">
+        <addwaypoint id="cross_b"/>
+        <addwaypoint id="cross_a"/>
+        <addwaypoint id="check_a"/>
+        <addwaypoint id="check_b"/>
+        <addwaypoint id="check_c"/>
+        <addwaypoint id="cross_c"/>
+    </agent>
+</scenario>

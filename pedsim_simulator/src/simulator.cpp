@@ -128,7 +128,7 @@ void Simulator::runSimulation()
         SCENE.moveAllAgents();
 
         publishAgentVisuals();
-
+		
         publishGroupVisuals();
 
         // visuals for walls
@@ -456,6 +456,11 @@ void Simulator::publishWalls()
 /// -----------------------------------------------------------------
 void Simulator::publishAttractions()
 {
+// 	Waypoint* getWaypointByName(const QString& nameIn)
+	
+	// publish the info desk queue 
+	
+	
     foreach ( AttractionArea* atr, SCENE.getAttractions() )
     {
         visualization_msgs::Marker marker;
@@ -497,7 +502,6 @@ int main ( int argc, char **argv )
     // initialize resources
     ros::init ( argc, argv, "simulator" );
 
-    ROS_INFO ( "node initialized" );
 
     ros::NodeHandle node;
 
@@ -506,6 +510,8 @@ int main ( int argc, char **argv )
 
     if ( sm.initializeSimulation() )
     {
+		ROS_INFO ( "node initialized, now running " );
+		
         sm.runSimulation();
     }
     else

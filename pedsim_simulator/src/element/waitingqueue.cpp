@@ -29,17 +29,10 @@
 * \author Sven Wehner <mail@svenwehner.de>
 */
 
-// Includes
 #include <pedsim_simulator/element/waitingqueue.h>
-
-// → SGDiCoP
-// #include "logging.h"
 #include <pedsim_simulator/rng.h>
 #include <pedsim_simulator/scene.h>
 #include <pedsim_simulator/element/agent.h>
-
-// → Qt
-#include <QSettings>
 
 
 WaitingQueue::WaitingQueue ( const QString& nameIn, Ped::Tvector positionIn, Ped::Tangle directionIn )
