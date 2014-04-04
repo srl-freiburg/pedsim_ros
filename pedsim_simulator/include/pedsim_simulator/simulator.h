@@ -69,6 +69,7 @@ public:
 
 	bool initializeSimulation();
 	void runSimulation();
+	void loadConfigParameters();
 
 	/// publishers
 	void publishAgentVisuals();

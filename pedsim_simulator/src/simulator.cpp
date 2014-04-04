@@ -84,8 +84,27 @@ bool Simulator::initializeSimulation()
     ROS_INFO ( "Loading from %s scene file", scene_file_param.c_str() );
 
     robot_ = nullptr;
+	
+	/// load the remaining parameters
+    loadConfigParameters();
 
     return true;
+}
+
+void Simulator::loadConfigParameters()
+{
+    double cell_size;
+    ros::param::param<double> ( "/simulator/cell_size", cell_size, 1.0 );
+    CONFIG.cell_width = cell_size;
+    CONFIG.cell_height = cell_size;
+
+    double robot_wait_time;
+    ros::param::param<double> ( "/pedsim/move_robot", robot_wait_time, 100.0 );
+    CONFIG.robot_wait_time = robot_wait_time;
+
+    double teleop_state;
+    ros::param::param<double> ( "/pedsim/teleop_state", teleop_state, 0.0 );
+    CONFIG.robot_mode = static_cast<RobotMode> ( teleop_state );
 }
 
 

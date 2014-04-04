@@ -66,7 +66,11 @@ Config::Config ( QObject* parent )
     forceRandom = 0.1;
     forceAlongWall = 2.0;
 	
-	robot_mode = SOCIAL_DRIVE;
+	cell_width = 1.0;
+    cell_height = 1.0;
+
+    robot_mode = SOCIAL_DRIVE;
+    robot_wait_time = 100;	
 
     // TODO - add utility to switch off group forces and behaviours
 	groups_enabled = true;

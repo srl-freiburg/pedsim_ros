@@ -119,9 +119,14 @@ public:
 	
 	// robot control 
 	RobotMode robot_mode;
+	int robot_wait_time;
 	
 	// enable/disable groups behaviour
 	bool groups_enabled;
+	
+	// cells
+	double cell_width;
+    double cell_height;
 };
 
 #endif
