@@ -29,10 +29,7 @@
 * \author Sven Wehner <mail@svenwehner.de>
 */
 
-// Includes
 #include <pedsim_simulator/agentstatemachine.h>
-
-// → SGDiCoP
 #include <pedsim_simulator/config.h>
 #include <pedsim_simulator/rng.h>
 #include <pedsim_simulator/scene.h>
@@ -40,13 +37,12 @@
 #include <pedsim_simulator/element/agentgroup.h>
 #include <pedsim_simulator/element/waitingqueue.h>
 #include <pedsim_simulator/element/attractionarea.h>
-
 #include <pedsim_simulator/waypointplanner/individualwaypointplanner.h>
 #include <pedsim_simulator/waypointplanner/queueingplanner.h>
 #include <pedsim_simulator/waypointplanner/groupwaypointplanner.h>
 #include <pedsim_simulator/waypointplanner/shoppingplanner.h>
 
-
+#include <ros/ros.h>
 
 AgentStateMachine::AgentStateMachine ( Agent* agentIn )
 {
@@ -108,13 +104,12 @@ void AgentStateMachine::doStateTransition()
                 //       number of Bernoulli trials needed to get one success.
                 //       → CDF(X) = 1-(1-p)^k   with k = the number of trials
                 double baseProbability = 0.02;
-                double maxAttractionDistance = 7;
+                double maxAttractionDist = 7;
                 // → probability dependents on strength, distance,
                 //   and whether another group member are attracted
                 double probability = baseProbability
                                      * attraction->getStrength()
-                                     * ( ( distance<maxAttractionDistance ) ? ( 1- ( distance/maxAttractionDistance ) )
-:0 )
+                                     * ( ( distance<maxAttractionDist ) ? ( 1- ( distance/maxAttractionDist ) ) :0 )
                                      * CONFIG.timeStepSize;
                 std::bernoulli_distribution isAttracted ( probability );
 
@@ -169,8 +164,8 @@ void AgentStateMachine::doStateTransition()
 
 void AgentStateMachine::activateState ( AgentState stateIn )
 {
-// 	DEBUG_LOG("Agent %1 activating state '%2' (time: %3)",
-// 		agent->getId(), stateToName(stateIn),
+// 	ROS_DEBUG("Agent %d activating state '%s' (time: %f)",
+// 		agent->getId(), stateToName(stateIn).toStdString(),
 // 		SCENE.getTime());
 
     // de-activate old state

@@ -33,6 +33,7 @@
 #include <pedsim_simulator/config.h>
 #include <pedsim_simulator/element/agent.h>
 
+#include <ros/ros.h>
 
 GroupCoherenceForce::GroupCoherenceForce ( Agent* agentIn )
     : Force ( agentIn )
@@ -66,7 +67,7 @@ Ped::Tvector GroupCoherenceForce::getForce ( Ped::Tvector walkingDirection )
     // sanity checks
     if ( group->isEmpty() )
     {
-// 		ERROR_LOG("Computing GroupCoherenceForce for empty group!");
+		ROS_DEBUG("Computing GroupCoherenceForce for empty group!");
         return Ped::Tvector();
     }
 
@@ -113,8 +114,7 @@ Ped::Tvector GroupCoherenceForce::getForce ( Ped::Tvector walkingDirection )
         double softenedFactor = factor * ( tanh ( distance - maxDistance ) +1 ) / 2;
         force *= softenedFactor;
 
-        // 	DEBUG_LOG("softenedFactor = %0 = %1 * (tanh(%2 - %3)+1) / 2", softenedFactor, factor, distance,
-		// maxDistance);
+        ROS_DEBUG("softenedFactor = %f = %f * (tanh(%f - %f)+1) / 2", softenedFactor, factor, distance, maxDistance);
 
         return force;
     }

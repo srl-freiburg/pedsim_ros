@@ -33,6 +33,8 @@
 #include <pedsim_simulator/config.h>
 #include <pedsim_simulator/element/agent.h>
 
+#include <ros/ros.h>
+
 
 GroupGazeForce::GroupGazeForce ( Agent* agentIn )
     : Force ( agentIn )
@@ -66,7 +68,7 @@ Ped::Tvector GroupGazeForce::getForce ( Ped::Tvector walkingDirection )
     // sanity checks
     if ( group->isEmpty() )
     {
-// 		ERROR_LOG("Computing GroupGazeForce for empty group!");
+		ROS_DEBUG("Computing GroupGazeForce for empty group!");
         return Ped::Tvector();
     }
 

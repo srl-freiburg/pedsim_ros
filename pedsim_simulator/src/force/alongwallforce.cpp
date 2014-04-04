@@ -29,26 +29,23 @@
 * \author Sven Wehner <mail@svenwehner.de>
 */
 
-// Includes
 #include <pedsim_simulator/force/alongwallforce.h>
-// → SGDiCoP
 #include <pedsim_simulator/config.h>
-// #include "logging.h"
 #include <pedsim_simulator/scene.h>
 #include <pedsim_simulator/element/agent.h>
 #include <pedsim_simulator/element/obstacle.h>
-// → Qt
-#include <QSettings>
+
+#include <ros/ros.h>
 
 
 AlongWallForce::AlongWallForce ( Agent* agentIn )
     : Force ( agentIn )
 {
     // initialize values
-    QSettings settings;
-    speedThreshold = settings.value ( "AlongWallForce/SpeedThreshold", 0.2 ).toDouble();
-    distanceThreshold = settings.value ( "AlongWallForce/DistanceThreshold", 0.6 ).toDouble();
-    angleThresholdDegree = settings.value ( "AlongWallForce/AngleThreshold", 20 ).toDouble();
+    // TODO - put these magic values into a yaml parameter file
+    speedThreshold = 0.2;
+    distanceThreshold = 0.6;
+    angleThresholdDegree = 20;
     setFactor ( CONFIG.forceAlongWall );
 
     // connect signals
@@ -65,7 +62,7 @@ Ped::Tvector AlongWallForce::getForce ( Ped::Tvector walkingDirection )
 {
     if ( agent == nullptr )
     {
-// 		ERROR_LOG("Cannot compute AlongWallForce for null agent!");
+		ROS_DEBUG("Cannot compute AlongWallForce for null agent!");
         return Ped::Tvector();
     }
 
@@ -105,7 +102,7 @@ Ped::Tvector AlongWallForce::getForce ( Ped::Tvector walkingDirection )
     if ( angle > angleThreshold )
         return Ped::Tvector();
 
-// 	DEBUG_LOG("Found Agent %1 to be stuck!", agent->getId());
+	ROS_DEBUG("Found Agent %d to be stuck!", agent->getId());
 
     // set force
     // → project to find walking direction

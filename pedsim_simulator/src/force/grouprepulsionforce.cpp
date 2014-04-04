@@ -31,10 +31,10 @@
 
 
 #include <pedsim_simulator/force/grouprepulsionforce.h>
-
 #include <pedsim_simulator/config.h>
 #include <pedsim_simulator/element/agent.h>
 
+#include <ros/ros.h>
 
 GroupRepulsionForce::GroupRepulsionForce ( Agent* agentIn )
     : Force ( agentIn )
@@ -68,7 +68,7 @@ Ped::Tvector GroupRepulsionForce::getForce ( Ped::Tvector walkingDirection )
     // sanity checks
     if ( group->isEmpty() )
     {
-// 		ERROR_LOG("Computing GroupRepulsionForce for empty group!");
+		ROS_DEBUG("Computing GroupRepulsionForce for empty group!");
         return Ped::Tvector();
     }
 

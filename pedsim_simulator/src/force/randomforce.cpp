@@ -29,24 +29,19 @@
 * \author Sven Wehner <mail@svenwehner.de>
 */
 
-// Includes
 #include <pedsim_simulator/force/randomforce.h>
-// → SGDiCoP
 #include <pedsim_simulator/config.h>
-// #include "logging.h"
 #include <pedsim_simulator/rng.h>
 #include <pedsim_simulator/scene.h>
-// → Qt
-#include <QSettings>
 
+#include <ros/ros.h>
 
 RandomForce::RandomForce ( Agent* agentIn )
     : Force ( agentIn )
 {
     // initialize values
     setFactor ( CONFIG.forceRandom );
-    QSettings settings;
-    fadingDuration = settings.value ( "RandomForce/FadingDuration", 1 ).toDouble();
+    fadingDuration = 1;
     nextDeviation = computeNewDeviation();
 
     // connect signals
@@ -64,7 +59,7 @@ void RandomForce::setFadingTime ( double durationIn )
     // sanity checks
     if ( durationIn < 0 )
     {
-// 		ERROR_LOG("Cannot set fading time to invalid value: %1", durationIn);
+		ROS_DEBUG("Cannot set fading time to invalid value: %1", durationIn);
         return;
     }
 

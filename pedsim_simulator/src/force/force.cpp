@@ -29,10 +29,7 @@
 * \author Sven Wehner <mail@svenwehner.de>
 */
 
-// Includes
 #include <pedsim_simulator/force/force.h>
-
-// → SGDiCoP
 #include <pedsim_simulator/element/agent.h>
 
 
