@@ -120,7 +120,8 @@ QList<AgentGroup*> AgentGroup::divideAgents ( const QList<Agent*>& agentsIn )
     QList<Agent*> unassignedAgents = agentsIn;
 
     // initialize Poisson distribution
-    const double poissonLambda = 3.0;
+    // TODO - put this in a init config fle
+    const double poissonLambda = 1.5;
     // → initialize distribution
     std::poisson_distribution<int> distribution ( poissonLambda );
 
@@ -154,7 +155,7 @@ QList<AgentGroup*> AgentGroup::divideAgents ( const QList<Agent*>& agentsIn )
     // → report group size distribution
     reportSizeDistribution ( sizeDistribution );
 
-	
+
 	if ( CONFIG.groups_enabled )
 	{
         // → iterate over all group sizes and create groups accordingly

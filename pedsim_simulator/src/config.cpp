@@ -59,18 +59,18 @@ Config::Config ( QObject* parent )
     forceObstacle = 10.0;
     sigmaObstacle = 0.2;
     forceSocial = 5.0;
-	
+
     forceGroupGaze = 3.0;
     forceGroupCoherence = 2.0;
     forceGroupRepulsion = 1.0;
     forceRandom = 0.1;
     forceAlongWall = 2.0;
-	
+
 	cell_width = 1.0;
     cell_height = 1.0;
 
     robot_mode = SOCIAL_DRIVE;
-    robot_wait_time = 100;	
+    robot_wait_time = 100;
 
 	groups_enabled = true;
 }
@@ -104,9 +104,6 @@ void Config::setSimSpeed ( int valueIn )
 {
     // keep simulation speed in bounds
     simSpeed = qBound ( 10, valueIn, 1000 );
-
-    // inform users
-    emit simulationSpeedChanged ( simSpeed );
 }
 
 void Config::decreaseSimSpeed()

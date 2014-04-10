@@ -50,16 +50,15 @@ protected:
 	static Config* instance;
 public:
 	static Config& getInstance();
-	
+
 
 	// Signals
 signals:
 	// TODO - eliminate this
 	void forceVisibilityChanged(QString force, bool show);
-	
+
 	// → Simulation
 	void timeStepSizeChanged(double value);
-	void simulationSpeedChanged(int value);
 	// → Forces
 	void forceFactorChanged(QString name, double value);
 	void forceFactorObstacleChanged(double value);
@@ -96,7 +95,7 @@ public slots:
 public:
 	QMap<QString,double> getForceMap() const;
 	bool isForceVisible(const QString& forceNameIn) const;
-	
+
 	//TODO: make member variables protected and add getter functions
 
 
@@ -116,14 +115,14 @@ public:
 	double forceGroupRepulsion;
 	double forceRandom;
 	double forceAlongWall;
-	
-	// robot control 
+
+	// robot control
 	RobotMode robot_mode;
 	int robot_wait_time;
-	
+
 	// enable/disable groups behaviour
 	bool groups_enabled;
-	
+
 	// cells
 	double cell_width;
     double cell_height;
