@@ -84,7 +84,7 @@ bool Simulator::initializeSimulation()
     ROS_INFO ( "Loading from %s scene file", scene_file_param.c_str() );
 
     robot_ = nullptr;
-	
+
 	/// load the remaining parameters
     loadConfigParameters();
 
@@ -124,21 +124,24 @@ void Simulator::runSimulation()
 					robot_ = a;
 			}
 		}
-		
+
         SCENE.moveAllAgents();
 
         publishAgentVisuals();
-		
+
         publishGroupVisuals();
 
-        // visuals for walls
-        publishWalls();
+        // obstacle cells (planning needs these)
+        publishObstacles();
 
         // only publish the obstacles in the beginning
         if ( SCENE.getTime() < 0.1 )
         {
-            publishObstacles();
+            // attraction visuals
             publishAttractions();
+
+            // visuals for walls
+            publishWalls();
         }
 
         ros::spinOnce();
@@ -199,12 +202,12 @@ void Simulator::publishAgentVisuals()
         marker.pose.position.x = a->getx();
         marker.pose.position.y = a->gety();
 		marker.action = 0;  // add or modify
-		
+
 		if ( robot_ != nullptr &&  a->getType() == robot_->getType() )
         {
             marker.type = visualization_msgs::Marker::MESH_RESOURCE;
             marker.mesh_resource = "package://pedsim_simulator/images/darylbot_rotated_shifted.dae";
-			
+
             marker.color.a = 1.0;
             marker.color.r = 0.5;
             marker.color.g = 1.0;
@@ -227,8 +230,8 @@ void Simulator::publishAgentVisuals()
 			marker.color.g = 0.7;
 			marker.color.b = 1.0;
 		}
-		
-		
+
+
 
         if ( a->getStateMachine()->getCurrentState() == AgentStateMachine::AgentState::StateQueueing )
         {
@@ -457,10 +460,10 @@ void Simulator::publishWalls()
 void Simulator::publishAttractions()
 {
 // 	Waypoint* getWaypointByName(const QString& nameIn)
-	
-	// publish the info desk queue 
-	
-	
+
+	// publish the info desk queue
+
+
     foreach ( AttractionArea* atr, SCENE.getAttractions() )
     {
         visualization_msgs::Marker marker;
@@ -511,7 +514,7 @@ int main ( int argc, char **argv )
     if ( sm.initializeSimulation() )
     {
 		ROS_INFO ( "node initialized, now running " );
-		
+
         sm.runSimulation();
     }
     else

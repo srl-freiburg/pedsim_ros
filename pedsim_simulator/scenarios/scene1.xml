@@ -36,7 +36,7 @@
         <addwaypoint id="right_top"/>
     </agent>
     <!-- Robot agent (id = 1) -->
-    <agent x="35" y="10" n="1" dx="0" dy="0" type="2">
+    <agent x="35" y="40" n="1" dx="0" dy="0" type="2">
         <addwaypoint id="robot_start"/>
         <addwaypoint id="robot_goal"/>
     </agent>
