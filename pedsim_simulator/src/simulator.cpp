@@ -135,7 +135,7 @@ void Simulator::runSimulation()
         publishObstacles();
 
         // only publish the obstacles in the beginning
-        if ( SCENE.getTime() < 0.1 )
+        if ( SCENE.getTime() < 10 )
         {
             // attraction visuals
             publishAttractions();
@@ -397,8 +397,8 @@ void Simulator::publishObstacles()
     {
         geometry_msgs::Point p;
         Location loc = ( *it );
-        p.x = loc.x;
-        p.y = loc.y;
+        p.x = loc.x - 0.5;
+        p.y = loc.y - 0.5;
         p.z = 0.0;
         obstacles.cells.push_back ( p );
 
