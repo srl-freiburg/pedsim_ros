@@ -198,7 +198,6 @@ void Simulator::publishAgentVisuals()
         marker.ns = "pedsim";
         marker.id = a->getId();
 
-        marker.pose.position.z = marker.scale.z / 2.0;
         marker.pose.position.x = a->getx();
         marker.pose.position.y = a->gety();
 		marker.action = 0;  // add or modify
@@ -268,6 +267,10 @@ void Simulator::publishAgentVisuals()
             marker.pose.orientation.z = 0.0;
             marker.pose.orientation.w = 1.0;
         }
+
+        // set the position in the Z
+        marker.pose.position.z = marker.scale.z / 2.0;
+
         marker_array.markers.push_back ( marker );
 
         /// status message
