@@ -40,8 +40,7 @@ WaitingQueue::WaitingQueue ( const QString& nameIn, Ped::Tvector positionIn, Ped
 {
     // initialize values
     dequeueTime = INFINITY;
-    waitDurationMean = 10;
-    waitDurationStd = 5;
+    waitDurationLambda = 0.7;
 
     // connect signals
     connect ( &SCENE, SIGNAL ( sceneTimeChanged ( double ) ), this, SLOT ( onTimeChanged ( double ) ) );
@@ -67,7 +66,6 @@ void WaitingQueue::onTimeChanged ( double timeIn )
         if ( hasReachedWaitingPosition() )
         {
             // set the time when to dequeue leading agent
-// 			DEBUG_LOG("Waiting Time for agent (%1) starts!", firstInLine->toString());
             startDequeueTime();
         }
     }
@@ -76,7 +74,6 @@ void WaitingQueue::onTimeChanged ( double timeIn )
     if ( dequeueTime <= timeIn )
     {
         // dequeue agent and inform users
-// 		DEBUG_LOG("Agent %1 may pass Queue (%2)", firstInLine->getId(), this->toString());
         emit agentMayPass ( firstInLine->getId() );
         dequeueAgent ( firstInLine );
     }
@@ -138,7 +135,6 @@ const Agent* WaitingQueue::enqueueAgent ( Agent* agentIn )
     if ( aheadAgent == nullptr )
     {
         emit queueLeaderChanged ( agentIn->getId() );
-// 		DEBUG_LOG("New Queue Leader: %1 (queue: %2)", agentIn->getId(), this->toString());
     }
 
     // stay informed about updates on queue end
@@ -243,7 +239,7 @@ void WaitingQueue::resetDequeueTime()
 void WaitingQueue::startDequeueTime()
 {
     // draw random waiting period
-    normal_distribution<double> distribution ( waitDurationMean, waitDurationStd );
+    exponential_distribution<> distribution ( waitDurationLambda );
     double waitDuration = distribution ( RNG() );
     dequeueTime = SCENE.getTime() + waitDuration;
 }

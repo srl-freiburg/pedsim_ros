@@ -111,8 +111,7 @@ protected:
 	QList<Agent*> queuedAgents;
 
 	// → dequeueing
-	double waitDurationMean;
-	double waitDurationStd;
+	double waitDurationLambda;
 	double dequeueTime;
 };
 
