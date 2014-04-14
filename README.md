@@ -5,6 +5,13 @@ ROS packages for PedSim (Pedestrian Simulator) based on social force
 model of [Helbing et. al](http://arxiv.org/pdf/cond-mat/9805244.pdf). The implementation is based on a modified version of Christian Gloor's [libpedsim](http://pedsim.silmaril.org/) library. All visualization is done via [Rviz](http://wiki.ros.org/rviz).
 
 
+### Requirements
+- ROS ( including visualization rools -> `rviz` )
+- C++11 compiler 
+- Qt4 
+- Eigen3 
+
+
 ### Installation
 Clone into you catkin workspace, then run compile;
 ```
