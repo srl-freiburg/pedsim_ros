@@ -229,7 +229,7 @@ bool AgentGroup::addMember ( Agent* agentIn )
 {
     if ( members.contains ( agentIn ) )
     {
-// 		DEBUG_LOG("AgentGroup: Couldn't add Agent twice!");
+		ROS_DEBUG("AgentGroup: Couldn't add Agent twice!");
         return false;
     }
 
@@ -326,7 +326,10 @@ Ped::Tvector AgentGroup::updateCenterOfMass()
     // compute center of mass
     Ped::Tvector com;
     foreach ( const Agent* member, members )
+	{
         com += member->getPosition();
+	}
+	
     int groupSize = members.size();
     com /= groupSize;
 
@@ -335,9 +338,6 @@ Ped::Tvector AgentGroup::updateCenterOfMass()
 
     // mark the cache as valid
     dirty = false;
-
-    // update graphical representation
-    emit centerOfMassChanged ( cacheCoM.x, cacheCoM.y );
 
     return cacheCoM;
 }
@@ -350,7 +350,7 @@ void AgentGroup::setRecollect ( bool recollectIn )
         if ( recollecting )
             return;
 
-// 		DEBUG_LOG("AgentGroup needs to recollect! (%1)", toString());
+		ROS_DEBUG("AgentGroup needs to recollect! (%s)", toString().toStdString().c_str());
         recollecting = true;
     }
     else
@@ -359,7 +359,7 @@ void AgentGroup::setRecollect ( bool recollectIn )
         if ( !recollecting )
             return;
 
-// 		DEBUG_LOG("AgentGroup finished recollecting! (%1)", toString());
+		ROS_DEBUG("AgentGroup finished recollecting! (%s)", toString().toStdString().c_str());
         recollecting = false;
     }
 }
@@ -400,7 +400,7 @@ void AgentGroup::reportSizeDistribution ( const QVector<int>& sizeDistributionIn
         sizeDistributionString += tr ( " %1: %2;" ).arg ( groupSize ).arg ( count );
         groupSize++;
     }
-// 	INFO_LOG("Group Size Distribution:%1", sizeDistributionString);
+	ROS_DEBUG("Group Size Distribution: %s", sizeDistributionString.toStdString().c_str());
 }
 
 QString AgentGroup::toString() const

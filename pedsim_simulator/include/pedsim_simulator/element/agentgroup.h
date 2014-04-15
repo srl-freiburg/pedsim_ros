@@ -58,7 +58,6 @@ public:
 
 	// Signals
 signals:
-	void centerOfMassChanged(double x, double y);
 	void membersChanged();
 	void memberAdded(int id);
 	void memberRemoved(int id);

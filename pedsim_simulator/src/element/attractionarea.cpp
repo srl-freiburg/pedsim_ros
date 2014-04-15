@@ -29,7 +29,6 @@
 * \author Sven Wehner <mail@svenwehner.de>
 */
 
-// Includes
 #include <pedsim_simulator/element/attractionarea.h>
 
 

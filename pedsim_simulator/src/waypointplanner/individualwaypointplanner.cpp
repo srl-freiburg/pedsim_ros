@@ -29,60 +29,68 @@
 * \author Sven Wehner <mail@svenwehner.de>
 */
 
-// Includes
 #include <pedsim_simulator/waypointplanner/individualwaypointplanner.h>
-// → SGDiCoP
-// #include "logging.h"
 #include <pedsim_simulator/element/agent.h>
 #include <pedsim_simulator/element/areawaypoint.h>
 #include <pedsim_simulator/element/waitingqueue.h>
 
 
-IndividualWaypointPlanner::IndividualWaypointPlanner() {
-	// initialize values
-	agent = nullptr;
-	destination = nullptr;
+IndividualWaypointPlanner::IndividualWaypointPlanner()
+{
+    // initialize values
+    agent = nullptr;
+    destination = nullptr;
 }
 
-bool IndividualWaypointPlanner::setAgent(Agent* agentIn) {
-	agent = agentIn;
+bool IndividualWaypointPlanner::setAgent ( Agent* agentIn )
+{
+    agent = agentIn;
 
-	return true;
+    return true;
 }
 
-Waypoint* IndividualWaypointPlanner::getDestination() const {
-	return destination;
+Waypoint* IndividualWaypointPlanner::getDestination() const
+{
+    return destination;
 }
 
-void IndividualWaypointPlanner::setDestination(Waypoint* waypointIn) {
-	destination = waypointIn;
+void IndividualWaypointPlanner::setDestination ( Waypoint* waypointIn )
+{
+    destination = waypointIn;
 }
 
-Waypoint* IndividualWaypointPlanner::getCurrentWaypoint() {
-	return destination;
+Waypoint* IndividualWaypointPlanner::getCurrentWaypoint()
+{
+    return destination;
 }
 
-bool IndividualWaypointPlanner::hasCompletedDestination() const {
-	if(destination == nullptr) {
-// 		WARN_LOG("IndividualWaypointPlanner: No destination set!");
-		return true;
-	}
+bool IndividualWaypointPlanner::hasCompletedDestination() const
+{
+    if ( destination == nullptr )
+    {
+		ROS_DEBUG("IndividualWaypointPlanner: No destination set!");
+        return true;
+    }
 
-	// check whether group has reached waypoint
-	AreaWaypoint* areaWaypoint = dynamic_cast<AreaWaypoint*>(destination);
-	if(areaWaypoint != nullptr) {
-		return areaWaypoint->isWithinArea(agent->getPosition());
-	}
-	else {
-// 		ERROR_LOG("Unknown Waypoint type: %1", destination->toString());
-		return true;
-	}
+    // check whether group has reached waypoint
+    AreaWaypoint* areaWaypoint = dynamic_cast<AreaWaypoint*> ( destination );
+    if ( areaWaypoint != nullptr )
+    {
+        return areaWaypoint->isWithinArea ( agent->getPosition() );
+    }
+    else
+    {
+		ROS_DEBUG("Unknown Waypoint type: %s", destination->toString().toStdString().c_str());
+        return true;
+    }
 }
 
-QString IndividualWaypointPlanner::name() const {
-	return tr("IndividualWaypointPlanner");
+QString IndividualWaypointPlanner::name() const
+{
+    return tr ( "IndividualWaypointPlanner" );
 }
 
-QString IndividualWaypointPlanner::toString() const {
-	return tr("%1 (%2)").arg(name()).arg((agent==nullptr)?"null":agent->toString());
+QString IndividualWaypointPlanner::toString() const
+{
+    return tr ( "%1 (%2)" ).arg ( name() ).arg ( ( agent==nullptr ) ?"null":agent->toString() );
 }

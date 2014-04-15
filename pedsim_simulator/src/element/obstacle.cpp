@@ -29,11 +29,7 @@
 * \author Sven Wehner <mail@svenwehner.de>
 */
 
-// Includes
 #include <pedsim_simulator/element/obstacle.h>
-
-// → Qt
-#include <QSettings>
 
 
 Obstacle::Obstacle ( double pax, double pay, double pbx, double pby )

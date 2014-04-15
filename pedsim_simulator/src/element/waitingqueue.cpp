@@ -160,7 +160,7 @@ bool WaitingQueue::dequeueAgent ( Agent* agentIn )
     // sanity checks
     if ( queuedAgents.isEmpty() )
     {
-		ROS_DEBUG("Cannot dequeue agent from empty waiting queue!");
+        ROS_DEBUG ( "Cannot dequeue agent from empty waiting queue!" );
         return false;
     }
 
@@ -175,13 +175,15 @@ bool WaitingQueue::dequeueAgent ( Agent* agentIn )
     }
     else
     {
-		ROS_DEBUG("Dequeueing agent from queue (%s), not in front of the queue", agentIn->toString().toStdString().c_str());
+        ROS_DEBUG ( "Dequeueing agent from queue (%s), not in front of the queue",
+agentIn->toString().toStdString().c_str() );
         int removedCount = queuedAgents.removeAll ( agentIn );
         dequeueSuccess = ( removedCount >= 1 );
 
         if ( dequeueSuccess == false )
         {
-			ROS_DEBUG("Agent isn't waiting in queue! (Agent: %s, Queue: %s)", agentIn->toString().toStdString().c_str(), this->toString().toStdString().c_str());
+            ROS_DEBUG ( "Agent isn't waiting in queue! (Agent: %s, Queue: %s)",
+agentIn->toString().toStdString().c_str(), this->toString().toStdString().c_str() );
             return false;
         }
     }
