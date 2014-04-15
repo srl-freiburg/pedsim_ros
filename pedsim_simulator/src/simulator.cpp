@@ -108,6 +108,10 @@ void Simulator::loadConfigParameters()
 }
 
 
+/// -----------------------------------------------------------------
+/// \brief runSimulation
+/// \details Hub of the application 
+/// -----------------------------------------------------------------
 void Simulator::runSimulation()
 {
     ros::Rate r ( 25 ); // Hz
@@ -119,7 +123,6 @@ void Simulator::runSimulation()
 			// setup the robot
 			BOOST_FOREACH ( Agent* a, SCENE.getAgents() )
 			{
-				// TODO - convert back to robot type enum
 				if ( a->getType() == Ped::Tagent::ROBOT )
 					robot_ = a;
 			}

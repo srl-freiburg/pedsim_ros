@@ -63,7 +63,7 @@ AgentGroup::AgentGroup ( const QList<Agent*>& agentsIn )
     dirtyMaxDistance = true;
     members = agentsIn;
     // → delayed center of mass update
-    comUpdateTimer.setSingleShot ( true );
+    comUpdateTimer.setSingleShot ( false );
     comUpdateTimer.setInterval ( 0 );
     connect ( &comUpdateTimer, SIGNAL ( timeout() ), this, SLOT ( updateCenterOfMass() ) );
 
