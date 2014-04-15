@@ -483,12 +483,10 @@ void Simulator::publishWalls()
 /// -----------------------------------------------------------------
 void Simulator::publishAttractions()
 {
-// 	Waypoint* getWaypointByName(const QString& nameIn)
-
-	// publish the info desk queue
+	// TODO - show also the waypoints
 
 
-    foreach ( AttractionArea* atr, SCENE.getAttractions() )
+    BOOST_FOREACH ( AttractionArea* atr, SCENE.getAttractions() )
     {
         visualization_msgs::Marker marker;
         marker.header.frame_id = "world";

@@ -32,33 +32,35 @@
 #define _rng_h_
 
 
-// Includes
-// → STL
 #include <random>
 
 
-class RandomNumberGenerator {
-	// Constructor and Destructor
+/// -----------------------------------------------------------------
+/// \class RandomNumberGenerator
+/// \details Random number generation for various distributions
+/// -----------------------------------------------------------------
+class RandomNumberGenerator
+{
 protected:
-	RandomNumberGenerator();
+    RandomNumberGenerator();
 
 
-	// Singleton Design Pattern
-	#define RNG RandomNumberGenerator::getInstance()
+    // Singleton Design Pattern
+#define RNG RandomNumberGenerator::getInstance()
 protected:
-	static RandomNumberGenerator* instance;
+    static RandomNumberGenerator* instance;
 public:
-	static RandomNumberGenerator& getInstance();
+    static RandomNumberGenerator& getInstance();
 
 
-	// Operators
+    // Operators
 public:
-	std::default_random_engine& operator()();
+    std::default_random_engine& operator() ();
 
 
-	// Attributes
+    // Attributes
 public:
-	std::default_random_engine randomEngine;
+    std::default_random_engine randomEngine;
 };
 
 #endif

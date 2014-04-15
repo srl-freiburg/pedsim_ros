@@ -28,44 +28,41 @@
 * \author Billy Okal <okal@cs.uni-freiburg.de>
 * \author Sven Wehner <mail@svenwehner.de>
 */
+
 #ifndef _waypoint_h_
 #define _waypoint_h_
 
-// Includes
-// → SGDiCoP
+
 #include <pedsim_simulator/element/scenarioelement.h>
-// → PedSim
 #include <libpedsim/ped_waypoint.h>
 
 
-class Waypoint : public ScenarioElement, public Ped::Twaypoint {
-	Q_OBJECT
+class Waypoint : public ScenarioElement, public Ped::Twaypoint
+{
+    Q_OBJECT
 
-	// Constructor and Destructor
 public:
-	Waypoint(const QString& nameIn);
-	Waypoint(const QString& nameIn, const Ped::Tvector& positionIn);
-	virtual ~Waypoint();
+    Waypoint ( const QString& nameIn );
+    Waypoint ( const QString& nameIn, const Ped::Tvector& positionIn );
+    virtual ~Waypoint();
 
-
-	// Signals
+    // Signals
 signals:
-	void positionChanged(double x, double y);
+    void positionChanged ( double x, double y );
 
-
-	// Methods
+    // Methods
 public:
-	QString getName() const;
-	// → Ped::Twaypoint Overrides
-	virtual void setPosition(double xIn, double yIn);
-	virtual void setPosition(const Ped::Tvector& posIn);
-	virtual void setx(double xIn);
-	virtual void sety(double yIn);
+    QString getName() const;
+    // → Ped::Twaypoint Overrides
+    virtual void setPosition ( double xIn, double yIn );
+    virtual void setPosition ( const Ped::Tvector& posIn );
+    virtual void setx ( double xIn );
+    virtual void sety ( double yIn );
 
 
-	// Attributes
+    // Attributes
 protected:
-	const QString name;
+    const QString name;
 };
 
 #endif
