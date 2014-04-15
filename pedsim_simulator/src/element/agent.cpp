@@ -54,15 +54,6 @@ Agent::Agent()
     stateMachine = new AgentStateMachine ( this );
     // → group
     group = nullptr;
-
-    // connect signals
-    // TODO - remove signals
-    connect ( &CONFIG, SIGNAL ( forceFactorObstacleChanged ( double ) ), this, SLOT ( onForceFactorObstacleChanged (
-double ) ) );
-    connect ( &CONFIG, SIGNAL ( forceSigmaObstacleChanged ( double ) ), this, SLOT ( onForceSigmaObstacleChanged (
-double ) ) );
-    connect ( &CONFIG, SIGNAL ( forceFactorSocialChanged ( double ) ), this, SLOT ( onForceFactorSocialChanged ( double
-) ) );
 }
 
 Agent::~Agent()
@@ -75,23 +66,6 @@ Agent::~Agent()
     }
 }
 
-void Agent::onForceFactorObstacleChanged ( double valueIn )
-{
-    // update force factor
-    Ped::Tagent::setForceFactorObstacle ( CONFIG.forceObstacle );
-}
-
-void Agent::onForceSigmaObstacleChanged ( double valueIn )
-{
-    // update force sigma
-    Ped::Tagent::forceSigmaObstacle = valueIn;
-}
-
-void Agent::onForceFactorSocialChanged ( double valueIn )
-{
-    // update force factor
-    Ped::Tagent::setForceFactorSocial ( CONFIG.forceSocial );
-}
 
 /// Calculates the desired force. Same as in lib, but adds graphical representation
 Ped::Tvector Agent::desiredForce()
@@ -151,7 +125,7 @@ Ped::Tvector Agent::myForce ( Ped::Tvector desired ) const
         // → sanity checks
         if ( !currentForce.isValid() )
         {
-// 			WARN_LOG("Invalid Force: %1", force->getName());
+			ROS_DEBUG("Invalid Force: %s", force->getName().toStdString().c_str());
             currentForce = Ped::Tvector();
         }
         forceValue += currentForce;

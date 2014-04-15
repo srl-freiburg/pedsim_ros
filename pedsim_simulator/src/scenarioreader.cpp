@@ -51,7 +51,7 @@ ScenarioReader::ScenarioReader()
 
 bool ScenarioReader::readFromFile ( const QString& filename )
 {
-// 	ROS_DEBUG("Loading scenario file '%1'.", filename);
+	ROS_DEBUG("Loading scenario file '%s'.", filename.toStdString().c_str());
 
     // open file
     QFile file ( filename );
@@ -73,8 +73,7 @@ bool ScenarioReader::readFromFile ( const QString& filename )
     // check for errors
     if ( xmlReader.hasError() )
     {
-// 		ROS_DEBUG("Error while reading scenario file: %s (line: %s)", xmlReader.errorString().toStdString().c_str(),
-// xmlReader.lineNumber().toStdString().c_str());
+		// ROS_DEBUG("Error while reading scenario file: %s (line: %s)", xmlReader.errorString().toStdString().c_str(), xmlReader.lineNumber().toStdString().c_str());
         return false;
     }
 
@@ -186,7 +185,7 @@ void ScenarioReader::processData()
         else
         {
             // inform the user about invalid elements
-// 			ROS_DEBUG("Unknown element: <%s>", elementName.toStdString());
+			ROS_DEBUG("Unknown element: <%s>", elementName.toStdString().c_str());
         }
     }
     else if ( xmlReader.isEndElement() )

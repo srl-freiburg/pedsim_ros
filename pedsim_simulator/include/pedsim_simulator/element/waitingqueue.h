@@ -32,15 +32,11 @@
 #ifndef _waitingqueue_h_
 #define _waitingqueue_h_
 
-// Includes
-// → SGDiCoP
+
 #include <pedsim_simulator/element/waypoint.h>
-
-// → PedSim
 #include <libpedsim/ped_vector.h>
-
-// → Qt
 #include <QPointF>
+#include <ros/ros.h>
 
 
 // Forward Declarations

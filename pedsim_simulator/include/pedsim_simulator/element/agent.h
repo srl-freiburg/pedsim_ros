@@ -35,6 +35,7 @@
 #include <pedsim_simulator/element/scenarioelement.h>
 #include <libpedsim/ped_agent.h>
 #include <QGraphicsRectItem>
+#include <ros/ros.h>
 
 // Forward Declarations
 class AgentGroup;
@@ -67,15 +68,6 @@ signals:
 	void typeChanged(int type);
 	void forceAdded(QString name);
 	void forceRemoved(QString name);
-
-
-	// Slots
-public slots:
-	// → Forces
-	void onForceFactorObstacleChanged(double valueIn);
-	void onForceSigmaObstacleChanged(double valueIn);
-	void onForceFactorSocialChanged(double valueIn);
-
 
 	// Methods
 public:
@@ -152,7 +144,7 @@ protected:
 	// → force
 	QList<Force*> forces;
 	QStringList disabledForces;
-	
+
 	// → waypoint planner
 	WaypointPlanner* waypointplanner;
 };
