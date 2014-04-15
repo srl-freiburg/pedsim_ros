@@ -32,7 +32,6 @@
 #ifndef _scenarioelement_h_
 #define _scenarioelement_h_
 
-// Includes
 #include <QObject>
 
 

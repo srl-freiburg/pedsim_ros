@@ -32,12 +32,9 @@
 #ifndef _attractionarea_h_
 #define _attractionarea_h_
 
-// Includes
-// → SGDiCoP
+
 #include <pedsim_simulator/element/scenarioelement.h>
-// → PedSim
 #include <libpedsim/ped_vector.h>
-// → Qt
 #include <QSizeF>
 
 

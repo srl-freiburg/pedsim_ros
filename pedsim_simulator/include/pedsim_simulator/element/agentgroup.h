@@ -32,12 +32,9 @@
 #ifndef _agentgroup_h_
 #define _agentgroup_h_
 
-// Includes
-// → SGDiCoP
+
 #include <pedsim_simulator/element/scenarioelement.h>
-// → PedSim
 #include <libpedsim/ped_vector.h>
-// → Qt
 #include <QGraphicsItemGroup>
 #include <QGraphicsLineItem>
 #include <QGraphicsEllipseItem>

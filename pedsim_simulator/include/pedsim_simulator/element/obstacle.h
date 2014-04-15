@@ -32,12 +32,9 @@
 #ifndef _obstacle_h_
 #define _obstacle_h_
 
-// Includes
-// → SGDiCoP
+
 #include <pedsim_simulator/element/scenarioelement.h>
-// → PedSim
 #include <libpedsim/ped_obstacle.h>
-// → Qt
 #include <QGraphicsLineItem>
 
 

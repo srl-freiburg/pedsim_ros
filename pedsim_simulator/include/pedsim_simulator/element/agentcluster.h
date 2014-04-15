@@ -32,8 +32,6 @@
 #ifndef _agentcluster_h_
 #define _agentcluster_h_
 
-// Includes
-// → SGDiCoP
 #include <pedsim_simulator/element/agent.h>
 
 

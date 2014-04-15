@@ -32,10 +32,8 @@
 #ifndef _queueingwaypoint_h_
 #define _queueingwaypoint_h_
 
-// Includes
-// → SGDiCoP
+
 #include <pedsim_simulator/element/waypoint.h>
-// → Qt
 #include <QPointF>
 
 

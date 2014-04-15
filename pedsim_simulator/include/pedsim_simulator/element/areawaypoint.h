@@ -32,10 +32,7 @@
 #ifndef _areawaypoint_h_
 #define _areawaypoint_h_
 
-// Includes
-// → SGDiCoP
 #include <pedsim_simulator/element/waypoint.h>
-// → Qt
 #include <QPointF>
 
 
