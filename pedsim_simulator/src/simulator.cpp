@@ -59,6 +59,7 @@ bool Simulator::initializeSimulation()
     pub_all_agents_ = nh_.advertise<pedsim_msgs::AllAgentsState> ( "dynamic_obstacles", 0 );
     pub_attractions_ = nh_.advertise<visualization_msgs::Marker> ( "attractions", 0 );
     pub_queues_ = nh_.advertise<visualization_msgs::Marker> ( "queues", 0 );
+	pub_waypoints_ = nh_.advertise<visualization_msgs::Marker> ( "waypoints", 0 );
 
     /// setup any pointers
     orientation_handler_.reset ( new OrientationHandler() );
@@ -483,9 +484,35 @@ void Simulator::publishWalls()
 /// -----------------------------------------------------------------
 void Simulator::publishAttractions()
 {
-	// TODO - show also the waypoints
+	/// waypoints
+	BOOST_FOREACH ( Waypoint* wp, SCENE.getWaypoints() )
+    {
+		visualization_msgs::Marker marker;
+        marker.header.frame_id = "world";
+        marker.header.stamp = ros::Time();
+        marker.ns = "pedsim";
+        marker.id = wp->getId();
 
+        marker.color.a = 0.55;
+        marker.color.r = 1.0;
+        marker.color.g = 0.0;
+        marker.color.b = 1.0;
 
+		// TODO - get radius information from waypoints
+        marker.scale.x = 5.0;
+        marker.scale.y = 5.0;
+        marker.scale.z = 0.02;
+
+        marker.pose.position.x = wp->getPosition().x;
+        marker.pose.position.y = wp->getPosition().y;
+        marker.pose.position.z = marker.scale.z / 2.0;
+
+        marker.type = visualization_msgs::Marker::CYLINDER;
+		
+		pub_waypoints_.publish ( marker );
+    }
+
+    /// publish attractions (shopping areas etc)
     BOOST_FOREACH ( AttractionArea* atr, SCENE.getAttractions() )
     {
         visualization_msgs::Marker marker;

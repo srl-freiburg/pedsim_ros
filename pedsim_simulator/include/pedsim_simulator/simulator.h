@@ -58,6 +58,7 @@
 #include <pedsim_simulator/scenarioreader.h>
 #include <pedsim_simulator/agentstatemachine.h>
 #include <pedsim_simulator/element/attractionarea.h>
+#include <pedsim_simulator/element/waypoint.h>
 #include <pedsim_simulator/config.h>
 
 
@@ -97,6 +98,7 @@ private:
 	ros::Publisher pub_all_agents_;
 	ros::Publisher pub_attractions_;
 	ros::Publisher pub_queues_;
+	ros::Publisher pub_waypoints_;
 	
 	// subscribers
     ros::Subscriber sub_robot_command_;
