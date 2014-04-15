@@ -91,6 +91,11 @@ bool Simulator::initializeSimulation()
     return true;
 }
 
+
+/// -----------------------------------------------------------------
+/// \brief loadConfigParameters
+/// \details Load configuration parameter from ROS parameter server
+/// -----------------------------------------------------------------
 void Simulator::loadConfigParameters()
 {
     double cell_size;
@@ -110,7 +115,7 @@ void Simulator::loadConfigParameters()
 
 /// -----------------------------------------------------------------
 /// \brief runSimulation
-/// \details Hub of the application 
+/// \details Hub of the application
 /// -----------------------------------------------------------------
 void Simulator::runSimulation()
 {
