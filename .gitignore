@@ -19,3 +19,5 @@ CMakelists.txt.user
 
 .kdev4/
 *.kdev4
+doc
+doc/*
