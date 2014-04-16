@@ -154,8 +154,6 @@ void ScenarioReader::processData()
             agentCluster->setType ( static_cast<Ped::Tagent::AgentType> ( type ) );
             SCENE.addAgentCluster ( agentCluster );
             currentAgents = agentCluster;
-
-            std::cout << "Added agent cluster size " << n << std::endl;
         }
         // → agent's inner elements
         else if ( elementName == "addwaypoint" )

@@ -349,9 +349,9 @@ void Simulator::publishGroupVisuals()
         center_marker.color.g = 0.0;
         center_marker.color.b = 1.0;
 
-        center_marker.scale.x = 0.1;
-        center_marker.scale.y = 0.1;
-        center_marker.scale.z = 0.1;
+        center_marker.scale.x = 0.05;
+        center_marker.scale.y = 0.05;
+        center_marker.scale.z = 0.05;
 
         center_marker.pose.position.x = gcom.x;
         center_marker.pose.position.y = gcom.y;
@@ -385,9 +385,9 @@ void Simulator::publishGroupVisuals()
             marker.color.g = 0.0;
             marker.color.b = 1.0;
 
-            marker.scale.x = 0.1;
-            marker.scale.y = 0.1;
-            marker.scale.z = 0.1;
+            marker.scale.x = 0.05;
+            marker.scale.y = 0.05;
+            marker.scale.z = 0.05;
 
             marker.type = visualization_msgs::Marker::ARROW;
 
@@ -493,14 +493,14 @@ void Simulator::publishAttractions()
         marker.ns = "pedsim";
         marker.id = wp->getId();
 
-        marker.color.a = 0.55;
+        marker.color.a = 0.25;
         marker.color.r = 1.0;
         marker.color.g = 0.0;
         marker.color.b = 1.0;
 
 		// TODO - get radius information from waypoints
-        marker.scale.x = 5.0;
-        marker.scale.y = 5.0;
+        marker.scale.x = 3.0;
+        marker.scale.y = 3.0;
         marker.scale.z = 0.02;
 
         marker.pose.position.x = wp->getPosition().x;
@@ -521,7 +521,7 @@ void Simulator::publishAttractions()
         marker.ns = "pedsim";
         marker.id = atr->getId();
 
-        marker.color.a = 0.25;
+        marker.color.a = 0.45;
         marker.color.r = 1.0;
         marker.color.g = 1.0;
         marker.color.b = 0.0;
