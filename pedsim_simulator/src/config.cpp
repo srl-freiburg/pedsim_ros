@@ -29,10 +29,7 @@
 * \author Sven Wehner <mail@svenwehner.de>
 */
 
-// Includes
 #include <pedsim_simulator/config.h>
-// → Qt
-#include <QSettings>
 #include <QStringList>
 
 
@@ -87,9 +84,6 @@ Config& Config::getInstance()
 void Config::setForceVisibility ( const QString& forceIn, bool visibleIn )
 {
     forceVisibilityMap[forceIn] = visibleIn;
-
-    // inform users
-    emit forceVisibilityChanged ( forceIn, visibleIn );
 }
 
 void Config::setTimeStepSize ( double valueIn )

@@ -38,93 +38,92 @@
 #include <pedsim_simulator/utilities.h>
 
 
-class Config : public QObject {
-	Q_OBJECT
+class Config : public QObject
+{
+    Q_OBJECT
 
 protected:
-	Config(QObject* parent = 0);
+    Config ( QObject* parent = 0 );
 
-	// Singleton Design Pattern
-	#define CONFIG Config::getInstance()
+    // Singleton Design Pattern
+#define CONFIG Config::getInstance()
 protected:
-	static Config* instance;
+    static Config* instance;
 public:
-	static Config& getInstance();
+    static Config& getInstance();
 
 
-	// Signals
+    // Signals
 signals:
-	// TODO - eliminate this
-	void forceVisibilityChanged(QString force, bool show);
-
-	// → Simulation
-	void timeStepSizeChanged(double value);
-	// → Forces
-	void forceFactorChanged(QString name, double value);
-	void forceFactorObstacleChanged(double value);
-	void forceSigmaObstacleChanged(double value);
-	void forceFactorSocialChanged(double value);
-	void forceFactorGroupGazeChanged(double value);
-	void forceFactorGroupCoherenceChanged(double value);
-	void forceFactorGroupRepulsionChanged(double value);
-	void forceFactorRandomChanged(double value);
-	void forceFactorAlongWallChanged(double value);
+    // → Simulation
+    void timeStepSizeChanged ( double value );
+    // → Forces
+    void forceFactorChanged ( QString name, double value );
+    void forceFactorObstacleChanged ( double value );
+    void forceSigmaObstacleChanged ( double value );
+    void forceFactorSocialChanged ( double value );
+    void forceFactorGroupGazeChanged ( double value );
+    void forceFactorGroupCoherenceChanged ( double value );
+    void forceFactorGroupRepulsionChanged ( double value );
+    void forceFactorRandomChanged ( double value );
+    void forceFactorAlongWallChanged ( double value );
 
 
-	// Slots
+    // Slots
 public slots:
-	void setForceVisibility(const QString& forceIn, bool visibleIn);
-	void setSimSpeed(int valueIn);
-	void decreaseSimSpeed();
-	void increaseSimSpeed();
-	void halveSimSpeed();
-	void doubleSimSpeed();
-	void setTimeStepSize(double valueIn);
-	// → Forces
-	void setObstacleForce(double valueIn);
-	void setObstacleSigma(double valueIn);
-	void setSocialForce(double valueIn);
-	void setGroupGazeForce(double valueIn);
-	void setGroupCoherenceForce(double valueIn);
-	void setGroupRepulsionForce(double valueIn);
-	void setRandomForce(double valueIn);
-	void setAlongWallForce(double valueIn);
+    void setForceVisibility ( const QString& forceIn, bool visibleIn );
+    void setSimSpeed ( int valueIn );
+    void decreaseSimSpeed();
+    void increaseSimSpeed();
+    void halveSimSpeed();
+    void doubleSimSpeed();
+    void setTimeStepSize ( double valueIn );
+    // → Forces
+    void setObstacleForce ( double valueIn );
+    void setObstacleSigma ( double valueIn );
+    void setSocialForce ( double valueIn );
+    void setGroupGazeForce ( double valueIn );
+    void setGroupCoherenceForce ( double valueIn );
+    void setGroupRepulsionForce ( double valueIn );
+    void setRandomForce ( double valueIn );
+    void setAlongWallForce ( double valueIn );
 
 
-	// Methods
+    // Methods
 public:
-	QMap<QString,double> getForceMap() const;
-	bool isForceVisible(const QString& forceNameIn) const;
+    QMap<QString,double> getForceMap() const;
+    bool isForceVisible ( const QString& forceNameIn ) const;
 
-	//TODO: make member variables protected and add getter functions
+    //TODO: make member variables protected and add getter functions
+	//TODO - add distribution parameters here
 
 
-	// Attributes
+    // Attributes
 public:
-	// → Visibility of individual forces
-	QMap<QString,bool> forceVisibilityMap;
-	// → Simulation
-	double timeStepSize;
-	int simSpeed;
-	// → Forces
-	double forceObstacle;
-	double sigmaObstacle;
-	double forceSocial;
-	double forceGroupGaze;
-	double forceGroupCoherence;
-	double forceGroupRepulsion;
-	double forceRandom;
-	double forceAlongWall;
+    // → Visibility of individual forces
+    QMap<QString,bool> forceVisibilityMap;
+    // → Simulation
+    double timeStepSize;
+    int simSpeed;
+    // → Forces
+    double forceObstacle;
+    double sigmaObstacle;
+    double forceSocial;
+    double forceGroupGaze;
+    double forceGroupCoherence;
+    double forceGroupRepulsion;
+    double forceRandom;
+    double forceAlongWall;
 
-	// robot control
-	RobotMode robot_mode;
-	int robot_wait_time;
+    // robot control
+    RobotMode robot_mode;
+    int robot_wait_time;
 
-	// enable/disable groups behaviour
-	bool groups_enabled;
+    // enable/disable groups behaviour
+    bool groups_enabled;
 
-	// cells
-	double cell_width;
+    // cells
+    double cell_width;
     double cell_height;
 };
 
