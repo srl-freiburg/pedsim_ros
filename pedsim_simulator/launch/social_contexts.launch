@@ -1,7 +1,7 @@
 <launch>
   <!-- params -->
   <param name="/simulator/scene_file" value="$(find pedsim_simulator)scenarios/social_contexts.xml" type="string"/>
-  <!-- <rosparam command="load" file="$(find momo)/config/demo_params.yaml" /> -->
+  <rosparam command="load" file="$(find momo)/config/context_params.yaml" />
 
   <!-- other parameters -->
   <param name="/pedsim/update_type" value="oracle" type="string"/>
@@ -26,8 +26,8 @@
 
 
   <!-- planning node -->
-  <!-- <node name="momo_node" pkg="momo" type="momo_ros.py" respawn="false" output="log"/> -->
+  <node name="momo_node" pkg="momo" type="momo_ros.py" respawn="false" output="log"/>
 
   <!-- Keyboard teleoperation node -->
-  <node name="teleop" pkg="pedsim_simulator" type="teleop" respawn="false" output="log" />
+  <!-- <node name="teleop" pkg="pedsim_simulator" type="teleop" respawn="false" output="log" /> -->
 </launch>

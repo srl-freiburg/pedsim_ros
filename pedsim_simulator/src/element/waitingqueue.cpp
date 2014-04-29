@@ -33,6 +33,7 @@
 #include <pedsim_simulator/rng.h>
 #include <pedsim_simulator/scene.h>
 #include <pedsim_simulator/element/agent.h>
+#include <pedsim_simulator/config.h>
 
 
 WaitingQueue::WaitingQueue ( const QString& nameIn, Ped::Tvector positionIn, Ped::Tangle directionIn )
@@ -40,7 +41,7 @@ WaitingQueue::WaitingQueue ( const QString& nameIn, Ped::Tvector positionIn, Ped
 {
     // initialize values
     dequeueTime = INFINITY;
-    waitDurationLambda = 0.9;
+    waitDurationLambda = CONFIG.wait_time_lambda;
 
     // connect signals
     connect ( &SCENE, SIGNAL ( sceneTimeChanged ( double ) ), this, SLOT ( onTimeChanged ( double ) ) );

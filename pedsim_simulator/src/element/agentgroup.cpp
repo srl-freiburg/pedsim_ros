@@ -121,7 +121,7 @@ QList<AgentGroup*> AgentGroup::divideAgents ( const QList<Agent*>& agentsIn )
 
     // initialize Poisson distribution
     // TODO - put this in a init config fle
-    const double poissonLambda = 1.5;
+    const double poissonLambda = CONFIG.group_size_lambda;
     // → initialize distribution
     std::poisson_distribution<int> distribution ( poissonLambda );
 
@@ -329,7 +329,7 @@ Ped::Tvector AgentGroup::updateCenterOfMass()
 	{
         com += member->getPosition();
 	}
-	
+
     int groupSize = members.size();
     com /= groupSize;
 

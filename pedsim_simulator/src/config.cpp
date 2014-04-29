@@ -70,6 +70,11 @@ Config::Config ( QObject* parent )
     robot_wait_time = 100;
 
 	groups_enabled = true;
+
+
+    // distribution parameters
+    group_size_lambda = 1.5;
+    wait_time_lambda = 0.5;
 }
 
 Config& Config::getInstance()
