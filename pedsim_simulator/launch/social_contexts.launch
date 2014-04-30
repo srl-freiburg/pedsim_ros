@@ -1,6 +1,19 @@
 <launch>
   <!-- params -->
   <param name="/simulator/scene_file" value="$(find pedsim_simulator)scenarios/social_contexts.xml" type="string"/>
+
+  <!-- specific social contexts -->
+  <!-- <param name="/simulator/scene_file" value="$(find pedsim_simulator)scenarios/contexts/queueing.xml" type="string"/> -->
+  <param name="/simulator/scene_file" value="$(find pedsim_simulator)scenarios/contexts/shopping.xml" type="string"/>
+  <!-- <param name="/simulator/scene_file" value="$(find pedsim_simulator)scenarios/social_contexts.xml" type="string"/> -->
+  <!-- <param name="/simulator/scene_file" value="$(find pedsim_simulator)scenarios/social_contexts.xml" type="string"/> -->
+  <!-- <param name="/simulator/scene_file" value="$(find pedsim_simulator)scenarios/social_contexts.xml" type="string"/> -->
+  <!-- <param name="/simulator/scene_file" value="$(find pedsim_simulator)scenarios/social_contexts.xml" type="string"/> -->
+  <!-- <param name="/simulator/scene_file" value="$(find pedsim_simulator)scenarios/social_contexts.xml" type="string"/> -->
+  <!-- <param name="/simulator/scene_file" value="$(find pedsim_simulator)scenarios/social_contexts.xml" type="string"/> -->
+  <!-- <param name="/simulator/scene_file" value="$(find pedsim_simulator)scenarios/social_contexts.xml" type="string"/> -->
+
+  <!-- additional parameters for driving the robot -->
   <rosparam command="load" file="$(find momo)/config/context_params.yaml" />
 
   <!-- other parameters -->
@@ -26,8 +39,8 @@
 
 
   <!-- planning node -->
-  <node name="momo_node" pkg="momo" type="momo_ros.py" respawn="false" output="log"/>
+  <!-- <node name="momo_node" pkg="momo" type="momo_ros.py" respawn="false" output="log"/> -->
 
   <!-- Keyboard teleoperation node -->
-  <!-- <node name="teleop" pkg="pedsim_simulator" type="teleop" respawn="false" output="log" /> -->
+  <node name="teleop" pkg="pedsim_simulator" type="teleop" respawn="false" output="log" />
 </launch>
