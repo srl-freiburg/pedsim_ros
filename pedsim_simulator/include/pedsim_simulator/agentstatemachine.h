@@ -32,8 +32,6 @@
 #ifndef _agentstatemachine_h_
 #define _agentstatemachine_h_
 
-// Includes
-// → Qt
 #include <QObject>
 
 // Forward Declarations
@@ -51,12 +49,12 @@ class AgentStateMachine : public QObject {
 	// Enums
 public:
 	typedef enum {
-		StateNone,
-		StateWaiting,
-		StateQueueing,
-		StateWalking,
-		StateGroupWalking,
-		StateShopping
+		StateNone = 0,
+		StateWaiting = 1,
+		StateQueueing = 2,
+		StateWalking = 3,
+		StateGroupWalking = 4,
+		StateShopping = 5
 	} AgentState;
 	Q_ENUMS(AgentState)
 

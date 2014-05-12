@@ -60,6 +60,7 @@
 #include <pedsim_simulator/element/attractionarea.h>
 #include <pedsim_simulator/element/waypoint.h>
 #include <pedsim_simulator/config.h>
+#include <pedsim_simulator/agentstatemachine.h>
 
 
 class Simulator
@@ -73,12 +74,12 @@ public:
 	void loadConfigParameters();
 
 	/// publishers
-	void publishAgentVisuals();
+	void publishAgents();
 	void publishGroupVisuals();
 	void publishObstacles();
 	void publishWalls();
 	void publishAttractions();
-	
+
 	/// subscriber helpers
     void callbackRobotCommand ( const pedsim_msgs::AgentState::ConstPtr &msg );
 
@@ -86,7 +87,7 @@ private:
 
 	// robot agent
 	Agent* robot_;
-	
+
 	ros::NodeHandle nh_;
 
 	// publishers
@@ -99,7 +100,7 @@ private:
 	ros::Publisher pub_attractions_;
 	ros::Publisher pub_queues_;
 	ros::Publisher pub_waypoints_;
-	
+
 	// subscribers
     ros::Subscriber sub_robot_command_;
 

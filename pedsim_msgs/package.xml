@@ -1,14 +1,12 @@
 <?xml version="1.0"?>
 <package>
   <name>pedsim_msgs</name>
-  <version>0.0.1</version>
-  <description>The pedsim_msgs package: contains messages and services for pedsim</description>
+  <version>0.0.2</version>
+  <description>The pedsim_msgs package: contains messages for pedsim</description>
 
   <maintainer email="okal@cs.uni-freiburg.de">Billy Okal</maintainer>
 
   <license>BSD</license>
-
-  <!-- <url type="website">http://ros.org/wiki/pedsim_msgs</url> -->
 
   <buildtool_depend>catkin</buildtool_depend>
 

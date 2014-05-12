@@ -136,7 +136,7 @@ void Simulator::runSimulation()
 
         SCENE.moveAllAgents();
 
-        publishAgentVisuals();
+        publishAgents();
 
         publishGroupVisuals();
 
@@ -183,10 +183,10 @@ void Simulator::callbackRobotCommand ( const pedsim_msgs::AgentState::ConstPtr &
 
 
 /// -----------------------------------------------------------------
-/// \brief publishAgentVisuals
+/// \brief publishAgents
 /// \details publish agent status information and the visual markers
 /// -----------------------------------------------------------------
-void Simulator::publishAgentVisuals()
+void Simulator::publishAgents()
 {
     // minor optimization with arrays for speedup
     visualization_msgs::MarkerArray marker_array;
@@ -310,6 +310,9 @@ void Simulator::publishAgentVisuals()
         state.velocity.x = a->getvx();
         state.velocity.y = a->getvy();
         state.velocity.z = a->getvz();
+
+        AgentStateMachine::AgentState sc =  a->getStateMachine()->getCurrentState();
+        state.social_state = static_cast<size_t>( sc );
 
         all_status.agent_states.push_back ( state );
     }
@@ -508,7 +511,7 @@ void Simulator::publishAttractions()
         marker.pose.position.z = marker.scale.z / 2.0;
 
         marker.type = visualization_msgs::Marker::CYLINDER;
-		
+
 		pub_waypoints_.publish ( marker );
     }
 
