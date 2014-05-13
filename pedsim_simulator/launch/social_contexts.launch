@@ -1,9 +1,9 @@
 <launch>
   <!-- params -->
-  <!-- <param name="/simulator/scene_file" value="$(find pedsim_simulator)scenarios/social_contexts.xml" type="string"/> -->
+  <param name="/simulator/scene_file" value="$(find pedsim_simulator)scenarios/social_contexts.xml" type="string"/>
 
   <!-- specific social contexts -->
-  <param name="/simulator/scene_file" value="$(find pedsim_simulator)scenarios/contexts/queueing.xml" type="string"/>
+  <!-- <param name="/simulator/scene_file" value="$(find pedsim_simulator)scenarios/contexts/queueing.xml" type="string"/> -->
   <!-- <param name="/simulator/scene_file" value="$(find pedsim_simulator)scenarios/contexts/shopping.xml" type="string"/> -->
   <!-- <param name="/simulator/scene_file" value="$(find pedsim_simulator)scenarios/contexts/standing.xml" type="string"/> -->
   <!-- <param name="/simulator/scene_file" value="$(find pedsim_simulator)scenarios/contexts/flow.xml" type="string"/> -->
