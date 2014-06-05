@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--This scenario file was created by SGDiCoP on 2014-06-05T18:17:20-->
+<!--This scenario file was created by SGDiCoP on 2014-06-05T18:26:32-->
 <scenario>
     <!--Obstacles-->
     <obstacle x1="10" y1="0" x2="30" y2="0"/>
@@ -27,6 +27,7 @@
     <attraction id="lacoste" x="3" y="15" width="6" height="15" strength="5"/>
     <attraction id="thalia" x="57" y="16" width="6" height="10" strength="10"/>
     <!--Agents-->
+    <!--AgentClusters-->
     <agent x="1.67" y="28.23" n="1" dx="0" dy="0" type="2">
         <addwaypoint id="r0"/>
         <addwaypoint id="r1"/>
@@ -39,26 +40,57 @@
         <addwaypoint id="A"/>
         <addwaypoint id="B"/>
     </agent>
-    <!--AgentClusters-->
-    <agent x="10" y="36" n="15" dx="5" dy="5" type="0">
+    <agent x="10" y="36" n="25" dx="5" dy="5" type="0">
+        <addwaypoint id="r0"/>
         <addwaypoint id="E"/>
         <addwaypoint id="D"/>
         <addwaypoint id="decision"/>
         <addqueue id="kq"/>
         <addwaypoint id="C"/>
-        <addwaypoint id="A"/>
+        <addwaypoint id="B"/>
     </agent>
-    <agent x="5" y="-6" n="15" dx="5" dy="5" type="1">
+    <agent x="10" y="36" n="25" dx="5" dy="5" type="0">
+        <addwaypoint id="r0"/>
+        <addwaypoint id="E"/>
+        <addwaypoint id="D"/>
+        <addwaypoint id="decision"/>
+        <addwaypoint id="C"/>
+        <addwaypoint id="B"/>
+    </agent>
+
+    <agent x="5" y="3" n="25" dx="5" dy="5" type="1">
         <addwaypoint id="decision"/>
         <addqueue id="klm"/>
-        <addwaypoint id="A"/>
         <addwaypoint id="C"/>
         <addwaypoint id="D"/>
         <addwaypoint id="E"/>
         <addwaypoint id="A"/>
     </agent>
-    <agent x="46" y="13" n="10" dx="5" dy="5" type="3">
+    <agent x="5" y="3" n="25" dx="5" dy="5" type="1">
+        <addwaypoint id="decision"/>
+        <addwaypoint id="C"/>
+        <addwaypoint id="D"/>
+        <addwaypoint id="E"/>
+        <addwaypoint id="A"/>
+    </agent>
+
+    <agent x="46" y="13" n="15" dx="5" dy="5" type="3">
         <addwaypoint id="decision"/>
         <addwaypoint id="r4"/>
+    </agent>
+    <agent x="64" y="-3" n="25" dx="5" dy="5" type="1">
+        <addwaypoint id="decision"/>
+        <addqueue id="kq"/>
+        <addwaypoint id="C"/>
+        <addwaypoint id="B"/>
+        <addwaypoint id="E"/>
+        <addwaypoint id="D"/>
+    </agent>
+    <agent x="64" y="-3" n="25" dx="5" dy="5" type="1">
+        <addwaypoint id="decision"/>
+        <addwaypoint id="C"/>
+        <addwaypoint id="B"/>
+        <addwaypoint id="E"/>
+        <addwaypoint id="D"/>
     </agent>
 </scenario>

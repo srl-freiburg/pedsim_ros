@@ -136,13 +136,13 @@ void Teleop::keyLoop()
             ROS_DEBUG ( "LEFT" );
             angular_ = 1.0;
             dirty = true;
-            rot_angle_ += 30.0;
+            rot_angle_ += 15.0;
             break;
         case KEYCODE_R:
             ROS_DEBUG ( "RIGHT" );
             angular_ = -1.0;
             dirty = true;
-            rot_angle_ -= 30.0;
+            rot_angle_ -= 15.0;
             break;
         case KEYCODE_U:
             ROS_DEBUG ( "UP" );
