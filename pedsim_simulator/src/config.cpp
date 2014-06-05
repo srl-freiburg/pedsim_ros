@@ -67,13 +67,13 @@ Config::Config ( QObject* parent )
     cell_height = 1.0;
 
     robot_mode = SOCIAL_DRIVE;
-    robot_wait_time = 100;
+    robot_wait_time = 15;
 
 	groups_enabled = false;
 
     // distribution parameters
     group_size_lambda = 1.5;
-    wait_time_lambda = 0.5;
+    wait_time_lambda = 0.2;
 }
 
 Config& Config::getInstance()

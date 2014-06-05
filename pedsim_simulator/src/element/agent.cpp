@@ -201,7 +201,7 @@ void Agent::move ( double h )
     // elders rarely move
     if ( getType() == Ped::Tagent::ELDER )
     {
-        Ped::Tagent::setVmax ( 0.1 );
+        Ped::Tagent::setVmax ( 0.0 );
         Ped::Tagent::move ( h / 10.0 );
     }
 
