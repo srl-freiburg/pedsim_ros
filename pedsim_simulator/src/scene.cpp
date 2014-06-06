@@ -59,7 +59,7 @@ Scene::Scene ( QObject* parent )
 
     //TODO: create this dynamically according to scenario
 // 	QRect area(-50, -50, 500, 500);
-    QRect area ( -500, -500, 1000, 1000 );
+    QRect area ( -100, -100, 500, 500 );
 
     // we need to add a tree to the scene to be able to search for neighbours
     tree = new Ped::Ttree ( this, 0, area.x(), area.y(), area.width(), area.height() );

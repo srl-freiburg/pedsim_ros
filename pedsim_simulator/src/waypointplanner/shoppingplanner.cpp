@@ -62,6 +62,9 @@ void ShoppingPlanner::loseAttraction() {
 }
 
 bool ShoppingPlanner::setAgent(Agent* agentIn) {
+	// if (agentIn->getType() == 2)
+	// 	return false;
+
 	agent = agentIn;
 	return true;
 }
@@ -83,7 +86,7 @@ bool ShoppingPlanner::setAttraction(AttractionArea* attractionIn) {
 Waypoint* ShoppingPlanner::getCurrentWaypoint() {
 	if(hasCompletedWaypoint())
 		currentWaypoint = getNextWaypoint();
-	
+
 	return currentWaypoint;
 }
 

@@ -62,8 +62,8 @@ Teleop::Teleop() :
     angular_ ( 0 ),
     l_scale_ ( 2.0 ),
     a_scale_ ( 2.0 ),
-    rot_angle_ ( 0.0 ),
-    robot_speed ( 1.2 )
+    rot_angle_ ( 90.0 ),
+    robot_speed ( 0.8 )
 {
     nh_.param ( "scale_angular", a_scale_, a_scale_ );
     nh_.param ( "scale_linear", l_scale_, l_scale_ );
