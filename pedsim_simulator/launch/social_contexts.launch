@@ -1,11 +1,11 @@
 <launch>
   <!-- params -->
-  <!-- <param name="/simulator/scene_file" value="$(find pedsim_simulator)scenarios/social_contexts.xml" type="string"/> -->
+  <param name="/simulator/scene_file" value="$(find pedsim_simulator)scenarios/social_contexts.xml" type="string"/>
 
   <!-- specific social contexts -->
   <!-- <param name="/simulator/scene_file" value="$(find pedsim_simulator)scenarios/contexts/queueing.xml" type="string"/> -->
   <!-- <param name="/simulator/scene_file" value="$(find pedsim_simulator)scenarios/contexts/shopping.xml" type="string"/> -->
-  <param name="/simulator/scene_file" value="$(find pedsim_simulator)scenarios/contexts/standing.xml" type="string"/>
+  <!-- <param name="/simulator/scene_file" value="$(find pedsim_simulator)scenarios/contexts/standing.xml" type="string"/> -->
   <!-- <param name="/simulator/scene_file" value="$(find pedsim_simulator)scenarios/contexts/flow.xml" type="string"/> -->
   <!-- <param name="/simulator/scene_file" value="$(find pedsim_simulator)scenarios/contexts/anti_flow.xml" type="string"/> -->
 
@@ -20,12 +20,12 @@
   <param name="/pedsim/target_type" value="2" type="int"/>
 
   <!-- robot control parameters -->
-  <param name="/pedsim/move_robot" value="15" type="double"/>
+  <!-- <param name="/pedsim/move_robot" value="15" type="double"/> -->
 
   <!-- FLOW and ANTI-FLOW -->
-  <!-- <param name="/pedsim/move_robot" value="3" type="double"/> -->
+  <param name="/pedsim/move_robot" value="3" type="double"/>
 
-  <param name="/pedsim/teleop_state" value="1.0" type="double"/>
+  <param name="/pedsim/teleop_state" value="0.0" type="double"/>
 
 
   <!-- tf broadcaster for aligning frames -->

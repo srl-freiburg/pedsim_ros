@@ -15,7 +15,7 @@
     <waypoint id="D" x="62" y="-1" r="3"/>
     <waypoint id="E" x="37" y="-5" r="3"/>
     <waypoint id="decision" x="30" y="10" r="3"/>
-    <queue id="klm" x="25" y="26" direction="90"/>
+    <queue id="klm" x="25" y="26" direction="95"/>
     <queue id="kq" x="35" y="26" direction="90"/>
     <waypoint id="r0" x="14" y="23" r="3"/>
     <waypoint id="r1" x="4" y="15" r="3"/>
@@ -24,22 +24,23 @@
     <waypoint id="r4" x="42" y="9" r="3"/>
     <!--Attractions-->
     <attraction id="info_zone" x="30" y="28" width="15" height="4" strength="0"/>
-    <attraction id="lacoste" x="3" y="15" width="6" height="15" strength="5"/>
-    <attraction id="thalia" x="57" y="16" width="6" height="10" strength="10"/>
+    <attraction id="lacoste" x="10" y="15" width="6" height="15" strength="5"/>
+    <attraction id="thalia" x="45" y="25" width="6" height="10" strength="10"/>
     <!--Agents-->
     <!--AgentClusters-->
     <agent x="1.67" y="28.23" n="1" dx="0" dy="0" type="2">
         <addwaypoint id="r0"/>
         <addwaypoint id="E"/>
-        <addwaypoint id="A"/>
-        <addwaypoint id="r1"/>
+        <!-- <addwaypoint id="A"/> -->
+        <!-- <addwaypoint id="r1"/> -->
         <addwaypoint id="r2"/>
-        <addwaypoint id="r0"/>
+        <addwaypoint id="C"/>
+        <!-- <addwaypoint id="r0"/> -->
         <addwaypoint id="r3"/>
         <addwaypoint id="r4"/>
         <addwaypoint id="D"/>
         <addwaypoint id="E"/>
-        <addwaypoint id="A"/>
+        <!-- <addwaypoint id="A"/> -->
         <addwaypoint id="B"/>
     </agent>
     <agent x="10" y="36" n="25" dx="5" dy="5" type="0">

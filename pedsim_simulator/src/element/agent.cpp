@@ -192,7 +192,16 @@ void Agent::move ( double h )
             Ped::Tagent::move ( h );
         }
 	}
-	else if ( getType() != Ped::Tagent::ROBOT || CONFIG.robot_mode == SOCIAL_DRIVE )
+    else if ( getType() == Ped::Tagent::ROBOT && CONFIG.robot_mode == SOCIAL_DRIVE )
+    {
+        Ped::Tagent::setForceFactorSocial ( CONFIG.forceSocial * 0.7 );
+        Ped::Tagent::setForceFactorObstacle ( 350 );
+        Ped::Tagent::setForceFactorDesired ( 4.2 );
+
+        Ped::Tagent::setVmax ( 1.8 );
+        Ped::Tagent::move ( h );
+    }
+	else if ( getType() != Ped::Tagent::ROBOT )
 	{
 		// just move the agent via SF
 		Ped::Tagent::move ( h );
