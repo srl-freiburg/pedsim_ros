@@ -16,7 +16,7 @@
     <waypoint id="robot_start" x="4" y="4" r="2"/>
     <!--Attractions-->
     <!--Agents-->
-    <agent x="5" y="10" n="1" dx="0" dy="0" type="2">
+    <agent x="5" y="6" n="1" dx="0" dy="0" type="2">
         <!-- <addwaypoint id="robot_start"/>
         <addwaypoint id="robot_goal"/> -->
         <addwaypoint id="enter_starbucksky"/>
@@ -25,7 +25,7 @@
         <addwaypoint id="robot_start"/>
     </agent>
     <!--AgentClusters-->
-    <agent x="4" y="4" n="30" dx="3" dy="3" type="0">
+    <agent x="4" y="4" n="50" dx="3" dy="3" type="0">
         <addwaypoint id="enter_starbucksky"/>
         <addwaypoint id="robot_goal"/>
         <addwaypoint id="enter_bookshop"/>

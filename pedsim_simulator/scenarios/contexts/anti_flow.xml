@@ -25,21 +25,21 @@
         <addwaypoint id="robot_start"/>
     </agent>
     <!--AgentClusters-->
-    <agent x="25" y="25" n="15" dx="3" dy="3" type="0">
+    <agent x="25" y="25" n="40" dx="3" dy="3" type="0">
         <addwaypoint id="enter_starbucksky"/>
         <addwaypoint id="robot_start"/>
         <addwaypoint id="enter_bookshop"/>
         <addwaypoint id="robot_goal"/>
     </agent>
 
-    <agent x="5" y="25" n="15" dx="3" dy="3" type="0">
+    <agent x="5" y="25" n="40" dx="3" dy="3" type="0">
         <addwaypoint id="robot_start"/>
         <addwaypoint id="enter_bookshop"/>
         <addwaypoint id="robot_goal"/>
         <addwaypoint id="enter_starbucksky"/>
     </agent>
 
-    <agent x="25" y="5" n="15" dx="3" dy="3" type="0">
+    <agent x="25" y="5" n="40" dx="3" dy="3" type="0">
         <addwaypoint id="robot_goal"/>
         <addwaypoint id="enter_starbucksky"/>
         <addwaypoint id="robot_start"/>

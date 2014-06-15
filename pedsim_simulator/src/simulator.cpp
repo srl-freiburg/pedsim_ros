@@ -52,8 +52,9 @@ bool Simulator::initializeSimulation()
 {
     /// setup ros publishers
     pub_agent_visuals_ = nh_.advertise<visualization_msgs::MarkerArray> ( "agents_markers", 0 );
-    pub_group_centers_ = nh_.advertise<visualization_msgs::Marker> ( "group_centers", 0 );
-    pub_group_lines_ = nh_.advertise<visualization_msgs::Marker> ( "group_lines", 0 );
+    pub_group_centers_ = nh_.advertise<visualization_msgs::MarkerArray> ( "group_centers", 0 );
+    pub_agent_arrows_ = nh_.advertise<visualization_msgs::MarkerArray> ( "agent_arrows", 0 );
+    pub_group_lines_ = nh_.advertise<visualization_msgs::MarkerArray> ( "group_lines", 0 );
     pub_obstacles_ = nh_.advertise<nav_msgs::GridCells> ( "static_obstacles", 0 );
     pub_walls_ = nh_.advertise<visualization_msgs::Marker> ( "walls", 0 );
     pub_all_agents_ = nh_.advertise<pedsim_msgs::AllAgentsState> ( "dynamic_obstacles", 0 );
@@ -190,6 +191,7 @@ void Simulator::publishAgents()
 {
     // minor optimization with arrays for speedup
     visualization_msgs::MarkerArray marker_array;
+    visualization_msgs::MarkerArray arrow_array;
 
     // status message
     pedsim_msgs::AllAgentsState all_status;
@@ -211,6 +213,25 @@ void Simulator::publishAgents()
         marker.pose.position.y = a->gety();
 		marker.action = 0;  // add or modify
 
+        // arrow
+        visualization_msgs::Marker arrow;
+        arrow.header.frame_id = "world";
+        arrow.header.stamp = ros::Time();
+        arrow.ns = "pedsim";
+        arrow.id = a->getId() + 3000;
+
+        arrow.pose.position.x = a->getx();
+        arrow.pose.position.y = a->gety();
+        arrow.action = 0;  // add or modify
+
+        arrow.color.a = 1.0;
+        arrow.color.r = 1.0;
+        arrow.color.g = 0.0;
+        arrow.color.b = 0.0;
+
+        arrow.scale.y = 0.1;
+        arrow.scale.z = 0.1;
+
 		if ( robot_ != nullptr &&  a->getType() == robot_->getType() )
         {
             marker.type = visualization_msgs::Marker::MESH_RESOURCE;
@@ -229,8 +250,8 @@ void Simulator::publishAgents()
         {
             marker.type = visualization_msgs::Marker::CYLINDER;
 
-            marker.scale.x = 0.3 / 2.0;
-            marker.scale.y = 0.3;
+            marker.scale.x = 0.4 / 2.0;
+            marker.scale.y = 0.4;
             marker.scale.z = 1.75;
 
             marker.color.a = 1.0;
@@ -242,8 +263,8 @@ void Simulator::publishAgents()
 		{
 			marker.type = visualization_msgs::Marker::CYLINDER;
 
-			marker.scale.x = 0.3 / 2.0;
-			marker.scale.y = 0.3;
+			marker.scale.x = 0.4 / 2.0;
+			marker.scale.y = 0.4;
 			marker.scale.z = 1.75;
 
 			marker.color.a = 1.0;
@@ -281,6 +302,14 @@ void Simulator::publishAgents()
             marker.pose.orientation.y = q.y();
             marker.pose.orientation.z = q.z();
             marker.pose.orientation.w = q.w();
+
+            arrow.pose.orientation.x = q.x();
+            arrow.pose.orientation.y = q.y();
+            arrow.pose.orientation.z = q.z();
+            arrow.pose.orientation.w = q.w();
+
+            double xx = sqrt(a->getvx()*a->getvx() + a->getvy()*a->getvy());
+            arrow.scale.x = xx > 0.0 ? xx : 0.01;
         }
         else
         {
@@ -294,6 +323,7 @@ void Simulator::publishAgents()
         marker.pose.position.z = marker.scale.z / 2.0;
 
         marker_array.markers.push_back ( marker );
+        arrow_array.markers.push_back ( arrow );
 
         /// status message
         pedsim_msgs::AgentState state;
@@ -319,6 +349,7 @@ void Simulator::publishAgents()
 
     // publish the marker array
     pub_agent_visuals_.publish ( marker_array );
+    pub_agent_arrows_.publish ( arrow_array );
     pub_all_agents_.publish ( all_status );
 }
 
@@ -330,6 +361,8 @@ void Simulator::publishAgents()
 void Simulator::publishGroupVisuals()
 {
     QList<AgentGroup*> groups = SCENE.getGroups();
+
+    visualization_msgs::MarkerArray center_array;
 
     /// visualize groups (sketchy)
     BOOST_FOREACH ( AgentGroup* ag, groups )
@@ -367,13 +400,17 @@ void Simulator::publishGroupVisuals()
 
         center_marker.type = visualization_msgs::Marker::CYLINDER;
 
-        pub_group_centers_.publish ( center_marker );
+        center_array.markers.push_back ( center_marker );
+
+        // pub_group_centers_.publish ( center_marker );
 
         // members
         geometry_msgs::Point p1;
         p1.x = gcom.x;
         p1.y = gcom.y;
         p1.z = 0.0;
+
+        visualization_msgs::MarkerArray lines_array;
 
         BOOST_FOREACH ( Agent* m, ag->getMembers() )
         {
@@ -388,9 +425,9 @@ void Simulator::publishGroupVisuals()
             marker.color.g = 0.0;
             marker.color.b = 1.0;
 
-            marker.scale.x = 0.05;
-            marker.scale.y = 0.05;
-            marker.scale.z = 0.05;
+            marker.scale.x = 0.1;
+            marker.scale.y = 0.1;
+            marker.scale.z = 0.1;
 
             marker.type = visualization_msgs::Marker::ARROW;
 
@@ -402,8 +439,12 @@ void Simulator::publishGroupVisuals()
             marker.points.push_back ( p1 );
             marker.points.push_back ( p2 );
 
-            pub_group_lines_.publish ( marker );
+            lines_array.markers.push_back ( marker );
+            // pub_group_lines_.publish ( marker );
         }
+
+        pub_group_centers_.publish ( center_array );
+        pub_group_lines_.publish ( lines_array );
     }
 }
 

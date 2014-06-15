@@ -15,7 +15,7 @@
     <waypoint id="robot_goal" x="22" y="27" r="5"/>
     <waypoint id="robot_start" x="4" y="4" r="2"/>
     <!--Attractions-->
-    <attraction id="Bookshop" x="17" y="12" width="20" height="15" strength="50.0"/>
+    <attraction id="Bookshop" x="17" y="12" width="10" height="15" strength="50.0"/>
     <!-- <attraction id="starbucksky" x="3" y="15" width="5" height="10" strength="2"/> -->
     <!--Agents-->
     <agent x="4" y="4" n="1" dx="0" dy="0" type="2">

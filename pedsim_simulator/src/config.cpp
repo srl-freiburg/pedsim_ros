@@ -69,7 +69,7 @@ Config::Config ( QObject* parent )
     robot_mode = SOCIAL_DRIVE;
     robot_wait_time = 15;
 
-	groups_enabled = false;
+	groups_enabled = true;
 
     // distribution parameters
     group_size_lambda = 1.5;

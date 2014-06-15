@@ -100,6 +100,7 @@ private:
 	ros::Publisher pub_attractions_;
 	ros::Publisher pub_queues_;
 	ros::Publisher pub_waypoints_;
+	ros::Publisher pub_agent_arrows_;
 
 	// subscribers
     ros::Subscriber sub_robot_command_;

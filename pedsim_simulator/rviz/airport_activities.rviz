@@ -5,8 +5,12 @@ Panels:
     Property Tree Widget:
       Expanded:
         - /Grid1/Offset1
+        - /Marker2
+        - /Marker3
+        - /Marker4
+        - /MarkerArray4
       Splitter Ratio: 0.5
-    Tree Height: 812
+    Tree Height: 355
   - Class: rviz/Selection
     Name: Selection
   - Class: rviz/Tool Properties
@@ -94,37 +98,21 @@ Visualization Manager:
       Queue Size: 0
       Value: true
     - Class: rviz/Marker
-      Enabled: true
+      Enabled: false
       Marker Topic: /queues
       Name: Marker
       Namespaces:
         {}
       Queue Size: 1
-      Value: true
+      Value: false
     - Class: rviz/Marker
-      Enabled: true
-      Marker Topic: /group_centers
-      Name: Marker
-      Namespaces:
-        {}
-      Queue Size: 0
-      Value: true
-    - Class: rviz/Marker
-      Enabled: true
-      Marker Topic: /group_lines
-      Name: Marker
-      Namespaces:
-        {}
-      Queue Size: 0
-      Value: true
-    - Class: rviz/Marker
-      Enabled: true
+      Enabled: false
       Marker Topic: /waypoints
       Name: Marker
       Namespaces:
-        pedsim: true
+        {}
       Queue Size: 0
-      Value: true
+      Value: false
     - Class: rviz/Marker
       Enabled: true
       Marker Topic: /attractions
@@ -132,6 +120,30 @@ Visualization Manager:
       Namespaces:
         pedsim: true
       Queue Size: 1
+      Value: true
+    - Class: rviz/MarkerArray
+      Enabled: true
+      Marker Topic: /group_centers
+      Name: MarkerArray
+      Namespaces:
+        pedsim: true
+      Queue Size: 0
+      Value: true
+    - Class: rviz/MarkerArray
+      Enabled: true
+      Marker Topic: /group_lines
+      Name: MarkerArray
+      Namespaces:
+        pedsim: true
+      Queue Size: 0
+      Value: true
+    - Class: rviz/MarkerArray
+      Enabled: true
+      Marker Topic: /agent_arrows
+      Name: MarkerArray
+      Namespaces:
+        pedsim: true
+      Queue Size: 0
       Value: true
   Enabled: true
   Global Options:
@@ -157,19 +169,19 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/XYOrbit
-      Distance: 47.8319
+      Distance: 35.4638
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.06
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: 30.4153
-        Y: 3.20634
+        X: 26.9603
+        Y: 6.80038
         Z: -8.55445e-05
       Name: Current View
       Near Clip Distance: 0.01
-      Pitch: 0.975401
+      Pitch: 1.0704
       Target Frame: <Fixed Frame>
       Value: XYOrbit (rviz)
       Yaw: 4.71355
@@ -190,5 +202,5 @@ Window Geometry:
   Views:
     collapsed: true
   Width: 1920
-  X: 1920
+  X: 1913
   Y: 0
