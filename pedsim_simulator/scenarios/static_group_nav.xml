@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--This scenario file was created by SGDiCoP on 2014-06-18T15:11:51-->
+<scenario>
+    <!--Obstacles-->
+    <obstacle x1="0" y1="0" x2="30" y2="0"/>
+    <obstacle x1="0" y1="0" x2="0" y2="30"/>
+    <obstacle x1="0" y1="30" x2="30" y2="30"/>
+    <obstacle x1="30" y1="30" x2="30" y2="0"/>
+    <!--Waypoints (incl. WaitingQueues)-->
+    <waypoint id="a" x="5" y="5" r="2"/>
+    <waypoint id="b" x="5" y="20" r="2"/>
+    <waypoint id="c" x="20" y="20" r="2"/>
+    <waypoint id="d" x="20" y="5" r="2"/>
+
+    <waypoint id="start" x="14" y="5" r="2"/>
+    <waypoint id="goal" x="25" y="27" r="2"/>
+
+    <!--Attractions-->
+    <!--Agents-->
+    <!--AgentClusters-->
+    <agent x="14" y="6" n="1" dx="0" dy="0" type="2">
+        <addwaypoint id="goal"/>
+        <addwaypoint id="start"/>
+
+        <!-- <addwaypoint id="a"/>
+        <addwaypoint id="b"/>
+        <addwaypoint id="c"/>
+        <addwaypoint id="d"/> -->
+    </agent>
+    <agent x="8" y="21" n="10" dx="15" dy="15" type="3">
+        <addwaypoint id="a"/>
+        <addwaypoint id="b"/>
+    </agent>
+    <agent x="22" y="21" n="10" dx="15" dy="15" type="3">
+        <addwaypoint id="a"/>
+        <addwaypoint id="b"/>
+    </agent>
+    <agent x="12" y="11" n="20" dx="15" dy="15" type="3">
+        <addwaypoint id="a"/>
+        <addwaypoint id="b"/>
+    </agent>
+</scenario>
