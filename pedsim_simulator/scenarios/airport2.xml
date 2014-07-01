@@ -146,7 +146,11 @@
     <attraction id="WindowMainhallSouth" x="-1" y="-50" width="2" height="20" strength="1"/>
     <!--Agents-->
     <!--AgentClusters-->
-    <agent x="-25" y="155" n="1" dx="0" dy="0" type="1"/>
+    <agent x="-25" y="155" n="1" dx="0" dy="0" type="2">
+        <addwaypoint id="Checkpoint1Post"/>
+        <addwaypoint id="Checkpoint1Pre"/>
+    </agent>
+
     <agent x="-140" y="30" n="50" dx="50" dy="50" type="0">
         <addwaypoint id="EntryNorth"/>
         <addwaypoint id="MainhallWestNorth"/>

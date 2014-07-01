@@ -1,5 +1,5 @@
 //
-// pedsim - A microscopic pedestrian simulation system. 
+// pedsim - A microscopic pedestrian simulation system.
 // Copyright (c) 2003 - 2012 by Christian Gloor
 //
 
@@ -27,11 +27,11 @@ namespace Ped {
 
 
 /// This is the main class of the library. It contains the Tagent, which eventually will move through the
-/// Tscene and interact with Tobstacle and other Tagent. You can use it as it is, and access the agent's 
+/// Tscene and interact with Tobstacle and other Tagent. You can use it as it is, and access the agent's
 /// coordinates using the getx() etc methods. Or, if you want to change the way the agent behaves, you can
 /// derive a new class from it, and overwrite the methods you want to change. This is also a convenient way
-/// to get access to internal variables not available though public methods, like the individual forces that 
-/// affect the agent. 
+/// to get access to internal variables not available though public methods, like the individual forces that
+/// affect the agent.
 /// \author  chgloor
 /// \date    2003-12-26
 	class LIBEXPORT Tagent {
@@ -43,10 +43,12 @@ namespace Ped {
 			CHILD = 1,
 			ROBOT = 2,
 			ELDER = 3
+			// AIRPORT_CART = 4,
+			// AIRPLANE = 5
 		};
-		
-		
-		Tagent(); 
+
+
+		Tagent();
 		virtual ~Tagent();
 
 		virtual void updateState() {};
@@ -61,8 +63,8 @@ namespace Ped {
 		virtual void setPosition(double px, double py, double pz = 0);
 		virtual void setType(AgentType typeIn) { type = typeIn; };
 		virtual void setVmax(double vmax);
-		
-		void setTeleop( bool opstatus ) { teleop = opstatus; } 
+
+		void setTeleop( bool opstatus ) { teleop = opstatus; }
 
 		int getId() const { return id; };
 		AgentType getType() const { return type; };
@@ -84,7 +86,7 @@ namespace Ped {
 		double getax() const { return a.x; };
 		double getay() const { return a.y; };
 		double getaz() const { return a.z; };
-		
+
 		void setvx( double vv ) { v.x = vv; }
 		void setvy( double vv ) { v.y = vv; }
 
@@ -97,7 +99,7 @@ namespace Ped {
 
 	protected:
 		int id;                                           ///< agent number
-		Tvector p;                                        ///< current position of the agent 
+		Tvector p;                                        ///< current position of the agent
 		Tvector v;                                        ///< current velocity of the agent
 		Tvector a;                                        ///< current acceleration of the agent
 		AgentType type;
@@ -110,7 +112,7 @@ namespace Ped {
 		double forceFactorSocial;
 		double forceFactorObstacle;
 		double forceSigmaObstacle;
-		
+
 		Ped::Tscene* scene;
 
 		Ped::Tvector desiredDirection;
