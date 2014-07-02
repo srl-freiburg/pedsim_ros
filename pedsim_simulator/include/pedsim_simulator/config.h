@@ -97,7 +97,7 @@ public:
     //TODO: make member variables protected and add getter functions
 	//TODO - add distribution parameters here
     double group_size_lambda;
-    double wait_time_lambda;
+    double wait_time_beta;
 
 
     // Attributes

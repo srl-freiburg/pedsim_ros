@@ -209,11 +209,18 @@ void Simulator::publishAgents()
         marker.ns = "pedsim";
         marker.id = a->getId();
 
+        marker.type = visualization_msgs::Marker::MESH_RESOURCE;
+        marker.mesh_resource = "package://pedsim_simulator/images/man.3ds";
+
         marker.pose.position.x = a->getx();
         marker.pose.position.y = a->gety();
 		marker.action = 0;  // add or modify
+		
+		marker.scale.x = 0.025;
+        marker.scale.y = 0.025;
+        marker.scale.z = 0.025;
 
-        // arrow
+        /// arrows
         visualization_msgs::Marker arrow;
         arrow.header.frame_id = "world";
         arrow.header.stamp = ros::Time();
@@ -229,8 +236,8 @@ void Simulator::publishAgents()
         arrow.color.g = 0.0;
         arrow.color.b = 0.0;
 
-        arrow.scale.y = 0.1;
-        arrow.scale.z = 0.1;
+        arrow.scale.y = 0.05;
+        arrow.scale.z = 0.05;
 
 		if ( robot_ != nullptr &&  a->getType() == robot_->getType() )
         {
@@ -238,26 +245,20 @@ void Simulator::publishAgents()
             marker.mesh_resource = "package://pedsim_simulator/images/darylbot_rotated_shifted.dae";
 
             marker.color.a = 1.0;
-            marker.color.r = 0.5;
+            marker.color.r = 1.0;
             marker.color.g = 1.0;
-            marker.color.b = 0.5;
+            marker.color.b = 1.0;
 
-            marker.scale.x = 1.0;
-            marker.scale.y = 1.0;
+            marker.scale.x = 0.7;
+            marker.scale.y = 0.7;
             marker.scale.z = 1.0;
         }
         else if ( a->getType() == Ped::Tagent::ELDER )
         {
-            marker.type = visualization_msgs::Marker::CYLINDER;
-
-            marker.scale.x = 0.4 / 2.0;
-            marker.scale.y = 0.4;
-            marker.scale.z = 1.75;
-
             marker.color.a = 1.0;
-            marker.color.r = 0.0;
-            marker.color.g = 0.0;
-            marker.color.b = 0.0;
+            marker.color.r = 1.0;
+            marker.color.g = 1.0;
+            marker.color.b = 1.0;
         }
         // else if ( a->getType() == Ped::Tagent::AIRPORT_CART )
         // {
@@ -274,12 +275,6 @@ void Simulator::publishAgents()
         // }
         else
 		{
-			marker.type = visualization_msgs::Marker::CYLINDER;
-
-			marker.scale.x = 0.4 / 2.0;
-			marker.scale.y = 0.4;
-			marker.scale.z = 1.75;
-
 			marker.color.a = 1.0;
 			marker.color.r = 0.0;
 			marker.color.g = 0.7;
@@ -386,7 +381,7 @@ void Simulator::publishGroupVisuals()
 
         Ped::Tvector gcom = ag->getCenterOfMass();
 
-        // center
+        /// center of mass  of the group
         visualization_msgs::Marker center_marker;
         center_marker.header.frame_id = "world";
         center_marker.header.stamp = ros::Time();
@@ -415,9 +410,7 @@ void Simulator::publishGroupVisuals()
 
         center_array.markers.push_back ( center_marker );
 
-        // pub_group_centers_.publish ( center_marker );
-
-        // members
+        /// members of the group
         geometry_msgs::Point p1;
         p1.x = gcom.x;
         p1.y = gcom.y;
@@ -438,12 +431,11 @@ void Simulator::publishGroupVisuals()
             marker.color.g = 1.0;
             marker.color.b = 0.0;
 
-            marker.scale.x = 0.1;
-            marker.scale.y = 0.1;
-            marker.scale.z = 0.1;
+            marker.scale.x = 0.05;
+            marker.scale.y = 0.05;
+            marker.scale.z = 0.05;
 
             marker.type = visualization_msgs::Marker::ARROW;
-
             geometry_msgs::Point p2;
             p2.x = m->getx();
             p2.y = m->gety();
@@ -453,7 +445,6 @@ void Simulator::publishGroupVisuals()
             marker.points.push_back ( p2 );
 
             lines_array.markers.push_back ( marker );
-            // pub_group_lines_.publish ( marker );
         }
 
         pub_group_centers_.publish ( center_array );
@@ -542,33 +533,74 @@ void Simulator::publishWalls()
 void Simulator::publishAttractions()
 {
 	/// waypoints
-	BOOST_FOREACH ( Waypoint* wp, SCENE.getWaypoints() )
-    {
-		visualization_msgs::Marker marker;
-        marker.header.frame_id = "world";
-        marker.header.stamp = ros::Time();
-        marker.ns = "pedsim";
-        marker.id = wp->getId();
-
-        marker.color.a = 0.25;
-        marker.color.r = 1.0;
-        marker.color.g = 0.0;
-        marker.color.b = 1.0;
-
-		// TODO - get radius information from waypoints
-        marker.scale.x = 3.0;
-        marker.scale.y = 3.0;
-        marker.scale.z = 0.02;
-
-        marker.pose.position.x = wp->getPosition().x;
-        marker.pose.position.y = wp->getPosition().y;
-        marker.pose.position.z = marker.scale.z / 2.0;
-
-        marker.type = visualization_msgs::Marker::CYLINDER;
-
-		pub_waypoints_.publish ( marker );
-    }
-
+// 	BOOST_FOREACH ( Waypoint* wp, SCENE.getWaypoints() )
+//     {
+// // 		wp->getType()
+// 		visualization_msgs::Marker marker;
+//         marker.header.frame_id = "world";
+//         marker.header.stamp = ros::Time();
+//         marker.ns = "pedsim";
+//         marker.id = wp->getId();
+// 
+//         marker.color.a = 0.15;
+//         marker.color.r = 1.0;
+//         marker.color.g = 0.0;
+//         marker.color.b = 1.0;
+// 
+// 		// TODO - get radius information from waypoints
+//         marker.scale.x = 3.0;
+//         marker.scale.y = 3.0;
+//         marker.scale.z = 0.02;
+// 
+//         marker.pose.position.x = wp->getPosition().x;
+//         marker.pose.position.y = wp->getPosition().y;
+//         marker.pose.position.z = marker.scale.z / 2.0;
+// 
+//         marker.type = visualization_msgs::Marker::CYLINDER;
+// 
+// 		pub_waypoints_.publish ( marker );
+//     }
+    
+//     WaitingQueue* info_desk  = SCENE.getWaitingQueueByName("klm");
+// 	visualization_msgs::Marker marker;
+// 	marker.header.frame_id = "world";
+// 	marker.header.stamp = ros::Time();
+// 	marker.ns = "pedsim";
+// 	marker.id = info_desk->getId();
+// 	marker.type = visualization_msgs::Marker::MESH_RESOURCE;
+//     marker.mesh_resource = "package://pedsim_simulator/images/kiosk.dae";
+// 
+// 	marker.scale.x = 1.0;
+// 	marker.scale.y = 1.0;
+// 	marker.scale.z = 1.0;
+// 
+// 	marker.pose.position.x = info_desk->getPosition().x - 2.5;
+// 	marker.pose.position.y = info_desk->getPosition().y + 0.5;
+// 	marker.pose.position.z = 0.0; //marker.scale.z / 2.0;
+// 	
+// 	pub_queues_.publish ( marker );
+// 
+// 	
+// 	WaitingQueue* kq  = SCENE.getWaitingQueueByName("kq");
+// 	visualization_msgs::Marker marker2;
+// 	marker2.header.frame_id = "world";
+// 	marker2.header.stamp = ros::Time();
+// 	marker2.ns = "pedsim";
+// 	marker2.id = kq->getId();
+// 	marker2.type = visualization_msgs::Marker::MESH_RESOURCE;
+//     marker2.mesh_resource = "package://pedsim_simulator/images/kiosk.dae";
+// 
+// 	marker2.scale.x = 1.0;
+// 	marker2.scale.y = 1.0;
+// 	marker2.scale.z = 1.0;
+// 
+// 	marker2.pose.position.x = kq->getPosition().x - 2.5;
+// 	marker2.pose.position.y = kq->getPosition().y + 0.5;
+// 	marker2.pose.position.z = 0.0; //marker.scale.z / 2.0;
+// 	
+// 	pub_queues_.publish ( marker2 );
+	
+	
     /// publish attractions (shopping areas etc)
     BOOST_FOREACH ( AttractionArea* atr, SCENE.getAttractions() )
     {
@@ -578,7 +610,7 @@ void Simulator::publishAttractions()
         marker.ns = "pedsim";
         marker.id = atr->getId();
 
-        marker.color.a = 0.45;
+        marker.color.a = 0.35;
         marker.color.r = 1.0;
         marker.color.g = 1.0;
         marker.color.b = 0.0;

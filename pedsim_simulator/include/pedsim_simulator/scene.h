@@ -32,11 +32,8 @@
 #ifndef _scene_h_
 #define _scene_h_
 
-// Includes
-// → PedSim
 #include <libpedsim/ped_scene.h>
 #include <libpedsim/ped_vector.h>
-// → Qt
 #include <QMap>
 #include <QRectF>
 #include <QObject>

@@ -37,35 +37,37 @@
 #include <QPointF>
 
 
-class QueueingWaypoint : public Waypoint {
-	Q_OBJECT
+class QueueingWaypoint : public Waypoint
+{
+    Q_OBJECT
 
-	// Constructor and Destructor
+    // Constructor and Destructor
 public:
-	QueueingWaypoint(const QString& nameIn, const Ped::Tvector& positionIn);
-	virtual ~QueueingWaypoint();
+    QueueingWaypoint ( const QString& nameIn, const Ped::Tvector& positionIn );
+    virtual ~QueueingWaypoint();
 
 
-	// Signals
+    // Signals
 signals:
-	void positionChanged(double x, double y);
+    void positionChanged ( double x, double y );
 
 
-	// Methods
+    // Methods
 public:
-	QString getName() const;
+    QString getName() const;
 
-	bool isWithinArea(const Ped::Tvector& posIn);
+    bool isWithinArea ( const Ped::Tvector& posIn );
 
-	// → Ped::Twaypoint Overrides
-	virtual Ped::Tvector getForce(const Ped::Tagent& agentIn, Ped::Tvector* desiredDirectionOut = NULL, bool* reached = NULL) const;
-	virtual Ped::Tvector closestPoint(const Ped::Tvector& posIn, bool* withinWaypoint = NULL) const;
+    // → Ped::Twaypoint Overrides
+    virtual Ped::Tvector getForce ( const Ped::Tagent& agentIn, Ped::Tvector* desiredDirectionOut = NULL, bool* reached 
+= NULL ) const;
+    virtual Ped::Tvector closestPoint ( const Ped::Tvector& posIn, bool* withinWaypoint = NULL ) const;
 
-	// → ScenarioElement Overrides/Overloads
+    // → ScenarioElement Overrides/Overloads
 public:
-	virtual QPointF getVisiblePosition() const;
-	virtual void setVisiblePosition(const QPointF& positionIn);
-	QString toString() const;
+    virtual QPointF getVisiblePosition() const;
+    virtual void setVisiblePosition ( const QPointF& positionIn );
+    QString toString() const;
 
 };
 

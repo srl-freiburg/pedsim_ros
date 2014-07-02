@@ -41,7 +41,7 @@ WaitingQueue::WaitingQueue ( const QString& nameIn, Ped::Tvector positionIn, Ped
 {
     // initialize values
     dequeueTime = INFINITY;
-    waitDurationLambda = CONFIG.wait_time_lambda;
+    waitDurationLambda = CONFIG.wait_time_beta;
 
     // connect signals
     connect ( &SCENE, SIGNAL ( sceneTimeChanged ( double ) ), this, SLOT ( onTimeChanged ( double ) ) );

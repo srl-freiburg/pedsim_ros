@@ -73,7 +73,7 @@ Config::Config ( QObject* parent )
 
     // distribution parameters
     group_size_lambda = 1.5;
-    wait_time_lambda = 0.2;
+    wait_time_beta = 0.2;
 }
 
 Config& Config::getInstance()

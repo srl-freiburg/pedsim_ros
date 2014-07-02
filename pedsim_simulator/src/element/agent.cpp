@@ -199,6 +199,7 @@ void Agent::move ( double h )
         Ped::Tagent::setForceFactorDesired ( 4.2 );
 
         Ped::Tagent::setVmax ( 1.8 );
+		Ped::Tagent::SetRadius( 0.4 );
         Ped::Tagent::move ( h );
     }
 	else if ( getType() != Ped::Tagent::ROBOT )

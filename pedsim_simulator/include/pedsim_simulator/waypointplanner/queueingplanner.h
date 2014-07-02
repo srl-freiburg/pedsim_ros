@@ -32,10 +32,7 @@
 #ifndef _queueingplanner_h_
 #define _queueingplanner_h_
 
-// Includes
-// → SGDiCoP
 #include <pedsim_simulator/waypointplanner/waypointplanner.h>
-// → PedSim
 #include <libpedsim/ped_vector.h>
 
 

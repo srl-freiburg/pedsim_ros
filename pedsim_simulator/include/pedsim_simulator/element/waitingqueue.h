@@ -43,72 +43,74 @@
 class Agent;
 
 
-class WaitingQueue : public Waypoint {
-	Q_OBJECT
+class WaitingQueue : public Waypoint
+{
+    Q_OBJECT
 
-	// Constructor and Destructor
+    // Constructor and Destructor
 public:
-	WaitingQueue(const QString& nameIn, Ped::Tvector positionIn, Ped::Tangle directionIn = Ped::Tangle::fromDegree(0));
+    WaitingQueue ( const QString& nameIn, Ped::Tvector positionIn, 
+				   Ped::Tangle directionIn = Ped::Tangle::fromDegree ( 0 ) );
     virtual ~WaitingQueue();
 
 
-	// Signals
+    // Signals
 signals:
-	void directionChanged(double radianAngle);
-	// → Waiting Agents
-	void agentMayPass(int id);
-	void agentDequeued(int id);
-	void queueLeaderChanged(int id);
-	void queueEndChanged();
-	void queueEndPositionChanged(double x, double y);
+    void directionChanged ( double radianAngle );
+    // → Waiting Agents
+    void agentMayPass ( int id );
+    void agentDequeued ( int id );
+    void queueLeaderChanged ( int id );
+    void queueEndChanged();
+    void queueEndPositionChanged ( double x, double y );
 
 
-	// Slots
+    // Slots
 protected slots:
-	void onTimeChanged(double timeIn);
-	void onLastAgentPositionChanged(double xIn, double yIn);
+    void onTimeChanged ( double timeIn );
+    void onLastAgentPositionChanged ( double xIn, double yIn );
 
 
-	// Methods
+    // Methods
 public:
-	Ped::Tangle getDirection() const;
-	void setDirection(const Ped::Tangle& angleIn);
-	void setDirection(double xIn, double yIn);
-	void setDirection(const Ped::Tvector& directionIn);
+    Ped::Tangle getDirection() const;
+    void setDirection ( const Ped::Tangle& angleIn );
+    void setDirection ( double xIn, double yIn );
+    void setDirection ( const Ped::Tvector& directionIn );
 
-	// → Queueing behavior
-	bool isEmpty() const;
-	Ped::Tvector getQueueEndPosition() const;
-	const Agent* enqueueAgent(Agent* agentIn);
-	bool dequeueAgent(Agent* agentIn);
-	bool hasReachedWaitingPosition();
+    // → Queueing behavior
+    bool isEmpty() const;
+    Ped::Tvector getQueueEndPosition() const;
+    const Agent* enqueueAgent ( Agent* agentIn );
+    bool dequeueAgent ( Agent* agentIn );
+    bool hasReachedWaitingPosition();
 protected:
-	void resetDequeueTime();
-	void startDequeueTime();
+    void resetDequeueTime();
+    void startDequeueTime();
 
 protected:
-	void informAboutEndPosition();
+    void informAboutEndPosition();
 
-	// → Waypoint Overrides
+    // → Waypoint Overrides
 public:
-	virtual Ped::Tvector closestPoint(const Ped::Tvector& p, bool* withinWaypoint = NULL) const;
+    virtual Ped::Tvector closestPoint ( const Ped::Tvector& p, bool* withinWaypoint = NULL ) const;
 
-	// → ScenarioElement Overrides/Overloads
+    // → ScenarioElement Overrides/Overloads
 public:
-	virtual QPointF getVisiblePosition() const;
-	virtual void setVisiblePosition(const QPointF& positionIn);
-	QString toString() const;
+    virtual QPointF getVisiblePosition() const;
+    virtual void setVisiblePosition ( const QPointF& positionIn );
+    QString toString() const;
 
 
-	// Attributes
+    // Attributes
 protected:
-	Ped::Tangle direction;
+    Ped::Tangle direction;
 
-	QList<Agent*> queuedAgents;
+    QList<Agent*> queuedAgents;
 
-	// → dequeueing
-	double waitDurationLambda;
-	double dequeueTime;
+    // → dequeueing
+    double waitDurationLambda;
+    double dequeueTime;
 };
 
 #endif

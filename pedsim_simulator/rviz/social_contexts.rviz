@@ -5,6 +5,7 @@ Panels:
     Property Tree Widget:
       Expanded:
         - /Grid1/Offset1
+        - /Marker3
         - /MarkerArray3
         - /MarkerArray4
       Splitter Ratio: 0.5
@@ -31,10 +32,10 @@ Panels:
 Visualization Manager:
   Class: ""
   Displays:
-    - Alpha: 0.2
+    - Alpha: 0.15
       Cell Size: 1
       Class: rviz/Grid
-      Color: 0; 0; 0
+      Color: 255; 255; 255
       Enabled: true
       Line Style:
         Line Width: 0.03
@@ -50,12 +51,12 @@ Visualization Manager:
       Reference Frame: <Fixed Frame>
       Value: true
     - Class: rviz/Axes
-      Enabled: true
+      Enabled: false
       Length: 10
       Name: Axes
       Radius: 0.1
       Reference Frame: <Fixed Frame>
-      Value: true
+      Value: false
     - Alpha: 0.7
       Class: rviz/GridCells
       Color: 0; 170; 255
@@ -67,18 +68,18 @@ Visualization Manager:
       Buffer Length: 1
       Class: rviz/Path
       Color: 255; 255; 127
-      Enabled: true
+      Enabled: false
       Name: Path
       Topic: /planned_path
-      Value: true
+      Value: false
     - Alpha: 0.7
       Class: rviz/Map
       Color Scheme: map
       Draw Behind: false
-      Enabled: true
+      Enabled: false
       Name: Map
       Topic: /costmap
-      Value: true
+      Value: false
     - Class: rviz/MarkerArray
       Enabled: true
       Marker Topic: /agents_markers
@@ -100,7 +101,7 @@ Visualization Manager:
       Marker Topic: /queues
       Name: Marker
       Namespaces:
-        {}
+        pedsim: true
       Queue Size: 1
       Value: true
     - Class: rviz/Marker
@@ -132,7 +133,7 @@ Visualization Manager:
       Marker Topic: /group_centers
       Name: MarkerArray
       Namespaces:
-        {}
+        pedsim: true
       Queue Size: 0
       Value: true
     - Class: rviz/MarkerArray
@@ -140,12 +141,12 @@ Visualization Manager:
       Marker Topic: /group_lines
       Name: MarkerArray
       Namespaces:
-        {}
+        pedsim: true
       Queue Size: 0
       Value: true
   Enabled: true
   Global Options:
-    Background Color: 234; 234; 234
+    Background Color: 0; 0; 0
     Fixed Frame: world
     Frame Rate: 30
   Name: root
@@ -167,22 +168,22 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/XYOrbit
-      Distance: 19.0457
+      Distance: 5.94797
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.06
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: 15.2079
-        Y: 10.5292
-        Z: -6.72459e-05
+        X: 22.7061
+        Y: 8.02433
+        Z: -6.61549e-05
       Name: Current View
       Near Clip Distance: 0.01
-      Pitch: 0.789797
+      Pitch: 0.269797
       Target Frame: <Fixed Frame>
       Value: XYOrbit (rviz)
-      Yaw: 4.71354
+      Yaw: 5.46351
     Saved: ~
 Window Geometry:
   Displays:

@@ -5,7 +5,8 @@
     <obstacle x1="0" y1="0" x2="30" y2="0"/>
     <obstacle x1="0" y1="0" x2="0" y2="30"/>
     <obstacle x1="0" y1="30" x2="30" y2="30"/>
-    <obstacle x1="30" y1="30" x2="30" y2="0"/>
+<!--     <obstacle x1="21" y1="15" x2="21" y2="17"/> -->
+	<obstacle x1="30" y1="30" x2="30" y2="0"/>
     <!--Waypoints (incl. WaitingQueues)-->
     <waypoint id="enter_bookshop" x="25" y="10" r="3"/>
     <waypoint id="enter_starbucksky" x="5" y="20" r="3"/>

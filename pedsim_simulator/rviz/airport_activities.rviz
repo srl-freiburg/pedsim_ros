@@ -5,12 +5,10 @@ Panels:
     Property Tree Widget:
       Expanded:
         - /Grid1/Offset1
-        - /Marker2
         - /Marker3
-        - /Marker4
         - /MarkerArray4
       Splitter Ratio: 0.5
-    Tree Height: 355
+    Tree Height: 812
   - Class: rviz/Selection
     Name: Selection
   - Class: rviz/Tool Properties
@@ -33,10 +31,10 @@ Panels:
 Visualization Manager:
   Class: ""
   Displays:
-    - Alpha: 0.1
+    - Alpha: 0.15
       Cell Size: 1
       Class: rviz/Grid
-      Color: 0; 0; 0
+      Color: 255; 255; 255
       Enabled: true
       Line Style:
         Line Width: 0.03
@@ -69,18 +67,18 @@ Visualization Manager:
       Buffer Length: 1
       Class: rviz/Path
       Color: 255; 255; 127
-      Enabled: true
+      Enabled: false
       Name: Path
       Topic: /planned_path
-      Value: true
+      Value: false
     - Alpha: 0.7
       Class: rviz/Map
       Color Scheme: map
       Draw Behind: false
-      Enabled: true
+      Enabled: false
       Name: Map
       Topic: /costmap
-      Value: true
+      Value: false
     - Class: rviz/MarkerArray
       Enabled: true
       Marker Topic: /agents_markers
@@ -98,21 +96,13 @@ Visualization Manager:
       Queue Size: 0
       Value: true
     - Class: rviz/Marker
-      Enabled: false
+      Enabled: true
       Marker Topic: /queues
       Name: Marker
       Namespaces:
-        {}
+        pedsim: true
       Queue Size: 1
-      Value: false
-    - Class: rviz/Marker
-      Enabled: false
-      Marker Topic: /waypoints
-      Name: Marker
-      Namespaces:
-        {}
-      Queue Size: 0
-      Value: false
+      Value: true
     - Class: rviz/Marker
       Enabled: true
       Marker Topic: /attractions
@@ -147,7 +137,7 @@ Visualization Manager:
       Value: true
   Enabled: true
   Global Options:
-    Background Color: 234; 234; 234
+    Background Color: 0; 0; 0
     Fixed Frame: world
     Frame Rate: 30
   Name: root
@@ -169,19 +159,19 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/XYOrbit
-      Distance: 35.4638
+      Distance: 48.5578
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.06
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: 26.9603
-        Y: 6.80038
+        X: 30.193
+        Y: 4.92186
         Z: -8.55445e-05
       Name: Current View
       Near Clip Distance: 0.01
-      Pitch: 1.0704
+      Pitch: 1.4554
       Target Frame: <Fixed Frame>
       Value: XYOrbit (rviz)
       Yaw: 4.71355

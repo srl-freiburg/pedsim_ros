@@ -100,7 +100,7 @@ void AgentStateMachine::doStateTransition()
             if ( attraction != nullptr )
             {
                 // check whether agent is attracted
-                // Note: The Cumulative Geometric Distribution determines the
+                // NOTE: The Cumulative Geometric Distribution determines the
                 //       number of Bernoulli trials needed to get one success.
                 //       → CDF(X) = 1-(1-p)^k   with k = the number of trials
                 double baseProbability = 0.02;
@@ -216,8 +216,8 @@ void AgentStateMachine::activateState ( AgentState stateIn )
         shoppingPlanner->setAgent ( agent );
         shoppingPlanner->setAttraction ( attraction );
         agent->setWaypointPlanner ( shoppingPlanner );
-        agent->disableForce ( "GroupCoherence" );
-        agent->disableForce ( "GroupGaze" );
+//         agent->disableForce ( "GroupCoherence" );
+//         agent->disableForce ( "GroupGaze" );
 
         // keep other agents informed about the attraction
         AgentGroup* group = agent->getGroup();
@@ -311,7 +311,7 @@ bool AgentStateMachine::checkGroupForAttractions ( AttractionArea** attractionOu
 
             if ( attraction != nullptr )
             {
-// 				DEBUG_LOG("Agent%1's Group Member (%2) is attracted to: %3",
+// 				ROS_DEBUG("Agent%1's Group Member (%2) is attracted to: %3",
 // 					agent->getId(), member->getId(), attraction->getName());
                 attractionOut = &attraction;
                 return true;

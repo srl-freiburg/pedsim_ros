@@ -63,6 +63,7 @@ namespace Ped {
 		virtual void setPosition(double px, double py, double pz = 0);
 		virtual void setType(AgentType typeIn) { type = typeIn; };
 		virtual void setVmax(double vmax);
+		virtual void SetRadius(double radius) { agentRadius = radius; }
 
 		void setTeleop( bool opstatus ) { teleop = opstatus; }
 

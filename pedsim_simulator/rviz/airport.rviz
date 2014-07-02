@@ -3,7 +3,8 @@ Panels:
     Help Height: 81
     Name: Displays
     Property Tree Widget:
-      Expanded: ~
+      Expanded:
+        - /Global Options1
       Splitter Ratio: 0.5
     Tree Height: 355
   - Class: rviz/Selection
@@ -132,6 +133,14 @@ Visualization Manager:
         pedsim: true
       Queue Size: 0
       Value: true
+    - Class: rviz/MarkerArray
+      Enabled: true
+      Marker Topic: /airplane_markers
+      Name: MarkerArray
+      Namespaces:
+        {}
+      Queue Size: 100
+      Value: true
   Enabled: true
   Global Options:
     Background Color: 7; 7; 7
@@ -156,22 +165,22 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/XYOrbit
-      Distance: 107.335
+      Distance: 847.276
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.06
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: -13.1716
-        Y: 2.07737
-        Z: 8.91316e-06
+        X: -61.1435
+        Y: -180.014
+        Z: 2.83513e-06
       Name: Current View
       Near Clip Distance: 0.01
-      Pitch: 1.0154
+      Pitch: 1.0698
       Target Frame: <Fixed Frame>
       Value: XYOrbit (rviz)
-      Yaw: 0.000398636
+      Yaw: 4.68858
     Saved: ~
 Window Geometry:
   Displays:

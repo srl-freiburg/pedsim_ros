@@ -59,6 +59,7 @@
 #include <pedsim_simulator/agentstatemachine.h>
 #include <pedsim_simulator/element/attractionarea.h>
 #include <pedsim_simulator/element/waypoint.h>
+#include <pedsim_simulator/element/waitingqueue.h>
 #include <pedsim_simulator/config.h>
 #include <pedsim_simulator/agentstatemachine.h>
 

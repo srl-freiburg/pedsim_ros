@@ -60,7 +60,7 @@ void QueueingWaypointPlanner::onFollowedAgentPositionChanged ( double xIn, doubl
 
     //HACK: don't update minor changes (prevent over-correcting)
     //TODO: integrate update importance to waypoint (force?)
-    const double minUpdateDistance = 0.4;
+    const double minUpdateDistance = 0.55;
     Ped::Tvector diff = followedPosition - currentWaypoint->getPosition();
     if ( diff.length() < minUpdateDistance )
         return;
@@ -272,7 +272,7 @@ void QueueingWaypointPlanner::activateQueueingMode()
 
 void QueueingWaypointPlanner::addPrivateSpace ( Ped::Tvector& queueEndIn ) const
 {
-    const double privateSpaceDistance = 0.7;
+    const double privateSpaceDistance = 0.4;
     Ped::Tvector queueOffset ( Ped::Tvector::fromPolar ( waitingQueue->getDirection(), privateSpaceDistance ) );
     queueEndIn -= queueOffset;
 }
