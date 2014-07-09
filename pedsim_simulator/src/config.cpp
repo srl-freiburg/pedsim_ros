@@ -72,7 +72,8 @@ Config::Config ( QObject* parent )
 	groups_enabled = true;
 
     // distribution parameters
-    group_size_lambda = 1.5;
+    group_size_lambda = 1.3;
+    // group_size_lambda = 5.3;
     wait_time_beta = 0.2;
 }
 

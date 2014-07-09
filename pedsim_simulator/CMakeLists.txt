@@ -7,8 +7,8 @@ set( PEDSIM_CORE_DEPENDENCIES
     roscpp
     rospy
     std_msgs
+    # spencer_tracking_msgs
     pedsim_msgs
-    pedsim_srvs
     visualization_msgs
     nav_msgs
     geometry_msgs
@@ -40,15 +40,15 @@ include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty
 )
 
-set(SOURCES 
+set(SOURCES
 	src/simulator.cpp
     src/scene.cpp
-    src/config.cpp 
+    src/config.cpp
     src/orientationhandler.cpp
-    src/agentstatemachine.cpp 
+    src/agentstatemachine.cpp
     src/scenarioreader.cpp
 	src/rng.cpp
-	
+
 	# elements
 	src/element/agent.cpp
 	src/element/agentgroup.cpp
@@ -60,7 +60,7 @@ set(SOURCES
 	src/element/waypoint.cpp
 	src/element/obstacle.cpp
 	src/element/scenarioelement.cpp
-	
+
 	# forces
 	src/force/alongwallforce.cpp
 	src/force/force.cpp
@@ -68,21 +68,21 @@ set(SOURCES
 	src/force/groupgazeforce.cpp
 	src/force/grouprepulsionforce.cpp
 	src/force/randomforce.cpp
-	
+
 	# waypointplanner
 	src/waypointplanner/waypointplanner.cpp
 	src/waypointplanner/individualwaypointplanner.cpp
 	src/waypointplanner/queueingplanner.cpp
 	src/waypointplanner/shoppingplanner.cpp
 	src/waypointplanner/groupwaypointplanner.cpp
-) 
+)
 
 
 set(MOC_FILES
 	include/pedsim_simulator/config.h
 	include/pedsim_simulator/scene.h
 	include/pedsim_simulator/agentstatemachine.h
-	
+
 	include/pedsim_simulator/element/scenarioelement.h
 	include/pedsim_simulator/element/agent.h
 	include/pedsim_simulator/element/agentcluster.h
@@ -93,7 +93,7 @@ set(MOC_FILES
 	include/pedsim_simulator/element/areawaypoint.h
 	include/pedsim_simulator/element/waitingqueue.h
 	include/pedsim_simulator/element/queueingwaypoint.h
-	
+
 	include/pedsim_simulator/force/force.h
 	include/pedsim_simulator/force/randomforce.h
 	include/pedsim_simulator/force/groupgazeforce.h
@@ -114,8 +114,8 @@ QT4_WRAP_CPP(MOC_SRCS_UI ${MOC_FILES})
 add_executable(simulator ${SOURCES}  ${MOC_SRCS_UI} ${QT_RESOURCES_CPP} ${QT_FORMS_HPP} ${QT_MOC_HPP})
 add_executable(teleop src/robot_teleop.cpp)
 
-TARGET_LINK_LIBRARIES(simulator 
-    ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY} ${QT_QTOPENGL_LIBRARY} ${QWT_LIBRARIES} pedsim 
+TARGET_LINK_LIBRARIES(simulator
+    ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY} ${QT_QTOPENGL_LIBRARY} ${QWT_LIBRARIES} pedsim
     ${BOOST_LIBRARIES} ${OpenCV_LIBS} ${catkin_LIBRARIES}
 )
 

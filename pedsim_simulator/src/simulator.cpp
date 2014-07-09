@@ -51,16 +51,20 @@ Simulator::~Simulator()
 bool Simulator::initializeSimulation()
 {
     /// setup ros publishers
+    // visualizations
     pub_agent_visuals_ = nh_.advertise<visualization_msgs::MarkerArray> ( "agents_markers", 0 );
     pub_group_centers_ = nh_.advertise<visualization_msgs::MarkerArray> ( "group_centers", 0 );
     pub_agent_arrows_ = nh_.advertise<visualization_msgs::MarkerArray> ( "agent_arrows", 0 );
     pub_group_lines_ = nh_.advertise<visualization_msgs::MarkerArray> ( "group_lines", 0 );
-    pub_obstacles_ = nh_.advertise<nav_msgs::GridCells> ( "static_obstacles", 0 );
     pub_walls_ = nh_.advertise<visualization_msgs::Marker> ( "walls", 0 );
-    pub_all_agents_ = nh_.advertise<pedsim_msgs::AllAgentsState> ( "dynamic_obstacles", 0 );
     pub_attractions_ = nh_.advertise<visualization_msgs::Marker> ( "attractions", 0 );
     pub_queues_ = nh_.advertise<visualization_msgs::Marker> ( "queues", 0 );
-	pub_waypoints_ = nh_.advertise<visualization_msgs::Marker> ( "waypoints", 0 );
+    pub_waypoints_ = nh_.advertise<visualization_msgs::Marker> ( "waypoints", 0 );
+
+    // informative topics (data)
+    pub_obstacles_ = nh_.advertise<nav_msgs::GridCells> ( "static_obstacles", 0 );
+    pub_all_agents_ = nh_.advertise<pedsim_msgs::AllAgentsState> ( "dynamic_obstacles", 0 );
+    // pub_all_agents_ = nh_.advertise<pedsim_msgs::AllAgentsState> ( "/spencer/perception/tracked_persons", 0 );
 
     /// setup any pointers
     orientation_handler_.reset ( new OrientationHandler() );
@@ -215,7 +219,7 @@ void Simulator::publishAgents()
         marker.pose.position.x = a->getx();
         marker.pose.position.y = a->gety();
 		marker.action = 0;  // add or modify
-		
+
 		marker.scale.x = 0.025;
         marker.scale.y = 0.025;
         marker.scale.z = 0.025;
@@ -541,26 +545,26 @@ void Simulator::publishAttractions()
 //         marker.header.stamp = ros::Time();
 //         marker.ns = "pedsim";
 //         marker.id = wp->getId();
-// 
+//
 //         marker.color.a = 0.15;
 //         marker.color.r = 1.0;
 //         marker.color.g = 0.0;
 //         marker.color.b = 1.0;
-// 
+//
 // 		// TODO - get radius information from waypoints
 //         marker.scale.x = 3.0;
 //         marker.scale.y = 3.0;
 //         marker.scale.z = 0.02;
-// 
+//
 //         marker.pose.position.x = wp->getPosition().x;
 //         marker.pose.position.y = wp->getPosition().y;
 //         marker.pose.position.z = marker.scale.z / 2.0;
-// 
+//
 //         marker.type = visualization_msgs::Marker::CYLINDER;
-// 
+//
 // 		pub_waypoints_.publish ( marker );
 //     }
-    
+
 //     WaitingQueue* info_desk  = SCENE.getWaitingQueueByName("klm");
 // 	visualization_msgs::Marker marker;
 // 	marker.header.frame_id = "world";
@@ -569,18 +573,18 @@ void Simulator::publishAttractions()
 // 	marker.id = info_desk->getId();
 // 	marker.type = visualization_msgs::Marker::MESH_RESOURCE;
 //     marker.mesh_resource = "package://pedsim_simulator/images/kiosk.dae";
-// 
+//
 // 	marker.scale.x = 1.0;
 // 	marker.scale.y = 1.0;
 // 	marker.scale.z = 1.0;
-// 
+//
 // 	marker.pose.position.x = info_desk->getPosition().x - 2.5;
 // 	marker.pose.position.y = info_desk->getPosition().y + 0.5;
 // 	marker.pose.position.z = 0.0; //marker.scale.z / 2.0;
-// 	
+//
 // 	pub_queues_.publish ( marker );
-// 
-// 	
+//
+//
 // 	WaitingQueue* kq  = SCENE.getWaitingQueueByName("kq");
 // 	visualization_msgs::Marker marker2;
 // 	marker2.header.frame_id = "world";
@@ -589,18 +593,18 @@ void Simulator::publishAttractions()
 // 	marker2.id = kq->getId();
 // 	marker2.type = visualization_msgs::Marker::MESH_RESOURCE;
 //     marker2.mesh_resource = "package://pedsim_simulator/images/kiosk.dae";
-// 
+//
 // 	marker2.scale.x = 1.0;
 // 	marker2.scale.y = 1.0;
 // 	marker2.scale.z = 1.0;
-// 
+//
 // 	marker2.pose.position.x = kq->getPosition().x - 2.5;
 // 	marker2.pose.position.y = kq->getPosition().y + 0.5;
 // 	marker2.pose.position.z = 0.0; //marker.scale.z / 2.0;
-// 	
+//
 // 	pub_queues_.publish ( marker2 );
-	
-	
+
+
     /// publish attractions (shopping areas etc)
     BOOST_FOREACH ( AttractionArea* atr, SCENE.getAttractions() )
     {

@@ -216,8 +216,8 @@ void AgentStateMachine::activateState ( AgentState stateIn )
         shoppingPlanner->setAgent ( agent );
         shoppingPlanner->setAttraction ( attraction );
         agent->setWaypointPlanner ( shoppingPlanner );
-//         agent->disableForce ( "GroupCoherence" );
-//         agent->disableForce ( "GroupGaze" );
+        agent->disableForce ( "GroupCoherence" );
+        agent->disableForce ( "GroupGaze" );
 
         // keep other agents informed about the attraction
         AgentGroup* group = agent->getGroup();

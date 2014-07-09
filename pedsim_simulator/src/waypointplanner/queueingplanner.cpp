@@ -60,7 +60,7 @@ void QueueingWaypointPlanner::onFollowedAgentPositionChanged ( double xIn, doubl
 
     //HACK: don't update minor changes (prevent over-correcting)
     //TODO: integrate update importance to waypoint (force?)
-    const double minUpdateDistance = 0.55;
+    const double minUpdateDistance = 0.7;
     Ped::Tvector diff = followedPosition - currentWaypoint->getPosition();
     if ( diff.length() < minUpdateDistance )
         return;

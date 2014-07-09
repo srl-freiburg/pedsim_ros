@@ -36,11 +36,6 @@
 #include <pedsim_msgs/AgentState.h>
 #include <pedsim_msgs/AllAgentsState.h>
 
-#include <pedsim_srvs/SetAgentState.h>
-#include <pedsim_srvs/SetAllAgentsState.h>
-#include <pedsim_srvs/GetAgentState.h>
-#include <pedsim_srvs/GetAllAgentsState.h>
-
 #include <visualization_msgs/Marker.h>
 #include <visualization_msgs/MarkerArray.h>
 #include <std_msgs/Header.h>
