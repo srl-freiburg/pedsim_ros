@@ -45,7 +45,9 @@ Simulator::Simulator ( const ros::NodeHandle &node )
 
 Simulator::~Simulator()
 {
-
+    delete robot_;
+    int returnValue = 0;
+    QCoreApplication::exit(returnValue);
 }
 
 bool Simulator::initializeSimulation()
@@ -64,7 +66,9 @@ bool Simulator::initializeSimulation()
     // informative topics (data)
     pub_obstacles_ = nh_.advertise<nav_msgs::GridCells> ( "static_obstacles", 0 );
     pub_all_agents_ = nh_.advertise<pedsim_msgs::AllAgentsState> ( "dynamic_obstacles", 0 );
-    // pub_all_agents_ = nh_.advertise<pedsim_msgs::AllAgentsState> ( "/spencer/perception/tracked_persons", 0 );
+
+    pub_tracked_persons_ = nh_.advertise<spencer_tracking_msgs::TrackedPersons> ( "/spencer/perception/tracked_persons", 0 );
+    pub_tracked_groups_ = nh_.advertise<spencer_tracking_msgs::TrackedGroups> ( "/spencer/perception/tracked_groups", 0 );
 
     /// setup any pointers
     orientation_handler_.reset ( new OrientationHandler() );
@@ -141,7 +145,8 @@ void Simulator::runSimulation()
 
         SCENE.moveAllAgents();
 
-        publishAgents();
+        publishAgents();    // TODO - remove this old piece
+        publishData();
 
         publishGroupVisuals();
 
@@ -188,8 +193,60 @@ void Simulator::callbackRobotCommand ( const pedsim_msgs::AgentState::ConstPtr &
 
 
 /// -----------------------------------------------------------------
+/// \brief publishData
+/// \details publish tracked persons and tracked groups messages
+/// -----------------------------------------------------------------
+void Simulator::publishData()
+{
+    /// Tracked people
+    spencer_tracking_msgs::TrackedPersons tracked_people;
+    std_msgs::Header tracked_people_header;
+    tracked_people_header.stamp = ros::Time::now();
+    tracked_people.header = tracked_people_header;
+
+    BOOST_FOREACH ( Agent* a, SCENE.getAgents() )
+    {
+        spencer_tracking_msgs::TrackedPerson person;
+        person.track_id = a->getId();
+        person.is_occluded = false;
+        // person.detection_id = 0;  // not simulated yet
+        // person.age = 0;   // also not simulated yet
+
+        tracked_people.tracks.push_back(person);
+    }
+
+    /// Tracked groups
+    spencer_tracking_msgs::TrackedGroups tracked_groups;
+    std_msgs::Header tracked_groups_header;
+    tracked_groups_header.stamp = ros::Time::now();
+    tracked_groups.header = tracked_groups_header;
+
+    QList<AgentGroup*> sim_groups = SCENE.getGroups();
+    BOOST_FOREACH ( AgentGroup* ag, sim_groups )
+    {
+        spencer_tracking_msgs::TrackedGroup group;
+        group.group_id = ag->getId();
+        // group.age = 0; //NOTE  not simulated so far
+        // group.centerOfGravity = ... // TODO - convert CoM to Pose with Covariance
+
+        BOOST_FOREACH ( Agent* m, ag->getMembers() )
+        {
+            group.track_ids.push_back(m->getId());
+        }
+
+        tracked_groups.groups.push_back(group);
+    }
+
+
+    /// publish the messages
+    pub_tracked_persons_.publish(tracked_people);
+    pub_tracked_groups_.publish(tracked_groups);
+}
+
+/// -----------------------------------------------------------------
 /// \brief publishAgents
 /// \details publish agent status information and the visual markers
+/// \note This method is old format and is deprecated
 /// -----------------------------------------------------------------
 void Simulator::publishAgents()
 {
@@ -220,9 +277,7 @@ void Simulator::publishAgents()
         marker.pose.position.y = a->gety();
 		marker.action = 0;  // add or modify
 
-		marker.scale.x = 0.025;
-        marker.scale.y = 0.025;
-        marker.scale.z = 0.025;
+		marker.scale.x = 0.025; marker.scale.y = 0.025; marker.scale.z = 0.025;
 
         /// arrows
         visualization_msgs::Marker arrow;
@@ -235,72 +290,37 @@ void Simulator::publishAgents()
         arrow.pose.position.y = a->gety();
         arrow.action = 0;  // add or modify
 
-        arrow.color.a = 1.0;
-        arrow.color.r = 1.0;
-        arrow.color.g = 0.0;
-        arrow.color.b = 0.0;
+        arrow.color.a = 1.0; arrow.color.r = 1.0; arrow.color.g = 0.0; arrow.color.b = 0.0;
 
-        arrow.scale.y = 0.05;
-        arrow.scale.z = 0.05;
+        arrow.scale.y = 0.05; arrow.scale.z = 0.05;
 
 		if ( robot_ != nullptr &&  a->getType() == robot_->getType() )
         {
             marker.type = visualization_msgs::Marker::MESH_RESOURCE;
             marker.mesh_resource = "package://pedsim_simulator/images/darylbot_rotated_shifted.dae";
 
-            marker.color.a = 1.0;
-            marker.color.r = 1.0;
-            marker.color.g = 1.0;
-            marker.color.b = 1.0;
-
-            marker.scale.x = 0.7;
-            marker.scale.y = 0.7;
-            marker.scale.z = 1.0;
+            marker.color.a = 1.0; marker.color.r = 1.0; marker.color.g = 1.0; marker.color.b = 1.0;
+            marker.scale.x = 0.7; marker.scale.y = 0.7; marker.scale.z = 1.0;
         }
         else if ( a->getType() == Ped::Tagent::ELDER )
         {
-            marker.color.a = 1.0;
-            marker.color.r = 1.0;
-            marker.color.g = 1.0;
-            marker.color.b = 1.0;
+            marker.color.a = 1.0; marker.color.r = 1.0; marker.color.g = 1.0; marker.color.b = 1.0;
         }
-        // else if ( a->getType() == Ped::Tagent::AIRPORT_CART )
-        // {
-        //     marker.type = visualization_msgs::Marker::CUBE;
-
-        //     marker.scale.x = 0.4 / 2.0;
-        //     marker.scale.y = 0.4;
-        //     marker.scale.z = 1.75;
-
-        //     marker.color.a = 1.0;
-        //     marker.color.r = 1.0;
-        //     marker.color.g = 0.0;
-        //     marker.color.b = 1.0;
-        // }
         else
 		{
-			marker.color.a = 1.0;
-			marker.color.r = 0.0;
-			marker.color.g = 0.7;
-			marker.color.b = 1.0;
+			marker.color.a = 1.0; marker.color.r = 0.0; marker.color.g = 0.7; marker.color.b = 1.0;
 		}
 
 
 
         if ( a->getStateMachine()->getCurrentState() == AgentStateMachine::AgentState::StateQueueing )
         {
-            marker.color.a = 1.0;
-            marker.color.r = 1.0;
-            marker.color.g = 0.0;
-            marker.color.b = 1.0;
+            marker.color.a = 1.0; marker.color.r = 1.0; marker.color.g = 0.0; marker.color.b = 1.0;
         }
 
         if ( a->getStateMachine()->getCurrentState() == AgentStateMachine::AgentState::StateShopping )
         {
-            marker.color.a = 1.0;
-            marker.color.r = 0.0;
-            marker.color.g = 0.0;
-            marker.color.b = 1.0;
+            marker.color.a = 1.0; marker.color.r = 0.0; marker.color.g = 0.0; marker.color.b = 1.0;
         }
 
 
@@ -392,14 +412,8 @@ void Simulator::publishGroupVisuals()
         center_marker.ns = "pedsim";
         center_marker.id = ag->getId();
 
-        center_marker.color.a = 0.7;
-        center_marker.color.r = 0.0;
-        center_marker.color.g = 0.0;
-        center_marker.color.b = 1.0;
-
-        center_marker.scale.x = 0.05;
-        center_marker.scale.y = 0.05;
-        center_marker.scale.z = 0.05;
+        center_marker.color.a = 0.7; center_marker.color.r = 0.0; center_marker.color.g = 0.0; center_marker.color.b = 1.0;
+        center_marker.scale.x = 0.05; center_marker.scale.y = 0.05;
 
         center_marker.pose.position.x = gcom.x;
         center_marker.pose.position.y = gcom.y;
@@ -430,14 +444,9 @@ void Simulator::publishGroupVisuals()
             marker.ns = "pedsim";
             marker.id = m->getId() +1000;
 
-            marker.color.a = 0.7;
-            marker.color.r = 1.0;
-            marker.color.g = 1.0;
-            marker.color.b = 0.0;
+            marker.color.a = 0.7; marker.color.r = 1.0; marker.color.g = 1.0; marker.color.b = 0.0;
 
-            marker.scale.x = 0.05;
-            marker.scale.y = 0.05;
-            marker.scale.z = 0.05;
+            marker.scale.x = 0.05; marker.scale.y = 0.05; marker.scale.z = 0.05;
 
             marker.type = visualization_msgs::Marker::ARROW;
             geometry_msgs::Point p2;
@@ -641,7 +650,6 @@ void Simulator::publishAttractions()
 /// -----------------------------------------------------------------
 int main ( int argc, char **argv )
 {
-
     QApplication app ( argc, argv );
 
     // initialize resources
@@ -649,8 +657,6 @@ int main ( int argc, char **argv )
 
 
     ros::NodeHandle node;
-
-
     Simulator sm ( node );
 
     if ( sm.initializeSimulation() )
@@ -663,18 +669,6 @@ int main ( int argc, char **argv )
     {
         return EXIT_FAILURE;
     }
-
-
-//     double x1, x2, y1, y2;
-//     ros::param::param<double> ( "/pedsim/x1", x1, 0.0 );
-//     ros::param::param<double> ( "/pedsim/x2", x2, 100.0 );
-//     ros::param::param<double> ( "/pedsim/y1", y1, 0.0 );
-//     ros::param::param<double> ( "/pedsim/y2", y2, 100.0 );
-//
-//     // Scene sim_scene(0, 0, 45, 45, node);
-//     // Scene sim_scene(0, 0, 300, 100, node);
-//     Scene sim_scene ( x1, y1, x2, y2, node );
-
 
     return app.exec();
 }

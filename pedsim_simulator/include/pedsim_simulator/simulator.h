@@ -32,15 +32,26 @@
 #include <ros/ros.h>
 #include <ros/console.h>
 
-// messages and services
+// old pedsim messages and services
+// TODO - remove this dependency
 #include <pedsim_msgs/AgentState.h>
 #include <pedsim_msgs/AllAgentsState.h>
+
+// spencer messages
+#include <spencer_tracking_msgs/TrackedPerson.h>
+#include <spencer_tracking_msgs/TrackedPersons.h>
+#include <spencer_tracking_msgs/TrackedGroup.h>
+#include <spencer_tracking_msgs/TrackedGroups.h>
+
 
 #include <visualization_msgs/Marker.h>
 #include <visualization_msgs/MarkerArray.h>
 #include <std_msgs/Header.h>
 #include <nav_msgs/GridCells.h>
 #include <geometry_msgs/Point.h>
+#include <geometry_msgs/PoseWithCovariance.h>
+#include <geometry_msgs/TwistWithCovariance.h>
+
 
 #include <pedsim_simulator/orientationhandler.h>
 
@@ -71,6 +82,7 @@ public:
 
 	/// publishers
 	void publishAgents();
+	void publishData();
 	void publishGroupVisuals();
 	void publishObstacles();
 	void publishWalls();
@@ -86,19 +98,24 @@ private:
 
 	ros::NodeHandle nh_;
 
-	// publishers
-	ros::Publisher pub_obstacles_;
-    ros::Publisher pub_agent_visuals_;
+	/// publishers
+	// - data messages
+	ros::Publisher pub_obstacles_; 	// grid cells
+	ros::Publisher pub_all_agents_;	// positions and velocities (old msg)
+	ros::Publisher pub_tracked_persons_;
+	ros::Publisher pub_tracked_groups_;
+
+	// - visualization related messages (e.g. markers)
+	ros::Publisher pub_attractions_;
+	ros::Publisher pub_agent_visuals_;
     ros::Publisher pub_group_centers_;
 	ros::Publisher pub_group_lines_;
 	ros::Publisher pub_walls_;
-	ros::Publisher pub_all_agents_;
-	ros::Publisher pub_attractions_;
 	ros::Publisher pub_queues_;
 	ros::Publisher pub_waypoints_;
 	ros::Publisher pub_agent_arrows_;
 
-	// subscribers
+	/// subscribers
     ros::Subscriber sub_robot_command_;
 
     OrientationHandlerPtr orientation_handler_;

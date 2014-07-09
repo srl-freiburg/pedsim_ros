@@ -7,7 +7,7 @@ set( PEDSIM_CORE_DEPENDENCIES
     roscpp
     rospy
     std_msgs
-    # spencer_tracking_msgs
+    spencer_tracking_msgs
     pedsim_msgs
     visualization_msgs
     nav_msgs
