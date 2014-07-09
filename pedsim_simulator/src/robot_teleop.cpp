@@ -116,7 +116,6 @@ void Teleop::keyLoop()
     puts ( "---------------------------" );
     puts ( "Use arrow keys to move the robot." );
 
-
     // for(;;)
     while ( true )
     {

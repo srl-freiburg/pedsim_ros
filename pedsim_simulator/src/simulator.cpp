@@ -212,6 +212,31 @@ void Simulator::publishData()
         // person.detection_id = 0;  // not simulated yet
         // person.age = 0;   // also not simulated yet
 
+        double theta = atan2 ( a->getvy(), a->getvx() );
+        Eigen::Quaternionf q = orientation_handler_->angle2Quaternion ( theta );
+
+        geometry_msgs::PoseWithCovariance pcov;
+        pcov.pose.position.x = a->getx();
+        pcov.pose.position.y = a->gety();
+        pcov.pose.position.z = 0.0;
+        pcov.pose.orientation.x = q.x();
+        pcov.pose.orientation.y = q.y();
+        pcov.pose.orientation.z = q.z();
+        pcov.pose.orientation.w = q.w();
+
+        person.pose = pcov;
+
+        // TODO - recheck this
+        geometry_msgs::TwistWithCovariance tcov;
+        tcov.twist.linear.x = a->getvx();
+        tcov.twist.linear.y = a->getvy();
+        tcov.twist.linear.z = 0.0;
+        // tcov.twist.angular.x = 0;
+        // tcov.twist.angular.y = 0;
+        // tcov.twist.angular.z = 0;
+
+        person.twist = tcov;
+
         tracked_people.tracks.push_back(person);
     }
 
@@ -328,8 +353,7 @@ void Simulator::publishAgents()
         {
             // construct the orientation quaternion
             double theta = atan2 ( a->getvy(), a->getvx() );
-            Eigen::Quaternionf q = orientation_handler_->angle2Quaternion ( theta
-                                                                          );
+            Eigen::Quaternionf q = orientation_handler_->angle2Quaternion ( theta );
             marker.pose.orientation.x = q.x();
             marker.pose.orientation.y = q.y();
             marker.pose.orientation.z = q.z();
@@ -382,6 +406,7 @@ void Simulator::publishAgents()
     // publish the marker array
     pub_agent_visuals_.publish ( marker_array );
     pub_agent_arrows_.publish ( arrow_array );
+
     pub_all_agents_.publish ( all_status );
 }
 

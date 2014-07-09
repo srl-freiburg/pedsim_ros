@@ -52,13 +52,13 @@ class AgentGroup;
 class WaitingQueue;
 
 
-class Scene : public QObject, protected Ped::Tscene {
+class Scene : public QObject, protected Ped::Tscene
+{
 	Q_OBJECT
 
 public:
 	Scene(QObject* parent = 0);
 	virtual ~Scene();
-
 
     // Singleton Design Pattern
 	#define SCENE Scene::getInstance()
@@ -66,7 +66,6 @@ protected:
 	static Scene* instance;
 public:
 	static Scene& getInstance();
-
 
 	// Signals
 signals:
@@ -89,13 +88,11 @@ signals:
 	void attractionAdded(QString name);
 	void attractionRemoved(QString name);
 
-
 	// Slots
 public slots:
 	void moveAllAgents();
 protected slots:
 	void cleanupScene();
-
 
 	// Methods
 public:
@@ -126,7 +123,6 @@ public:
 protected:
 	void dissolveClusters();
 
-	// → libPedSim overrides
 public:
 	virtual void addAgent(Agent* agent);
 	virtual void addObstacle(Obstacle* obstacle);
@@ -157,8 +153,6 @@ protected:
 
 	// → simulated time
 	double sceneTime;
-
-
 };
 
 #endif
