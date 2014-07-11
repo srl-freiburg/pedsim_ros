@@ -72,6 +72,7 @@ bool Simulator::initializeSimulation()
 
     /// setup any pointers
     orientation_handler_.reset ( new OrientationHandler() );
+    robot_ = nullptr;
 
     /// subscribers
     sub_robot_command_ = nh_.subscribe ( "robot_state", 1, &Simulator::callbackRobotCommand, this );
@@ -80,9 +81,7 @@ bool Simulator::initializeSimulation()
     std::string scene_file_param;
     ros::param::param<std::string> ( "/simulator/scene_file", scene_file_param, "scene.xml" );
     // load scenario file
-    // TODO - convert qstrings to std::strings
     QString scenefile = QString::fromStdString ( scene_file_param );
-
     ScenarioReader scenario_reader;
     bool readResult = scenario_reader.readFromFile ( scenefile );
     if ( readResult == false )
@@ -90,10 +89,6 @@ bool Simulator::initializeSimulation()
         ROS_WARN ( "Could not load the scene file, check paths" );
         return false;
     }
-
-    ROS_INFO ( "Loading from %s scene file", scene_file_param.c_str() );
-
-    robot_ = nullptr;
 
 	/// load the remaining parameters
     loadConfigParameters();
@@ -110,11 +105,12 @@ void Simulator::loadConfigParameters()
 {
     double cell_size;
     ros::param::param<double> ( "/simulator/cell_size", cell_size, 1.0 );
+    // add dimensions are in meters
     CONFIG.cell_width = cell_size;
     CONFIG.cell_height = cell_size;
 
     double robot_wait_time;
-    ros::param::param<double> ( "/pedsim/move_robot", robot_wait_time, 100.0 );
+    ros::param::param<double> ( "/pedsim/move_robot", robot_wait_time, 10.0 );
     CONFIG.robot_wait_time = robot_wait_time;
 
     double teleop_state;
@@ -252,6 +248,7 @@ void Simulator::publishData()
         spencer_tracking_msgs::TrackedGroup group;
         group.group_id = ag->getId();
         // group.age = 0; //NOTE  not simulated so far
+        Ped::Tvector com = ag->getCenterOfMass();
         // group.centerOfGravity = ... // TODO - convert CoM to Pose with Covariance
 
         BOOST_FOREACH ( Agent* m, ag->getMembers() )
@@ -261,7 +258,6 @@ void Simulator::publishData()
 
         tracked_groups.groups.push_back(group);
     }
-
 
     /// publish the messages
     pub_tracked_persons_.publish(tracked_people);
@@ -294,14 +290,12 @@ void Simulator::publishAgents()
         marker.header.stamp = ros::Time();
         marker.ns = "pedsim";
         marker.id = a->getId();
-
         marker.type = visualization_msgs::Marker::MESH_RESOURCE;
         marker.mesh_resource = "package://pedsim_simulator/images/man.3ds";
 
         marker.pose.position.x = a->getx();
         marker.pose.position.y = a->gety();
 		marker.action = 0;  // add or modify
-
 		marker.scale.x = 0.025; marker.scale.y = 0.025; marker.scale.z = 0.025;
 
         /// arrows
@@ -314,16 +308,13 @@ void Simulator::publishAgents()
         arrow.pose.position.x = a->getx();
         arrow.pose.position.y = a->gety();
         arrow.action = 0;  // add or modify
-
         arrow.color.a = 1.0; arrow.color.r = 1.0; arrow.color.g = 0.0; arrow.color.b = 0.0;
-
         arrow.scale.y = 0.05; arrow.scale.z = 0.05;
 
 		if ( robot_ != nullptr &&  a->getType() == robot_->getType() )
         {
             marker.type = visualization_msgs::Marker::MESH_RESOURCE;
             marker.mesh_resource = "package://pedsim_simulator/images/darylbot_rotated_shifted.dae";
-
             marker.color.a = 1.0; marker.color.r = 1.0; marker.color.g = 1.0; marker.color.b = 1.0;
             marker.scale.x = 0.7; marker.scale.y = 0.7; marker.scale.z = 1.0;
         }
@@ -382,6 +373,8 @@ void Simulator::publishAgents()
         arrow_array.markers.push_back ( arrow );
 
         /// status message
+        /// TODO - remove this once, we publish internal states using
+        /// spencer messages
         pedsim_msgs::AgentState state;
         std_msgs::Header agent_header;
         agent_header.stamp = ros::Time::now();
@@ -418,7 +411,6 @@ void Simulator::publishAgents()
 void Simulator::publishGroupVisuals()
 {
     QList<AgentGroup*> groups = SCENE.getGroups();
-
     visualization_msgs::MarkerArray center_array;
 
     /// visualize groups (sketchy)
@@ -436,29 +428,23 @@ void Simulator::publishGroupVisuals()
         center_marker.header.stamp = ros::Time();
         center_marker.ns = "pedsim";
         center_marker.id = ag->getId();
-
         center_marker.color.a = 0.7; center_marker.color.r = 0.0; center_marker.color.g = 0.0; center_marker.color.b = 1.0;
         center_marker.scale.x = 0.05; center_marker.scale.y = 0.05;
 
         center_marker.pose.position.x = gcom.x;
         center_marker.pose.position.y = gcom.y;
         center_marker.pose.position.z = center_marker.scale.z / 2.0;
-
         center_marker.pose.orientation.x = 0;
         center_marker.pose.orientation.y = 0;
         center_marker.pose.orientation.z = 0;
         center_marker.pose.orientation.w = 1;
 
         center_marker.type = visualization_msgs::Marker::CYLINDER;
-
         center_array.markers.push_back ( center_marker );
 
         /// members of the group
         geometry_msgs::Point p1;
-        p1.x = gcom.x;
-        p1.y = gcom.y;
-        p1.z = 0.0;
-
+        p1.x = gcom.x; p1.y = gcom.y; p1.z = 0.0;
         visualization_msgs::MarkerArray lines_array;
 
         BOOST_FOREACH ( Agent* m, ag->getMembers() )
@@ -470,18 +456,13 @@ void Simulator::publishGroupVisuals()
             marker.id = m->getId() +1000;
 
             marker.color.a = 0.7; marker.color.r = 1.0; marker.color.g = 1.0; marker.color.b = 0.0;
-
             marker.scale.x = 0.05; marker.scale.y = 0.05; marker.scale.z = 0.05;
-
             marker.type = visualization_msgs::Marker::ARROW;
             geometry_msgs::Point p2;
-            p2.x = m->getx();
-            p2.y = m->gety();
-            p2.z = 0.0;
+            p2.x = m->getx(); p2.y = m->gety(); p2.z = 0.0;
 
             marker.points.push_back ( p1 );
             marker.points.push_back ( p2 );
-
             lines_array.markers.push_back ( marker );
         }
 
@@ -508,9 +489,7 @@ void Simulator::publishObstacles()
     {
         geometry_msgs::Point p;
         Location loc = ( *it );
-        p.x = loc.x - 0.5;
-        p.y = loc.y - 0.5;
-        p.z = 0.0;
+        p.x = loc.x - 0.5; p.y = loc.y - 0.5; p.z = 0.0;
         obstacles.cells.push_back ( p );
 
         it++;
@@ -543,7 +522,6 @@ void Simulator::publishWalls()
     marker.scale.z = 3.0;
 
     marker.pose.position.z = marker.scale.z / 2.0;
-
     marker.type = visualization_msgs::Marker::CUBE_LIST;
 
     std::vector<Location>::const_iterator it = SCENE.obstacle_cells_.begin();
@@ -679,8 +657,6 @@ int main ( int argc, char **argv )
 
     // initialize resources
     ros::init ( argc, argv, "simulator" );
-
-
     ros::NodeHandle node;
     Simulator sm ( node );
 
@@ -692,6 +668,7 @@ int main ( int argc, char **argv )
     }
     else
     {
+        ROS_WARN("Could not initialize simulation, aborting");
         return EXIT_FAILURE;
     }
 

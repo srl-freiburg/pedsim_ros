@@ -43,6 +43,7 @@
 #include <spencer_tracking_msgs/TrackedGroup.h>
 #include <spencer_tracking_msgs/TrackedGroups.h>
 
+// other ROS-sy messages
 #include <visualization_msgs/Marker.h>
 #include <visualization_msgs/MarkerArray.h>
 #include <std_msgs/Header.h>
@@ -50,8 +51,6 @@
 #include <geometry_msgs/Point.h>
 #include <geometry_msgs/PoseWithCovariance.h>
 #include <geometry_msgs/TwistWithCovariance.h>
-
-#include <pedsim_simulator/orientationhandler.h>
 
 #include <boost/foreach.hpp>
 #include <functional>
@@ -66,8 +65,14 @@
 #include <pedsim_simulator/element/waitingqueue.h>
 #include <pedsim_simulator/config.h>
 #include <pedsim_simulator/agentstatemachine.h>
+#include <pedsim_simulator/orientationhandler.h>
 
 
+/// -----------------------------------------------------------------
+/// \class Simulator
+/// \brief Simulation wrapper
+/// \details ROS interface to the scene object provided by pedsim
+/// -----------------------------------------------------------------
 class Simulator
 {
 public:

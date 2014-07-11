@@ -42,6 +42,11 @@
 #define KEYCODE_D 0x42
 #define KEYCODE_Q 0x71
 
+
+/// -----------------------------------------------------------------
+/// \class Teleop
+/// \brief Teleoperation interface via Keyboard
+/// -----------------------------------------------------------------
 class Teleop
 {
 public:
@@ -87,11 +92,8 @@ int main ( int argc, char **argv )
 {
     ros::init ( argc, argv, "robot_teleop" );
     Teleop robot;
-
     signal ( SIGINT, quit );
-
     robot.keyLoop();
-
     return ( 0 );
 }
 
@@ -102,7 +104,6 @@ void Teleop::keyLoop()
     char c;
     bool dirty = false;
 
-
     // get the console in raw mode
     tcgetattr ( kfd, &cooked );
     memcpy ( &raw, &cooked, sizeof ( struct termios ) );
@@ -112,9 +113,11 @@ void Teleop::keyLoop()
     raw.c_cc[VEOF] = 2;
     tcsetattr ( kfd, TCSANOW, &raw );
 
-    puts ( "Reading from keyboard" );
-    puts ( "---------------------------" );
+    puts ( "Robot Teleoperation: Reading from keyboard" );
+    puts ( "------------------------------------------" );
     puts ( "Use arrow keys to move the robot." );
+    puts ( "LEFT | RIGHT control direction (15 degree steps)" );
+    puts ( "UP | DOWN control speed (0.1 m/s steps)" );
 
     // for(;;)
     while ( true )
@@ -172,17 +175,17 @@ void Teleop::keyLoop()
         double stepx = robot_speed * vx;
         double stepy = robot_speed * vy;
 
+        /// TODO - change this to use a spencer-ish message type
+        /// to avoid dependence of pedsim_msgs
         pedsim_msgs::AgentState astate;
 
         std_msgs::Header header_;
         header_.stamp = ros::Time::now();
         astate.header = header_;
 
-        // astate.id = 1;
         astate.type = 2;
         astate.velocity.x = stepx;
         astate.velocity.y = stepy;
-
 
         if ( dirty == true )
         {

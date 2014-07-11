@@ -36,6 +36,7 @@
 #include <pedsim_simulator/element/areawaypoint.h>
 #include <pedsim_simulator/element/waitingqueue.h>
 #include <pedsim_simulator/element/attractionarea.h>
+
 #include <QFile>
 #include <iostream>
 
@@ -73,6 +74,7 @@ bool ScenarioReader::readFromFile ( const QString& filename )
     // check for errors
     if ( xmlReader.hasError() )
     {
+        // TODO - fix qstring and std string issues here to show error lines
 		// ROS_DEBUG("Error while reading scenario file: %s (line: %s)", xmlReader.errorString().toStdString().c_str(), xmlReader.lineNumber().toStdString().c_str());
         return false;
     }
@@ -155,7 +157,6 @@ void ScenarioReader::processData()
             SCENE.addAgentCluster ( agentCluster );
             currentAgents = agentCluster;
         }
-        // → agent's inner elements
         else if ( elementName == "addwaypoint" )
         {
             if ( currentAgents == nullptr )
