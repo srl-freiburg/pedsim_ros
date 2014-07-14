@@ -34,7 +34,7 @@
 
 #include <pedsim_simulator/element/scenarioelement.h>
 #include <libpedsim/ped_agent.h>
-#include <QGraphicsRectItem>
+#include <QGraphicsRectItem>	// TODO -remove qgraphics dependencies
 #include <ros/ros.h>
 
 // Forward Declarations
@@ -45,7 +45,8 @@ class Waypoint;
 class WaypointPlanner;
 
 
-class Agent : public ScenarioElement, public Ped::Tagent {
+class Agent : public ScenarioElement, public Ped::Tagent
+{
 	Q_OBJECT
 
 	// Constructor and Destructor

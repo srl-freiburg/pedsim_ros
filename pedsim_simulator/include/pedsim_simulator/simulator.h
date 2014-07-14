@@ -80,8 +80,8 @@ public:
 	virtual ~Simulator();
 
 	bool initializeSimulation();
-	void runSimulation();
 	void loadConfigParameters();
+	void runSimulation();
 
 	/// publishers
 	void publishAgents();
@@ -92,6 +92,7 @@ public:
 	void publishAttractions();
 
 	/// subscriber helpers
+	// Drive robot based on topic messages
     void callbackRobotCommand ( const pedsim_msgs::AgentState::ConstPtr &msg );
 
 private:
@@ -121,6 +122,6 @@ private:
 	/// subscribers
     ros::Subscriber sub_robot_command_;
 
+    // - Covenient object to handling quaternions
     OrientationHandlerPtr orientation_handler_;
-
 };

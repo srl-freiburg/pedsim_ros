@@ -165,6 +165,7 @@ void Simulator::runSimulation()
     }
 }
 
+
 /// -----------------------------------------------------------------
 /// \brief callbackRobotCommand
 /// \details Control the robot based on the set velocity command
@@ -176,7 +177,7 @@ void Simulator::callbackRobotCommand ( const pedsim_msgs::AgentState::ConstPtr &
     double vx = msg->velocity.x;
     double vy = msg->velocity.y;
 
-    if ( CONFIG.robot_mode == TELEOPERATION || CONFIG.robot_mode == CONTROLLED )
+    if ( CONFIG.robot_mode == RobotMode::TELEOPERATION || CONFIG.robot_mode == RobotMode::CONTROLLED )
         robot_->setTeleop ( true );
 
     if ( robot_->getType() == static_cast<Ped::Tagent::AgentType> ( msg->type ) )
@@ -264,6 +265,7 @@ void Simulator::publishData()
     pub_tracked_groups_.publish(tracked_groups);
 }
 
+
 /// -----------------------------------------------------------------
 /// \brief publishAgents
 /// \details publish agent status information and the visual markers
@@ -327,8 +329,6 @@ void Simulator::publishAgents()
 			marker.color.a = 1.0; marker.color.r = 0.0; marker.color.g = 0.7; marker.color.b = 1.0;
 		}
 
-
-
         if ( a->getStateMachine()->getCurrentState() == AgentStateMachine::AgentState::StateQueueing )
         {
             marker.color.a = 1.0; marker.color.r = 1.0; marker.color.g = 0.0; marker.color.b = 1.0;
@@ -338,7 +338,6 @@ void Simulator::publishAgents()
         {
             marker.color.a = 1.0; marker.color.r = 0.0; marker.color.g = 0.0; marker.color.b = 1.0;
         }
-
 
         if ( a->getvx() != 0.0 )
         {

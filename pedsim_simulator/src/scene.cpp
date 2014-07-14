@@ -586,15 +586,11 @@ std::set<const Ped::Tagent*> Scene::getNeighbors ( double x, double y, double ma
     {
         const Ped::Tagent& candidate = **agentIter;
         Ped::Tvector candidatePos = candidate.getPosition();
-
         double distance = ( candidatePos - position ).length();
-		//ROS_DEBUG("Neighbor: @(%f, %f) -> Distance=%f", aX, aY, distance);
 
         // remove distant neighbors
         if ( distance > maxDist )
         {
-            // Note: this uses the fact that "variable++" first returns variable and then increments
-            //       the iterator would be invalid after erase()
             potentialNeighbours.erase ( agentIter++ );
         }
         else
@@ -655,9 +651,7 @@ void Scene::drawObstacles ( float x1, float y1, float x2, float y2 )
     double unit_x, unit_y;
     unit_x = 1;
     unit_y = 1;
-    // POINT (y1, x1);  // first point
-    // NB the last point can't be here, because of its previous point (which has
-    // to be verified)
+
     if ( dy < 0 )
     {
         ystep = -unit_y;
@@ -679,7 +673,6 @@ void Scene::drawObstacles ( float x1, float y1, float x2, float y2 )
 
     ddy = 2 * dy;  // work with double values for full precision
     ddx = 2 * dx;
-
     obstacle_cells_.push_back ( Location ( x1, y1 ) );
 
     if ( ddx >= ddy )

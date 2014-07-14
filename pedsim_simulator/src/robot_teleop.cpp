@@ -32,6 +32,7 @@
 #include <stdio.h>
 #include <ros/ros.h>
 #include <termios.h>
+
 #include <pedsim_msgs/AgentState.h>
 #include <std_msgs/Header.h>
 
@@ -70,6 +71,7 @@ Teleop::Teleop() :
     rot_angle_ ( 90.0 ),
     robot_speed ( 0.8 )
 {
+    // TODO - add these params to launch file
     nh_.param ( "scale_angular", a_scale_, a_scale_ );
     nh_.param ( "scale_linear", l_scale_, l_scale_ );
 
@@ -193,7 +195,6 @@ void Teleop::keyLoop()
             dirty = false;
         }
     }
-
 
     return;
 }

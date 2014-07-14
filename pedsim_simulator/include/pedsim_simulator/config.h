@@ -71,7 +71,6 @@ signals:
 
     // Slots
 public slots:
-    void setForceVisibility ( const QString& forceIn, bool visibleIn );
     void setSimSpeed ( int valueIn );
     void decreaseSimSpeed();
     void increaseSimSpeed();
@@ -91,8 +90,8 @@ public slots:
 
     // Methods
 public:
+    // TODO - change to std::unordered_map
     QMap<QString,double> getForceMap() const;
-    bool isForceVisible ( const QString& forceNameIn ) const;
 
     //TODO: make member variables protected and add getter functions
 	//TODO - add distribution parameters here
@@ -102,8 +101,6 @@ public:
 
     // Attributes
 public:
-    // → Visibility of individual forces
-    QMap<QString,bool> forceVisibilityMap;
     // → Simulation
     double timeStepSize;
     int simSpeed;

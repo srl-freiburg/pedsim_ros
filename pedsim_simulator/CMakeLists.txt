@@ -1,9 +1,9 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
 PROJECT(pedsim_simulator)
 
-ADD_DEFINITIONS(-Wall -Wunused -std=c++0x -pipe)
+ADD_DEFINITIONS(-Wall -Wunused -std=c++0x -pipe) # C++ 11 is required
 
-set( PEDSIM_CORE_DEPENDENCIES
+set( PEDSIM_SIMULATOR_DEPENDENCIES
     roscpp
     rospy
     std_msgs
@@ -16,7 +16,7 @@ set( PEDSIM_CORE_DEPENDENCIES
 )
 
 ## Find catkin macros and libraries
-find_package(catkin REQUIRED COMPONENTS ${PEDSIM_CORE_DEPENDENCIES})
+find_package(catkin REQUIRED COMPONENTS ${PEDSIM_SIMULATOR_DEPENDENCIES})
 
 # add qt4 to the project
 FIND_PACKAGE(Boost REQUIRED)
@@ -26,12 +26,8 @@ FIND_PACKAGE(Eigen REQUIRED)
 INCLUDE(${QT_USE_FILE})
 
 catkin_package(
- CATKIN_DEPENDS ${PEDSIM_CORE_DEPENDENCIES}
+ CATKIN_DEPENDS ${PEDSIM_SIMULATOR_DEPENDENCIES}
 )
-
-# add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/libpedsim)
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/libpedsim)
-
 
 include_directories(include)
 include_directories(${Eigen_INCLUDE_DIRS})
@@ -108,6 +104,8 @@ set(MOC_FILES
 	include/pedsim_simulator/waypointplanner/queueingplanner.h
 )
 
+# Compile the basic pedsim library
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/libpedsim)
 
 QT4_WRAP_CPP(MOC_SRCS_UI ${MOC_FILES})
 
@@ -121,8 +119,9 @@ TARGET_LINK_LIBRARIES(simulator
 
 TARGET_LINK_LIBRARIES(teleop ${BOOST_LIBRARIES} ${catkin_LIBRARIES})
 
-
 INSTALL(TARGETS simulator teleop
     RUNTIME DESTINATION bin
     LIBRARY DESTINATION lib
 )
+
+## Unit Tests

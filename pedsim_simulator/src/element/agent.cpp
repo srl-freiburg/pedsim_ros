@@ -170,7 +170,7 @@ void Agent::updateState()
 
 void Agent::move ( double h )
 {
-	if ( getType() == Ped::Tagent::ROBOT && CONFIG.robot_mode == TELEOPERATION)
+	if ( getType() == Ped::Tagent::ROBOT && CONFIG.robot_mode == RobotMode::TELEOPERATION)
 	{
 		Ped::Tagent::setForceFactorSocial ( 0.1 );
 		Ped::Tagent::setForceFactorObstacle ( 0.1 );
@@ -181,7 +181,7 @@ void Agent::move ( double h )
             Ped::Tagent::move ( h );
         }
 	}
-	else if ( getType() == Ped::Tagent::ROBOT && CONFIG.robot_mode == CONTROLLED )
+	else if ( getType() == Ped::Tagent::ROBOT && CONFIG.robot_mode == RobotMode::CONTROLLED )
 	{
 		Ped::Tagent::setForceFactorSocial ( CONFIG.forceSocial );
 		Ped::Tagent::setForceFactorObstacle ( 350 );
@@ -192,14 +192,14 @@ void Agent::move ( double h )
             Ped::Tagent::move ( h );
         }
 	}
-    else if ( getType() == Ped::Tagent::ROBOT && CONFIG.robot_mode == SOCIAL_DRIVE )
+    else if ( getType() == Ped::Tagent::ROBOT && CONFIG.robot_mode == RobotMode::SOCIAL_DRIVE )
     {
         Ped::Tagent::setForceFactorSocial ( CONFIG.forceSocial * 0.7 );
         Ped::Tagent::setForceFactorObstacle ( 350 );
         Ped::Tagent::setForceFactorDesired ( 4.2 );
 
         Ped::Tagent::setVmax ( 1.8 );
-		Ped::Tagent::SetRadius( 0.4 );
+		Ped::Tagent::SetRadius( 0.5 );
         Ped::Tagent::move ( h );
     }
 	else if ( getType() != Ped::Tagent::ROBOT )

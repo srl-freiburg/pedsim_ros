@@ -30,7 +30,6 @@
 */
 
 #include <pedsim_simulator/config.h>
-#include <QStringList>
 
 
 // initialize static value
@@ -39,23 +38,11 @@ Config* Config::Config::instance = nullptr;
 
 Config::Config ( QObject* parent )
 {
-    // → load visibility configuration for individual forces
-    QStringList forces (
-    {
-        "Desired", "Obstacle", "Social",
-        "Random", "AlongWall",
-        "GroupGaze", "GroupCoherence", "GroupRepulsion"
-    } );
-    foreach ( QString currentForce, forces )
-    {
-        forceVisibilityMap[currentForce] = true;
-    }
-
     timeStepSize = 0.05;
     simSpeed = int(1000.0/50);
     forceObstacle = 10.0;
     sigmaObstacle = 0.2;
-    forceSocial = 5.0;
+    forceSocial = 5.1;
 
     forceGroupGaze = 3.0;
     forceGroupCoherence = 2.0;
@@ -66,7 +53,7 @@ Config::Config ( QObject* parent )
 	cell_width = 1.0;
     cell_height = 1.0;
 
-    robot_mode = SOCIAL_DRIVE;
+    robot_mode = RobotMode::SOCIAL_DRIVE;
     robot_wait_time = 15;
 
 	groups_enabled = true;
@@ -83,12 +70,6 @@ Config& Config::getInstance()
         instance = new Config();
 
     return *instance;
-}
-
-
-void Config::setForceVisibility ( const QString& forceIn, bool visibleIn )
-{
-    forceVisibilityMap[forceIn] = visibleIn;
 }
 
 void Config::setTimeStepSize ( double valueIn )
@@ -212,9 +193,4 @@ QMap<QString,double> Config::getForceMap() const
     forceMap["alongwall"] = forceAlongWall;
 
     return forceMap;
-}
-
-bool Config::isForceVisible ( const QString& forceNameIn ) const
-{
-    return forceVisibilityMap.value ( forceNameIn, true );
 }

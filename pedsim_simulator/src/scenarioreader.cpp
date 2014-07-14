@@ -91,8 +91,7 @@ void ScenarioReader::processData()
         const QString elementName = xmlReader.name().toString();
         const QXmlStreamAttributes elementAttributes = xmlReader.attributes();
 
-        if ( ( elementName == "scenario" )
-                || ( elementName == "welcome" ) )
+        if ( ( elementName == "scenario" ) || ( elementName == "welcome" ) )
         {
             // nothing to do
         }

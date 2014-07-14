@@ -47,7 +47,7 @@ static boost::mt19937 generator;
 
 
 /// --------------------------------------
-/// \brief Generate a random number in a 
+/// \brief Generate a random number in a
 /// \details range over uniform distribution
 /// \param[in] min - minimum value
 /// \param[in] max - maximum value
@@ -92,7 +92,7 @@ inline double distance(double x1, double y1, double x2, double y2)
 /// \enum RobotMode
 /// \brief Robot control mode
 /// --------------------------------------
-enum RobotMode
+enum class RobotMode
 {
 	CONTROLLED = 0,
 	TELEOPERATION = 1,
@@ -112,7 +112,7 @@ struct ForceWeight
 	float group_gaze;
 	float group_cohesion;
 	float group_repulsion;
-	
+
 	ForceWeight()
 	{
 		desired = 1.0;
@@ -133,14 +133,14 @@ typedef boost::shared_ptr<ForceWeight const> ForceWeightConstPtr;
 /// \struct Location
 /// \brief 2D location/cell
 /// --------------------------------------
-struct Location 
+struct Location
 {
     float x;
     float y;
 
     Location(float xx, float yy) : x(xx), y(yy) {}
 
-    bool operator ==(Location a) 
+    bool operator ==(Location a)
     {
         if (x == a.x && y == a.y) return true;
         else return false;
