@@ -54,7 +54,9 @@ bool Simulator::initializeSimulation()
 {
     /// setup ros publishers
     // visualizations
-    pub_agent_visuals_ = nh_.advertise<visualization_msgs::MarkerArray> ( "agents_markers", 0 );
+    // pub_agent_visuals_ = nh_.advertise<visualization_msgs::MarkerArray> ( "agents_markers", 0 );
+    pub_agent_visuals_ = nh_.advertise<animated_marker_msgs::AnimatedMarkerArray> ( "agents_markers", 0 );
+
     pub_group_centers_ = nh_.advertise<visualization_msgs::MarkerArray> ( "group_centers", 0 );
     pub_agent_arrows_ = nh_.advertise<visualization_msgs::MarkerArray> ( "agent_arrows", 0 );
     pub_group_lines_ = nh_.advertise<visualization_msgs::MarkerArray> ( "group_lines", 0 );
@@ -274,7 +276,9 @@ void Simulator::publishData()
 void Simulator::publishAgents()
 {
     // minor optimization with arrays for speedup
-    visualization_msgs::MarkerArray marker_array;
+    // visualization_msgs::MarkerArray marker_array;
+    animated_marker_msgs::AnimatedMarkerArray marker_array;
+
     visualization_msgs::MarkerArray arrow_array;
 
     // status message
@@ -287,18 +291,24 @@ void Simulator::publishAgents()
     BOOST_FOREACH ( Agent* a, SCENE.getAgents() )
     {
         /// visual marker message
-        visualization_msgs::Marker marker;
+        // visualization_msgs::Marker marker;
+        animated_marker_msgs::AnimatedMarker marker;
+        marker.mesh_use_embedded_materials = true;
         marker.header.frame_id = "world";
         marker.header.stamp = ros::Time();
         marker.ns = "pedsim";
         marker.id = a->getId();
-        marker.type = visualization_msgs::Marker::MESH_RESOURCE;
-        marker.mesh_resource = "package://pedsim_simulator/images/man.3ds";
+        // marker.type = visualization_msgs::Marker::MESH_RESOURCE;
+        marker.type = animated_marker_msgs::AnimatedMarker::MESH_RESOURCE;
+        // marker.mesh_resource = "package://pedsim_simulator/images/man.3ds";
+        marker.mesh_resource = "package://pedsim_simulator/images/animated_walking_man.mesh";
 
         marker.pose.position.x = a->getx();
         marker.pose.position.y = a->gety();
 		marker.action = 0;  // add or modify
-		marker.scale.x = 0.025; marker.scale.y = 0.025; marker.scale.z = 0.025;
+		// marker.scale.x = 0.025; marker.scale.y = 0.025; marker.scale.z = 0.025;
+        const double person_scale = 2.0 / 8.5 * 1.8;
+        marker.scale.x = person_scale; marker.scale.y = person_scale; marker.scale.z = person_scale;
 
         /// arrows
         visualization_msgs::Marker arrow;
@@ -309,18 +319,12 @@ void Simulator::publishAgents()
 
         arrow.pose.position.x = a->getx();
         arrow.pose.position.y = a->gety();
+        arrow.pose.position.z = 1.4;
         arrow.action = 0;  // add or modify
         arrow.color.a = 1.0; arrow.color.r = 1.0; arrow.color.g = 0.0; arrow.color.b = 0.0;
         arrow.scale.y = 0.05; arrow.scale.z = 0.05;
 
-		if ( robot_ != nullptr &&  a->getType() == robot_->getType() )
-        {
-            marker.type = visualization_msgs::Marker::MESH_RESOURCE;
-            marker.mesh_resource = "package://pedsim_simulator/images/darylbot_rotated_shifted.dae";
-            marker.color.a = 1.0; marker.color.r = 1.0; marker.color.g = 1.0; marker.color.b = 1.0;
-            marker.scale.x = 0.7; marker.scale.y = 0.7; marker.scale.z = 1.0;
-        }
-        else if ( a->getType() == Ped::Tagent::ELDER )
+        if ( a->getType() == Ped::Tagent::ELDER )
         {
             marker.color.a = 1.0; marker.color.r = 1.0; marker.color.g = 1.0; marker.color.b = 1.0;
         }
@@ -339,34 +343,49 @@ void Simulator::publishAgents()
             marker.color.a = 1.0; marker.color.r = 0.0; marker.color.g = 0.0; marker.color.b = 1.0;
         }
 
+
+        Eigen::Quaterniond q = computePose( a );
+        marker.pose.orientation.x = q.x();
+        marker.pose.orientation.y = q.y();
+        marker.pose.orientation.z = q.z();
+        marker.pose.orientation.w = q.w();
+
+        double theta = atan2 ( a->getvy(), a->getvx() );
+        Eigen::Quaternionf qa = orientation_handler_->angle2Quaternion ( theta );
+
         if ( a->getvx() != 0.0 )
         {
-            // construct the orientation quaternion
-            double theta = atan2 ( a->getvy(), a->getvx() );
-            Eigen::Quaternionf q = orientation_handler_->angle2Quaternion ( theta );
-            marker.pose.orientation.x = q.x();
-            marker.pose.orientation.y = q.y();
-            marker.pose.orientation.z = q.z();
-            marker.pose.orientation.w = q.w();
-
-            arrow.pose.orientation.x = q.x();
-            arrow.pose.orientation.y = q.y();
-            arrow.pose.orientation.z = q.z();
-            arrow.pose.orientation.w = q.w();
+            arrow.pose.orientation.x = qa.x();
+            arrow.pose.orientation.y = qa.y();
+            arrow.pose.orientation.z = qa.z();
+            arrow.pose.orientation.w = qa.w();
 
             double xx = sqrt(a->getvx()*a->getvx() + a->getvy()*a->getvy());
             arrow.scale.x = xx > 0.0 ? xx : 0.01;
+
+            marker.animation_speed = xx * 0.7;
         }
         else
         {
-            marker.pose.orientation.x = 0.0;
-            marker.pose.orientation.y = 0.0;
-            marker.pose.orientation.z = 0.0;
-            marker.pose.orientation.w = 1.0;
+            marker.animation_speed = 0.0;
         }
 
-        // set the position in the Z
-        marker.pose.position.z = marker.scale.z / 2.0;
+        if ( robot_ != nullptr &&  a->getType() == robot_->getType() )
+        {
+            marker.type = visualization_msgs::Marker::MESH_RESOURCE;
+            marker.mesh_resource = "package://pedsim_simulator/images/darylbot_rotated_shifted.dae";
+            marker.color.a = 1.0; marker.color.r = 1.0; marker.color.g = 1.0; marker.color.b = 1.0;
+            marker.scale.x = 0.8; marker.scale.y = 0.8; marker.scale.z = 1.0;
+
+            marker.pose.orientation.x = qa.x();
+            marker.pose.orientation.y = qa.y();
+            marker.pose.orientation.z = qa.z();
+            marker.pose.orientation.w = qa.w();
+
+            marker.pose.position.z = 0.7;
+
+            arrow.pose.position.z = 1.0;
+        }
 
         marker_array.markers.push_back ( marker );
         arrow_array.markers.push_back ( arrow );
@@ -432,7 +451,7 @@ void Simulator::publishGroupVisuals()
 
         center_marker.pose.position.x = gcom.x;
         center_marker.pose.position.y = gcom.y;
-        center_marker.pose.position.z = center_marker.scale.z / 2.0;
+        center_marker.pose.position.z = 1.4;
         center_marker.pose.orientation.x = 0;
         center_marker.pose.orientation.y = 0;
         center_marker.pose.orientation.z = 0;
@@ -443,7 +462,7 @@ void Simulator::publishGroupVisuals()
 
         /// members of the group
         geometry_msgs::Point p1;
-        p1.x = gcom.x; p1.y = gcom.y; p1.z = 0.0;
+        p1.x = gcom.x; p1.y = gcom.y; p1.z = 1.4;
         visualization_msgs::MarkerArray lines_array;
 
         BOOST_FOREACH ( Agent* m, ag->getMembers() )
@@ -458,7 +477,7 @@ void Simulator::publishGroupVisuals()
             marker.scale.x = 0.05; marker.scale.y = 0.05; marker.scale.z = 0.05;
             marker.type = visualization_msgs::Marker::ARROW;
             geometry_msgs::Point p2;
-            p2.x = m->getx(); p2.y = m->gety(); p2.z = 0.0;
+            p2.x = m->getx(); p2.y = m->gety(); p2.z = 1.4;
 
             marker.points.push_back ( p1 );
             marker.points.push_back ( p2 );

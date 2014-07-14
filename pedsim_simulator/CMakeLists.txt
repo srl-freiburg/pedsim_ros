@@ -10,6 +10,7 @@ set( PEDSIM_SIMULATOR_DEPENDENCIES
     spencer_tracking_msgs
     pedsim_msgs
     visualization_msgs
+    animated_marker_msgs
     nav_msgs
     geometry_msgs
     tf

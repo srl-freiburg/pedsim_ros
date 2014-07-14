@@ -42,7 +42,7 @@ class OrientationHandler
 {
 private:
 
-	/// Quaternion elements 
+	/// Quaternion elements
 	double qx_;
 	double qy_;
 	double qz_;
@@ -57,17 +57,21 @@ private:
 public:
 
 	OrientationHandler() { qx_ = 0.0; qy_ = 0.0; qz_ = 0.0; qw_ = 1.0; }
-	/// Constructor to call if you know the heading of the robot in a xy plane 
+	/// Constructor to call if you know the heading of the robot in a xy plane
 	OrientationHandler(double theta);
 	/// Constructor to call if you know the velocity's components of the robot in a xy plane
 	OrientationHandler(double vx, double vy);
-	/// Constructor to call if you know the quaternion's components 
+	/// Constructor to call if you know the quaternion's components
 	OrientationHandler(double qw, double qx, double qy, double qz);
 	~OrientationHandler();
-	
+
 	/// Computes and returns the robot's heading angle Theta (in a xy plane) given its quaternion
 	double getTheta(Eigen::Quaternionf quaternion);
 	Eigen::Quaternionf angle2Quaternion(double theta);
+
+	Eigen::Quaterniond rpy2Quaternion(double roll, double pitch, double yaw);
+
+
 	/// get the robot's heading angle Theta computed by the constructor
 	double gett();
 

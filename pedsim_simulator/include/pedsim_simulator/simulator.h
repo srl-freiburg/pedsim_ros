@@ -31,6 +31,7 @@
 // ros and big guys
 #include <ros/ros.h>
 #include <ros/console.h>
+// #include <tf/transform_listener.h>
 
 // old pedsim messages and services
 // TODO - remove this dependency
@@ -51,6 +52,8 @@
 #include <geometry_msgs/Point.h>
 #include <geometry_msgs/PoseWithCovariance.h>
 #include <geometry_msgs/TwistWithCovariance.h>
+#include <animated_marker_msgs/AnimatedMarker.h>
+#include <animated_marker_msgs/AnimatedMarkerArray.h>
 
 #include <boost/foreach.hpp>
 #include <functional>
@@ -124,4 +127,20 @@ private:
 
     // - Covenient object to handling quaternions
     OrientationHandlerPtr orientation_handler_;
+
+private:
+
+	inline Eigen::Quaterniond computePose( Agent* a )
+	{
+		double theta = atan2 ( a->getvy(), a->getvx() );
+
+		double aa = M_PI / 2.0;
+		double b = 0.0;
+		// double yaw = (theta + 90.0) / (180.0 * M_PI);
+		double c = theta + (M_PI / 2.0);
+
+		// Eigen::Quaterniond q = orientation_handler_->rpy2Quaternion(a, b, c);
+		Eigen::Quaterniond q = orientation_handler_->rpy2Quaternion(aa, c, b);
+		return q;
+	}
 };
