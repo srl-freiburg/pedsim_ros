@@ -117,7 +117,7 @@ Visualization Manager:
       Marker Topic: /attractions
       Name: Marker
       Namespaces:
-        {}
+        pedsim: true
       Queue Size: 1
       Value: true
     - Class: rviz/MarkerArray
@@ -168,22 +168,22 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/XYOrbit
-      Distance: 35.4208
+      Distance: 16.4496
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.06
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: 18.9587
-        Y: 11.1604
-        Z: -6.61549e-05
+        X: 14.6287
+        Y: 10.1935
+        Z: -7.09233e-05
       Name: Current View
       Near Clip Distance: 0.01
-      Pitch: 1.3198
+      Pitch: 0.774801
       Target Frame: <Fixed Frame>
       Value: XYOrbit (rviz)
-      Yaw: 5.62351
+      Yaw: 4.7035
     Saved: ~
 Window Geometry:
   Displays:

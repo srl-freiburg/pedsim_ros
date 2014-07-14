@@ -35,6 +35,8 @@
 #include <pedsim_simulator/element/queueingwaypoint.h>
 #include <pedsim_simulator/element/waitingqueue.h>
 
+#include <pedsim_simulator/utilities.h>
+
 
 QueueingWaypointPlanner::QueueingWaypointPlanner()
 {
@@ -203,7 +205,8 @@ WaitingQueue* QueueingWaypointPlanner::getWaitingQueue() const
 
 bool QueueingWaypointPlanner::hasReachedQueueEnd() const
 {
-    const double endPositionRadius = 2.0;
+    // const double endPositionRadius = 2.0;
+    const double endPositionRadius = 4.0;
 
     // sanity checks
     if ( waitingQueue == nullptr )
@@ -220,8 +223,6 @@ bool QueueingWaypointPlanner::hasReachedQueueEnd() const
 
 void QueueingWaypointPlanner::activateApproachingMode()
 {
-// 	DEBUG_LOG("Agent %1 enters Approaching Mode", agent->getId());
-
     // update mode
     status = QueueingWaypointPlanner::Approaching;
 
@@ -236,8 +237,6 @@ void QueueingWaypointPlanner::activateApproachingMode()
 
 void QueueingWaypointPlanner::activateQueueingMode()
 {
-// 	DEBUG_LOG("Agent %1 enters Queueing Mode", agent->getId());
-
     // update mode
     status = QueueingWaypointPlanner::Queued;
 
@@ -264,6 +263,7 @@ void QueueingWaypointPlanner::activateQueueingMode()
     agent->disableForce ( "Random" );
     agent->disableForce ( "GroupCoherence" );
     agent->disableForce ( "GroupGaze" );
+    agent->disableForce ( "GroupRepulsion" );
 
     // reset waypoint (remove old one)
     delete currentWaypoint;
@@ -272,8 +272,13 @@ void QueueingWaypointPlanner::activateQueueingMode()
 
 void QueueingWaypointPlanner::addPrivateSpace ( Ped::Tvector& queueEndIn ) const
 {
-    const double privateSpaceDistance = 0.4;
-    Ped::Tvector queueOffset ( Ped::Tvector::fromPolar ( waitingQueue->getDirection(), privateSpaceDistance ) );
+    // const double privateSpaceDistance = 0.4;
+    const double privateSpaceDistance = randRange(0.2, 0.8);    // distance between agents in queue
+    const double privateSpaceDirection = randRange(-30.0, 30.0);    // relative orientations
+    Ped::Tangle orientation;
+    orientation.setDegree( privateSpaceDirection );
+
+    Ped::Tvector queueOffset ( Ped::Tvector::fromPolar ( waitingQueue->getDirection() + orientation, privateSpaceDistance ) );
     queueEndIn -= queueOffset;
 }
 

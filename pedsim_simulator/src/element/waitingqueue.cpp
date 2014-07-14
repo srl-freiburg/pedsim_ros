@@ -224,7 +224,8 @@ bool WaitingQueue::hasReachedWaitingPosition()
     if ( queuedAgents.isEmpty() )
         return false;
 
-    const double waitingRadius = 0.7;
+    // const double waitingRadius = 0.7;
+    const double waitingRadius = 0.3;
 
     // compute distance from where queue starts
     const Agent* leadingAgent = queuedAgents.first();

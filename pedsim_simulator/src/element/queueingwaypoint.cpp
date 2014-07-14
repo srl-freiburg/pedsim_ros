@@ -50,8 +50,9 @@ QString QueueingWaypoint::getName() const
     return name;
 }
 
-Ped::Tvector QueueingWaypoint::getForce ( const Ped::Tagent& agentIn, Ped::Tvector* desiredDirectionOut, bool* reached )
-const
+Ped::Tvector QueueingWaypoint::getForce ( const Ped::Tagent& agentIn,
+                                         Ped::Tvector* desiredDirectionOut,
+                                         bool* reached ) const
 {
     if ( reached != nullptr )
         *reached = false;
@@ -65,8 +66,7 @@ const
     {
         // trivial case: agent is far away
         Ped::Tvector desiredDirection = diff.normalized();
-        Ped::Tvector force = ( desiredDirection * agentIn.getVmax() - agentIn.getVelocity() ) /
-agentIn.getRelaxationTime();
+        Ped::Tvector force = ( desiredDirection * agentIn.getVmax() - agentIn.getVelocity() ) / agentIn.getRelaxationTime();
         if ( desiredDirectionOut != nullptr )
             *desiredDirectionOut = desiredDirection;
         return force;
