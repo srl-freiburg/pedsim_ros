@@ -32,15 +32,15 @@
 #ifndef _groupwaypointplanner_h_
 #define _groupwaypointplanner_h_
 
-// Includes
-// → SGDiCoP
+
 #include <pedsim_simulator/waypointplanner/waypointplanner.h>
 
 // Forward Declarations
 class AgentGroup;
 
 
-class GroupWaypointPlanner : public WaypointPlanner {
+class GroupWaypointPlanner : public WaypointPlanner
+{
 	Q_OBJECT
 
 	// Constructor and Destructor

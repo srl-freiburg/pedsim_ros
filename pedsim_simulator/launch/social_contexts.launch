@@ -42,5 +42,5 @@
   <!-- <node name="momo_node" pkg="momo" type="momo_ros.py" respawn="false" output="log"/> -->
 
   <!-- Keyboard teleoperation node -->
-  <node name="teleop" pkg="pedsim_simulator" type="teleop" respawn="false" output="log" />
+  <node name="teleop" pkg="pedsim_simulator" type="teleop" respawn="false" output="screen" />
 </launch>

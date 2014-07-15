@@ -6,8 +6,7 @@ Panels:
       Expanded:
         - /Grid1
         - /Grid1/Offset1
-        - /Marker3
-        - /MarkerArray3
+        - /MarkerArray2
         - /AnimatedMarkerArray1
       Splitter Ratio: 0.5
     Tree Height: 841
@@ -42,45 +41,15 @@ Visualization Manager:
         Line Width: 0.03
         Value: Lines
       Name: Grid
-      Normal Cell Count: 2
+      Normal Cell Count: 0
       Offset:
         X: 15
         Y: 15
-        Z: 1
+        Z: 0
       Plane: XY
       Plane Cell Count: 40
       Reference Frame: <Fixed Frame>
       Value: true
-    - Class: rviz/Axes
-      Enabled: false
-      Length: 10
-      Name: Axes
-      Radius: 0.1
-      Reference Frame: <Fixed Frame>
-      Value: false
-    - Alpha: 0.7
-      Class: rviz/GridCells
-      Color: 0; 170; 255
-      Enabled: false
-      Name: GridCells
-      Topic: /static_obstacles
-      Value: false
-    - Alpha: 1
-      Buffer Length: 1
-      Class: rviz/Path
-      Color: 255; 255; 127
-      Enabled: false
-      Name: Path
-      Topic: /planned_path
-      Value: false
-    - Alpha: 0.7
-      Class: rviz/Map
-      Color Scheme: map
-      Draw Behind: false
-      Enabled: false
-      Name: Map
-      Topic: /costmap
-      Value: false
     - Class: rviz/Marker
       Enabled: true
       Marker Topic: /walls
@@ -98,14 +67,6 @@ Visualization Manager:
       Queue Size: 1
       Value: true
     - Class: rviz/Marker
-      Enabled: false
-      Marker Topic: /waypoints
-      Name: Marker
-      Namespaces:
-        {}
-      Queue Size: 0
-      Value: false
-    - Class: rviz/Marker
       Enabled: true
       Marker Topic: /attractions
       Name: Marker
@@ -121,14 +82,6 @@ Visualization Manager:
         pedsim: true
       Queue Size: 0
       Value: true
-    - Class: rviz/MarkerArray
-      Enabled: false
-      Marker Topic: /group_centers
-      Name: MarkerArray
-      Namespaces:
-        {}
-      Queue Size: 0
-      Value: false
     - Class: rviz/MarkerArray
       Enabled: true
       Marker Topic: /group_lines
@@ -169,22 +122,22 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/XYOrbit
-      Distance: 10.3134
+      Distance: 24.3162
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.06
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: 14.6287
-        Y: 10.1935
-        Z: -7.09233e-05
+        X: 17.6188
+        Y: 10.0559
+        Z: -7.9567e-05
       Name: Current View
       Near Clip Distance: 0.01
-      Pitch: 0.264801
+      Pitch: 0.9298
       Target Frame: <Fixed Frame>
       Value: XYOrbit (rviz)
-      Yaw: 5.07349
+      Yaw: 5.14349
     Saved: ~
 Window Geometry:
   Displays:

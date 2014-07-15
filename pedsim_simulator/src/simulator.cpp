@@ -46,6 +46,21 @@ Simulator::Simulator ( const ros::NodeHandle &node )
 Simulator::~Simulator()
 {
     delete robot_;
+
+    // shutdown service servers and publishers
+    sub_robot_command_.shutdown();
+    pub_agent_visuals_.shutdown();
+    pub_agent_arrows_.shutdown();
+    pub_group_lines_.shutdown();
+    pub_walls_.shutdown();
+    pub_attractions_.shutdown();
+    pub_queues_.shutdown();
+    pub_waypoints_.shutdown();
+    pub_obstacles_.shutdown();
+    pub_all_agents_.shutdown();
+    pub_tracked_persons_.shutdown();
+    pub_tracked_groups_.shutdown();
+
     int returnValue = 0;
     QCoreApplication::exit(returnValue);
 }
@@ -55,7 +70,6 @@ bool Simulator::initializeSimulation()
     /// setup ros publishers
     // visualizations
     pub_agent_visuals_ = nh_.advertise<animated_marker_msgs::AnimatedMarkerArray> ( "agents_markers", 0 );
-    pub_group_centers_ = nh_.advertise<visualization_msgs::MarkerArray> ( "group_centers", 0 );
     pub_agent_arrows_ = nh_.advertise<visualization_msgs::MarkerArray> ( "agent_arrows", 0 );
     pub_group_lines_ = nh_.advertise<visualization_msgs::MarkerArray> ( "group_lines", 0 );
     pub_walls_ = nh_.advertise<visualization_msgs::Marker> ( "walls", 0 );
@@ -429,26 +443,6 @@ void Simulator::publishGroupVisuals()
 
         Ped::Tvector gcom = ag->getCenterOfMass();
 
-        /// center of mass  of the group
-        visualization_msgs::Marker center_marker;
-        center_marker.header.frame_id = "world";
-        center_marker.header.stamp = ros::Time();
-        center_marker.ns = "pedsim";
-        center_marker.id = ag->getId();
-        center_marker.color.a = 0.7; center_marker.color.r = 0.0; center_marker.color.g = 0.0; center_marker.color.b = 1.0;
-        center_marker.scale.x = 0.05; center_marker.scale.y = 0.05;
-
-        center_marker.pose.position.x = gcom.x;
-        center_marker.pose.position.y = gcom.y;
-        center_marker.pose.position.z = 1.4;
-        center_marker.pose.orientation.x = 0;
-        center_marker.pose.orientation.y = 0;
-        center_marker.pose.orientation.z = 0;
-        center_marker.pose.orientation.w = 1;
-
-        center_marker.type = visualization_msgs::Marker::CYLINDER;
-        center_array.markers.push_back ( center_marker );
-
         /// members of the group
         geometry_msgs::Point p1;
         p1.x = gcom.x; p1.y = gcom.y; p1.z = 1.4;
@@ -473,7 +467,6 @@ void Simulator::publishGroupVisuals()
             lines_array.markers.push_back ( marker );
         }
 
-        pub_group_centers_.publish ( center_array );
         pub_group_lines_.publish ( lines_array );
     }
 }

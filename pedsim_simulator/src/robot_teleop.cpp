@@ -167,13 +167,16 @@ void Teleop::keyLoop()
 			robot_speed = 0.0;
         }
 
-        ROS_INFO ( "Set Speed, Angle [%f, %f]", robot_speed, rot_angle_ );
+        if ( rot_angle_ > 360.0 )
+            rot_angle_ = acos ( cos ( rot_angle_ ) );
 
-        /// using the code from old cpp project
-        double angle = rot_angle_;
-        double vx = cos ( angle * M_PI / 180.0 );
-        double vy = sin ( angle * M_PI / 180.0 );
+        if ( rot_angle_ < -360.0 )
+            rot_angle_ = acos ( cos ( rot_angle_ ) );
 
+        ROS_INFO ( "Current Speed, Angle [%f, %f]", robot_speed, rot_angle_ );
+
+        double vx = cos ( rot_angle_ * M_PI / 180.0 );
+        double vy = sin ( rot_angle_ * M_PI / 180.0 );
         double stepx = robot_speed * vx;
         double stepy = robot_speed * vy;
 

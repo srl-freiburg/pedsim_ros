@@ -115,7 +115,6 @@ private:
 	// - visualization related messages (e.g. markers)
 	ros::Publisher pub_attractions_;
 	ros::Publisher pub_agent_visuals_;
-    ros::Publisher pub_group_centers_;
 	ros::Publisher pub_group_lines_;
 	ros::Publisher pub_walls_;
 	ros::Publisher pub_queues_;
