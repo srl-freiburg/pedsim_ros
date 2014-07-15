@@ -54,9 +54,7 @@ bool Simulator::initializeSimulation()
 {
     /// setup ros publishers
     // visualizations
-    // pub_agent_visuals_ = nh_.advertise<visualization_msgs::MarkerArray> ( "agents_markers", 0 );
     pub_agent_visuals_ = nh_.advertise<animated_marker_msgs::AnimatedMarkerArray> ( "agents_markers", 0 );
-
     pub_group_centers_ = nh_.advertise<visualization_msgs::MarkerArray> ( "group_centers", 0 );
     pub_agent_arrows_ = nh_.advertise<visualization_msgs::MarkerArray> ( "agent_arrows", 0 );
     pub_group_lines_ = nh_.advertise<visualization_msgs::MarkerArray> ( "group_lines", 0 );
@@ -275,10 +273,7 @@ void Simulator::publishData()
 /// -----------------------------------------------------------------
 void Simulator::publishAgents()
 {
-    // minor optimization with arrays for speedup
-    // visualization_msgs::MarkerArray marker_array;
     animated_marker_msgs::AnimatedMarkerArray marker_array;
-
     visualization_msgs::MarkerArray arrow_array;
 
     // status message
@@ -287,26 +282,21 @@ void Simulator::publishAgents()
     all_header.stamp = ros::Time::now();
     all_status.header = all_header;
 
-
     BOOST_FOREACH ( Agent* a, SCENE.getAgents() )
     {
-        /// visual marker message
-        // visualization_msgs::Marker marker;
+        /// walking people message
         animated_marker_msgs::AnimatedMarker marker;
         marker.mesh_use_embedded_materials = true;
         marker.header.frame_id = "world";
         marker.header.stamp = ros::Time();
         marker.ns = "pedsim";
         marker.id = a->getId();
-        // marker.type = visualization_msgs::Marker::MESH_RESOURCE;
         marker.type = animated_marker_msgs::AnimatedMarker::MESH_RESOURCE;
-        // marker.mesh_resource = "package://pedsim_simulator/images/man.3ds";
         marker.mesh_resource = "package://pedsim_simulator/images/animated_walking_man.mesh";
 
         marker.pose.position.x = a->getx();
         marker.pose.position.y = a->gety();
 		marker.action = 0;  // add or modify
-		// marker.scale.x = 0.025; marker.scale.y = 0.025; marker.scale.z = 0.025;
         const double person_scale = 2.0 / 8.5 * 1.8;
         marker.scale.x = person_scale; marker.scale.y = person_scale; marker.scale.z = person_scale;
 
@@ -344,7 +334,7 @@ void Simulator::publishAgents()
         }
 
 
-        Eigen::Quaterniond q = computePose( a );
+        Eigen::Quaternionf q = computePose( a );
         marker.pose.orientation.x = q.x();
         marker.pose.orientation.y = q.y();
         marker.pose.orientation.z = q.z();
@@ -383,7 +373,6 @@ void Simulator::publishAgents()
             marker.pose.orientation.w = qa.w();
 
             marker.pose.position.z = 0.7;
-
             arrow.pose.position.z = 1.0;
         }
 

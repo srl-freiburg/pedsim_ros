@@ -68,8 +68,7 @@ public:
 	/// Computes and returns the robot's heading angle Theta (in a xy plane) given its quaternion
 	double getTheta(Eigen::Quaternionf quaternion);
 	Eigen::Quaternionf angle2Quaternion(double theta);
-
-	Eigen::Quaterniond rpy2Quaternion(double roll, double pitch, double yaw);
+	Eigen::Quaternionf rpy2Quaternion(double roll, double pitch, double yaw);
 
 
 	/// get the robot's heading angle Theta computed by the constructor

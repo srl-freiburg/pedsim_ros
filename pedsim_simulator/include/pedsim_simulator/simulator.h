@@ -130,7 +130,7 @@ private:
 
 private:
 
-	inline Eigen::Quaterniond computePose( Agent* a )
+	inline Eigen::Quaternionf computePose( Agent* a )
 	{
 		double theta = atan2 ( a->getvy(), a->getvx() );
 
@@ -140,7 +140,7 @@ private:
 		double c = theta + (M_PI / 2.0);
 
 		// Eigen::Quaterniond q = orientation_handler_->rpy2Quaternion(a, b, c);
-		Eigen::Quaterniond q = orientation_handler_->rpy2Quaternion(aa, c, b);
+		Eigen::Quaternionf q = orientation_handler_->rpy2Quaternion(aa, c, b);
 		return q;
 	}
 };

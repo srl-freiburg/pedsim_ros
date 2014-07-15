@@ -66,9 +66,7 @@ OrientationHandler::OrientationHandler ( double qw, double qx, double qy, double
 
 OrientationHandler::OrientationHandler ( double vx,double vy )
 {
-    double theta=0;
-
-    theta = atan2 ( vy, vy );
+    const double theta = atan2 ( vy, vy );
 
     Eigen::Matrix3f r_m ( Eigen::Matrix3f::Identity() );
     r_m ( 0,0 ) = cos ( theta );
@@ -124,26 +122,11 @@ Eigen::Quaternionf OrientationHandler::angle2Quaternion ( double theta )
     return quaternion;
 }
 
-Eigen::Quaterniond OrientationHandler::rpy2Quaternion(double roll, double pitch, double yaw)
+Eigen::Quaternionf OrientationHandler::rpy2Quaternion(double roll, double pitch, double yaw)
 {
-    // Eigen::AngleAxisd rollAngle(roll, Eigen::Vector3d::UnitZ());
-    // Eigen::AngleAxisd yawAngle(yaw, Eigen::Vector3d::UnitY());
-    // Eigen::AngleAxisd pitchAngle(pitch, Eigen::Vector3d::UnitX());
-
-    // Eigen::Quaternion<double> q = (rollAngle * yawAngle * pitchAngle).cast<double>();
-    // Eigen::Matrix3d r_m = q.matrix();
-
-
-    Eigen::Quaterniond r_m = Eigen::AngleAxisd(roll, Eigen::Vector3d::UnitX())
-                            * Eigen::AngleAxisd(pitch, Eigen::Vector3d::UnitY())
-                            * Eigen::AngleAxisd(yaw, Eigen::Vector3d::UnitZ());
-
-    // Eigen::Quaternion<double> q(r_m);
-
-    // Eigen::Quaterniond quaternion_notNorm ( r_m );
-    // Eigen::Quaterniond quaternion = quaternion_notNorm.normalized();
-
-    // return quaternion;
+    Eigen::Quaternionf r_m = Eigen::AngleAxisf(roll, Eigen::Vector3f::UnitX())
+                            * Eigen::AngleAxisf(pitch, Eigen::Vector3f::UnitY())
+                            * Eigen::AngleAxisf(yaw, Eigen::Vector3f::UnitZ());
 
     return r_m.normalized();
 }
