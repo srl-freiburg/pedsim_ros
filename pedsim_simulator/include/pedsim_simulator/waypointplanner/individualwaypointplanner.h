@@ -32,15 +32,15 @@
 #ifndef _individualwaypointplanner_h_
 #define _individualwaypointplanner_h_
 
-// Includes
-// → SGDiCoP
+
 #include <pedsim_simulator/waypointplanner/waypointplanner.h>
 
 // Forward Declarations
 class AgentGroup;
 
 
-class IndividualWaypointPlanner : public WaypointPlanner {
+class IndividualWaypointPlanner : public WaypointPlanner
+{
 	Q_OBJECT
 
 	// Constructor and Destructor
@@ -61,9 +61,8 @@ public:
 	static Type getPlannerType() { return WaypointPlanner::Individual; };
 	virtual Waypoint* getCurrentWaypoint();
 	virtual bool hasCompletedDestination() const;
-	
+
 	virtual QString name() const;
-	virtual QString toString() const;
 
 
 	// Attributes

@@ -61,7 +61,6 @@ public:
 	virtual bool hasCompletedDestination() const;
 
 	virtual QString name() const;
-	virtual QString toString() const;
 
 	virtual bool setGroup(AgentGroup* groupIn);
 

@@ -61,7 +61,8 @@ void ShoppingPlanner::loseAttraction()
 
 bool ShoppingPlanner::setAgent ( Agent* agentIn )
 {
-    /// NOTE - should the robot be allowed to queue?
+    /// NOTE - should the robot be allowed to shop?
+    /// who funds robot's shopping expenses??
     // if (agentIn->getType() == 2)
     // 	return false;
 
@@ -152,9 +153,6 @@ Waypoint* ShoppingPlanner::getNextWaypoint()
 
     // → create new waypoint
     currentWaypoint = new AreaWaypoint ( name, position, 0.5 );
-	
-	/// check if significant difference
-// 	if (currentWaypoint->getx() - ol)
 
     // reset reached time
     timeReached = 0;
@@ -179,10 +177,10 @@ Ped::Tvector ShoppingPlanner::getRandomAttractionPosition() const
     QSizeF size = attraction->getSize();
     std::uniform_real_distribution<double> xDistribution ( -size.width() /2, size.width() /2 );
     std::uniform_real_distribution<double> yDistribution ( -size.height() /2, size.height() /2 );
-	
+
 	double xdiff = xDistribution ( RNG() );
 	double ydiff = yDistribution ( RNG() );
-	
+
     randomPosition += Ped::Tvector ( xdiff, ydiff );
 
     return randomPosition;
@@ -193,29 +191,20 @@ Ped::Tvector ShoppingPlanner::createRandomOffset() const
     const double radiusStd = 4;
 	std::normal_distribution<double> radiusDistribution ( 0, radiusStd );
 	double radius = radiusDistribution ( RNG() );
-	
-	
-//     std::uniform_real_distribution<double> angleDistribution ( 0, 360 );
+
 	std::discrete_distribution<int> angleDistribution {0,45,90,135,180,225,270,315,360};
-	double angle = angleDistribution ( RNG() ); 
-	
+	double angle = angleDistribution ( RNG() );
+
     Ped::Tvector randomOffset = Ped::Tvector::fromPolar ( Ped::Tangle::fromDegree ( angle ), radius );
-	
+
 	// only update for significant shopping idea change
 	if (randomOffset.lengthSquared() < 1.0)
 		return Ped::Tvector(0, 0, 0);
-	
+
     return randomOffset;
 }
 
 QString ShoppingPlanner::name() const
 {
     return tr ( "ShoppingPlanner" );
-}
-
-QString ShoppingPlanner::toString() const
-{
-    return tr ( "ShoppingPlanner (Agent: %1, Attraction: %2)" )
-           .arg ( ( agent!=nullptr ) ?"null":QString::number ( agent->getId() ) )
-           .arg ( ( attraction!=nullptr ) ?"null":attraction->toString() );
 }

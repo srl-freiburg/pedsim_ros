@@ -352,8 +352,3 @@ QString QueueingWaypointPlanner::name() const
 {
     return tr ( "QueueingWaypointPlanner" );
 }
-
-QString QueueingWaypointPlanner::toString() const
-{
-    return tr ( "%1 (%2)" ).arg ( name() ).arg ( ( waitingQueue==nullptr ) ?"null":waitingQueue->toString() );
-}

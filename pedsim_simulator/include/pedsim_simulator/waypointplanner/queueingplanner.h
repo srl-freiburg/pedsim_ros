@@ -40,9 +40,11 @@
 class WaitingQueue;
 
 
-class QueueingWaypointPlanner : public WaypointPlanner {
+class QueueingWaypointPlanner : public WaypointPlanner
+{
 	Q_OBJECT
 
+	// TODO - change to enum class
 	typedef enum {
 		Unknown,
 		Approaching,
@@ -79,7 +81,7 @@ public:
 	bool hasReachedQueueEnd() const;
 	void activateApproachingMode();
 	void activateQueueingMode();
-	
+
 protected:
 	void addPrivateSpace(Ped::Tvector& queueEndIn) const;
 	QString createWaypointName() const;
@@ -91,9 +93,8 @@ public:
 	virtual Waypoint* getNextWaypoint();
 	virtual bool hasCompletedWaypoint() const;
 	virtual bool hasCompletedDestination() const;
-	
+
 	virtual QString name() const;
-	virtual QString toString() const;
 
 
 	// Attributes

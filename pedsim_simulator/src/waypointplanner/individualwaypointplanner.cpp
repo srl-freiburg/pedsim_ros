@@ -89,8 +89,3 @@ QString IndividualWaypointPlanner::name() const
 {
     return tr ( "IndividualWaypointPlanner" );
 }
-
-QString IndividualWaypointPlanner::toString() const
-{
-    return tr ( "%1 (%2)" ).arg ( name() ).arg ( ( agent==nullptr ) ?"null":agent->toString() );
-}

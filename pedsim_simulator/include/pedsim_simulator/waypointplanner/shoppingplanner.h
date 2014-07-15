@@ -32,10 +32,8 @@
 #ifndef _shoppingplanner_h_
 #define _shoppingplanner_h_
 
-// Includes
-// → SGDiCoP
+
 #include <pedsim_simulator/waypointplanner/waypointplanner.h>
-// → PedSim
 #include <libpedsim/ped_vector.h>
 
 
@@ -44,7 +42,8 @@ class Agent;
 class AttractionArea;
 
 
-class ShoppingPlanner : public WaypointPlanner {
+class ShoppingPlanner : public WaypointPlanner
+{
 	Q_OBJECT
 
 	// Constructor and Destructor
@@ -84,8 +83,6 @@ public:
 	virtual bool hasCompletedDestination() const;
 
 	virtual QString name() const;
-	virtual QString toString() const;
-
 
 	// Attributes
 protected:

@@ -91,8 +91,3 @@ QString GroupWaypointPlanner::name() const
 {
     return tr ( "GroupWaypointPlanner" );
 }
-
-QString GroupWaypointPlanner::toString() const
-{
-    return tr ( "%1 (%2)" ).arg ( name() ).arg ( ( group==nullptr ) ?"null":group->toString() );
-}

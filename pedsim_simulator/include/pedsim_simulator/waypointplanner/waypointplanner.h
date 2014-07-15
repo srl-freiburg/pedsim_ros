@@ -32,8 +32,7 @@
 #ifndef _waypointplanner_h_
 #define _waypointplanner_h_
 
-// Includes
-// → Qt
+
 #include <QObject>
 
 
@@ -43,7 +42,8 @@ class AgentGroup;
 class Waypoint;
 
 
-class WaypointPlanner : public QObject {
+class WaypointPlanner : public QObject
+{
 	Q_OBJECT
 
 	// Enums
@@ -65,9 +65,8 @@ public:
 	static Type getPlannerType();
 	virtual Waypoint* getCurrentWaypoint() = 0;
 	virtual bool hasCompletedDestination() const = 0;
-	
+
 	virtual QString name() const = 0;
-	virtual QString toString() const = 0;
 };
 
 #endif
