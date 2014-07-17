@@ -67,6 +67,14 @@ bool ShoppingPlanner::setAgent ( Agent* agentIn )
     // 	return false;
 
     agent = agentIn;
+
+    // some nice fix to dancing in shops
+    agent->disableForce ( "Social" );
+    agent->disableForce ( "Random" );
+    agent->disableForce ( "GroupCoherence" );
+    agent->disableForce ( "GroupGaze" );
+    agent->disableForce ( "GroupRepulsion" );
+
     return true;
 }
 
@@ -101,7 +109,7 @@ bool ShoppingPlanner::hasCompletedWaypoint()
 
     // check whether agent has reached the waypoint and has been there for a given time
     const double distanceThreshold = 1.0;
-    const double waitTime = 5.0;
+    const double waitTime = 15.0;
     double distance = ( agent->getPosition() - currentWaypoint->getPosition() ).length();
     if ( distance <= distanceThreshold )
     {
@@ -136,6 +144,7 @@ Waypoint* ShoppingPlanner::getNextWaypoint()
     if ( !hadWaypoint )
     {
         //TODO: closest point or random point?
+        // maybe also add some timing here, only change position after some random wait (Erlang dist)
         position = getRandomAttractionPosition();
     }
     else
@@ -198,7 +207,7 @@ Ped::Tvector ShoppingPlanner::createRandomOffset() const
     Ped::Tvector randomOffset = Ped::Tvector::fromPolar ( Ped::Tangle::fromDegree ( angle ), radius );
 
 	// only update for significant shopping idea change
-	if (randomOffset.lengthSquared() < 1.0)
+	if (randomOffset.lengthSquared() < 2.0)
 		return Ped::Tvector(0, 0, 0);
 
     return randomOffset;

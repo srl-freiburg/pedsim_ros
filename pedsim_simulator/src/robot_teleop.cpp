@@ -75,6 +75,7 @@ Teleop::Teleop() :
     nh_.param ( "scale_angular", a_scale_, a_scale_ );
     nh_.param ( "scale_linear", l_scale_, l_scale_ );
 
+    // TODO - clean this up
     vel_pub_ = nh_.advertise<pedsim_msgs::AgentState> ( "robot_state", 1 );
 }
 
@@ -132,7 +133,7 @@ void Teleop::keyLoop()
         }
 
         // linear_=angular_=0;
-        ROS_DEBUG ( "value: 0x%02X\n", c );
+        // ROS_DEBUG ( "value: 0x%02X\n", c );
 
         switch ( c )
         {
