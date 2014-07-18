@@ -109,6 +109,7 @@ bool ShoppingPlanner::hasCompletedWaypoint()
 
     // check whether agent has reached the waypoint and has been there for a given time
     const double distanceThreshold = 1.0;
+    // TODO - make shopping time also random
     const double waitTime = 15.0;
     double distance = ( agent->getPosition() - currentWaypoint->getPosition() ).length();
     if ( distance <= distanceThreshold )

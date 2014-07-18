@@ -241,7 +241,13 @@ void WaitingQueue::resetDequeueTime()
 void WaitingQueue::startDequeueTime()
 {
     // draw random waiting period
-    exponential_distribution<> distribution ( waitDurationLambda );
+    // exponential_distribution<> distribution ( waitDurationLambda );
+
+    // construct an Erlang distribution from a Gamma
+    const int alpha = 2;
+    const double beta = 0.5;
+    gamma_distribution<> distribution ( alpha, beta );
+
     double waitDuration = distribution ( RNG() );
     dequeueTime = SCENE.getTime() + waitDuration;
 }
