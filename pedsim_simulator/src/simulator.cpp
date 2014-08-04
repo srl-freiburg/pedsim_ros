@@ -58,6 +58,7 @@ Simulator::~Simulator()
     pub_all_agents_.shutdown();
     pub_tracked_persons_.shutdown();
     pub_tracked_groups_.shutdown();
+    pub_social_activities_.shutdown();
 
     int returnValue = 0;
     QCoreApplication::exit(returnValue);
@@ -81,6 +82,7 @@ bool Simulator::initializeSimulation()
 
     pub_tracked_persons_ = nh_.advertise<spencer_tracking_msgs::TrackedPersons> ( "/spencer/perception/tracked_persons", 0 );
     pub_tracked_groups_ = nh_.advertise<spencer_tracking_msgs::TrackedGroups> ( "/spencer/perception/tracked_groups", 0 );
+    pub_social_activities_ = nh_.advertise<spencer_social_relation_msgs::SocialActivities> ( "/spencer/perception/social_activities", 0 );
 
     /// setup any pointers
     orientation_handler_.reset ( new OrientationHandler() );
@@ -155,6 +157,7 @@ void Simulator::runSimulation()
 
         publishAgents();    // TODO - remove this old piece
         publishData();
+        publishSocialActivities();
         publishGroupVisuals();
 
         // obstacle cells (planning needs these)
@@ -198,6 +201,57 @@ void Simulator::callbackRobotCommand ( const pedsim_msgs::AgentState::ConstPtr &
 
 
 /// -----------------------------------------------------------------
+/// \brief publishSocialActivities
+/// \details publish spencer_relation_msgs::SocialActivities
+/// -----------------------------------------------------------------
+void Simulator::publishSocialActivities()
+{
+    /// Social activities
+    spencer_social_relation_msgs::SocialActivities social_activities;
+    std_msgs::Header social_activities_header;
+    social_activities_header.stamp = ros::Time::now();
+    social_activities.header = social_activities_header;
+
+    spencer_social_relation_msgs::SocialActivity queueing_activity;
+    spencer_social_relation_msgs::SocialActivity shopping_activity;
+    spencer_social_relation_msgs::SocialActivity standing_activity;
+
+    BOOST_FOREACH ( Agent* a, SCENE.getAgents() )
+    {
+        /// activity of the current agent
+        AgentStateMachine::AgentState sact =  a->getStateMachine()->getCurrentState();
+
+        if ( sact == AgentStateMachine::AgentState::StateQueueing )
+        {
+            queueing_activity.type = spencer_social_relation_msgs::SocialActivity::TYPE_WAITING_IN_QUEUE;
+            queueing_activity.confidence = 1.0;
+            queueing_activity.track_ids.push_back( a->getId() );
+        }
+        else if ( sact == AgentStateMachine::AgentState::StateShopping )
+        {
+            shopping_activity.type = spencer_social_relation_msgs::SocialActivity::TYPE_SHOPPING;
+            shopping_activity.confidence = 1.0;
+            shopping_activity.track_ids.push_back( a->getId() );
+        }
+        else if ( a->getType() == Ped::Tagent::ELDER )  // Hack for really slow people
+        {
+            standing_activity.type = spencer_social_relation_msgs::SocialActivity::TYPE_STANDING;
+            standing_activity.confidence = 1.0;
+            standing_activity.track_ids.push_back( a->getId() );
+        }
+        else
+            continue;
+    }
+
+    social_activities.elements.push_back( queueing_activity );
+    social_activities.elements.push_back( shopping_activity );
+    social_activities.elements.push_back( standing_activity );
+
+    pub_social_activities_.publish( social_activities );
+}
+
+
+/// -----------------------------------------------------------------
 /// \brief publishData
 /// \details publish tracked persons and tracked groups messages
 /// -----------------------------------------------------------------
@@ -228,7 +282,6 @@ void Simulator::publishData()
         pcov.pose.orientation.y = q.y();
         pcov.pose.orientation.z = q.z();
         pcov.pose.orientation.w = q.w();
-
         person.pose = pcov;
 
         // TODO - recheck this
@@ -239,10 +292,9 @@ void Simulator::publishData()
         // tcov.twist.angular.x = 0;
         // tcov.twist.angular.y = 0;
         // tcov.twist.angular.z = 0;
-
         person.twist = tcov;
 
-        tracked_people.tracks.push_back(person);
+        tracked_people.tracks.push_back( person );
     }
 
     /// Tracked groups
@@ -269,8 +321,8 @@ void Simulator::publishData()
     }
 
     /// publish the messages
-    pub_tracked_persons_.publish(tracked_people);
-    pub_tracked_groups_.publish(tracked_groups);
+    pub_tracked_persons_.publish( tracked_people );
+    pub_tracked_groups_.publish( tracked_groups );
 }
 
 

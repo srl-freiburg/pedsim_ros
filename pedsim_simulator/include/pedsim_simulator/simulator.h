@@ -31,7 +31,6 @@
 // ros and big guys
 #include <ros/ros.h>
 #include <ros/console.h>
-// #include <tf/transform_listener.h>
 
 // old pedsim messages and services
 // TODO - remove this dependency
@@ -43,6 +42,8 @@
 #include <spencer_tracking_msgs/TrackedPersons.h>
 #include <spencer_tracking_msgs/TrackedGroup.h>
 #include <spencer_tracking_msgs/TrackedGroups.h>
+#include <spencer_social_relation_msgs/SocialActivity.h>
+#include <spencer_social_relation_msgs/SocialActivities.h>
 
 // other ROS-sy messages
 #include <visualization_msgs/Marker.h>
@@ -89,6 +90,7 @@ public:
 	/// publishers
 	void publishAgents();
 	void publishData();
+	void publishSocialActivities();
 	void publishGroupVisuals();
 	void publishObstacles();
 	void publishWalls();
@@ -109,8 +111,9 @@ private:
 	// - data messages
 	ros::Publisher pub_obstacles_; 	// grid cells
 	ros::Publisher pub_all_agents_;	// positions and velocities (old msg)
-	ros::Publisher pub_tracked_persons_;
+	ros::Publisher pub_tracked_persons_;	// in spencer format
 	ros::Publisher pub_tracked_groups_;
+	ros::Publisher pub_social_activities_;
 
 	// - visualization related messages (e.g. markers)
 	ros::Publisher pub_attractions_;
