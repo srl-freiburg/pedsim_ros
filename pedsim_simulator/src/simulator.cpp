@@ -215,6 +215,8 @@ void Simulator::publishSocialActivities()
     spencer_social_relation_msgs::SocialActivity queueing_activity;
     spencer_social_relation_msgs::SocialActivity shopping_activity;
     spencer_social_relation_msgs::SocialActivity standing_activity;
+    spencer_social_relation_msgs::SocialActivity group_moving_activity;
+    spencer_social_relation_msgs::SocialActivity individual_moving_activity;
 
     BOOST_FOREACH ( Agent* a, SCENE.getAgents() )
     {
@@ -227,25 +229,43 @@ void Simulator::publishSocialActivities()
             queueing_activity.confidence = 1.0;
             queueing_activity.track_ids.push_back( a->getId() );
         }
-        else if ( sact == AgentStateMachine::AgentState::StateShopping )
+
+        if ( sact == AgentStateMachine::AgentState::StateShopping )
         {
             shopping_activity.type = spencer_social_relation_msgs::SocialActivity::TYPE_SHOPPING;
             shopping_activity.confidence = 1.0;
             shopping_activity.track_ids.push_back( a->getId() );
         }
-        else if ( a->getType() == Ped::Tagent::ELDER )  // Hack for really slow people
+
+        if ( a->getType() == Ped::Tagent::ELDER )  // Hack for really slow people
         {
             standing_activity.type = spencer_social_relation_msgs::SocialActivity::TYPE_STANDING;
             standing_activity.confidence = 1.0;
             standing_activity.track_ids.push_back( a->getId() );
         }
-        else
-            continue;
+
+        if ( sact == AgentStateMachine::AgentState::StateGroupWalking )
+        {
+            group_moving_activity.type = spencer_social_relation_msgs::SocialActivity::TYPE_GROUP_MOVING;
+            group_moving_activity.confidence = 1.0;
+            group_moving_activity.track_ids.push_back( a->getId() );
+        }
+
+        if ( sact == AgentStateMachine::AgentState::StateWalking )
+        {
+            individual_moving_activity.type = spencer_social_relation_msgs::SocialActivity::TYPE_INDIVIDUAL_MOVING;
+            individual_moving_activity.confidence = 1.0;
+            individual_moving_activity.track_ids.push_back( a->getId() );
+        }
+        // else
+        //     continue;
     }
 
     social_activities.elements.push_back( queueing_activity );
     social_activities.elements.push_back( shopping_activity );
     social_activities.elements.push_back( standing_activity );
+    social_activities.elements.push_back( group_moving_activity );
+    social_activities.elements.push_back( individual_moving_activity );
 
     pub_social_activities_.publish( social_activities );
 }

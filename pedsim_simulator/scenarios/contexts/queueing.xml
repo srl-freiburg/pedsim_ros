@@ -29,7 +29,7 @@
         <addwaypoint id="robot_pause"/>
     </agent>
     <!--AgentClusters-->
-    <agent x="7" y="10" n="40" dx="3" dy="3" type="1">
+    <agent x="7" y="10" n="30" dx="3" dy="3" type="1">
         <addqueue id="info_desk"/>
         <addqueue id="leave_bookshop"/>
         <!-- <addwaypoint id="leave_bookshop"/> -->
