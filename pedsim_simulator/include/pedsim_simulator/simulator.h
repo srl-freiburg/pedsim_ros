@@ -145,4 +145,29 @@ private:
 		Eigen::Quaternionf q = orientation_handler_->rpy2Quaternion(aa, c, b);
 		return q;
 	}
+
+	inline std::string agentStateToActivity( AgentStateMachine::AgentState state )
+	{
+		std::string activity = "Unknown";
+
+		switch ( state )
+		{
+			case AgentStateMachine::AgentState::StateWalking:
+				activity = pedsim_msgs::AgentState::TYPE_INDIVIDUAL_MOVING;
+				break;
+			case AgentStateMachine::AgentState::StateGroupWalking:
+				activity = pedsim_msgs::AgentState::TYPE_GROUP_MOVING;
+				break;
+			case AgentStateMachine::AgentState::StateQueueing:
+				activity = pedsim_msgs::AgentState::TYPE_WAITING_IN_QUEUE;
+				break;
+			case AgentStateMachine::AgentState::StateShopping:
+				activity = pedsim_msgs::AgentState::TYPE_SHOPPING;
+				break;
+		}
+
+		// TODO - add standing to the state machine
+
+		return activity;
+	}
 };
