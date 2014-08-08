@@ -75,8 +75,7 @@ Teleop::Teleop() :
     nh_.param ( "scale_angular", a_scale_, a_scale_ );
     nh_.param ( "scale_linear", l_scale_, l_scale_ );
 
-    // TODO - clean this up
-    vel_pub_ = nh_.advertise<pedsim_msgs::AgentState> ( "robot_state", 1 );
+    vel_pub_ = nh_.advertise<pedsim_msgs::AgentState> ( "/pedsim_simulator/robot_command", 0 );
 }
 
 int kfd = 0;

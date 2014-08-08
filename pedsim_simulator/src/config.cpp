@@ -55,6 +55,7 @@ Config::Config ( QObject* parent )
 
     robot_mode = RobotMode::SOCIAL_DRIVE;
     robot_wait_time = 15;
+	max_robot_speed = 2.0;
 
 	groups_enabled = true;
 

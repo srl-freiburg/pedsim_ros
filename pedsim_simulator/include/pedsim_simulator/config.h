@@ -117,6 +117,7 @@ public:
     // robot control
     RobotMode robot_mode;
     int robot_wait_time;
+	float max_robot_speed;
 
     // enable/disable groups behaviour
     bool groups_enabled;

@@ -135,13 +135,10 @@ private:
 	inline Eigen::Quaternionf computePose( Agent* a )
 	{
 		double theta = atan2 ( a->getvy(), a->getvx() );
-
 		double aa = M_PI / 2.0;
 		double b = 0.0;
-		// double yaw = (theta + 90.0) / (180.0 * M_PI);
 		double c = theta + (M_PI / 2.0);
 
-		// Eigen::Quaterniond q = orientation_handler_->rpy2Quaternion(a, b, c);
 		Eigen::Quaternionf q = orientation_handler_->rpy2Quaternion(aa, c, b);
 		return q;
 	}
@@ -166,7 +163,10 @@ private:
 				break;
 		}
 
-		// TODO - add standing to the state machine
+		// TODO 
+		// - add standing to the state machine
+		// - add waiting at the end of the queue 
+		// - add group walking
 
 		return activity;
 	}

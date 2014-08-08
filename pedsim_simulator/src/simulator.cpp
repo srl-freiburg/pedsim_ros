@@ -89,7 +89,7 @@ bool Simulator::initializeSimulation()
     robot_ = nullptr;
 
     /// subscribers
-    sub_robot_command_ = nh_.subscribe ( "robot_state", 1, &Simulator::callbackRobotCommand, this );
+    sub_robot_command_ = nh_.subscribe ( "/pedsim_simulator/robot_command", 1, &Simulator::callbackRobotCommand, this );
 
     /// load parameters
     std::string scene_file_param;
@@ -117,19 +117,17 @@ bool Simulator::initializeSimulation()
 /// -----------------------------------------------------------------
 void Simulator::loadConfigParameters()
 {
-    double cell_size;
-    ros::param::param<double> ( "/simulator/cell_size", cell_size, 1.0 );
-    // add dimensions are in meters
-    CONFIG.cell_width = cell_size;
-    CONFIG.cell_height = cell_size;
-
-    double robot_wait_time;
-    ros::param::param<double> ( "/pedsim/move_robot", robot_wait_time, 10.0 );
-    CONFIG.robot_wait_time = robot_wait_time;
-
-    double teleop_state;
-    ros::param::param<double> ( "/pedsim/teleop_state", teleop_state, 0.0 );
-    CONFIG.robot_mode = static_cast<RobotMode> ( teleop_state );
+	double robot_wait_time;
+    ros::param::param<double> ( "/pedsim_simulator/robot_wait_time", robot_wait_time, 10.0 );
+	CONFIG.robot_wait_time = robot_wait_time;
+	
+	double max_robot_speed;
+	ros::param::param<double> ( "/pedsim_simulator/max_robot_speed", max_robot_speed, 2.0 );
+	CONFIG.max_robot_speed = max_robot_speed;
+	
+    double teleop_flag;
+    ros::param::param<double> ( "/pedsim_simulator/teleop_flag", teleop_flag, 0.0 );
+    CONFIG.robot_mode = static_cast<RobotMode> ( teleop_flag );
 }
 
 
@@ -195,7 +193,8 @@ void Simulator::callbackRobotCommand ( const pedsim_msgs::AgentState::ConstPtr &
 		robot_->setvx ( vx );
 		robot_->setvy ( vy );
         // NOTE - check if this is really necessary
-		robot_->setVmax ( sqrt ( vx * vx + vy * vy ) );
+// 		robot_->setVmax ( sqrt ( vx * vx + vy * vy ) );
+		robot_->setVmax( CONFIG.max_robot_speed );
     }
 }
 
@@ -377,7 +376,7 @@ void Simulator::publishAgents()
         marker.pose.position.x = a->getx();
         marker.pose.position.y = a->gety();
 		marker.action = 0;  // add or modify
-        const double person_scale = 2.0 / 8.5 * 1.8;
+        const double person_scale = 2.0 / 8.5 * 1.8;  // TODO - move these magic numbers to a config file
         marker.scale.x = person_scale; marker.scale.y = person_scale; marker.scale.z = person_scale;
 
         /// arrows
@@ -559,7 +558,6 @@ void Simulator::publishObstacles()
         Location loc = ( *it );
         p.x = loc.x - 0.5; p.y = loc.y - 0.5; p.z = 0.0;
         obstacles.cells.push_back ( p );
-
         it++;
     }
 
@@ -593,7 +591,6 @@ void Simulator::publishWalls()
         p.y = loc.y;
         p.z = 0.0;
         marker.points.push_back ( p );
-
         it++;
     }
 
