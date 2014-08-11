@@ -205,8 +205,8 @@ WaitingQueue* QueueingWaypointPlanner::getWaitingQueue() const
 
 bool QueueingWaypointPlanner::hasReachedQueueEnd() const
 {
-    // const double endPositionRadius = 2.0;
-    const double endPositionRadius = 4.0;
+    const double endPositionRadius = 2.0;
+//     const double endPositionRadius = 5.0;
 
     // sanity checks
     if ( waitingQueue == nullptr )
@@ -233,6 +233,11 @@ void QueueingWaypointPlanner::activateApproachingMode()
     // reset waypoint (remove old one)
     delete currentWaypoint;
     currentWaypoint = new QueueingWaypoint ( waypointName, destination );
+	
+	// NOTE - wild experiment
+	agent->disableForce ( "GroupCoherence" );
+    agent->disableForce ( "GroupGaze" );
+    agent->disableForce ( "GroupRepulsion" );
 }
 
 void QueueingWaypointPlanner::activateQueueingMode()
@@ -259,7 +264,7 @@ void QueueingWaypointPlanner::activateQueueingMode()
     }
 
     // deactivate problematic forces
-    agent->disableForce ( "Social" );
+    agent->disableForce ( "Social" ); 	/// Uncomment to enable chaotic queues mode
     agent->disableForce ( "Random" );
     agent->disableForce ( "GroupCoherence" );
     agent->disableForce ( "GroupGaze" );
@@ -274,7 +279,7 @@ void QueueingWaypointPlanner::addPrivateSpace ( Ped::Tvector& queueEndIn ) const
 {
     // const double privateSpaceDistance = 0.4;
     const double privateSpaceDistance = randRange(0.2, 0.8);    // distance between agents in queue
-    const double privateSpaceDirection = randRange(-30.0, 30.0);    // relative orientations
+    const double privateSpaceDirection = randRange(-45.0, 45.0);    // relative orientations
     Ped::Tangle orientation;
     orientation.setDegree( privateSpaceDirection );
 

@@ -61,6 +61,7 @@ Config::Config ( QObject* parent )
 
     // distribution parameters
     // TODO - move all magic numbers here
+	// use YAML file for loading configuration parameters
     group_size_lambda = 1.3;
     wait_time_beta = 0.2;
 }

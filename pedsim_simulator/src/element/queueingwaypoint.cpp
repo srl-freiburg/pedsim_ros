@@ -37,12 +37,10 @@
 QueueingWaypoint::QueueingWaypoint ( const QString& nameIn, const Ped::Tvector& positionIn )
     : Waypoint ( nameIn, positionIn )
 {
-
 }
 
 QueueingWaypoint::~QueueingWaypoint()
 {
-
 }
 
 QString QueueingWaypoint::getName() const
@@ -68,7 +66,9 @@ Ped::Tvector QueueingWaypoint::getForce ( const Ped::Tagent& agentIn,
         Ped::Tvector desiredDirection = diff.normalized();
         Ped::Tvector force = ( desiredDirection * agentIn.getVmax() - agentIn.getVelocity() ) / agentIn.getRelaxationTime();
         if ( desiredDirectionOut != nullptr )
+		{
             *desiredDirectionOut = desiredDirection;
+		}
         return force;
     }
     else
@@ -85,7 +85,9 @@ Ped::Tvector QueueingWaypoint::getForce ( const Ped::Tagent& agentIn,
 
         Ped::Tvector force = decelerationForce + projectionForce;
         if ( desiredDirectionOut != nullptr )
+		{
             *desiredDirectionOut = velocity;
+		}
         return force;
     }
 }
