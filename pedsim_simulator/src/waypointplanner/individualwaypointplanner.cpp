@@ -46,6 +46,16 @@ bool IndividualWaypointPlanner::setAgent ( Agent* agentIn )
 {
     agent = agentIn;
 
+	if (agent->getType() == Ped::Tagent::ELDER)
+	{
+		/// discourage fancy behaviour on elderly people
+// 		agent->disableForce ( "Social" );
+// 		agent->disableForce ( "Random" );
+// 		agent->disableForce ( "GroupCoherence" );
+// 		agent->disableForce ( "GroupGaze" );
+// 		agent->disableForce ( "GroupRepulsion" );
+	}
+	
     return true;
 }
 

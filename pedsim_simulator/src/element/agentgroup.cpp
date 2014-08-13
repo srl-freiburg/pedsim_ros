@@ -162,13 +162,19 @@ QList<AgentGroup*> AgentGroup::divideAgents ( const QList<Agent*>& agentsIn )
             // create groups of given size
             for ( int groupIter = 0; groupIter < sizeDistribution[groupSize-1]; ++groupIter )
             {
+				Agent* groupLeader = unassignedAgents.takeFirst();
+				
+				/// old people are not allowed to lead
+				/// other leaders of tomorrow will never be a reality
+				if (groupLeader->getType() == Ped::Tagent::ELDER)
+					continue;
+				
                 // create a group
                 AgentGroup* newGroup = new AgentGroup();
                 // and add it to result set
                 groups.append ( newGroup );
 
                 // add first agent to the group
-                Agent* groupLeader = unassignedAgents.takeFirst();
                 Ped::Tvector leaderPosition = groupLeader->getPosition();
                 newGroup->addMember ( groupLeader );
 
