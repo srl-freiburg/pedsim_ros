@@ -172,11 +172,6 @@ QRectF Scene::itemsBoundingRect() const
                 boundingRect |= QRectF ( waitingQueue->getVisiblePosition() - QPointF ( 0.5, 0.5 ), QSizeF ( 1, 1 ) );
             }
         }
-        // → unknown waypoint type
-        else
-        {
-// 			ROS_DEBUG("Unknown Waypoint type: %1", (waypoint!=nullptr)?waypoint->toString():"null");
-        }
     }
     // → agent clusters
     foreach ( AgentCluster* agentCluster, agentClusters )
@@ -533,9 +528,6 @@ bool Scene::removeWaitingQueue ( WaitingQueue* queueIn )
     if ( removedCount == 0 )
         return false;
 
-    // remove waiting queue from all agents and agent clusters
-    //TODO
-
     // inform users
     emit waitingQueueRemoved ( queueIn->getName() );
 
@@ -561,9 +553,6 @@ bool Scene::removeAttraction ( AttractionArea* attractionInIn )
     // check whether the queue was removed
     if ( removedCount == 0 )
         return false;
-
-    // remove attraction from all agents
-    //TODO
 
     // inform users
     emit attractionRemoved ( attractionInIn->getName() );
@@ -601,7 +590,6 @@ std::set<const Ped::Tagent*> Scene::getNeighbors ( double x, double y, double ma
 
     return potentialNeighbours;
 }
-
 
 
 void Scene::moveAllAgents()

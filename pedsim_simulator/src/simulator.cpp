@@ -477,9 +477,7 @@ void Simulator::publishAgents()
         state.velocity.z = a->getvz();
 
         AgentStateMachine::AgentState sc =  a->getStateMachine()->getCurrentState();
-        // state.social_state = static_cast<size_t>( sc );
         state.social_state = agentStateToActivity ( sc );
-
         if ( a->getType() == Ped::Tagent::ELDER )
             state.social_state = pedsim_msgs::AgentState::TYPE_STANDING;
 

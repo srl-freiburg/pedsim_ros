@@ -152,6 +152,9 @@ void ScenarioReader::processData()
             int type = elementAttributes.value ( "type" ).toString().toInt();
             AgentCluster* agentCluster = new AgentCluster ( x, y, n );
             agentCluster->setDistribution ( dx, dy );
+			
+			/// TODO - change agents Vmax distribution based on agent type
+			/// and other force parameters to realize different behaviours
             agentCluster->setType ( static_cast<Ped::Tagent::AgentType> ( type ) );
             SCENE.addAgentCluster ( agentCluster );
             currentAgents = agentCluster;
