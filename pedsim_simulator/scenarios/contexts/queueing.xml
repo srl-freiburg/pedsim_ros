@@ -9,25 +9,25 @@
     <!--Waypoints (incl. WaitingQueues)-->
     <waypoint id="enter_bookshop" x="5" y="25" r="3"/>
     <waypoint id="enter_starbucksky" x="5" y="20" r="3"/>
-    <queue id="info_desk" x="20" y="12" direction="0"/>
+    <queue id="info_desk" x="20" y="15" direction="0"/>
 
     <queue id="leave_bookshop" x="25" y="26" direction="90"/>
-    <!-- <waypoint id="leave_bookshop" x="25" y="25" r="3"/> -->
 
     <waypoint id="leave_starbucksky" x="5" y="10" r="3"/>
     <waypoint id="robot_goal" x="22" y="5" r="5"/>
     <waypoint id="robot_pause" x="15" y="20" r="5"/>
     <waypoint id="robot_start" x="5" y="5" r="2"/>
-    <!--Attractions-->
-    <!-- <attraction id="Bookshop" x="27" y="15" width="5" height="10" strength="1"/> -->
-    <!-- <attraction id="starbucksky" x="3" y="15" width="5" height="10" strength="2"/> -->
-    <!--Agents-->
-    <agent x="5" y="5" n="1" dx="0" dy="0" type="2">
+
+
+    <!--robot-->
+<!--     <agent x="5" y="5" n="1" dx="0" dy="0" type="2">
         <addwaypoint id="robot_start"/>
         <addwaypoint id="robot_pause"/>
         <addwaypoint id="robot_goal"/>
         <addwaypoint id="robot_pause"/>
-    </agent>
+    </agent> -->
+
+
     <!--AgentClusters-->
     <agent x="7" y="10" n="30" dx="3" dy="3" type="1">
         <addqueue id="info_desk"/>
