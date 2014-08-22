@@ -80,51 +80,51 @@
 class Simulator
 {
 public:
-	Simulator(const ros::NodeHandle &node);
-	virtual ~Simulator();
+    Simulator(const ros::NodeHandle &node);
+    virtual ~Simulator();
 
-	bool initializeSimulation();
-	void loadConfigParameters();
-	void runSimulation();
+    bool initializeSimulation();
+    void loadConfigParameters();
+    void runSimulation();
 
-	/// publishers
-	void publishAgents();
-	void publishData();
-	void publishSocialActivities();
-	void publishGroupVisuals();
-	void publishObstacles();
-	void publishWalls();
-	void publishAttractions();
+    /// publishers
+    void publishAgents();
+    void publishData();
+    void publishSocialActivities();
+    void publishGroupVisuals();
+    void publishObstacles();
+    void publishWalls();
+    void publishAttractions();
 
-	/// subscriber helpers
-	// Drive robot based on topic messages
-    void callbackRobotCommand ( const pedsim_msgs::AgentState::ConstPtr &msg );
+    /// subscriber helpers
+    // Drive robot based on topic messages
+    void callbackRobotCommand(const pedsim_msgs::AgentState::ConstPtr &msg);
 
 private:
 
-	// robot agent
-	Agent* robot_;
+    // robot agent
+    Agent *robot_;
 
-	ros::NodeHandle nh_;
+    ros::NodeHandle nh_;
 
-	/// publishers
-	// - data messages
-	ros::Publisher pub_obstacles_; 	// grid cells
-	ros::Publisher pub_all_agents_;	// positions and velocities (old msg)
-	ros::Publisher pub_tracked_persons_;	// in spencer format
-	ros::Publisher pub_tracked_groups_;
-	ros::Publisher pub_social_activities_;
+    /// publishers
+    // - data messages
+    ros::Publisher pub_obstacles_; 			// grid cells
+    ros::Publisher pub_all_agents_;			// positions and velocities (old msg)
+    ros::Publisher pub_tracked_persons_;	// in spencer format
+    ros::Publisher pub_tracked_groups_;
+    ros::Publisher pub_social_activities_;
 
-	// - visualization related messages (e.g. markers)
-	ros::Publisher pub_attractions_;
-	ros::Publisher pub_agent_visuals_;
-	ros::Publisher pub_group_lines_;
-	ros::Publisher pub_walls_;
-	ros::Publisher pub_queues_;
-	ros::Publisher pub_waypoints_;
-	ros::Publisher pub_agent_arrows_;
+    // - visualization related messages (e.g. markers)
+    ros::Publisher pub_attractions_;
+    ros::Publisher pub_agent_visuals_;
+    ros::Publisher pub_group_lines_;
+    ros::Publisher pub_walls_;
+    ros::Publisher pub_queues_;
+    ros::Publisher pub_waypoints_;
+    ros::Publisher pub_agent_arrows_;
 
-	/// subscribers
+    /// subscribers
     ros::Subscriber sub_robot_command_;
 
     // - Covenient object to handling quaternions
@@ -132,42 +132,40 @@ private:
 
 private:
 
-	inline Eigen::Quaternionf computePose( Agent* a )
-	{
-		double theta = atan2 ( a->getvy(), a->getvx() );
-		double aa = M_PI / 2.0;
-		double b = 0.0;
-		double c = theta + (M_PI / 2.0);
+	/// \brief Compute pose of an agent in quaternion format
+    inline Eigen::Quaternionf computePose(Agent *a) {
+        double theta = atan2(a->getvy(), a->getvx());
+        Eigen::Quaternionf q = orientation_handler_->rpy2Quaternion(M_PI / 2.0, theta + (M_PI / 2.0), 0.0);
+        return q;
+    }
 
-		Eigen::Quaternionf q = orientation_handler_->rpy2Quaternion(aa, c, b);
-		return q;
-	}
+    inline std::string agentStateToActivity(AgentStateMachine::AgentState state) {
+        std::string activity = "Unknown";
 
-	inline std::string agentStateToActivity( AgentStateMachine::AgentState state )
-	{
-		std::string activity = "Unknown";
-
-		switch ( state )
-		{
-			case AgentStateMachine::AgentState::StateWalking:
-				activity = pedsim_msgs::AgentState::TYPE_INDIVIDUAL_MOVING;
-				break;
-			case AgentStateMachine::AgentState::StateGroupWalking:
-				activity = pedsim_msgs::AgentState::TYPE_GROUP_MOVING;
-				break;
-			case AgentStateMachine::AgentState::StateQueueing:
-				activity = pedsim_msgs::AgentState::TYPE_WAITING_IN_QUEUE;
-				break;
-			case AgentStateMachine::AgentState::StateShopping:
-				activity = pedsim_msgs::AgentState::TYPE_SHOPPING;
-				break;
+        switch (state) {
+        case AgentStateMachine::AgentState::StateWalking:
+            activity = pedsim_msgs::AgentState::TYPE_INDIVIDUAL_MOVING;
+            break;
+        case AgentStateMachine::AgentState::StateGroupWalking:
+            activity = pedsim_msgs::AgentState::TYPE_GROUP_MOVING;
+            break;
+        case AgentStateMachine::AgentState::StateQueueing:
+            activity = pedsim_msgs::AgentState::TYPE_WAITING_IN_QUEUE;
+            break;
+        case AgentStateMachine::AgentState::StateShopping:
+            activity = pedsim_msgs::AgentState::TYPE_SHOPPING;
+            break;
+		case AgentStateMachine::AgentState::StateNone:
+			break;
+		case AgentStateMachine::AgentState::StateWaiting:
+			break;	
 		}
 
-		// TODO 
-		// - add standing to the state machine
-		// - add waiting at the end of the queue 
-		// - add group walking
+        // TODO
+        // - add standing to the state machine
+        // - add waiting at the end of the queue
+        // - add group walking
 
-		return activity;
-	}
+        return activity;
+    }
 };

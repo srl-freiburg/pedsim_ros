@@ -35,8 +35,8 @@
 
 #include <QApplication>
 
-Simulator::Simulator ( const ros::NodeHandle &node )
-    : nh_ ( node )
+Simulator::Simulator(const ros::NodeHandle &node)
+    : nh_(node)
 {
     // nothing to do here
 }
@@ -46,6 +46,8 @@ Simulator::~Simulator()
     delete robot_;
 
     // shutdown service servers and publishers
+	// TODO - need a better way to keep track of publishers in a programmatic way and 
+	// also to terminate them
     sub_robot_command_.shutdown();
     pub_agent_visuals_.shutdown();
     pub_agent_arrows_.shutdown();
@@ -68,43 +70,44 @@ bool Simulator::initializeSimulation()
 {
     /// setup ros publishers
     // visualizations
-    pub_agent_visuals_ = nh_.advertise<animated_marker_msgs::AnimatedMarkerArray> ( "agents_markers", 0 );
-    pub_agent_arrows_ = nh_.advertise<visualization_msgs::MarkerArray> ( "agent_arrows", 0 );
-    pub_group_lines_ = nh_.advertise<visualization_msgs::MarkerArray> ( "group_lines", 0 );
-    pub_walls_ = nh_.advertise<visualization_msgs::Marker> ( "walls", 0 );
-    pub_attractions_ = nh_.advertise<visualization_msgs::Marker> ( "attractions", 0 );
-    pub_queues_ = nh_.advertise<visualization_msgs::Marker> ( "queues", 0 );
-    pub_waypoints_ = nh_.advertise<visualization_msgs::Marker> ( "waypoints", 0 );
+    pub_agent_visuals_ = nh_.advertise<animated_marker_msgs::AnimatedMarkerArray> ("agents_markers", 0);
+    pub_agent_arrows_ = nh_.advertise<visualization_msgs::MarkerArray> ("agent_arrows", 0);
+    pub_group_lines_ = nh_.advertise<visualization_msgs::MarkerArray> ("group_lines", 0);
+    pub_walls_ = nh_.advertise<visualization_msgs::Marker> ("walls", 0);
+    pub_attractions_ = nh_.advertise<visualization_msgs::Marker> ("attractions", 0);
+    pub_queues_ = nh_.advertise<visualization_msgs::Marker> ("queues", 0);
+    pub_waypoints_ = nh_.advertise<visualization_msgs::Marker> ("waypoints", 0);
 
     // informative topics (data)
-    pub_obstacles_ = nh_.advertise<nav_msgs::GridCells> ( "static_obstacles", 0 );
-    pub_all_agents_ = nh_.advertise<pedsim_msgs::AllAgentsState> ( "dynamic_obstacles", 0 );
+    pub_obstacles_ = nh_.advertise<nav_msgs::GridCells> ("static_obstacles", 0);
+    pub_all_agents_ = nh_.advertise<pedsim_msgs::AllAgentsState> ("dynamic_obstacles", 0);
 
-    pub_tracked_persons_ = nh_.advertise<spencer_tracking_msgs::TrackedPersons> ( "/spencer/perception/tracked_persons", 0 );
-    pub_tracked_groups_ = nh_.advertise<spencer_tracking_msgs::TrackedGroups> ( "/spencer/perception/tracked_groups", 0 );
-    pub_social_activities_ = nh_.advertise<spencer_social_relation_msgs::SocialActivities> ( "/spencer/perception/social_activities", 0 );
+    pub_tracked_persons_ = nh_.advertise<spencer_tracking_msgs::TrackedPersons> ("/spencer/perception/tracked_persons", 
+0);
+    pub_tracked_groups_ = nh_.advertise<spencer_tracking_msgs::TrackedGroups> ("/spencer/perception/tracked_groups", 0);
+    pub_social_activities_ = nh_.advertise<spencer_social_relation_msgs::SocialActivities> 
+("/spencer/perception/social_activities", 0);
 
     /// setup any pointers
-    orientation_handler_.reset ( new OrientationHandler() );
+    orientation_handler_.reset(new OrientationHandler());
     robot_ = nullptr;
 
     /// subscribers
-    sub_robot_command_ = nh_.subscribe ( "/pedsim_simulator/robot_command", 1, &Simulator::callbackRobotCommand, this );
+    sub_robot_command_ = nh_.subscribe("/pedsim_simulator/robot_command", 1, &Simulator::callbackRobotCommand, this);
 
     /// load parameters
     std::string scene_file_param;
-    ros::param::param<std::string> ( "/simulator/scene_file", scene_file_param, "scene.xml" );
+    ros::param::param<std::string> ("/simulator/scene_file", scene_file_param, "scene.xml");
     // load scenario file
-    QString scenefile = QString::fromStdString ( scene_file_param );
+    QString scenefile = QString::fromStdString(scene_file_param);
     ScenarioReader scenario_reader;
-    bool readResult = scenario_reader.readFromFile ( scenefile );
-    if ( readResult == false )
-    {
-        ROS_WARN ( "Could not load the scene file, check paths" );
+    bool readResult = scenario_reader.readFromFile(scenefile);
+    if (readResult == false) {
+        ROS_WARN("Could not load the scene file, check paths");
         return false;
     }
 
-	/// load the remaining parameters
+    /// load the remaining parameters
     loadConfigParameters();
 
     return true;
@@ -117,17 +120,17 @@ bool Simulator::initializeSimulation()
 /// -----------------------------------------------------------------
 void Simulator::loadConfigParameters()
 {
-	double robot_wait_time;
-    ros::param::param<double> ( "/pedsim_simulator/robot_wait_time", robot_wait_time, 10.0 );
-	CONFIG.robot_wait_time = robot_wait_time;
-	
-	double max_robot_speed;
-	ros::param::param<double> ( "/pedsim_simulator/max_robot_speed", max_robot_speed, 2.0 );
-	CONFIG.max_robot_speed = max_robot_speed;
-	
+    double robot_wait_time;
+    ros::param::param<double> ("/pedsim_simulator/robot_wait_time", robot_wait_time, 10.0);
+    CONFIG.robot_wait_time = robot_wait_time;
+
+    double max_robot_speed;
+    ros::param::param<double> ("/pedsim_simulator/max_robot_speed", max_robot_speed, 2.0);
+    CONFIG.max_robot_speed = max_robot_speed;
+
     double teleop_flag;
-    ros::param::param<double> ( "/pedsim_simulator/teleop_flag", teleop_flag, 0.0 );
-    CONFIG.robot_mode = static_cast<RobotMode> ( teleop_flag );
+    ros::param::param<double> ("/pedsim_simulator/teleop_flag", teleop_flag, 0.0);
+    CONFIG.robot_mode = static_cast<RobotMode>(teleop_flag);
 }
 
 
@@ -137,19 +140,16 @@ void Simulator::loadConfigParameters()
 /// -----------------------------------------------------------------
 void Simulator::runSimulation()
 {
-    ros::Rate r ( 25 ); // Hz
+    ros::Rate r(25);    // Hz
 
-    while ( ros::ok() )
-    {
-		if ( SCENE.getTime() < 0.1 )
-		{
-			// setup the robot
-			BOOST_FOREACH ( Agent* a, SCENE.getAgents() )
-			{
-				if ( a->getType() == Ped::Tagent::ROBOT )
-					robot_ = a;
-			}
-		}
+    while (ros::ok()) {
+        if (SCENE.getTime() < 0.1) {
+            // setup the robot
+            BOOST_FOREACH(Agent * a, SCENE.getAgents()) {
+                if (a->getType() == Ped::Tagent::ROBOT)
+                    robot_ = a;
+            }
+        }
 
         SCENE.moveAllAgents();
 
@@ -162,8 +162,7 @@ void Simulator::runSimulation()
         publishObstacles();
 
         // only publish the obstacles in the beginning
-        if ( SCENE.getTime() < 10 )
-        {
+        if (SCENE.getTime() < 10) {
             publishAttractions();
             publishWalls();
         }
@@ -180,21 +179,19 @@ void Simulator::runSimulation()
 /// Listens to incoming messages and manipulates the robot.
 /// \param[in] msg Message containing the pos and vel for the robot
 /// -----------------------------------------------------------------
-void Simulator::callbackRobotCommand ( const pedsim_msgs::AgentState::ConstPtr &msg )
+void Simulator::callbackRobotCommand(const pedsim_msgs::AgentState::ConstPtr &msg)
 {
     double vx = msg->velocity.x;
     double vy = msg->velocity.y;
 
-    if ( CONFIG.robot_mode == RobotMode::TELEOPERATION || CONFIG.robot_mode == RobotMode::CONTROLLED )
-        robot_->setTeleop ( true );
+    if (CONFIG.robot_mode == RobotMode::TELEOPERATION || CONFIG.robot_mode == RobotMode::CONTROLLED)
+        robot_->setTeleop(true);
 
-    if ( robot_->getType() == static_cast<Ped::Tagent::AgentType> ( msg->type ) )
-    {
-		robot_->setvx ( vx );
-		robot_->setvy ( vy );
+    if (robot_->getType() == static_cast<Ped::Tagent::AgentType>(msg->type)) {
+        robot_->setvx(vx);
+        robot_->setvy(vy);
         // NOTE - check if this is really necessary
-// 		robot_->setVmax ( sqrt ( vx * vx + vy * vy ) );
-		robot_->setVmax( CONFIG.max_robot_speed );
+        robot_->setVmax(CONFIG.max_robot_speed);
     }
 }
 
@@ -217,56 +214,50 @@ void Simulator::publishSocialActivities()
     spencer_social_relation_msgs::SocialActivity group_moving_activity;
     spencer_social_relation_msgs::SocialActivity individual_moving_activity;
 
-    BOOST_FOREACH ( Agent* a, SCENE.getAgents() )
-    {
+    foreach(Agent * a, SCENE.getAgents()) {
         /// activity of the current agent
         AgentStateMachine::AgentState sact =  a->getStateMachine()->getCurrentState();
 
-        if ( sact == AgentStateMachine::AgentState::StateQueueing )
-        {
+        if (sact == AgentStateMachine::AgentState::StateQueueing) {
             queueing_activity.type = spencer_social_relation_msgs::SocialActivity::TYPE_WAITING_IN_QUEUE;
             queueing_activity.confidence = 1.0;
-            queueing_activity.track_ids.push_back( a->getId() );
+            queueing_activity.track_ids.push_back(a->getId());
         }
 
-        if ( sact == AgentStateMachine::AgentState::StateShopping )
-        {
+        if (sact == AgentStateMachine::AgentState::StateShopping) {
             shopping_activity.type = spencer_social_relation_msgs::SocialActivity::TYPE_SHOPPING;
             shopping_activity.confidence = 1.0;
-            shopping_activity.track_ids.push_back( a->getId() );
+            shopping_activity.track_ids.push_back(a->getId());
         }
 
-        if ( a->getType() == Ped::Tagent::ELDER )  // Hack for really slow people
-        {
+        if (a->getType() == Ped::Tagent::ELDER) {  // Hack for really slow people
             standing_activity.type = spencer_social_relation_msgs::SocialActivity::TYPE_STANDING;
             standing_activity.confidence = 1.0;
-            standing_activity.track_ids.push_back( a->getId() );
+            standing_activity.track_ids.push_back(a->getId());
         }
 
-        if ( sact == AgentStateMachine::AgentState::StateGroupWalking )
-        {
+        if (sact == AgentStateMachine::AgentState::StateGroupWalking) {
             group_moving_activity.type = spencer_social_relation_msgs::SocialActivity::TYPE_GROUP_MOVING;
             group_moving_activity.confidence = 1.0;
-            group_moving_activity.track_ids.push_back( a->getId() );
+            group_moving_activity.track_ids.push_back(a->getId());
         }
 
-        if ( sact == AgentStateMachine::AgentState::StateWalking )
-        {
+        if (sact == AgentStateMachine::AgentState::StateWalking) {
             individual_moving_activity.type = spencer_social_relation_msgs::SocialActivity::TYPE_INDIVIDUAL_MOVING;
             individual_moving_activity.confidence = 1.0;
-            individual_moving_activity.track_ids.push_back( a->getId() );
+            individual_moving_activity.track_ids.push_back(a->getId());
         }
         // else
         //     continue;
     }
 
-    social_activities.elements.push_back( queueing_activity );
-    social_activities.elements.push_back( shopping_activity );
-    social_activities.elements.push_back( standing_activity );
-    social_activities.elements.push_back( group_moving_activity );
-    social_activities.elements.push_back( individual_moving_activity );
+    social_activities.elements.push_back(queueing_activity);
+    social_activities.elements.push_back(shopping_activity);
+    social_activities.elements.push_back(standing_activity);
+    social_activities.elements.push_back(group_moving_activity);
+    social_activities.elements.push_back(individual_moving_activity);
 
-    pub_social_activities_.publish( social_activities );
+    pub_social_activities_.publish(social_activities);
 }
 
 
@@ -282,16 +273,15 @@ void Simulator::publishData()
     tracked_people_header.stamp = ros::Time::now();
     tracked_people.header = tracked_people_header;
 
-    BOOST_FOREACH ( Agent* a, SCENE.getAgents() )
-    {
+    foreach(Agent * a, SCENE.getAgents()) {
         spencer_tracking_msgs::TrackedPerson person;
         person.track_id = a->getId();
         person.is_occluded = false;
         // person.detection_id = 0;  // not simulated yet
         // person.age = 0;   // also not simulated yet
 
-        double theta = atan2 ( a->getvy(), a->getvx() );
-        Eigen::Quaternionf q = orientation_handler_->angle2Quaternion ( theta );
+        double theta = atan2(a->getvy(), a->getvx());
+        Eigen::Quaternionf q = orientation_handler_->angle2Quaternion(theta);
 
         geometry_msgs::PoseWithCovariance pcov;
         pcov.pose.position.x = a->getx();
@@ -313,7 +303,7 @@ void Simulator::publishData()
         // tcov.twist.angular.z = 0;
         person.twist = tcov;
 
-        tracked_people.tracks.push_back( person );
+        tracked_people.tracks.push_back(person);
     }
 
     /// Tracked groups
@@ -322,17 +312,15 @@ void Simulator::publishData()
     tracked_groups_header.stamp = ros::Time::now();
     tracked_groups.header = tracked_groups_header;
 
-    QList<AgentGroup*> sim_groups = SCENE.getGroups();
-    BOOST_FOREACH ( AgentGroup* ag, sim_groups )
-    {
+    QList<AgentGroup *> sim_groups = SCENE.getGroups();
+    foreach(AgentGroup * ag, sim_groups) {
         spencer_tracking_msgs::TrackedGroup group;
         group.group_id = ag->getId();
         // group.age = 0; //NOTE  not simulated so far
         Ped::Tvector com = ag->getCenterOfMass();
         // group.centerOfGravity = ... // TODO - convert CoM to Pose with Covariance
 
-        BOOST_FOREACH ( Agent* m, ag->getMembers() )
-        {
+        BOOST_FOREACH(Agent * m, ag->getMembers()) {
             group.track_ids.push_back(m->getId());
         }
 
@@ -340,8 +328,8 @@ void Simulator::publishData()
     }
 
     /// publish the messages
-    pub_tracked_persons_.publish( tracked_people );
-    pub_tracked_groups_.publish( tracked_groups );
+    pub_tracked_persons_.publish(tracked_people);
+    pub_tracked_groups_.publish(tracked_groups);
 }
 
 
@@ -361,8 +349,7 @@ void Simulator::publishAgents()
     all_header.stamp = ros::Time::now();
     all_status.header = all_header;
 
-    BOOST_FOREACH ( Agent* a, SCENE.getAgents() )
-    {
+    foreach(Agent * a, SCENE.getAgents()) {
         /// walking people message
         animated_marker_msgs::AnimatedMarker marker;
         marker.mesh_use_embedded_materials = true;
@@ -375,9 +362,11 @@ void Simulator::publishAgents()
 
         marker.pose.position.x = a->getx();
         marker.pose.position.y = a->gety();
-		marker.action = 0;  // add or modify
+        marker.action = 0;  // add or modify
         const double person_scale = 2.0 / 8.5 * 1.8;  // TODO - move these magic numbers to a config file
-        marker.scale.x = person_scale; marker.scale.y = person_scale; marker.scale.z = person_scale;
+        marker.scale.x = person_scale;
+        marker.scale.y = person_scale;
+        marker.scale.z = person_scale;
 
         /// arrows
         visualization_msgs::Marker arrow;
@@ -390,61 +379,75 @@ void Simulator::publishAgents()
         arrow.pose.position.y = a->gety();
         arrow.pose.position.z = 1.4;
         arrow.action = 0;  // add or modify
-        arrow.color.a = 1.0; arrow.color.r = 1.0; arrow.color.g = 0.0; arrow.color.b = 0.0;
-        arrow.scale.y = 0.05; arrow.scale.z = 0.05;
+        arrow.color.a = 1.0;
+        arrow.color.r = 1.0;
+        arrow.color.g = 0.0;
+        arrow.color.b = 0.0;
+        arrow.scale.y = 0.05;
+        arrow.scale.z = 0.05;
 
-        if ( a->getType() == Ped::Tagent::ELDER )
-        {
-            marker.color.a = 1.0; marker.color.r = 1.0; marker.color.g = 1.0; marker.color.b = 1.0;
-        }
-        else
-		{
-			marker.color.a = 1.0; marker.color.r = 0.0; marker.color.g = 0.7; marker.color.b = 1.0;
-		}
-
-        if ( a->getStateMachine()->getCurrentState() == AgentStateMachine::AgentState::StateQueueing )
-        {
-            marker.color.a = 1.0; marker.color.r = 1.0; marker.color.g = 0.0; marker.color.b = 1.0;
-        }
-
-        if ( a->getStateMachine()->getCurrentState() == AgentStateMachine::AgentState::StateShopping )
-        {
-            marker.color.a = 1.0; marker.color.r = 0.0; marker.color.g = 0.0; marker.color.b = 1.0;
+        if (a->getType() == Ped::Tagent::ELDER) {
+            marker.color.a = 1.0;
+            marker.color.r = 1.0;
+            marker.color.g = 1.0;
+            marker.color.b = 1.0;
+        } else {
+            marker.color.a = 1.0;
+            marker.color.r = 0.0;
+            marker.color.g = 0.7;
+            marker.color.b = 1.0;
         }
 
+        if (a->getStateMachine()->getCurrentState() == AgentStateMachine::AgentState::StateQueueing) {
+            marker.color.a = 1.0;
+            marker.color.r = 1.0;
+            marker.color.g = 0.0;
+            marker.color.b = 1.0;
+        }
 
-        Eigen::Quaternionf q = computePose( a );
+        if (a->getStateMachine()->getCurrentState() == AgentStateMachine::AgentState::StateShopping) {
+            marker.color.a = 1.0;
+            marker.color.r = 0.0;
+            marker.color.g = 0.0;
+            marker.color.b = 1.0;
+        }
+
+
+        Eigen::Quaternionf q = computePose(a);
         marker.pose.orientation.x = q.x();
         marker.pose.orientation.y = q.y();
         marker.pose.orientation.z = q.z();
         marker.pose.orientation.w = q.w();
 
-        double theta = atan2 ( a->getvy(), a->getvx() );
-        Eigen::Quaternionf qa = orientation_handler_->angle2Quaternion ( theta );
+        double theta = atan2(a->getvy(), a->getvx());
+        Eigen::Quaternionf qa = orientation_handler_->angle2Quaternion(theta);
 
-        if ( a->getvx() != 0.0 )
-        {
+        if (a->getvx() != 0.0) {
             arrow.pose.orientation.x = qa.x();
             arrow.pose.orientation.y = qa.y();
             arrow.pose.orientation.z = qa.z();
             arrow.pose.orientation.w = qa.w();
 
-            double xx = sqrt(a->getvx()*a->getvx() + a->getvy()*a->getvy());
+            double xx = sqrt(a->getvx() * a->getvx() + a->getvy() * a->getvy());
             arrow.scale.x = xx > 0.0 ? xx : 0.01;
 
             marker.animation_speed = xx * 0.7;
-        }
-        else
-        {
+        } else {
             marker.animation_speed = 0.0;
         }
 
-        if ( robot_ != nullptr &&  a->getType() == robot_->getType() )
-        {
+        if (robot_ != nullptr &&  a->getType() == robot_->getType()) {
             marker.type = visualization_msgs::Marker::MESH_RESOURCE;
+			// TODO - this should be a configurable parameter via launch file
             marker.mesh_resource = "package://pedsim_simulator/images/darylbot_rotated_shifted.dae";
-            marker.color.a = 1.0; marker.color.r = 1.0; marker.color.g = 1.0; marker.color.b = 1.0;
-            marker.scale.x = 0.8; marker.scale.y = 0.8; marker.scale.z = 1.0;
+            marker.color.a = 1.0;
+            marker.color.r = 1.0;
+            marker.color.g = 1.0;
+            marker.color.b = 1.0;
+			
+            marker.scale.x = 0.8;
+            marker.scale.y = 0.8;
+            marker.scale.z = 1.0;
 
             marker.pose.orientation.x = qa.x();
             marker.pose.orientation.y = qa.y();
@@ -455,8 +458,8 @@ void Simulator::publishAgents()
             arrow.pose.position.z = 1.0;
         }
 
-        marker_array.markers.push_back ( marker );
-        arrow_array.markers.push_back ( arrow );
+        marker_array.markers.push_back(marker);
+        arrow_array.markers.push_back(arrow);
 
         /// status message
         /// TODO - remove this once, we publish internal states using
@@ -477,18 +480,18 @@ void Simulator::publishAgents()
         state.velocity.z = a->getvz();
 
         AgentStateMachine::AgentState sc =  a->getStateMachine()->getCurrentState();
-        state.social_state = agentStateToActivity ( sc );
-        if ( a->getType() == Ped::Tagent::ELDER )
+        state.social_state = agentStateToActivity(sc);
+        if (a->getType() == Ped::Tagent::ELDER)
             state.social_state = pedsim_msgs::AgentState::TYPE_STANDING;
 
-        all_status.agent_states.push_back ( state );
+        all_status.agent_states.push_back(state);
     }
 
     // publish the marker array
-    pub_agent_visuals_.publish ( marker_array );
-    pub_agent_arrows_.publish ( arrow_array );
+    pub_agent_visuals_.publish(marker_array);
+    pub_agent_arrows_.publish(arrow_array);
 
-    pub_all_agents_.publish ( all_status );
+    pub_all_agents_.publish(all_status);
 }
 
 
@@ -498,41 +501,48 @@ void Simulator::publishAgents()
 /// -----------------------------------------------------------------
 void Simulator::publishGroupVisuals()
 {
-    QList<AgentGroup*> groups = SCENE.getGroups();
+    QList<AgentGroup *> groups = SCENE.getGroups();
 
     /// visualize groups (sketchy)
-    BOOST_FOREACH ( AgentGroup* ag, groups )
-    {
+    foreach(AgentGroup * ag, groups) {
         // skip empty ones
-        if ( ag->memberCount() < 1 )
+        if (ag->memberCount() < 1)
             continue;
 
         /// members of the group
         geometry_msgs::Point p1;
         Ped::Tvector gcom = ag->getCenterOfMass();
-        p1.x = gcom.x; p1.y = gcom.y; p1.z = 1.4;
+        p1.x = gcom.x;
+        p1.y = gcom.y;
+        p1.z = 1.4;
         visualization_msgs::MarkerArray lines_array;
 
-        BOOST_FOREACH ( Agent* m, ag->getMembers() )
-        {
+        foreach(Agent * m, ag->getMembers()) {
             visualization_msgs::Marker marker;
             marker.header.frame_id = "world";
             marker.header.stamp = ros::Time();
             marker.ns = "pedsim";
-            marker.id = m->getId() +1000;
+            marker.id = m->getId() + 1000;
 
-            marker.color.a = 0.7; marker.color.r = 1.0; marker.color.g = 1.0; marker.color.b = 0.0;
-            marker.scale.x = 0.05; marker.scale.y = 0.05; marker.scale.z = 0.05;
+            marker.color.a = 0.7;
+            marker.color.r = 1.0;
+            marker.color.g = 1.0;
+            marker.color.b = 0.0;
+            marker.scale.x = 0.05;
+            marker.scale.y = 0.05;
+            marker.scale.z = 0.05;
             marker.type = visualization_msgs::Marker::ARROW;
             geometry_msgs::Point p2;
-            p2.x = m->getx(); p2.y = m->gety(); p2.z = 1.4;
+            p2.x = m->getx();
+            p2.y = m->gety();
+            p2.z = 1.4;
 
-            marker.points.push_back ( p1 );
-            marker.points.push_back ( p2 );
-            lines_array.markers.push_back ( marker );
+            marker.points.push_back(p1);
+            marker.points.push_back(p2);
+            lines_array.markers.push_back(marker);
         }
 
-        pub_group_lines_.publish ( lines_array );
+        pub_group_lines_.publish(lines_array);
     }
 }
 
@@ -550,16 +560,17 @@ void Simulator::publishObstacles()
     obstacles.cell_height = 1.0;
 
     std::vector<Location>::const_iterator it = SCENE.obstacle_cells_.begin();
-    while ( it != SCENE.obstacle_cells_.end() )
-    {
+    while (it != SCENE.obstacle_cells_.end()) {
         geometry_msgs::Point p;
-        Location loc = ( *it );
-        p.x = loc.x - 0.5; p.y = loc.y - 0.5; p.z = 0.0;
-        obstacles.cells.push_back ( p );
+        Location loc = (*it);
+        p.x = loc.x - 0.5;
+        p.y = loc.y - 0.5;
+        p.z = 0.0;
+        obstacles.cells.push_back(p);
         it++;
     }
 
-    pub_obstacles_.publish ( obstacles );
+    pub_obstacles_.publish(obstacles);
 }
 
 
@@ -575,24 +586,28 @@ void Simulator::publishWalls()
     marker.header.stamp = ros::Time();
     marker.ns = "pedsim";
     marker.id = 10000;
-    marker.color.a = 1.0; marker.color.r = 1.0; marker.color.g = 0.0; marker.color.b = 0.0;
-    marker.scale.x = 1.0; marker.scale.y = 1.0; marker.scale.z = 3.0;
+    marker.color.a = 1.0;
+    marker.color.r = 1.0;
+    marker.color.g = 0.0;
+    marker.color.b = 0.0;
+    marker.scale.x = 1.0;
+    marker.scale.y = 1.0;
+    marker.scale.z = 3.0;
     marker.pose.position.z = marker.scale.z / 2.0;
     marker.type = visualization_msgs::Marker::CUBE_LIST;
 
     std::vector<Location>::const_iterator it = SCENE.obstacle_cells_.begin();
-    while ( it != SCENE.obstacle_cells_.end() )
-    {
+    while (it != SCENE.obstacle_cells_.end()) {
         geometry_msgs::Point p;
-        Location loc = ( *it );
+        Location loc = (*it);
         p.x = loc.x;
         p.y = loc.y;
         p.z = 0.0;
-        marker.points.push_back ( p );
+        marker.points.push_back(p);
         it++;
     }
 
-    pub_walls_.publish ( marker );
+    pub_walls_.publish(marker);
 }
 
 
@@ -603,7 +618,7 @@ void Simulator::publishWalls()
 /// -----------------------------------------------------------------
 void Simulator::publishAttractions()
 {
-	/// waypoints
+    /// waypoints
 // 	BOOST_FOREACH ( Waypoint* wp, SCENE.getWaypoints() )
 //     {
 // // 		wp->getType()
@@ -632,49 +647,48 @@ void Simulator::publishAttractions()
 // 		pub_waypoints_.publish ( marker );
 //     }
 
- //    WaitingQueue* info_desk  = SCENE.getWaitingQueueByName("klm");
-	// visualization_msgs::Marker marker;
-	// marker.header.frame_id = "world";
-	// marker.header.stamp = ros::Time();
-	// marker.ns = "pedsim";
-	// marker.id = info_desk->getId();
-	// marker.type = visualization_msgs::Marker::MESH_RESOURCE;
- //    marker.mesh_resource = "package://pedsim_simulator/images/kiosk.dae";
+//    WaitingQueue* info_desk  = SCENE.getWaitingQueueByName("klm");
+    // visualization_msgs::Marker marker;
+    // marker.header.frame_id = "world";
+    // marker.header.stamp = ros::Time();
+    // marker.ns = "pedsim";
+    // marker.id = info_desk->getId();
+    // marker.type = visualization_msgs::Marker::MESH_RESOURCE;
+//    marker.mesh_resource = "package://pedsim_simulator/images/kiosk.dae";
 
-	// marker.scale.x = 1.0;
-	// marker.scale.y = 1.0;
-	// marker.scale.z = 1.0;
+    // marker.scale.x = 1.0;
+    // marker.scale.y = 1.0;
+    // marker.scale.z = 1.0;
 
-	// marker.pose.position.x = info_desk->getPosition().x - 2.5;
-	// marker.pose.position.y = info_desk->getPosition().y + 0.5;
-	// marker.pose.position.z = 0.0; //marker.scale.z / 2.0;
+    // marker.pose.position.x = info_desk->getPosition().x - 2.5;
+    // marker.pose.position.y = info_desk->getPosition().y + 0.5;
+    // marker.pose.position.z = 0.0; //marker.scale.z / 2.0;
 
-	// pub_queues_.publish ( marker );
+    // pub_queues_.publish ( marker );
 
 
-	// WaitingQueue* kq  = SCENE.getWaitingQueueByName("kq");
-	// visualization_msgs::Marker marker2;
-	// marker2.header.frame_id = "world";
-	// marker2.header.stamp = ros::Time();
-	// marker2.ns = "pedsim";
-	// marker2.id = kq->getId();
-	// marker2.type = visualization_msgs::Marker::MESH_RESOURCE;
- //    marker2.mesh_resource = "package://pedsim_simulator/images/kiosk.dae";
+    // WaitingQueue* kq  = SCENE.getWaitingQueueByName("kq");
+    // visualization_msgs::Marker marker2;
+    // marker2.header.frame_id = "world";
+    // marker2.header.stamp = ros::Time();
+    // marker2.ns = "pedsim";
+    // marker2.id = kq->getId();
+    // marker2.type = visualization_msgs::Marker::MESH_RESOURCE;
+//    marker2.mesh_resource = "package://pedsim_simulator/images/kiosk.dae";
 
-	// marker2.scale.x = 1.0;
-	// marker2.scale.y = 1.0;
-	// marker2.scale.z = 1.0;
+    // marker2.scale.x = 1.0;
+    // marker2.scale.y = 1.0;
+    // marker2.scale.z = 1.0;
 
-	// marker2.pose.position.x = kq->getPosition().x - 2.5;
-	// marker2.pose.position.y = kq->getPosition().y + 0.5;
-	// marker2.pose.position.z = 0.0; //marker.scale.z / 2.0;
+    // marker2.pose.position.x = kq->getPosition().x - 2.5;
+    // marker2.pose.position.y = kq->getPosition().y + 0.5;
+    // marker2.pose.position.z = 0.0; //marker.scale.z / 2.0;
 
-	// pub_queues_.publish ( marker2 );
+    // pub_queues_.publish ( marker2 );
 
 
     /// publish attractions (shopping areas etc)
-    BOOST_FOREACH ( AttractionArea* atr, SCENE.getAttractions() )
-    {
+    foreach(AttractionArea * atr, SCENE.getAttractions()) {
         visualization_msgs::Marker marker;
         marker.header.frame_id = "world";
         marker.header.stamp = ros::Time();
@@ -696,7 +710,7 @@ void Simulator::publishAttractions()
 
         marker.type = visualization_msgs::Marker::CUBE;
 
-        pub_attractions_.publish ( marker );
+        pub_attractions_.publish(marker);
     }
 }
 
@@ -705,23 +719,20 @@ void Simulator::publishAttractions()
 /// \brief main
 /// Hub of the application
 /// -----------------------------------------------------------------
-int main ( int argc, char **argv )
+int main(int argc, char **argv)
 {
-    QApplication app ( argc, argv );
+    QApplication app(argc, argv);
 
     // initialize resources
-    ros::init ( argc, argv, "simulator" );
+    ros::init(argc, argv, "simulator");
     ros::NodeHandle node;
-    Simulator sm ( node );
+    Simulator sm(node);
 
-    if ( sm.initializeSimulation() )
-    {
-		ROS_INFO ( "node initialized, now running " );
+    if (sm.initializeSimulation()) {
+        ROS_INFO("node initialized, now running ");
 
         sm.runSimulation();
-    }
-    else
-    {
+    } else {
         ROS_WARN("Could not initialize simulation, aborting");
         return EXIT_FAILURE;
     }

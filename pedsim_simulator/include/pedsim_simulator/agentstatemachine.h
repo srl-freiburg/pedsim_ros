@@ -43,10 +43,12 @@ class GroupWaypointPlanner;
 class ShoppingPlanner;
 
 
-class AgentStateMachine : public QObject {
+class AgentStateMachine : public QObject 
+{
 	Q_OBJECT
 
 	// Enums
+	// TODO - switch to enum classes
 public:
 	typedef enum {
 		StateNone = 0,
@@ -56,23 +58,18 @@ public:
 		StateGroupWalking = 4,
 		StateShopping = 5
 	} AgentState;
-	Q_ENUMS(AgentState)
-
 
 	// Constructor and Destructor
 public:
 	AgentStateMachine(Agent* agentIn);
 	virtual ~AgentStateMachine();
 
-
 	// Signals
 signals:
 	void stateChanged(AgentState newState);
 
-
 public slots:
 	void loseAttraction();
-
 
 	// Methods
 public:
@@ -83,7 +80,6 @@ protected:
 	void deactivateState(AgentState stateIn);
 	bool checkGroupForAttractions(AttractionArea** attractionOut = nullptr) const;
 	QString stateToName(AgentState stateIn) const;
-
 
 	// Attributes
 protected:

@@ -34,7 +34,6 @@
 #include <pedsim_simulator/element/agent.h>
 #include <pedsim_simulator/element/queueingwaypoint.h>
 #include <pedsim_simulator/element/waitingqueue.h>
-
 #include <pedsim_simulator/utilities.h>
 
 
@@ -206,7 +205,6 @@ WaitingQueue* QueueingWaypointPlanner::getWaitingQueue() const
 bool QueueingWaypointPlanner::hasReachedQueueEnd() const
 {
     const double endPositionRadius = 2.0;
-//     const double endPositionRadius = 5.0;
 
     // sanity checks
     if ( waitingQueue == nullptr )
@@ -275,6 +273,7 @@ void QueueingWaypointPlanner::activateQueueingMode()
     currentWaypoint = new QueueingWaypoint ( waypointName, queueingPosition );
 }
 
+/// Affects the behavior at the end of the queue and hence the shape
 void QueueingWaypointPlanner::addPrivateSpace ( Ped::Tvector& queueEndIn ) const
 {
     // const double privateSpaceDistance = 0.4;
