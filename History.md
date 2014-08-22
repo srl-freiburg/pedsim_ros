@@ -1,4 +1,19 @@
 
+0.0.3 / 2014-08-22
+==================
+
+ * changes to standing and queueing scenes to generate more realistic data
+ * better standing people modeling by tweaking different force weights
+ * lots of cleanup, optimizations, speedups...
+ * changed social state to a more consistent string notation
+ * integrated spencer_social_relation_msgs for publishing simulated social activities
+ * changed queue waiting time distribution to erlang
+ * fixed spooky behavior in shopping modes
+ * added walking people to the simulator and tuned behaviours, thanks to @tlind
+ * fixed queue dancing behaviour issues (re-wrote personal space in queue code)
+ * added spencer msgs to the simulator, not using standard spencer topics
+ * now having people models and more in the simulator
+
 0.0.2 / 2014-05-12
 ==================
 
