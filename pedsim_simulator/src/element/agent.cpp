@@ -183,9 +183,10 @@ void Agent::move ( double h )
 	}
 	else if ( getType() == Ped::Tagent::ROBOT && CONFIG.robot_mode == RobotMode::CONTROLLED )
 	{
-		Ped::Tagent::setForceFactorSocial ( CONFIG.forceSocial );
+		Ped::Tagent::setForceFactorSocial ( 0.1 * CONFIG.forceSocial );
 		Ped::Tagent::setForceFactorObstacle ( 350 );
-		Ped::Tagent::setForceFactorDesired ( 1.5 );
+		// Ped::Tagent::setForceFactorDesired ( 1.5 );
+        Ped::Tagent::setForceFactorDesired ( 0.5 );
 
 		if ( SCENE.getTime() >= CONFIG.robot_wait_time )
         {

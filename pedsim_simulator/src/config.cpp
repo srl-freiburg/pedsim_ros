@@ -57,7 +57,7 @@ Config::Config ( QObject* parent )
     robot_wait_time = 15;
 	max_robot_speed = 2.0;
 
-	groups_enabled = true;
+	groups_enabled = false;
 
     // distribution parameters
     // TODO - move all magic numbers here

@@ -46,7 +46,7 @@ Simulator::~Simulator()
     delete robot_;
 
     // shutdown service servers and publishers
-	// TODO - need a better way to keep track of publishers in a programmatic way and 
+	// TODO - need a better way to keep track of publishers in a programmatic way and
 	// also to terminate them
     sub_robot_command_.shutdown();
     pub_agent_visuals_.shutdown();
@@ -82,10 +82,10 @@ bool Simulator::initializeSimulation()
     pub_obstacles_ = nh_.advertise<nav_msgs::GridCells> ("static_obstacles", 0);
     pub_all_agents_ = nh_.advertise<pedsim_msgs::AllAgentsState> ("dynamic_obstacles", 0);
 
-    pub_tracked_persons_ = nh_.advertise<spencer_tracking_msgs::TrackedPersons> ("/spencer/perception/tracked_persons", 
+    pub_tracked_persons_ = nh_.advertise<spencer_tracking_msgs::TrackedPersons> ("/spencer/perception/tracked_persons",
 0);
     pub_tracked_groups_ = nh_.advertise<spencer_tracking_msgs::TrackedGroups> ("/spencer/perception/tracked_groups", 0);
-    pub_social_activities_ = nh_.advertise<spencer_social_relation_msgs::SocialActivities> 
+    pub_social_activities_ = nh_.advertise<spencer_social_relation_msgs::SocialActivities>
 ("/spencer/perception/social_activities", 0);
 
     /// setup any pointers
@@ -444,7 +444,7 @@ void Simulator::publishAgents()
             marker.color.r = 1.0;
             marker.color.g = 1.0;
             marker.color.b = 1.0;
-			
+
             marker.scale.x = 0.8;
             marker.scale.y = 0.8;
             marker.scale.z = 1.0;
