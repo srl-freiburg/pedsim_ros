@@ -42,24 +42,22 @@
 Agent::Agent()
 {
     // initialize
-    // → Ped::Tagent
     Ped::Tagent::setType ( Ped::Tagent::ADULT );
     Ped::Tagent::setForceFactorObstacle ( CONFIG.forceObstacle );
     forceSigmaObstacle = CONFIG.sigmaObstacle;
     Ped::Tagent::setForceFactorSocial ( CONFIG.forceSocial );
-    // → waypoints
+    // waypoints
     currentDestination = nullptr;
     waypointplanner = nullptr;
-    // → state machine
+    // state machine
     stateMachine = new AgentStateMachine ( this );
-    // → group
+    // group
     group = nullptr;
 }
 
 Agent::~Agent()
 {
     // clean up
-    // → remove forces
     foreach ( Force* currentForce, forces )
     {
         delete currentForce;
@@ -183,9 +181,10 @@ void Agent::move ( double h )
 	}
 	else if ( getType() == Ped::Tagent::ROBOT && CONFIG.robot_mode == RobotMode::CONTROLLED )
 	{
-		Ped::Tagent::setForceFactorSocial ( CONFIG.forceSocial );
+		Ped::Tagent::setForceFactorSocial ( 0.1 * CONFIG.forceSocial );
 		Ped::Tagent::setForceFactorObstacle ( 350 );
-		Ped::Tagent::setForceFactorDesired ( 1.5 );
+		// Ped::Tagent::setForceFactorDesired ( 1.5 );
+        Ped::Tagent::setForceFactorDesired ( 0.5 );
 
 		if ( SCENE.getTime() >= CONFIG.robot_wait_time )
         {
@@ -211,7 +210,11 @@ void Agent::move ( double h )
     // elders rarely move
     if ( getType() == Ped::Tagent::ELDER )
     {
-        Ped::Tagent::setVmax ( 0.1 );
+        // Ped::Tagent::setVmax ( 0.1 );
+        // Ped::Tagent::move ( h / 20.0 );
+
+        // NOTE - only temporary for setting up a static scene
+        Ped::Tagent::setVmax ( 0.0 );
         Ped::Tagent::move ( h / 20.0 );
     }
 
@@ -258,8 +261,6 @@ bool Agent::needNewDestination() const
 
 Ped::Twaypoint* Agent::getCurrentWaypoint() const
 {
-    // Note: this is different from getCurrentDestination()…
-
     // sanity checks
     if ( waypointplanner == nullptr )
         return nullptr;

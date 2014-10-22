@@ -49,9 +49,11 @@
 #include <visualization_msgs/Marker.h>
 #include <visualization_msgs/MarkerArray.h>
 #include <std_msgs/Header.h>
+#include <std_msgs/ColorRGBA.h>
 #include <nav_msgs/GridCells.h>
 #include <geometry_msgs/Point.h>
 #include <geometry_msgs/PoseWithCovariance.h>
+#include <geometry_msgs/PoseStamped.h>
 #include <geometry_msgs/TwistWithCovariance.h>
 #include <animated_marker_msgs/AnimatedMarker.h>
 #include <animated_marker_msgs/AnimatedMarkerArray.h>
@@ -86,6 +88,7 @@ public:
     bool initializeSimulation();
     void loadConfigParameters();
     void runSimulation();
+	void updateAgentActivities();
 
     /// publishers
     void publishAgents();
@@ -95,6 +98,7 @@ public:
     void publishObstacles();
     void publishWalls();
     void publishAttractions();
+    void publishRobotPosition();
 
     /// subscriber helpers
     // Drive robot based on topic messages
@@ -123,6 +127,7 @@ private:
     ros::Publisher pub_queues_;
     ros::Publisher pub_waypoints_;
     ros::Publisher pub_agent_arrows_;
+    ros::Publisher pub_robot_position_;
 
     /// subscribers
     ros::Subscriber sub_robot_command_;
@@ -130,19 +135,26 @@ private:
     // - Covenient object to handling quaternions
     OrientationHandlerPtr orientation_handler_;
 
+	// agent activity map
+	std::map<int, std::string> agent_activities_;
+
 private:
 
 	/// \brief Compute pose of an agent in quaternion format
-    inline Eigen::Quaternionf computePose(Agent *a) {
+    inline Eigen::Quaternionf computePose( Agent *a )
+	{
         double theta = atan2(a->getvy(), a->getvx());
         Eigen::Quaternionf q = orientation_handler_->rpy2Quaternion(M_PI / 2.0, theta + (M_PI / 2.0), 0.0);
         return q;
     }
 
-    inline std::string agentStateToActivity(AgentStateMachine::AgentState state) {
+	/// \brief Convert agent state machine state to simulated activity
+    inline std::string agentStateToActivity( AgentStateMachine::AgentState state )
+	{
         std::string activity = "Unknown";
 
-        switch (state) {
+        switch ( state )
+		{
         case AgentStateMachine::AgentState::StateWalking:
             activity = pedsim_msgs::AgentState::TYPE_INDIVIDUAL_MOVING;
             break;
@@ -158,7 +170,7 @@ private:
 		case AgentStateMachine::AgentState::StateNone:
 			break;
 		case AgentStateMachine::AgentState::StateWaiting:
-			break;	
+			break;
 		}
 
         // TODO
@@ -168,4 +180,41 @@ private:
 
         return activity;
     }
+
+    inline std_msgs::ColorRGBA getColor( int agent_id )
+	{
+		std::string act = agent_activities_[agent_id];
+		std_msgs::ColorRGBA color;
+
+		if ( act == "standing" )
+        {
+            color.a = 1.0;
+            color.r = 1.0;
+            color.g = 1.0;
+            color.b = 1.0;
+        }
+		else if ( act == "queueing" )
+        {
+            color.a = 1.0;
+            color.r = 1.0;
+            color.g = 0.0;
+            color.b = 1.0;
+        }
+		else if ( act == "shopping" )
+        {
+            color.a = 1.0;
+            color.r = 0.0;
+            color.g = 0.0;
+            color.b = 1.0;
+        }
+        else
+        {
+            color.a = 1.0;
+            color.r = 0.0;
+            color.g = 0.7;
+            color.b = 1.0;
+        }
+
+		return color;
+	}
 };
