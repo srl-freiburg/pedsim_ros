@@ -1,23 +1,4 @@
-# Compiled Object files
-*.slo
-*.lo
-*.o
-
-# Compiled Dynamic libraries
-*.so
-*.dylib
-
-# Compiled Static libraries
-*.lai
-*.la
-*.a
 .svn
+.svn/*
+*.pyc
 build
-.svn
-*.log
-CMakelists.txt.user
-
-.kdev4/
-*.kdev4
-doc
-doc/*

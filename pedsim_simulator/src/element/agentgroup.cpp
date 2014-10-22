@@ -157,9 +157,9 @@ QList<AgentGroup *> AgentGroup::divideAgents(const QList<Agent *> &agentsIn)
                 Agent *groupLeader = unassignedAgents.takeFirst();
 
                 /// old people are not allowed to lead
-                /// other leaders of tomorrow will never be a reality
-                if (groupLeader->getType() == Ped::Tagent::ELDER)
-                    continue;
+                /// otherwise leaders of tomorrow will never be a reality
+                // if (groupLeader->getType() == Ped::Tagent::ELDER)
+                //     continue;
 
                 // create a group
                 AgentGroup *newGroup = new AgentGroup();

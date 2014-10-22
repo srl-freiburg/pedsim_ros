@@ -27,15 +27,15 @@
         <addwaypoint id="c"/>
         <addwaypoint id="d"/> -->
     </agent>
-    <agent x="8" y="21" n="10" dx="15" dy="15" type="3">
+    <agent x="8" y="21" n="20" dx="15" dy="15" type="3">
         <addwaypoint id="a"/>
         <addwaypoint id="b"/>
     </agent>
-    <agent x="22" y="21" n="10" dx="15" dy="15" type="3">
+    <agent x="22" y="21" n="20" dx="15" dy="15" type="3">
         <addwaypoint id="a"/>
         <addwaypoint id="b"/>
     </agent>
-    <agent x="12" y="11" n="20" dx="15" dy="15" type="3">
+    <agent x="12" y="11" n="40" dx="15" dy="15" type="3">
         <addwaypoint id="a"/>
         <addwaypoint id="b"/>
     </agent>
