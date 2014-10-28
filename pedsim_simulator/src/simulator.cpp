@@ -81,14 +81,10 @@ bool Simulator::initializeSimulation()
     // informative topics (data)
     pub_obstacles_ = nh_.advertise<nav_msgs::GridCells> ( "static_obstacles", 0 );
     pub_all_agents_ = nh_.advertise<pedsim_msgs::AllAgentsState> ( "dynamic_obstacles", 0 );
-
-    pub_tracked_persons_ = nh_.advertise<spencer_tracking_msgs::TrackedPersons> ( "/spencer/perception/tracked_persons",
-                           0 );
-    pub_tracked_groups_ = nh_.advertise<spencer_tracking_msgs::TrackedGroups> ( "/spencer/perception/tracked_groups", 0
-);
-    pub_social_activities_ = nh_.advertise<spencer_social_relation_msgs::SocialActivities>
-                             ( "/spencer/perception/social_activities", 0 );
-    pub_robot_position_ = nh_.advertise<geometry_msgs::PoseStamped>( "/spencer/navigation/robot_position", 0 );
+    pub_tracked_persons_ = nh_.advertise<pedsim_msgs::TrackedPersons> ( "/pedsim/tracked_persons", 0 );
+    pub_tracked_groups_ = nh_.advertise<pedsim_msgs::TrackedGroups> ( "/pedsim/tracked_groups", 0 );
+    pub_social_activities_ = nh_.advertise<pedsim_msgs::SocialActivities>( "/pedsim/social_activities", 0 );
+    pub_robot_position_ = nh_.advertise<geometry_msgs::PoseStamped>( "/pedsim/robot_position", 0 );
 
     /// setup any pointers
     orientation_handler_.reset ( new OrientationHandler() );
@@ -259,17 +255,17 @@ void Simulator::callbackRobotCommand ( const pedsim_msgs::AgentState::ConstPtr &
 void Simulator::publishSocialActivities()
 {
     /// Social activities
-    spencer_social_relation_msgs::SocialActivities social_activities;
+    pedsim_msgs::SocialActivities social_activities;
     std_msgs::Header social_activities_header;
     social_activities_header.stamp = ros::Time::now();
     social_activities.header = social_activities_header;
 	social_activities.header.frame_id = "world";
 
-    spencer_social_relation_msgs::SocialActivity queueing_activity;
-    spencer_social_relation_msgs::SocialActivity shopping_activity;
-    spencer_social_relation_msgs::SocialActivity standing_activity;
-    spencer_social_relation_msgs::SocialActivity group_moving_activity;
-    spencer_social_relation_msgs::SocialActivity individual_moving_activity;
+    pedsim_msgs::SocialActivity queueing_activity;
+    pedsim_msgs::SocialActivity shopping_activity;
+    pedsim_msgs::SocialActivity standing_activity;
+    pedsim_msgs::SocialActivity group_moving_activity;
+    pedsim_msgs::SocialActivity individual_moving_activity;
 
     foreach ( Agent * a, SCENE.getAgents() )
     {
@@ -278,35 +274,35 @@ void Simulator::publishSocialActivities()
 
         if ( sact == AgentStateMachine::AgentState::StateQueueing )
         {
-            queueing_activity.type = spencer_social_relation_msgs::SocialActivity::TYPE_WAITING_IN_QUEUE;
+            queueing_activity.type = pedsim_msgs::SocialActivity::TYPE_WAITING_IN_QUEUE;
             queueing_activity.confidence = 1.0;
             queueing_activity.track_ids.push_back ( a->getId() );
         }
 
         if ( sact == AgentStateMachine::AgentState::StateShopping )
         {
-            shopping_activity.type = spencer_social_relation_msgs::SocialActivity::TYPE_SHOPPING;
+            shopping_activity.type = pedsim_msgs::SocialActivity::TYPE_SHOPPING;
             shopping_activity.confidence = 1.0;
             shopping_activity.track_ids.push_back ( a->getId() );
         }
 
         if ( a->getType() == Ped::Tagent::ELDER )  // Hack for really slow people
         {
-            standing_activity.type = spencer_social_relation_msgs::SocialActivity::TYPE_STANDING;
+            standing_activity.type = pedsim_msgs::SocialActivity::TYPE_STANDING;
             standing_activity.confidence = 1.0;
             standing_activity.track_ids.push_back ( a->getId() );
         }
 
         if ( sact == AgentStateMachine::AgentState::StateGroupWalking )
         {
-            group_moving_activity.type = spencer_social_relation_msgs::SocialActivity::TYPE_GROUP_MOVING;
+            group_moving_activity.type = pedsim_msgs::SocialActivity::TYPE_GROUP_MOVING;
             group_moving_activity.confidence = 1.0;
             group_moving_activity.track_ids.push_back ( a->getId() );
         }
 
         if ( sact == AgentStateMachine::AgentState::StateWalking )
         {
-            individual_moving_activity.type = spencer_social_relation_msgs::SocialActivity::TYPE_INDIVIDUAL_MOVING;
+            individual_moving_activity.type = pedsim_msgs::SocialActivity::TYPE_INDIVIDUAL_MOVING;
             individual_moving_activity.confidence = 1.0;
             individual_moving_activity.track_ids.push_back ( a->getId() );
         }
@@ -329,7 +325,7 @@ void Simulator::publishSocialActivities()
 void Simulator::publishData()
 {
     /// Tracked people
-    spencer_tracking_msgs::TrackedPersons tracked_people;
+    pedsim_msgs::TrackedPersons tracked_people;
     std_msgs::Header tracked_people_header;
     tracked_people_header.stamp = ros::Time::now();
     tracked_people.header = tracked_people_header;
@@ -337,7 +333,7 @@ void Simulator::publishData()
 
     foreach ( Agent * a, SCENE.getAgents() )
     {
-        spencer_tracking_msgs::TrackedPerson person;
+        pedsim_msgs::TrackedPerson person;
         person.track_id = a->getId();
         person.is_occluded = false;
         // person.detection_id = 0;  // not simulated yet
@@ -370,7 +366,7 @@ void Simulator::publishData()
     }
 
     /// Tracked groups
-    spencer_tracking_msgs::TrackedGroups tracked_groups;
+    pedsim_msgs::TrackedGroups tracked_groups;
     std_msgs::Header tracked_groups_header;
     tracked_groups_header.stamp = ros::Time::now();
     tracked_groups.header = tracked_groups_header;
@@ -378,7 +374,7 @@ void Simulator::publishData()
     QList<AgentGroup *> sim_groups = SCENE.getGroups();
     foreach ( AgentGroup * ag, sim_groups )
     {
-        spencer_tracking_msgs::TrackedGroup group;
+        pedsim_msgs::TrackedGroup group;
         group.group_id = ag->getId();
         // group.age = 0; //NOTE  not simulated so far
         // Ped::Tvector com = ag->getCenterOfMass();

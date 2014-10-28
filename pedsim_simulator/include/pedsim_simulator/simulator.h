@@ -32,18 +32,14 @@
 #include <ros/ros.h>
 #include <ros/console.h>
 
-// old pedsim messages and services
-// TODO - remove this dependency
 #include <pedsim_msgs/AgentState.h>
 #include <pedsim_msgs/AllAgentsState.h>
-
-// spencer messages
-#include <spencer_tracking_msgs/TrackedPerson.h>
-#include <spencer_tracking_msgs/TrackedPersons.h>
-#include <spencer_tracking_msgs/TrackedGroup.h>
-#include <spencer_tracking_msgs/TrackedGroups.h>
-#include <spencer_social_relation_msgs/SocialActivity.h>
-#include <spencer_social_relation_msgs/SocialActivities.h>
+#include <pedsim_msgs/TrackedPerson.h>
+#include <pedsim_msgs/TrackedPersons.h>
+#include <pedsim_msgs/TrackedGroup.h>
+#include <pedsim_msgs/TrackedGroups.h>
+#include <pedsim_msgs/SocialActivity.h>
+#include <pedsim_msgs/SocialActivities.h>
 
 // other ROS-sy messages
 #include <visualization_msgs/Marker.h>
