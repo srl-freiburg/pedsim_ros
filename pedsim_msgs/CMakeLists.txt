@@ -34,4 +34,4 @@ generate_messages(DEPENDENCIES ${MESSAGE_DEPENDENCIES})
 
 
 #Declare package run-time dependencies
-catkin_package( CATKIN_DEPENDS message_runtime ${MESSAGE_DEPENDENCIES})
+catkin_package( CATKIN_DEPENDS roscpp rospy message_runtime ${MESSAGE_DEPENDENCIES})
