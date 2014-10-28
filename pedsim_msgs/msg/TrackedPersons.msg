@@ -2,4 +2,4 @@
 #
 
 Header              header      # Header containing timestamp etc. of this message
-TrackedPerson[]     tracks      # All persons that are currently being tracked
+pedsim_msgs/TrackedPerson[]     tracks      # All persons that are currently being tracked

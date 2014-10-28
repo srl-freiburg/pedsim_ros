@@ -2,4 +2,4 @@
 #
 
 Header              header      # Header containing timestamp etc. of this message
-TrackedGroup[]      groups      # All groups that are currently being tracked
+pedsim_msgs/TrackedGroup[]      groups      # All groups that are currently being tracked
