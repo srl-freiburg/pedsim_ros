@@ -1,6 +1,6 @@
 <launch>
   <!-- params -->
-  <param name="/simulator/scene_file" value="$(find pedsim_simulator)scenarios/social_contexts.xml" type="string"/>
+  <param name="/pedsim/scene_file" value="$(find pedsim_simulator)scenarios/social_contexts.xml" type="string"/>
 
 
   <!-- specific social contexts -->
@@ -10,9 +10,6 @@
   <!-- <param name="/simulator/scene_file" value="$(find pedsim_simulator)scenarios/contexts/flow.xml" type="string"/> -->
   <!-- <param name="/simulator/scene_file" value="$(find pedsim_simulator)scenarios/contexts/anti_flow.xml" -->
 <!-- type="string"/> -->
-
-  <!-- additional parameters for driving the robot -->
-  <!-- <rosparam command="load" file="$(find momo)/config/context_params.yaml" /> -->
 
   <!-- other parameters -->
   <param name="/pedsim_simulator/max_robot_speed" value="2.0" type="double"/>
@@ -28,10 +25,6 @@
 
   <node pkg="rviz" type="rviz" name="rviz" args="-d $(find pedsim_simulator)/rviz/social_contexts.rviz"/>
 
-
-  <!-- planning node -->
-  <!-- <node name="momo_node" pkg="momo" type="momo_ros.py" respawn="false" output="log"/> -->
-
   <!-- Keyboard teleoperation node -->
-  <node name="teleop" pkg="pedsim_simulator" type="teleop" respawn="false" output="screen" />
+  <node name="robot_teleop_keyboard" pkg="pedsim_simulator" type="robot_teleop_keyboard" respawn="false" output="screen" />
 </launch>
