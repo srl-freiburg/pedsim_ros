@@ -25,5 +25,8 @@
 
 
   <!-- Keyboard teleoperation node -->
-  <node name="teleop" pkg="pedsim_simulator" type="teleop" respawn="false" output="log" />
+  <!-- <node name="robot_teleop_keyboard" pkg="pedsim_simulator" type="robot_teleop_keyboard" respawn="false" output="screen" /> -->
+  <node pkg="joy" type="joy_node" name="joystick"/>
+  <node name="robot_teleop_joystick" pkg="pedsim_simulator" type="robot_teleop_joystick" respawn="false" output="screen" />
+
 </launch>

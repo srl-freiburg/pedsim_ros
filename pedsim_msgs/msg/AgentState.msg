@@ -2,8 +2,8 @@ Header header
 int16 id
 int16 type
 string social_state
-geometry_msgs/Point position
-geometry_msgs/Point velocity
+geometry_msgs/Pose pose
+geometry_msgs/Twist twist
 
 
 

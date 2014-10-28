@@ -15,6 +15,7 @@ set( PEDSIM_SIMULATOR_DEPENDENCIES
     nav_msgs
     geometry_msgs
     tf
+    cmake_modules
 )
 
 ## Find catkin macros and libraries
@@ -112,18 +113,26 @@ add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/libpedsim)
 QT4_WRAP_CPP(MOC_SRCS_UI ${MOC_FILES})
 
 add_executable(simulator ${SOURCES}  ${MOC_SRCS_UI} ${QT_RESOURCES_CPP} ${QT_FORMS_HPP} ${QT_MOC_HPP})
-add_executable(teleop src/robot_teleop.cpp)
+
+add_executable(robot_teleop_keyboard src/robot_teleop_keyboard.cpp)
+TARGET_LINK_LIBRARIES(robot_teleop_keyboard ${BOOST_LIBRARIES} ${catkin_LIBRARIES})
+INSTALL(TARGETS simulator robot_teleop_keyboard
+    RUNTIME DESTINATION bin
+    LIBRARY DESTINATION lib
+)
+
+add_executable(robot_teleop_joystick src/robot_teleop_joystick.cpp)
+TARGET_LINK_LIBRARIES(robot_teleop_joystick ${BOOST_LIBRARIES} ${catkin_LIBRARIES})
+INSTALL(TARGETS simulator robot_teleop_joystick
+    RUNTIME DESTINATION bin
+    LIBRARY DESTINATION lib
+)
+
+# add_executable(robot_teleop_joystick src/robot_teleop_joystick.cpp)
 
 TARGET_LINK_LIBRARIES(simulator
     ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY} ${QT_QTOPENGL_LIBRARY} ${QWT_LIBRARIES} pedsim
     ${BOOST_LIBRARIES} ${OpenCV_LIBS} ${catkin_LIBRARIES}
-)
-
-TARGET_LINK_LIBRARIES(teleop ${BOOST_LIBRARIES} ${catkin_LIBRARIES})
-
-INSTALL(TARGETS simulator teleop
-    RUNTIME DESTINATION bin
-    LIBRARY DESTINATION lib
 )
 
 ## Unit Tests

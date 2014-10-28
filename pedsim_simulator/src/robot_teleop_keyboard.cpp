@@ -48,8 +48,7 @@
 /// \class Teleop
 /// \brief Teleoperation interface via Keyboard
 /// -----------------------------------------------------------------
-class Teleop
-{
+class Teleop {
 public:
     Teleop();
     void keyLoop();
@@ -64,119 +63,112 @@ private:
 };
 
 Teleop::Teleop() :
-    linear_ ( 0 ),
-    angular_ ( 0 ),
-    l_scale_ ( 2.0 ),
-    a_scale_ ( 2.0 ),
-    rot_angle_ ( 90.0 ),
-    robot_speed ( 0.8 )
-{
-    // TODO - add these params to launch file
-    nh_.param ( "scale_angular", a_scale_, a_scale_ );
-    nh_.param ( "scale_linear", l_scale_, l_scale_ );
-
-    vel_pub_ = nh_.advertise<pedsim_msgs::AgentState> ( "/pedsim_simulator/robot_command", 0 );
+    linear_(0),
+    angular_(0),
+    l_scale_(2.0),
+    a_scale_(2.0),
+    rot_angle_(90.0),
+    robot_speed(0.8) {
+    // TODO(?) - add these params to launch file
+    nh_.param("scale_angular", a_scale_, a_scale_);
+    nh_.param("scale_linear", l_scale_, l_scale_);
+    vel_pub_ = 
+        nh_.advertise<pedsim_msgs::AgentState>("/pedsim_simulator/robot_command", 0);
 }
 
 int kfd = 0;
 struct termios cooked, raw;
 
-void quit ( int sig )
-{
-    tcsetattr ( kfd, TCSANOW, &cooked );
+void quit(int sig) {
+    tcsetattr(kfd, TCSANOW, &cooked);
     ros::shutdown();
-    exit ( 0 );
+    exit(0);
 }
 
 
 // main
-int main ( int argc, char **argv )
-{
-    ros::init ( argc, argv, "robot_teleop" );
+int main(int argc, char **argv) {
+    ros::init(argc, argv, "robot_teleop_keyboard");
     Teleop robot;
-    signal ( SIGINT, quit );
+    signal(SIGINT, quit);
     robot.keyLoop();
     return ( 0 );
 }
 
 
 // Key loop (for driving the robot)
-void Teleop::keyLoop()
-{
+void Teleop::keyLoop() {
     char c;
     bool dirty = false;
 
     // get the console in raw mode
-    tcgetattr ( kfd, &cooked );
-    memcpy ( &raw, &cooked, sizeof ( struct termios ) );
-    raw.c_lflag &= ~ ( ICANON | ECHO );
+    tcgetattr(kfd, &cooked);
+    memcpy(&raw, &cooked, sizeof(struct termios));
+    raw.c_lflag &= ~(ICANON | ECHO);
     // Setting a new line, then end of file
     raw.c_cc[VEOL] = 1;
     raw.c_cc[VEOF] = 2;
-    tcsetattr ( kfd, TCSANOW, &raw );
+    tcsetattr(kfd, TCSANOW, &raw);
 
-    puts ( "Robot Teleoperation: Reading from keyboard" );
-    puts ( "------------------------------------------" );
-    puts ( "Use arrow keys to move the robot." );
-    puts ( "LEFT | RIGHT control direction (15 degree steps)" );
-    puts ( "UP | DOWN control speed (0.1 m/s steps)" );
+    ROS_INFO("Robot Teleoperation: Reading from keyboard");
+    ROS_INFO("------------------------------------------");
+    ROS_INFO("Use arrow keys to move the robot.");
+    ROS_INFO("LEFT | RIGHT control direction (15 degree steps)");
+    ROS_INFO("UP | DOWN control speed (0.1 m/s steps)");
 
     // for(;;)
-    while ( true )
-    {
+    while ( true ) {
         // get the next event from the keyboard
-        if ( read ( kfd, &c, 1 ) < 0 )
-        {
-            perror ( "read():" );
-            exit ( -1 );
+        if (read(kfd, &c, 1) < 0) {
+            perror("read():");
+            exit(-1);
         }
 
         // linear_=angular_=0;
         // ROS_DEBUG ( "value: 0x%02X\n", c );
 
-        switch ( c )
-        {
+        switch (c) {
         case KEYCODE_L:
-            ROS_DEBUG ( "LEFT" );
+            ROS_DEBUG("LEFT");
             angular_ = 1.0;
             dirty = true;
             rot_angle_ += 15.0;
             break;
         case KEYCODE_R:
-            ROS_DEBUG ( "RIGHT" );
+            ROS_DEBUG("RIGHT");
             angular_ = -1.0;
             dirty = true;
             rot_angle_ -= 15.0;
             break;
         case KEYCODE_U:
-            ROS_DEBUG ( "UP" );
+            ROS_DEBUG("UP");
             linear_ = 1.0;
             dirty = true;
             robot_speed += 0.1;
             break;
         case KEYCODE_D:
-            ROS_DEBUG ( "DOWN" );
+            ROS_DEBUG("DOWN");
             linear_ = -1.0;
             dirty = true;
             robot_speed -= 0.1;
             break;
-		case KEYCODE_Q:
-			ROS_DEBUG("Stop/Pause");
-			linear_ = 0.0;
-			dirty = true;
-			robot_speed = 0.0;
+        case KEYCODE_Q:
+            ROS_DEBUG("Stop/Pause");
+            linear_ = 0.0;
+            dirty = true;
+            robot_speed = 0.0;
         }
 
         if ( rot_angle_ > 360.0 )
-            rot_angle_ = acos ( cos ( rot_angle_ ) );
+            rot_angle_ = acos(cos(rot_angle_));
 
         if ( rot_angle_ < -360.0 )
-            rot_angle_ = acos ( cos ( rot_angle_ ) );
+            rot_angle_ = acos(cos(rot_angle_));
 
-        ROS_INFO ( "Current Speed, Angle [%f, %f]", robot_speed, rot_angle_ );
+        ROS_INFO("Current Speed, Angle [%f, %f]", robot_speed, rot_angle_);
 
-        double vx = cos ( rot_angle_ * M_PI / 180.0 );
-        double vy = sin ( rot_angle_ * M_PI / 180.0 );
+        double vx = cos(rot_angle_ * M_PI / 180.0);
+        double vy = sin(rot_angle_ * M_PI / 180.0);
         double stepx = robot_speed * vx;
         double stepy = robot_speed * vy;
 
@@ -189,15 +181,13 @@ void Teleop::keyLoop()
         astate.header = header_;
 
         astate.type = 2;
-        astate.velocity.x = stepx;
-        astate.velocity.y = stepy;
+        astate.twist.linear.x = stepx;
+        astate.twist.linear.y = stepy;
 
-        if ( dirty == true )
-        {
-            vel_pub_.publish ( astate );
+        if ( dirty == true ) {
+            vel_pub_.publish(astate);
             dirty = false;
         }
     }
-
     return;
 }
