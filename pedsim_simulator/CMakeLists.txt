@@ -7,8 +7,6 @@ set( PEDSIM_SIMULATOR_DEPENDENCIES
     roscpp
     rospy
     std_msgs
-    spencer_tracking_msgs
-    spencer_social_relation_msgs
     pedsim_msgs
     visualization_msgs
     animated_marker_msgs
