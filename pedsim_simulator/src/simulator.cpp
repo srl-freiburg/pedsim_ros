@@ -69,18 +69,18 @@ bool Simulator::initializeSimulation()
 {
     /// setup ros publishers
     // visualizations
-    pub_agent_visuals_ = nh_.advertise<animated_marker_msgs::AnimatedMarkerArray> ( "agents_markers", 0 );
-    pub_agent_arrows_ = nh_.advertise<visualization_msgs::MarkerArray> ( "agent_arrows", 0 );
-    pub_group_lines_ = nh_.advertise<visualization_msgs::MarkerArray> ( "group_lines", 0 );
-    pub_walls_ = nh_.advertise<visualization_msgs::Marker> ( "walls", 0 );
-    pub_attractions_ = nh_.advertise<visualization_msgs::Marker> ( "attractions", 0 );
-    pub_queues_ = nh_.advertise<visualization_msgs::Marker> ( "queues", 0 );
-    pub_waypoints_ = nh_.advertise<visualization_msgs::Marker> ( "waypoints", 0 );
+    pub_agent_visuals_ = nh_.advertise<animated_marker_msgs::AnimatedMarkerArray> ( "/pedsim/agents_markers", 0 );
+    pub_agent_arrows_ = nh_.advertise<visualization_msgs::MarkerArray> ( "/pedsim/agent_directions", 0 );
+    pub_group_lines_ = nh_.advertise<visualization_msgs::MarkerArray> ( "/pedsim/group_relations", 0 );
+    pub_walls_ = nh_.advertise<visualization_msgs::Marker> ( "/pedsim/walls", 0 );
+    pub_attractions_ = nh_.advertise<visualization_msgs::Marker> ( "/pedsim/attractions", 0 );
+    pub_queues_ = nh_.advertise<visualization_msgs::Marker> ( "/pedsim/queues", 0 );
+    pub_waypoints_ = nh_.advertise<visualization_msgs::Marker> ( "/pedsim/waypoints", 0 );
 
 
     // informative topics (data)
-    pub_obstacles_ = nh_.advertise<nav_msgs::GridCells> ( "static_obstacles", 0 );
-    pub_all_agents_ = nh_.advertise<pedsim_msgs::AllAgentsState> ( "dynamic_obstacles", 0 );
+    pub_obstacles_ = nh_.advertise<nav_msgs::GridCells> ( "/pedsim/static_obstacles", 0 );
+    pub_all_agents_ = nh_.advertise<pedsim_msgs::AllAgentsState> ( "/pedsim/dynamic_obstacles", 0 );
     pub_tracked_persons_ = nh_.advertise<pedsim_msgs::TrackedPersons> ( "/pedsim/tracked_persons", 0 );
     pub_tracked_groups_ = nh_.advertise<pedsim_msgs::TrackedGroups> ( "/pedsim/tracked_groups", 0 );
     pub_social_activities_ = nh_.advertise<pedsim_msgs::SocialActivities>( "/pedsim/social_activities", 0 );
@@ -91,11 +91,11 @@ bool Simulator::initializeSimulation()
     robot_ = nullptr;
 
     /// subscribers
-    sub_robot_command_ = nh_.subscribe ( "/pedsim_simulator/robot_command", 1, &Simulator::callbackRobotCommand, this );
+    sub_robot_command_ = nh_.subscribe ( "/pedsim/robot_command", 1, &Simulator::callbackRobotCommand, this );
 
     /// load parameters
     std::string scene_file_param;
-    ros::param::param<std::string> ( "/simulator/scene_file", scene_file_param, "scene.xml" );
+    ros::param::param<std::string> ( "/pedsim/scene_file", scene_file_param, "scene.xml" );
     // load scenario file
     QString scenefile = QString::fromStdString ( scene_file_param );
     ScenarioReader scenario_reader;
@@ -123,15 +123,15 @@ bool Simulator::initializeSimulation()
 void Simulator::loadConfigParameters()
 {
     double robot_wait_time;
-    ros::param::param<double> ( "/pedsim_simulator/robot_wait_time", robot_wait_time, 10.0 );
+    ros::param::param<double> ( "/pedsim/robot_wait_time", robot_wait_time, 10.0 );
     CONFIG.robot_wait_time = robot_wait_time;
 
     double max_robot_speed;
-    ros::param::param<double> ( "/pedsim_simulator/max_robot_speed", max_robot_speed, 2.0 );
+    ros::param::param<double> ( "/pedsim/max_robot_speed", max_robot_speed, 2.0 );
     CONFIG.max_robot_speed = max_robot_speed;
 
     double teleop_flag;
-    ros::param::param<double> ( "/pedsim_simulator/teleop_flag", teleop_flag, 0.0 );
+    ros::param::param<double> ( "/pedsim/teleop_flag", teleop_flag, 0.0 );
     CONFIG.robot_mode = static_cast<RobotMode> ( teleop_flag );
 }
 

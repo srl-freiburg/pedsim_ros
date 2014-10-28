@@ -36,10 +36,10 @@
 #include "boost/thread/thread.hpp"
 #include "ros/console.h"
 
-class TurtlebotTeleop
+class JoyTeleop
 {
 public:
-    TurtlebotTeleop();
+    JoyTeleop();
 private:
     void joyCallback(const sensor_msgs::Joy::ConstPtr& joy);
     void publish();
@@ -54,7 +54,7 @@ private:
     bool zero_twist_published_;
     ros::Timer timer_;
 };
-TurtlebotTeleop::TurtlebotTeleop():
+JoyTeleop::JoyTeleop():
     ph_("~"),
     linear_x(2),
     linear_y(3),
@@ -69,11 +69,11 @@ TurtlebotTeleop::TurtlebotTeleop():
     ph_.param("scale_linear", l_scale_, l_scale_);
     deadman_pressed_ = false;
     zero_twist_published_ = false;
-    vel_pub_ = ph_.advertise<pedsim_msgs::AgentState>("/pedsim_simulator/robot_command", 1, true);
-    joy_sub_ = nh_.subscribe<sensor_msgs::Joy>("joy", 10, &TurtlebotTeleop::joyCallback, this);
-    timer_ = nh_.createTimer(ros::Duration(0.1), boost::bind(&TurtlebotTeleop::publish, this));
+    vel_pub_ = ph_.advertise<pedsim_msgs::AgentState>("/pedsim/robot_command", 1, true);
+    joy_sub_ = nh_.subscribe<sensor_msgs::Joy>("joy", 10, &JoyTeleop::joyCallback, this);
+    timer_ = nh_.createTimer(ros::Duration(0.1), boost::bind(&JoyTeleop::publish, this));
 }
-void TurtlebotTeleop::joyCallback(const sensor_msgs::Joy::ConstPtr& joy) {
+void JoyTeleop::joyCallback(const sensor_msgs::Joy::ConstPtr& joy) {
     pedsim_msgs::AgentState vel;
     deadman_pressed_ = joy->buttons[deadman_axis_];
     vel.type = 2;
@@ -93,12 +93,12 @@ void TurtlebotTeleop::joyCallback(const sensor_msgs::Joy::ConstPtr& joy) {
         zero_twist_published_ = true;
     }
 }
-void TurtlebotTeleop::publish() {
+void JoyTeleop::publish() {
     boost::mutex::scoped_lock lock(publish_mutex_);
     vel_pub_.publish(last_published_);
 }
 int main(int argc, char** argv) {
-    ros::init(argc, argv, "turtlebot_teleop");
-    TurtlebotTeleop turtlebot_teleop;
+    ros::init(argc, argv, "robot_teleop_joy");
+    JoyTeleop joy_teleop;
     ros::spin();
 }
