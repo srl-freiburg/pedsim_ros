@@ -236,8 +236,8 @@ void Simulator::updateAgentActivities()
 /// -----------------------------------------------------------------
 void Simulator::callbackRobotCommand ( const pedsim_msgs::AgentState::ConstPtr &msg )
 {
-    double vx = msg->velocity.x;
-    double vy = msg->velocity.y;
+    double vx = msg->twist.linear.x;
+    double vy = msg->twist.linear.y;
 
     if ( CONFIG.robot_mode == RobotMode::TELEOPERATION || CONFIG.robot_mode == RobotMode::CONTROLLED )
         robot_->setTeleop ( true );
@@ -381,7 +381,7 @@ void Simulator::publishData()
         spencer_tracking_msgs::TrackedGroup group;
         group.group_id = ag->getId();
         // group.age = 0; //NOTE  not simulated so far
-        Ped::Tvector com = ag->getCenterOfMass();
+        // Ped::Tvector com = ag->getCenterOfMass();
         // group.centerOfGravity = ... // TODO - convert CoM to Pose with Covariance
 
         BOOST_FOREACH ( Agent * m, ag->getMembers() )
@@ -543,13 +543,13 @@ void Simulator::publishAgents()
 
         state.id = a->getId();
         state.type = a->getType();
-        state.position.x = a->getx();
-        state.position.y = a->gety();
-        state.position.z = a->getz();
+        state.pose.position.x = a->getx();
+        state.pose.position.y = a->gety();
+        state.pose.position.z = a->getz();
 
-        state.velocity.x = a->getvx();
-        state.velocity.y = a->getvy();
-        state.velocity.z = a->getvz();
+        state.twist.linear.x = a->getvx();
+        state.twist.linear.y = a->getvy();
+        state.twist.linear.z = a->getvz();
 
         AgentStateMachine::AgentState sc =  a->getStateMachine()->getCurrentState();
         state.social_state = agentStateToActivity ( sc );
