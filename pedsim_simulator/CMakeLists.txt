@@ -15,7 +15,6 @@ set( PEDSIM_SIMULATOR_DEPENDENCIES
     nav_msgs
     geometry_msgs
     tf
-    cmake_modules
 )
 
 ## Find catkin macros and libraries
