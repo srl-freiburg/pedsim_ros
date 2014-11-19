@@ -1,4 +1,13 @@
 
+0.0.3b / 2014-11-19
+==================
+
+  * FIXED slow termination of the main node due to SIGINT and SIGDFL conflicts
+  * Fixes #5 removed simulator dependency on spencer messages, now using local pedsim_msgs copies
+  * - AgentState.msg modified to follow Twist and Pose standards - robot teleop working with keyboard and xbox joystick - rviz file modified for visualization purposes
+  * added more message types for self contained compilation
+  * added animated markers to rviz config files
+
 0.0.3 / 2014-08-22
 ==================
 
