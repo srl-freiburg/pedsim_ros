@@ -78,13 +78,13 @@ Visualization Manager:
       Queue Size: 1
       Value: true
     - Class: rviz/MarkerArray
-      Enabled: false
+      Enabled: true
       Marker Topic: /pedsim/agent_directions
       Name: MarkerArray
       Namespaces:
-        {}
+        pedsim: true
       Queue Size: 0
-      Value: false
+      Value: true
     - Class: rviz/MarkerArray
       Enabled: true
       Marker Topic: /pedsim/group_relations
