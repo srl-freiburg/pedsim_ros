@@ -34,6 +34,7 @@
 #include <pedsim_simulator/element/agentcluster.h>
 
 #include <QApplication>
+#include <signal.h>
 
 Simulator::Simulator ( const ros::NodeHandle &node )
     : nh_ ( node )
