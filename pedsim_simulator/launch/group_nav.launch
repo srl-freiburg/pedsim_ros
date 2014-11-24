@@ -22,4 +22,7 @@
 
   <!-- Keyboard teleoperation node -->
   <node name="teleop" pkg="pedsim_simulator" type="teleop" respawn="false" output="log" />
+
+  <!-- pedsim to spencer converter -->
+  <node name="pedsim_to_spencer" pkg="pedsim_simulator" type="pedsim_to_spencer" respawn="false" output="log" />
 </launch>

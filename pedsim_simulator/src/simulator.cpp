@@ -34,6 +34,7 @@
 #include <pedsim_simulator/element/agentcluster.h>
 
 #include <QApplication>
+#include <signal.h>
 
 Simulator::Simulator ( const ros::NodeHandle &node )
     : nh_ ( node )
@@ -314,7 +315,7 @@ void Simulator::publishSocialActivities()
     social_activities.elements.push_back ( group_moving_activity );
     social_activities.elements.push_back ( individual_moving_activity );
 
-    pub_social_activities_.publish ( social_activities );
+    // pub_social_activities_.publish ( social_activities );
 }
 
 
@@ -705,7 +706,7 @@ void Simulator::publishAttractions()
         marker.color.g = 0.0;
         marker.color.b = 1.0;
 
-		// TODO - get radius information from waypoints
+	// TODO - get radius information from waypoints
         marker.scale.x = 3.0;
         marker.scale.y = 3.0;
         marker.scale.z = 0.02;
@@ -761,6 +762,9 @@ int main ( int argc, char **argv )
     ros::init ( argc, argv, "simulator" );
     ros::NodeHandle node;
     Simulator sm ( node );
+
+    // use default SIGINT handler so CTRL+C works
+    signal(SIGINT, SIG_DFL);
 
     if ( sm.initializeSimulation() )
     {

@@ -27,4 +27,7 @@
 
   <!-- Keyboard teleoperation node -->
   <node name="robot_teleop_keyboard" pkg="pedsim_simulator" type="robot_teleop_keyboard" respawn="false" output="screen" />
+
+  <!-- pedsim to spencer converter -->
+  <node name="pedsim_to_spencer" pkg="pedsim_to_spencer" type="pedsim_to_spencer" respawn="false" output="log" />
 </launch>
