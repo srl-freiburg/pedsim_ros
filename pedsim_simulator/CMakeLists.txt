@@ -119,6 +119,13 @@ INSTALL(TARGETS simulator robot_teleop_keyboard
     LIBRARY DESTINATION lib
 )
 
+add_executable(robot_teleop_joystick_vxy src/robot_teleop_joystick_vxy.cpp)
+TARGET_LINK_LIBRARIES(robot_teleop_joystick_vxy ${BOOST_LIBRARIES} ${catkin_LIBRARIES})
+INSTALL(TARGETS simulator robot_teleop_joystick_vxy
+    RUNTIME DESTINATION bin
+    LIBRARY DESTINATION lib
+)
+
 add_executable(robot_teleop_joystick src/robot_teleop_joystick.cpp)
 TARGET_LINK_LIBRARIES(robot_teleop_joystick ${BOOST_LIBRARIES} ${catkin_LIBRARIES})
 INSTALL(TARGETS simulator robot_teleop_joystick
