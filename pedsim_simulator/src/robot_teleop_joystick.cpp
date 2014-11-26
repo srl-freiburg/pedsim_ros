@@ -63,8 +63,8 @@ JoyTeleop::JoyTeleop():
     angular_(2),
     deadman_axis_(4),
     a_current(0),
-    l_scale_(1),
-    a_scale_(1),
+    l_scale_(2),
+    a_scale_(1.5),
     frequency(10)
 {
     ph_.param("axis_linear", linear_, linear_);
@@ -87,14 +87,16 @@ void JoyTeleop::joyCallback(const sensor_msgs::Joy::ConstPtr& joy) {
 void JoyTeleop::publish() {
     boost::mutex::scoped_lock lock(publish_mutex_);
     vel.type = 2;
+    // NOTE: DBL_MIN is only to keep the orientation in the simulator
     if (deadman_pressed_) {
         a_current += joy_th*a_scale_/frequency;
-        vel.twist.linear.x = l_scale_*joy_x*cos(a_current);
-        vel.twist.linear.y = l_scale_*joy_x*sin(a_current);
+        vel.twist.linear.x = (1+DBL_MIN)*l_scale_*joy_x*cos(a_current);
+        vel.twist.linear.y = (1+DBL_MIN)*l_scale_*joy_x*sin(a_current);
         zero_twist_published_ = false;
     } else if (!deadman_pressed_ && !zero_twist_published_) {
-        vel.twist.linear.x = 0;
-        vel.twist.linear.y = 0;
+        // the values should be zero, but again, to give a direction, we do it with DBL_MIN
+        vel.twist.linear.x = DBL_MIN*joy_x*cos(a_current);
+        vel.twist.linear.y = DBL_MIN*joy_x*sin(a_current);
         zero_twist_published_ = true;
     }
     vel_pub_.publish(vel);
