@@ -43,6 +43,7 @@ public:
 private:
     void joyCallback(const sensor_msgs::Joy::ConstPtr& joy);
     void publish();
+    double joyConvert(double in);
     ros::NodeHandle ph_, nh_;
     int linear_, angular_, deadman_axis_;
     double a_current;
@@ -56,6 +57,7 @@ private:
     ros::Timer timer_;
     double frequency;
     double joy_x, joy_th;
+    double joy_threshold;
 };
 JoyTeleop::JoyTeleop():
     ph_("~"),
@@ -65,7 +67,8 @@ JoyTeleop::JoyTeleop():
     a_current(0),
     l_scale_(2),
     a_scale_(1.5),
-    frequency(10)
+    frequency(10),
+    joy_threshold(0.15)
 {
     ph_.param("axis_linear", linear_, linear_);
     ph_.param("axis_angular", angular_, angular_);
@@ -81,8 +84,16 @@ JoyTeleop::JoyTeleop():
 void JoyTeleop::joyCallback(const sensor_msgs::Joy::ConstPtr& joy) {
     pedsim_msgs::AgentState vel;
     deadman_pressed_ = joy->buttons[deadman_axis_];
-    joy_x = joy->axes[linear_];
-    joy_th = joy->axes[angular_];
+    joy_x = joyConvert(joy->axes[linear_]);
+    joy_th = joyConvert(joy->axes[angular_]);
+}
+double JoyTeleop::joyConvert(double in) {
+    if (-joy_threshold < in && in < joy_threshold)
+        return DBL_MIN;  // TODO(silgon): check if this is the best to do
+    else if ( in >= joy_threshold )
+        return (in - joy_threshold)/(1 - joy_threshold);
+    // else if (in <= - joy_threshold)
+    return -(in + joy_threshold) / (-1 + joy_threshold);
 }
 void JoyTeleop::publish() {
     boost::mutex::scoped_lock lock(publish_mutex_);
