@@ -1,7 +1,7 @@
-CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
-PROJECT(pedsim_simulator)
+cmake_minimum_required(VERSION 2.6)
+project(pedsim_simulator)
 
-ADD_DEFINITIONS(-Wall -Wunused -std=c++0x -pipe) # C++ 11 is required
+add_definitions(-Wall -Wunused -std=c++0x -pipe) # C++ 11 is required
 
 set( PEDSIM_SIMULATOR_DEPENDENCIES
     roscpp
@@ -20,21 +20,18 @@ set( PEDSIM_SIMULATOR_DEPENDENCIES
 find_package(catkin REQUIRED COMPONENTS ${PEDSIM_SIMULATOR_DEPENDENCIES})
 
 # add qt4 to the project
-FIND_PACKAGE(Boost REQUIRED)
-FIND_PACKAGE(Qt4 REQUIRED)
-FIND_PACKAGE(Eigen REQUIRED)
+find_package(Boost REQUIRED)
+find_package(Qt4 REQUIRED)
+find_package(Eigen REQUIRED)
 
-INCLUDE(${QT_USE_FILE})
+catkin_package(CATKIN_DEPENDS ${PEDSIM_SIMULATOR_DEPENDENCIES})
 
-catkin_package(
- CATKIN_DEPENDS ${PEDSIM_SIMULATOR_DEPENDENCIES}
-)
-
+include(${QT_USE_FILE})
 include_directories(include)
 include_directories(${Eigen_INCLUDE_DIRS})
 include_directories(
-  ${catkin_INCLUDE_DIRS}
-  ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty
+    ${catkin_INCLUDE_DIRS}
+    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty
 )
 
 set(SOURCES
@@ -110,27 +107,24 @@ add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/libpedsim)
 
 QT4_WRAP_CPP(MOC_SRCS_UI ${MOC_FILES})
 
-add_executable(simulator ${SOURCES}  ${MOC_SRCS_UI} ${QT_RESOURCES_CPP} ${QT_FORMS_HPP} ${QT_MOC_HPP})
+
+## executables
+add_executable(simulator ${SOURCES} ${MOC_SRCS_UI} ${QT_RESOURCES_CPP} ${QT_FORMS_HPP} ${QT_MOC_HPP})
+target_link_libraries(simulator ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY}
+    pedsim ${BOOST_LIBRARIES} ${catkin_LIBRARIES}
+)
 
 add_executable(robot_teleop_keyboard src/robot_teleop_keyboard.cpp)
-TARGET_LINK_LIBRARIES(robot_teleop_keyboard ${BOOST_LIBRARIES} ${catkin_LIBRARIES})
-INSTALL(TARGETS simulator robot_teleop_keyboard
-    RUNTIME DESTINATION bin
-    LIBRARY DESTINATION lib
-)
+target_link_libraries(robot_teleop_keyboard ${BOOST_LIBRARIES} ${catkin_LIBRARIES})
 
 add_executable(robot_teleop_joystick src/robot_teleop_joystick.cpp)
-TARGET_LINK_LIBRARIES(robot_teleop_joystick ${BOOST_LIBRARIES} ${catkin_LIBRARIES})
-INSTALL(TARGETS simulator robot_teleop_joystick
+target_link_libraries(robot_teleop_joystick ${BOOST_LIBRARIES} ${catkin_LIBRARIES})
+
+## installations
+install(TARGETS simulator robot_teleop_joystick robot_teleop_keyboard
     RUNTIME DESTINATION bin
     LIBRARY DESTINATION lib
 )
 
-# add_executable(robot_teleop_joystick src/robot_teleop_joystick.cpp)
-
-TARGET_LINK_LIBRARIES(simulator
-    ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY} ${QT_QTOPENGL_LIBRARY} ${QWT_LIBRARIES} pedsim
-    ${BOOST_LIBRARIES} ${OpenCV_LIBS} ${catkin_LIBRARIES}
-)
 
 ## Unit Tests
