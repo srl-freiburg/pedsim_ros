@@ -12,7 +12,7 @@ model of [Helbing et. al](http://arxiv.org/pdf/cond-mat/9805244.pdf). The implem
 
 ### Dependencies
 * Animated markers available from [https://github.com/srl-freiburg/animated_markers](https://github.com/srl-freiburg/animated_markers)
-* Rviz plugins for tracking and social activity visualization. Installable via our `rviz` fork from [git@github.com:srl-freiburg/rviz.git](git@github.com:srl-freiburg/rviz.git).
+* Rviz plugins for tracking and social activity visualization. Installable via our `rviz` fork from [https://github.com/srl-freiburg/rviz](https://github.com/srl-freiburg/rviz).
 
 
 ### Installation
