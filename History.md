@@ -1,4 +1,12 @@
 
+0.0.4 / 2015-03-30
+==================
+
+ * Updated launch files and config to match rviz plugins
+ * cleanup of dependencies
+ * adding compatibility modules with indigo
+ * fix small bug with missing signal header
+
 0.0.3b / 2014-11-19
 ==================
 
