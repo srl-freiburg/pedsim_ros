@@ -1,6 +1,6 @@
 <launch>
   <!-- params -->
-  <param name="/simulator/scene_file" value="$(find pedsim_simulator)scenarios/airport_activities.xml" type="string"/>
+  <param name="/pedsim/scene_file" value="$(find pedsim_simulator)scenarios/airport_activities.xml" type="string"/>
 
   <!-- other parameters -->
   <param name="/pedsim_simulator/max_robot_speed" value="2.0" type="double"/>
@@ -18,5 +18,5 @@
   <node pkg="rviz" type="rviz" name="rviz" args="-d $(find pedsim_simulator)/rviz/airport_activities.rviz"/>
 
   <!-- Keyboard teleoperation node -->
-  <node name="teleop" pkg="pedsim_simulator" type="teleop" respawn="false" output="screen" />
+  <node name="robot_teleop_keyboard" pkg="pedsim_simulator" type="robot_teleop_keyboard" respawn="false" output="screen" />
 </launch>

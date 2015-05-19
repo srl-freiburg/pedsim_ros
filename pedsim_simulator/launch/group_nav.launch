@@ -1,6 +1,6 @@
 <launch>
   <!-- params -->
-  <param name="/simulator/scene_file" value="$(find pedsim_simulator)scenarios/static_group_nav.xml" type="string"/>
+  <param name="/pedsim/scene_file" value="$(find pedsim_simulator)scenarios/static_group_nav.xml" type="string"/>
 
   <!-- other parameters -->
   <param name="/pedsim_simulator/max_robot_speed" value="2.0" type="double"/>
@@ -17,12 +17,6 @@
   <node pkg="rviz" type="rviz" name="rviz" args="-d $(find pedsim_simulator)/rviz/social_contexts.rviz"/>
 
 
-  <!-- planning node -->
-  <!-- <node name="momo_node" pkg="momo" type="momo_ros.py" respawn="false" output="log"/> -->
-
   <!-- Keyboard teleoperation node -->
-  <node name="teleop" pkg="pedsim_simulator" type="teleop" respawn="false" output="log" />
-
-  <!-- pedsim to spencer converter -->
-  <node name="pedsim_to_spencer" pkg="pedsim_simulator" type="pedsim_to_spencer" respawn="false" output="log" />
+  <node name="robot_teleop_keyboard" pkg="pedsim_simulator" type="robot_teleop_keyboard" respawn="false" output="screen" />
 </launch>

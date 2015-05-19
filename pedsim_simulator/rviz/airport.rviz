@@ -5,9 +5,15 @@ Panels:
     Property Tree Widget:
       Expanded:
         - /Global Options1
-        - /MarkerArray4
+        - /Marker1
+        - /Marker2
+        - /Marker3
+        - /MarkerArray1
+        - /MarkerArray2
+        - /MarkerArray3
+        - /AnimatedMarkerArray1
       Splitter Ratio: 0.5
-    Tree Height: 843
+    Tree Height: 838
   - Class: rviz/Selection
     Name: Selection
   - Class: rviz/Tool Properties
@@ -48,39 +54,9 @@ Visualization Manager:
       Plane Cell Count: 1000
       Reference Frame: <Fixed Frame>
       Value: true
-    - Class: rviz/Axes
-      Enabled: false
-      Length: 10
-      Name: Axes
-      Radius: 0.1
-      Reference Frame: <Fixed Frame>
-      Value: false
-    - Alpha: 0.7
-      Class: rviz/GridCells
-      Color: 0; 170; 255
-      Enabled: false
-      Name: GridCells
-      Topic: /static_obstacles
-      Value: false
-    - Alpha: 1
-      Buffer Length: 1
-      Class: rviz/Path
-      Color: 255; 255; 127
-      Enabled: false
-      Name: Path
-      Topic: /planned_path
-      Value: false
-    - Alpha: 0.7
-      Class: rviz/Map
-      Color Scheme: map
-      Draw Behind: false
-      Enabled: false
-      Name: Map
-      Topic: /costmap
-      Value: false
     - Class: rviz/Marker
       Enabled: true
-      Marker Topic: /walls
+      Marker Topic: /pedsim/walls
       Name: Marker
       Namespaces:
         pedsim: true
@@ -88,7 +64,7 @@ Visualization Manager:
       Value: true
     - Class: rviz/Marker
       Enabled: true
-      Marker Topic: /queues
+      Marker Topic: /pedsim/queues
       Name: Marker
       Namespaces:
         {}
@@ -96,7 +72,7 @@ Visualization Manager:
       Value: true
     - Class: rviz/Marker
       Enabled: true
-      Marker Topic: /attractions
+      Marker Topic: /pedsim/attractions
       Name: Marker
       Namespaces:
         pedsim: true
@@ -104,23 +80,15 @@ Visualization Manager:
       Value: true
     - Class: rviz/MarkerArray
       Enabled: true
-      Marker Topic: /agent_arrows
+      Marker Topic: /pedsim/agent_directions
       Name: MarkerArray
       Namespaces:
         pedsim: true
       Queue Size: 0
       Value: true
     - Class: rviz/MarkerArray
-      Enabled: false
-      Marker Topic: /group_centers
-      Name: MarkerArray
-      Namespaces:
-        {}
-      Queue Size: 0
-      Value: false
-    - Class: rviz/MarkerArray
       Enabled: true
-      Marker Topic: /group_lines
+      Marker Topic: /pedsim/group_relations
       Name: MarkerArray
       Namespaces:
         pedsim: true
@@ -136,7 +104,7 @@ Visualization Manager:
       Value: true
     - Class: animated_marker_rviz_plugin/AnimatedMarkerArray
       Enabled: true
-      Marker Topic: /agents_markers
+      Marker Topic: /pedsim/agents_markers
       Name: AnimatedMarkerArray
       Namespaces:
         pedsim: true
@@ -166,22 +134,22 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/XYOrbit
-      Distance: 99.004
+      Distance: 178.996
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.06
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: -40.7575
-        Y: -46.9935
-        Z: 5.45026e-06
+        X: 33.8543
+        Y: -7.02219
+        Z: 9.54318e-06
       Name: Current View
       Near Clip Distance: 0.01
-      Pitch: 0.8748
+      Pitch: 0.4948
       Target Frame: <Fixed Frame>
       Value: XYOrbit (rviz)
-      Yaw: 4.60358
+      Yaw: 6.15358
     Saved: ~
 Window Geometry:
   Displays:
@@ -189,7 +157,7 @@ Window Geometry:
   Height: 1060
   Hide Left Dock: true
   Hide Right Dock: true
-  QMainWindow State: 000000ff00000000fd00000004000000000000010f000003e0fc0200000008fb0000001200530065006c0065006300740069006f006e00000001e10000009b0000006a00fffffffb0000001e0054006f006f006c002000500072006f007000650072007400690065007302000001ed000001df00000185000000a3fb000000120056006900650077007300200054006f006f02000001df000002110000018500000122fb000000200054006f006f006c002000500072006f0070006500720074006900650073003203000002880000011d000002210000017afb000000100044006900730070006c0061007900730000000028000003e0000000e900fffffffb0000002000730065006c0065006300740069006f006e00200062007500660066006500720200000138000000aa0000023a00000294fb00000014005700690064006500530074006500720065006f02000000e6000000d2000003ee0000030bfb0000000c004b0069006e0065006300740200000186000001060000030c000002610000000100000120000003c3fc0200000003fb0000001e0054006f006f006c002000500072006f00700065007200740069006500730100000041000000780000000000000000fb0000000a005600690065007700730000000042000003c3000000b600fffffffb0000001200530065006c0065006300740069006f006e010000025a000000b200000000000000000000000200000490000000a9fc0100000001fb0000000a00560069006500770073030000004e00000080000002e10000019700000003000007800000003efc0100000002fb0000000800540069006d00650000000000000007800000029a00fffffffb0000000800540069006d0065010000000000000450000000000000000000000780000003e000000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
+  QMainWindow State: 000000ff00000000fd00000004000000000000010f000003d6fc0200000008fb0000001200530065006c0065006300740069006f006e00000001e10000009b0000005300fffffffb0000001e0054006f006f006c002000500072006f007000650072007400690065007302000001ed000001df00000185000000a3fb000000120056006900650077007300200054006f006f02000001df000002110000018500000122fb000000200054006f006f006c002000500072006f0070006500720074006900650073003203000002880000011d000002210000017afb000000100044006900730070006c0061007900730000000035000003d6000000b600fffffffb0000002000730065006c0065006300740069006f006e00200062007500660066006500720200000138000000aa0000023a00000294fb00000014005700690064006500530074006500720065006f02000000e6000000d2000003ee0000030bfb0000000c004b0069006e0065006300740200000186000001060000030c000002610000000100000120000003c3fc0200000003fb0000001e0054006f006f006c002000500072006f00700065007200740069006500730100000041000000780000000000000000fb0000000a005600690065007700730000000042000003c30000009900fffffffb0000001200530065006c0065006300740069006f006e010000025a000000b200000000000000000000000200000490000000a9fc0100000001fb0000000a00560069006500770073030000004e00000080000002e10000019700000003000007800000003efc0100000002fb0000000800540069006d00650000000000000007800000023500fffffffb0000000800540069006d0065010000000000000450000000000000000000000780000003d600000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
   Selection:
     collapsed: false
   Time:
