@@ -14,9 +14,9 @@ def groups_sender():
     global group_id
 
     pub_groups = rospy.Publisher(
-        '/pedsim/tracked_groups', TrackedGroups, queue_size=1)
+        '/fake/tracked_groups', TrackedGroups, queue_size=1)
     sub_agents_poses = rospy.Subscriber(
-        '/pedsim/tracked_persons', TrackedPersons, ReadAgents, queue_size=1)
+        '/fake/tracked_persons', TrackedPersons, ReadAgents, queue_size=1)
     listener = tf.TransformListener()
     r = rospy.Rate(10)  # 10hz
 

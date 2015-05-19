@@ -260,7 +260,7 @@ void Simulator::publishSocialActivities()
     std_msgs::Header social_activities_header;
     social_activities_header.stamp = ros::Time::now();
     social_activities.header = social_activities_header;
-	social_activities.header.frame_id = "world";
+	social_activities.header.frame_id = "odom";
 
     pedsim_msgs::SocialActivity queueing_activity;
     pedsim_msgs::SocialActivity shopping_activity;
@@ -330,7 +330,7 @@ void Simulator::publishData()
     std_msgs::Header tracked_people_header;
     tracked_people_header.stamp = ros::Time::now();
     tracked_people.header = tracked_people_header;
-	tracked_people.header.frame_id = "world";
+	tracked_people.header.frame_id = "odom";
 
     foreach ( Agent * a, SCENE.getAgents() )
     {
@@ -443,7 +443,7 @@ void Simulator::publishAgents()
         /// walking people message
         animated_marker_msgs::AnimatedMarker marker;
         marker.mesh_use_embedded_materials = true;
-        marker.header.frame_id = "world";
+        marker.header.frame_id = "odom";
         marker.header.stamp = ros::Time();
         marker.ns = "pedsim";
         marker.id = a->getId();
@@ -460,7 +460,7 @@ void Simulator::publishAgents()
 
         /// arrows
         visualization_msgs::Marker arrow;
-        arrow.header.frame_id = "world";
+        arrow.header.frame_id = "odom";
         arrow.header.stamp = ros::Time();
         arrow.ns = "pedsim";
         arrow.id = a->getId() + 3000;
@@ -590,7 +590,7 @@ void Simulator::publishGroupVisuals()
         foreach ( Agent * m, ag->getMembers() )
         {
             visualization_msgs::Marker marker;
-            marker.header.frame_id = "world";
+            marker.header.frame_id = "odom";
             marker.header.stamp = ros::Time();
             marker.ns = "pedsim";
             marker.id = m->getId() + 1000;
@@ -626,7 +626,7 @@ void Simulator::publishGroupVisuals()
 void Simulator::publishObstacles()
 {
     nav_msgs::GridCells obstacles;
-    obstacles.header.frame_id = "world";
+    obstacles.header.frame_id = "odom";
     obstacles.cell_width = 1.0;
     obstacles.cell_height = 1.0;
 
@@ -654,7 +654,7 @@ void Simulator::publishObstacles()
 void Simulator::publishWalls()
 {
     visualization_msgs::Marker marker;
-    marker.header.frame_id = "world";
+    marker.header.frame_id = "odom";
     marker.header.stamp = ros::Time();
     marker.ns = "pedsim";
     marker.id = 10000;
@@ -696,7 +696,7 @@ void Simulator::publishAttractions()
     {
 // 		wp->getType()
 		visualization_msgs::Marker marker;
-        marker.header.frame_id = "world";
+        marker.header.frame_id = "odom";
         marker.header.stamp = ros::Time();
         marker.ns = "pedsim";
         marker.id = wp->getId();
@@ -725,7 +725,7 @@ void Simulator::publishAttractions()
     foreach ( AttractionArea * atr, SCENE.getAttractions() )
     {
         visualization_msgs::Marker marker;
-        marker.header.frame_id = "world";
+        marker.header.frame_id = "odom";
         marker.header.stamp = ros::Time();
         marker.ns = "pedsim";
         marker.id = atr->getId();

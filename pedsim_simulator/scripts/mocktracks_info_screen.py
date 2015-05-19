@@ -45,7 +45,7 @@ def createTrackedPerson(track_id, x, y, theta):
 
 def main():
     # Main code
-    trackPublisher = rospy.Publisher('/pedsim/tracked_persons', TrackedPersons)
+    trackPublisher = rospy.Publisher('/fake/tracked_persons', TrackedPersons)
 
     rospy.init_node('mocktracks_info_screen')
     rate = rospy.Rate(10)
