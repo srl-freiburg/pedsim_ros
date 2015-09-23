@@ -55,8 +55,6 @@ public:
 
     // Signals
 signals:
-    // → Simulation
-    void timeStepSizeChanged ( double value );
     // → Forces
     void forceFactorChanged ( QString name, double value );
     void forceFactorObstacleChanged ( double value );
@@ -71,12 +69,6 @@ signals:
 
     // Slots
 public slots:
-    void setSimSpeed ( int valueIn );
-    void decreaseSimSpeed();
-    void increaseSimSpeed();
-    void halveSimSpeed();
-    void doubleSimSpeed();
-    void setTimeStepSize ( double valueIn );
     // → Forces
     void setObstacleForce ( double valueIn );
     void setObstacleSigma ( double valueIn );
@@ -98,12 +90,16 @@ public:
     double group_size_lambda;
     double wait_time_beta;
 
+    double getTimeStepSize() {
+        return simulationFactor / updateRate;
+    }
 
     // Attributes
 public:
     // → Simulation
-    double timeStepSize;
-    int simSpeed;
+    double updateRate;
+    double simulationFactor;
+
     // → Forces
     double forceObstacle;
     double sigmaObstacle;
@@ -117,7 +113,7 @@ public:
     // robot control
     RobotMode robot_mode;
     int robot_wait_time;
-	float max_robot_speed;
+	double max_robot_speed;
 
     // enable/disable groups behaviour
     bool groups_enabled;

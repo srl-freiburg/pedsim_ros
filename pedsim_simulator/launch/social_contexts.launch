@@ -1,22 +1,78 @@
 <launch>
+  <arg name="teleop" default="false"/>
+  <arg name="publish_default_laser_collision_status" default="true"/>
+
   <!-- params -->
-  <param name="/pedsim/scene_file" value="$(find pedsim_simulator)scenarios/social_contexts.xml" type="string"/>
+  <rosparam command="load" file="$(find pedsim_simulator)/config/simulation_parameters.yaml" />
+  <param name="/pedsim/scene_file" value="$(find pedsim_simulator)scenarios/corridor.xml" type="string"/>
+
+  <!-- specific social contexts -->
+  <!-- <param name="/simulator/scene_file" value="$(find pedsim_simulator)scenarios/contexts/queueing.xml" type="string"/> -->
+  <!-- <param name="/simulator/scene_file" value="$(find pedsim_simulator)scenarios/contexts/shopping.xml" type="string"/> -->
+  <!-- <param name="/simulator/scene_file" value="$(find pedsim_simulator)scenarios/contexts/standing.xml" type="string"/> -->
+  <!-- <param name="/simulator/scene_file" value="$(find pedsim_simulator)scenarios/contexts/flow.xml" type="string"/> -->
+  <!-- <param name="/simulator/scene_file" value="$(find pedsim_simulator)scenarios/contexts/anti_flow.xml" -->
+<!-- type="string"/> -->
 
   <!-- other parameters -->
-  <param name="/pedsim_simulator/max_robot_speed" value="2.0" type="double"/>
-  <param name="/pedsim_simulator/robot_wait_time" value="3" type="double"/>
-  <param name="/pedsim_simulator/teleop_flag" value="1.0" type="double"/>
+
+  <!-- <param name="/pedsim_simulator/max_robot_speed" value="2.0" type="double"/>
+  <param name="/pedsim_simulator/robot_wait_time" value="30000000" type="double"/>
+  <param name="/pedsim_simulator/agents_alpha" value="0.2" type="double"/>
+  <param name="/pedsim_simulator/show_robot" value="false"/>
+
+  <param name="/pedsim_simulator/teleop_flag" value="0" type="double" unless="$(arg teleop)"/>
+  <param name="/pedsim_simulator/teleop_flag" value="1" type="double" if="$(arg teleop)"/> -->
+
+  <param name="/use_sim_time" value="false"/>
 
   <!-- tf broadcaster for aligning frames -->
   <node name="simulator_tf_broadcaster" pkg="pedsim_simulator" type="dummy_transforms.py" respawn="false" output="log"
 />
 
   <!-- main simulator node -->
-  <node name="simulator" pkg="pedsim_simulator" type="simulator" output="screen"/>
+  <node name="pedsim_simulator" pkg="pedsim_simulator" type="simulator" output="screen"/>
 
+  <!-- Rviz -->
   <node pkg="rviz" type="rviz" name="rviz" args="-d $(find pedsim_simulator)/rviz/social_contexts.rviz"/>
 
-  <!-- Keyboard teleoperation node -->
-  <node name="robot_teleop_keyboard" pkg="pedsim_simulator" type="robot_teleop_keyboard" respawn="false" output="screen" />
+  <!-- pedsim to spencer converter -->
+  <node name="pedsim_to_spencer" pkg="pedsim_to_spencer" type="pedsim_to_spencer" respawn="false" output="log">
+    <remap from="/spencer/perception/tracked_persons" to="/pedsim_to_spencer/tracked_persons"/>
+    <remap from="/spencer/perception/tracked_groups" to="/pedsim_to_spencer/tracked_groups"/>
+    <remap from="/spencer/perception/social_activities" to="/pedsim_to_spencer/social_activities"/>
+  </node>
+
+  <!-- SPENCER robot-related -->
+  <group ns="/spencer/control">
+    <include file="$(find spencer_description)/launch/publish.launch"/>
+    <include file="$(find spencer_description)/launch/joints.launch"/>
+
+    <!-- SPENCER simulated driving controller -->
+    <include file="$(find spencer_control)/launch/driving_controller.launch" ns="/spencer/control" clear_params="true">
+      <arg name="simulated" value="true"/>
+    </include>
+
+    <!-- Override parameters -->
+    <group ns="driving_controller">
+      <param name="pose_initial_x" value="4.0"/>
+      <param name="pose_initial_y" value="4.0"/>
+      <param name="pose_initial_theta" value="0.70"/>
+      <param name="max_linear_velocity" value="1.6"/>
+      <param name="max_angular_velocity" value="1.0"/>
+    </group>
+
+    <!-- Collision status for front and rear laser -->
+    <group if="$(arg publish_default_laser_collision_status)">
+      <!-- Publish collision-free collision status for front and rear laser at 35 Hz -->
+      <node pkg="rostopic" type="rostopic" name="rostopic_laser_front" args="pub /spencer/control/collision/laser_front spencer_control_msgs/CollisionStatus '{collisionError: false, collisionWarning: false}' -r 35" />
+      <node pkg="rostopic" type="rostopic" name="rostopic_laser_rear" args="pub /spencer/control/collision/laser_rear spencer_control_msgs/CollisionStatus '{collisionError: false, collisionWarning: false}' -r 35" />
+    </group>
+
+    <!-- RQT robot steering -->
+    <node pkg="rqt_robot_steering" name="rqt_robot_steering" type="rqt_robot_steering" if="$(arg teleop)">
+      <remap from="/cmd_vel" to="/spencer/control/drive_velocity"/>
+    </node>
+  </group>
 
 </launch>

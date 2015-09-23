@@ -1,10 +1,12 @@
 #!/usr/bin/env python
 #
 # Publishes fake tracked persons and the corresponding detections
+# (if not occluded) at
+# /pedsim/tracked_persons and /pedsim/detected_persons.
 
 import rospy
 import tf
-from pedsim_msgs.msg import TrackedPersons, TrackedPerson
+from spencer_tracking_msgs.msg import TrackedPersons, TrackedPerson
 from math import cos, sin, pi, radians
 
 
@@ -45,7 +47,7 @@ def createTrackedPerson(track_id, x, y, theta):
 
 def main():
     # Main code
-    trackPublisher = rospy.Publisher('/fake/tracked_persons', TrackedPersons)
+    trackPublisher = rospy.Publisher('/spencer/perception/tracked_persons', TrackedPersons)
 
     rospy.init_node('mocktracks_info_screen')
     rate = rospy.Rate(10)
@@ -58,12 +60,29 @@ def main():
         trackedPersons.header.frame_id = "odom"
         trackedPersons.header.stamp = rospy.Time.now()
 
+        # trackedPersons.tracks.append(
         # createTrackedPerson( trackId, x, y, theta ) )
+
         trackedPersons.tracks.append(createTrackedPerson(1,  3, 7, 270))
         trackedPersons.tracks.append(createTrackedPerson(2,  7, 5.5, 109))
         trackedPersons.tracks.append(createTrackedPerson(3,  8, 6.5, 90))
         trackedPersons.tracks.append(createTrackedPerson(4,  7, 9.2, 109))
         trackedPersons.tracks.append(createTrackedPerson(5,  7.5, 8.0, 109))
+
+        # trackedPersons.tracks.append(
+        #     createTrackedPerson(5,  9.2, 1.2, 71.56 - 90))
+        # trackedPersons.tracks.append(
+        #     createTrackedPerson(6,  7.1, 2.5,  80.9097 - 90))
+        # trackedPersons.tracks.append(createTrackedPerson(7,  8.2, 7.6,   8))
+        # trackedPersons.tracks.append(createTrackedPerson(8,  7.1, 6.5, 10))
+        # trackedPersons.tracks.append(
+        #     createTrackedPerson(9,  2.2, 1.8, 85.2364 - 90))
+        # trackedPersons.tracks.append(
+        #     createTrackedPerson(10, 4.1, 1.9, 93.8141 - 90))
+        # trackedPersons.tracks.append(
+        #     createTrackedPerson(11, 1.7, 9.3, 78.6901 - 90))
+        # trackedPersons.tracks.append(
+        #     createTrackedPerson(12, 2.2, 7.5, 63.4349 - 90))
 
         trackPublisher.publish(trackedPersons)
 

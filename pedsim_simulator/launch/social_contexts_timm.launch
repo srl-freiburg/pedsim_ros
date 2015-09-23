@@ -1,0 +1,99 @@
+<launch>
+  <arg name="steering_gui" default="false"/>
+  <arg name="teleop" default="true"/>
+  <arg name="publish_default_laser_collision_status" default="true"/>
+  
+  <!-- params -->
+  <param name="/pedsim/scene_file" value="$(find pedsim_simulator)scenarios/social_contexts.xml" type="string"/>
+
+  <param name="/pedsim_simulator/max_robot_speed" value="2.0" type="double"/>
+  <param name="/pedsim_simulator/robot_wait_time" value="30000000" type="double"/>
+  <param name="/pedsim_simulator/agents_alpha" value="0.2" type="double"/>
+  <param name="/pedsim_simulator/show_robot" value="false"/>  
+
+  <!-- ROBOT MODES: 0 = controlled, 1 = teleop, 2 = social drive -->
+  <param name="/pedsim_simulator/teleop_flag" value="0" type="double" unless="$(arg teleop)"/>
+  <param name="/pedsim_simulator/teleop_flag" value="1" type="double" if="$(arg teleop)"/>
+
+  <param name="/use_sim_time" value="false"/>
+
+  <!-- tf broadcaster for aligning frames -->
+  <node name="simulator_tf_broadcaster" pkg="pedsim_simulator" type="dummy_transforms.py" respawn="false" output="log"
+/>
+
+  <!-- main simulator node -->
+  <node name="pedsim_simulator" pkg="pedsim_simulator" type="simulator" output="screen"/>
+
+  <!-- Rviz -->
+  <node pkg="rviz" type="rviz" name="rviz" args="-d $(find pedsim_simulator)/rviz/social_contexts_timm.rviz"/>
+
+  <!-- SPENCER robot-related -->
+  <group ns="/spencer/control">
+    <include file="$(find spencer_description)/launch/publish.launch"/>
+    <include file="$(find spencer_description)/launch/joints.launch"/>
+
+    <!-- Xbox 360 controller -->
+    <include file="$(find spencer_teleop)/launch/joystick.launch"/>
+
+    <!-- SPENCER simulated driving controller -->
+    <include file="$(find spencer_control)/launch/driving_controller.launch" ns="/spencer/control" clear_params="true">
+      <arg name="simulated" value="true"/>
+    </include>
+
+    <!-- SPENCER simulated head controller -->
+    <include file="$(find spencer_head_controller)/launch/head_controller.launch">
+      <arg name="simulated" value="true"/>
+    </include>
+
+    <!-- Override parameters -->
+    <group ns="driving_controller">
+      <param name="pose_initial_x" value="4.0"/>
+      <param name="pose_initial_y" value="4.0"/>
+      <param name="pose_initial_theta" value="0.70"/>
+      <param name="max_linear_velocity" value="1.6"/>
+      <param name="max_angular_velocity" value="1.0"/>
+    </group>
+
+    <!-- Collision status for front and rear laser -->
+    <group if="$(arg publish_default_laser_collision_status)">
+      <!-- Publish collision-free collision status for front and rear laser at 35 Hz -->
+      <node pkg="rostopic" type="rostopic" name="rostopic_laser_front" args="pub /spencer/control/collision/laser_front spencer_control_msgs/CollisionStatus '{collisionError: false, collisionWarning: false}' -r 35" />
+      <node pkg="rostopic" type="rostopic" name="rostopic_laser_rear" args="pub /spencer/control/collision/laser_rear spencer_control_msgs/CollisionStatus '{collisionError: false, collisionWarning: false}' -r 35" />
+    </group>
+
+    <!-- RQT robot steering -->
+    <node pkg="rqt_robot_steering" name="rqt_robot_steering" type="rqt_robot_steering" if="$(arg steering_gui)">
+      <remap from="/cmd_vel" to="/spencer/control/desired_velocity"/>
+    </node>
+  </group>
+
+
+  <!-- pedsim to spencer converter -->
+  <node name="pedsim_to_spencer" pkg="pedsim_to_spencer" type="pedsim_to_spencer" respawn="false" output="log">
+    <remap from="/spencer/perception/tracked_persons" to="/pedsim_to_spencer/tracked_persons"/>
+    <remap from="/spencer/perception/tracked_groups" to="/pedsim_to_spencer/tracked_groups"/>
+    <remap from="/spencer/perception/social_activities" to="/pedsim_to_spencer/social_activities"/>
+  </node>
+
+  <!-- Tracking-related stuff -->
+  <group ns="pedsim_spencer/tracking">
+    <node name="tracks_to_detections" pkg="spencer_tracking_utils" type="tracks_to_detections">
+      <remap from="/spencer/perception/detected_persons" to="/spencer/perception/detected_persons_no_occlusions"/>
+      <remap from="/spencer/perception/tracked_persons" to="/pedsim_simulator/tracked_persons"/>
+
+      <param name="pose_variance" value="0.01"/>
+    </node>
+
+    <node name="simulate_occluded_detections_via_raytracing" pkg="spencer_tracking_utils" type="simulate_occluded_detections_via_raytracing" output="screen">
+      <remap from="input_detections" to="/spencer/perception/detected_persons_no_occlusions"/>
+      <remap from="output_detections" to="/spencer/perception/detected_persons"/>
+
+      <param name="sensor_target_frame" value="base_footprint"/>
+      <param name="sensor_max_range" value="10"/>
+      <param name="person_radius" value="0.4"/>
+    </node>
+
+    <include file="$(find spencer_people_tracking_launch)/launch/people_tracking.launch"/>
+  </group>
+
+</launch>

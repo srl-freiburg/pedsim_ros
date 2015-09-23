@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scenario>
+    <!--Obstacles-->
+    <obstacle x1="-0.5" y1="-0.5" x2="19.5" y2="-0.5"/>
+    <obstacle x1="-0.5" y1="-0.5" x2="-0.5" y2="14.5"/>
+    <obstacle x1="-0.5" y1="14.5" x2="19.5" y2="14.5"/>
+    <obstacle x1="19.5" y1="-0.5" x2="19.5" y2="14.5"/>
+
+<!--     <obstacle x1="7.5" y1="-0.5" x2="7.5" y2="4.5"/>
+    <obstacle x1="19.5" y1="14.5" x2="19.5" y2="4.5"/> -->
+
+<!--   <obstacle x1="-0.5" y1="0" x2="30" y2="0"/>
+    <obstacle x1="0" y1="0" x2="0" y2="15"/>
+    <obstacle x1="0" y1="15" x2="30" y2="15"/>
+    <obstacle x1="30" y1="0" x2="30" y2="15"/>
+
+    <obstacle x1="7.5" y1="0" x2="7.5" y2="5"/>
+    <obstacle x1="20" y1="15" x2="20" y2="5"/> -->
+
+    <!--Waypoints (incl. WaitingQueues)-->
+    <waypoint id="enter_bookshop" x="12" y="14" r="2"/>
+    <waypoint id="leave_bookshop" x="12" y="2" r="2"/>
+
+    <waypoint id="enter_mcdonald" x="16" y="14" r="2"/>
+    <waypoint id="leave_mcdonald" x="16" y="2" r="2"/>
+
+    <waypoint id="enter_starbucksky" x="24" y="14" r="2"/>
+    <waypoint id="leave_starbucksky" x="24" y="2" r="2"/>
+
+    <waypoint id="robot_goal" x="22" y="27" r="2"/>
+    <waypoint id="robot_start" x="4" y="4" r="2"/>
+	
+
+    <agent x="1.5" y="1.5" n="1" dx="0" dy="0" type="2">
+        <addwaypoint id="robot_start"/>
+        <addwaypoint id="robot_goal"/>
+    </agent>
+
+    <!--AgentClusters-->
+    <agent x="10" y="9" n="1" dx="0" dy="0" type="3">
+        <addwaypoint id="enter_bookshop"/>
+        <addwaypoint id="leave_bookshop"/>
+    </agent>
+        <!--AgentClusters-->
+    <agent x="7.5" y="6.5" n="1" dx="0" dy="0" type="3">
+        <addwaypoint id="enter_bookshop"/>
+        <addwaypoint id="leave_bookshop"/>
+    </agent>
+        <!--AgentClusters-->
+    <agent x="10" y="5.5" n="1" dx="0" dy="0" type="3">
+        <addwaypoint id="enter_bookshop"/>
+        <addwaypoint id="leave_bookshop"/>
+    </agent>
+        <!--AgentClusters-->
+    <agent x="11.5" y="7.5" n="1" dx="0" dy="0" type="3">
+        <addwaypoint id="enter_bookshop"/>
+        <addwaypoint id="leave_bookshop"/>
+    </agent>
+
+    
+</scenario>

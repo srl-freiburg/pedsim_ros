@@ -34,7 +34,7 @@
 
 // Includes
 // → PedSim
-#include <libpedsim/ped_vector.h>
+#include <pedsim/ped_vector.h>
 // → Qt
 #include <QObject>
 

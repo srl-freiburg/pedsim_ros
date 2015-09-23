@@ -29,6 +29,8 @@
 * \author Sven Wehner <mail@svenwehner.de>
 */
 
+#include <tf/transform_listener.h> // must come first due to conflict of Qt and Boost signals
+
 #include <pedsim_simulator/scene.h>
 #include <pedsim_simulator/simulator.h>
 #include <pedsim_simulator/element/agentcluster.h>
@@ -47,7 +49,6 @@ Simulator::~Simulator()
     delete robot_;
 
     // shutdown service servers and publishers
-    sub_robot_command_.shutdown();
     pub_agent_visuals_.shutdown();
     pub_agent_arrows_.shutdown();
     pub_group_lines_.shutdown();
@@ -68,47 +69,64 @@ Simulator::~Simulator()
 
 bool Simulator::initializeSimulation()
 {
+    // set up state
+    paused_ = false;
+
+    // read default queue size from ROS parameters
+    // NOTE: The default value of 0 means that the queues have *infinite* size! For real-time scenarios / simulations,
+    // this might not be a good idea!
+    ros::NodeHandle privateNodeHandle("~");
+    int defaultQueueSize; privateNodeHandle.param<int>("default_queue_size", defaultQueueSize, 0);
+    ROS_INFO_STREAM("Using default queue size of " << defaultQueueSize << " for publisher queues... " << (defaultQueueSize == 0 ? "NOTE: This means the queues are of infinite size!" : "") );
+
     /// setup ros publishers
     // visualizations
-    pub_agent_visuals_ = nh_.advertise<animated_marker_msgs::AnimatedMarkerArray> ( "/pedsim/agents_markers", 0 );
-    pub_agent_arrows_ = nh_.advertise<visualization_msgs::MarkerArray> ( "/pedsim/agent_directions", 0 );
-    pub_group_lines_ = nh_.advertise<visualization_msgs::MarkerArray> ( "/pedsim/group_relations", 0 );
-    pub_walls_ = nh_.advertise<visualization_msgs::Marker> ( "/pedsim/walls", 0 );
-    pub_attractions_ = nh_.advertise<visualization_msgs::Marker> ( "/pedsim/attractions", 0 );
-    pub_queues_ = nh_.advertise<visualization_msgs::Marker> ( "/pedsim/queues", 0 );
-    pub_waypoints_ = nh_.advertise<visualization_msgs::Marker> ( "/pedsim/waypoints", 0 );
+    pub_agent_visuals_ = nh_.advertise<animated_marker_msgs::AnimatedMarkerArray> ( "/pedsim/agents_markers", defaultQueueSize );
+    pub_agent_arrows_ = nh_.advertise<visualization_msgs::MarkerArray> ( "/pedsim/agent_directions", defaultQueueSize );
+    pub_group_lines_ = nh_.advertise<visualization_msgs::MarkerArray> ( "/pedsim/group_relations", defaultQueueSize );
+    pub_walls_ = nh_.advertise<visualization_msgs::Marker> ( "/pedsim/walls", defaultQueueSize, true );
+    pub_attractions_ = nh_.advertise<visualization_msgs::Marker> ( "/pedsim/attractions", defaultQueueSize, true );
+    pub_queues_ = nh_.advertise<visualization_msgs::Marker> ( "/pedsim/queues", defaultQueueSize, true );
+    pub_waypoints_ = nh_.advertise<visualization_msgs::Marker> ( "/pedsim/waypoints", defaultQueueSize, true );
 
 
     // informative topics (data)
-    pub_obstacles_ = nh_.advertise<nav_msgs::GridCells> ( "/pedsim/static_obstacles", 0 );
-    pub_all_agents_ = nh_.advertise<pedsim_msgs::AllAgentsState> ( "/pedsim/dynamic_obstacles", 0 );
-    pub_tracked_persons_ = nh_.advertise<pedsim_msgs::TrackedPersons> ( "/pedsim/tracked_persons", 0 );
-    pub_tracked_groups_ = nh_.advertise<pedsim_msgs::TrackedGroups> ( "/pedsim/tracked_groups", 0 );
-    pub_social_activities_ = nh_.advertise<pedsim_msgs::SocialActivities>( "/pedsim/social_activities", 0 );
-    pub_robot_position_ = nh_.advertise<geometry_msgs::PoseStamped>( "/pedsim/robot_position", 0 );
+    pub_obstacles_ = nh_.advertise<nav_msgs::GridCells> ( "/pedsim/static_obstacles", defaultQueueSize );
+    pub_all_agents_ = nh_.advertise<pedsim_msgs::AllAgentsState> ( "/pedsim/dynamic_obstacles", defaultQueueSize );
+    pub_tracked_persons_ = nh_.advertise<pedsim_msgs::TrackedPersons> ( "/pedsim/tracked_persons", defaultQueueSize );
+    pub_tracked_groups_ = nh_.advertise<pedsim_msgs::TrackedGroups> ( "/pedsim/tracked_groups", defaultQueueSize );
+    pub_social_activities_ = nh_.advertise<pedsim_msgs::SocialActivities>( "/pedsim/social_activities", defaultQueueSize );
+    pub_robot_position_ = nh_.advertise<geometry_msgs::PoseStamped>( "/pedsim/robot_position", defaultQueueSize );
+
+
+    // services
+    srv_pause_simulation_ = nh_.advertiseService("/pedsim/pause_simulation", &Simulator::onPauseSimulation, this);
+    srv_unpause_simulation_ = nh_.advertiseService("/pedsim/unpause_simulation", &Simulator::onUnpauseSimulation, this);
+
+
+    /// setup TF listener for obtaining robot position
+    transform_listener_.reset ( new tf::TransformListener() );
 
     /// setup any pointers
     orientation_handler_.reset ( new OrientationHandler() );
     robot_ = nullptr;
 
-    /// subscribers
-    sub_robot_command_ = nh_.subscribe ( "/pedsim/robot_command", 1, &Simulator::callbackRobotCommand, this );
-
     /// load parameters
     std::string scene_file_param;
     ros::param::param<std::string> ( "/pedsim/scene_file", scene_file_param, "scene.xml" );
+
     // load scenario file
     QString scenefile = QString::fromStdString ( scene_file_param );
     ScenarioReader scenario_reader;
-    bool readResult = scenario_reader.readFromFile ( scenefile );
-    if ( readResult == false )
+    bool read_result = scenario_reader.readFromFile ( scenefile );
+    if ( read_result == false )
     {
-        ROS_WARN ( "Could not load the scene file, check paths" );
+        ROS_WARN ( "Could not load the scene file, please check the paths and param names" );
         return false;
     }
 
     /// load the remaining parameters
-    loadConfigParameters();
+    // loadConfigParameters();
 
     /// cleanup containers
     agent_activities_.clear();
@@ -121,20 +139,23 @@ bool Simulator::initializeSimulation()
 /// \brief loadConfigParameters
 /// \details Load configuration parameter from ROS parameter server
 /// -----------------------------------------------------------------
-void Simulator::loadConfigParameters()
-{
-    double robot_wait_time;
-    ros::param::param<double> ( "/pedsim/robot_wait_time", robot_wait_time, 10.0 );
-    CONFIG.robot_wait_time = robot_wait_time;
+// void Simulator::loadConfigParameters()
+// {
+//     double robot_wait_time;
+//     ros::param::param<double> ( "/pedsim/robot_wait_time", robot_wait_time, 10.0 );
+//     CONFIG.robot_wait_time = robot_wait_time;
 
-    double max_robot_speed;
-    ros::param::param<double> ( "/pedsim/max_robot_speed", max_robot_speed, 2.0 );
-    CONFIG.max_robot_speed = max_robot_speed;
+//     double max_robot_speed;
+//     ros::param::param<double> ( "/pedsim/max_robot_speed", max_robot_speed, 2.0 );
+//     CONFIG.max_robot_speed = max_robot_speed;
 
-    double teleop_flag;
-    ros::param::param<double> ( "/pedsim/teleop_flag", teleop_flag, 0.0 );
-    CONFIG.robot_mode = static_cast<RobotMode> ( teleop_flag );
-}
+//     ros::param::param<double> ( "/pedsim/update_rate", CONFIG.updateRate, 25.0 );
+//     ros::param::param<double> ( "/pedsim/simulation_factor", CONFIG.simulationFactor, 1.0 );
+
+//     double teleop_flag;
+//     ros::param::param<double> ( "/pedsim/teleop_flag", teleop_flag, 0.0 );
+//     CONFIG.robot_mode = static_cast<RobotMode> ( teleop_flag );
+// }
 
 
 /// -----------------------------------------------------------------
@@ -143,21 +164,36 @@ void Simulator::loadConfigParameters()
 /// -----------------------------------------------------------------
 void Simulator::runSimulation()
 {
-    ros::Rate r ( 25 ); // Hz
+    ros::Rate r ( CONFIG.updateRate ); // Hz
 
     while ( ros::ok() )
     {
+        // get the latest config parameters from the param server
+        updateConfigParams();
+
         if ( SCENE.getTime() < 0.1 )
         {
             // setup the robot
             BOOST_FOREACH ( Agent * a, SCENE.getAgents() )
             {
-                if ( a->getType() == Ped::Tagent::ROBOT )
+                if ( a->getType() == Ped::Tagent::ROBOT ) {
                     robot_ = a;
+
+                    // init default pose of robot
+                    Eigen::Quaternionf q = computePose(robot_);
+                    last_robot_orientation_.x = q.x();
+                    last_robot_orientation_.y = q.y();
+                    last_robot_orientation_.z = q.z();
+                    last_robot_orientation_.w = q.w();
+                }
             }
         }
 
-        SCENE.moveAllAgents();
+        // Move robot
+        updateRobotPositionFromTF();
+
+        // Move agents
+        if(!paused_) SCENE.moveAllAgents();
 
         publishAgents();    // TODO - remove this old piece
         publishData();
@@ -171,7 +207,8 @@ void Simulator::runSimulation()
         publishObstacles();
 
         // only publish the obstacles in the beginning
-        if ( SCENE.getTime() < 10 )
+        // FIXME: Need to be re-published continously if the fixed frame in Rviz is moving!
+        //if ( SCENE.getTime() < 10 )
         {
             publishAttractions();
             publishWalls();
@@ -180,6 +217,55 @@ void Simulator::runSimulation()
         ros::spinOnce();
         r.sleep();
     }
+}
+
+
+void Simulator::updateConfigParams()
+{
+    // ROS_INFO("Loading parameters from the param server");
+
+    // double teleop_flag;
+    // ros::param::param<double> ( "/pedsim/teleop_flag", teleop_flag, 0.0 );
+    // CONFIG.robot_mode = static_cast<RobotMode> ( teleop_flag );
+
+    // ros::param::param<double> ( "/pedsim/update_rate", CONFIG.updateRate, 25.0 );
+    // ros::param::param<double> ( "/pedsim/simulation_factor", CONFIG.simulationFactor, 1.0 );
+    // ros::param::param<double> ( "/pedsim/max_robot_speed", CONFIG.max_robot_speed, 2.0 );
+    // ros::param::param<int> ( "/pedsim/robot_wait_time", CONFIG.robot_wait_time, 10 );
+
+    // // Social force simulation parameters and additional custom forces
+    // ros::param::param<double> ( "/pedsim/obstacle_force", CONFIG.forceObstacle, 10.0 );
+    // ros::param::param<double> ( "/pedsim/obstacle_sigma", CONFIG.sigmaObstacle, 0.2 );
+    // ros::param::param<double> ( "/pedsim/social_force", CONFIG.forceSocial, 5.1 );
+    // ros::param::param<double> ( "/pedsim/group_gaze_force", CONFIG.forceGroupGaze, 3.0 );
+    // ros::param::param<double> ( "/pedsim/group_coherence_force", CONFIG.forceGroupCoherence, 2.0 );
+    // ros::param::param<double> ( "/pedsim/group_repulsion_force", CONFIG.forceGroupRepulsion, 1.0 );
+    // ros::param::param<double> ( "/pedsim/random_force", CONFIG.forceRandom, 0.1 );
+    // ros::param::param<double> ( "/pedsim/along_wall_force", CONFIG.forceAlongWall, 2.0 );
+    // ros::param::param<double> ( "/pedsim/cell_width", CONFIG.cell_width, 1.0 );
+    // ros::param::param<double> ( "/pedsim/cell_height", CONFIG.cell_height, 1.0 );
+    // ros::param::param<bool> ( "/pedsim/enable_groups", CONFIG.groups_enabled, true );
+    // ros::param::param<double> ( "/pedsim/group_size_lambda", CONFIG.group_size_lambda, 1.7 );
+    // ros::param::param<double> ( "/pedsim/wait_time_beta", CONFIG.wait_time_beta, 0.2 );
+}
+
+/// -----------------------------------------------------------------
+/// \brief onPauseSimulation
+/// \details Pause the simulation
+/// -----------------------------------------------------------------
+bool Simulator::onPauseSimulation(std_srvs::Empty::Request& request, std_srvs::Empty::Response& response) {
+    paused_ = true;
+    return true;
+}
+
+
+/// -----------------------------------------------------------------
+/// \brief onUnpauseSimulation
+/// \details Unpause the simulation
+/// -----------------------------------------------------------------
+bool Simulator::onUnpauseSimulation(std_srvs::Empty::Request& request, std_srvs::Empty::Response& response) {
+    paused_ = false;
+    return true;
 }
 
 
@@ -226,25 +312,42 @@ void Simulator::updateAgentActivities()
 }
 
 /// -----------------------------------------------------------------
-/// \brief callbackRobotCommand
-/// \details Control the robot based on the set velocity command
-/// Listens to incoming messages and manipulates the robot.
-/// \param[in] msg Message containing the pos and vel for the robot
+/// \brief updateRobotPositionFromTF
+/// \details Updates the robot's position, and estimated vx vy, based upon the TF transform world --> base_footprint.
 /// -----------------------------------------------------------------
-void Simulator::callbackRobotCommand ( const pedsim_msgs::AgentState::ConstPtr &msg )
+void Simulator::updateRobotPositionFromTF ()
 {
-    double vx = msg->twist.linear.x;
-    double vy = msg->twist.linear.y;
+    if(!robot_) return;
 
-    if ( CONFIG.robot_mode == RobotMode::TELEOPERATION || CONFIG.robot_mode == RobotMode::CONTROLLED )
+    if ( CONFIG.robot_mode == RobotMode::TELEOPERATION || CONFIG.robot_mode == RobotMode::CONTROLLED ) {
         robot_->setTeleop ( true );
+        robot_->setVmax ( CONFIG.max_robot_speed ); // NOTE - check if this is really necessary
 
-    if ( robot_->getType() == static_cast<Ped::Tagent::AgentType> ( msg->type ) )
-    {
-        robot_->setvx ( vx );
-        robot_->setvy ( vy );
-        // NOTE - check if this is really necessary
-        robot_->setVmax ( CONFIG.max_robot_speed );
+        // Get robot position via TF
+        tf::StampedTransform tfTransform;
+        try {
+            // transform_listener_->lookupTransform("world", "base_footprint", ros::Time(0), tfTransform);
+            transform_listener_->lookupTransform("odom", "base_footprint", ros::Time(0), tfTransform);
+        }
+        catch(tf::TransformException e) {
+            ROS_WARN_STREAM_THROTTLE(5.0, "TF lookup from base_footprint to odom failed. Reason: " << e.what());
+            return;
+        }
+
+        double x = tfTransform.getOrigin().x(), y = tfTransform.getOrigin().y();
+        double dx = x - last_robot_pose_.getOrigin().x(), dy = y - last_robot_pose_.getOrigin().y();
+        double dt = tfTransform.stamp_.toSec() - last_robot_pose_.stamp_.toSec();
+        double vx = dx / dt, vy = dy / dt;
+
+        if(!std::isfinite(vx)) vx = 0;
+        if(!std::isfinite(vy)) vy = 0;
+
+        //ROS_WARN("Robot velocity: %.3f, %.3f -- position: %.2f %.2f", vx, vy, x, y);
+
+        robot_->setX( x ); robot_->setY( y );
+        robot_->setvx ( vx ); robot_->setvy ( vy );
+
+        last_robot_pose_ = tfTransform;
     }
 }
 
@@ -315,7 +418,7 @@ void Simulator::publishSocialActivities()
     social_activities.elements.push_back ( group_moving_activity );
     social_activities.elements.push_back ( individual_moving_activity );
 
-    // pub_social_activities_.publish ( social_activities );
+    pub_social_activities_.publish ( social_activities );
 }
 
 
@@ -334,6 +437,9 @@ void Simulator::publishData()
 
     foreach ( Agent * a, SCENE.getAgents() )
     {
+        if ( a->getType() == Ped::Tagent::ROBOT )
+            continue;
+
         pedsim_msgs::TrackedPerson person;
         person.track_id = a->getId();
         person.is_occluded = false;
@@ -344,6 +450,9 @@ void Simulator::publishData()
         Eigen::Quaternionf q = orientation_handler_->angle2Quaternion ( theta );
 
         geometry_msgs::PoseWithCovariance pcov;
+
+
+
         pcov.pose.position.x = a->getx();
         pcov.pose.position.y = a->gety();
         pcov.pose.position.z = 0.0;
@@ -371,6 +480,7 @@ void Simulator::publishData()
     std_msgs::Header tracked_groups_header;
     tracked_groups_header.stamp = ros::Time::now();
     tracked_groups.header = tracked_groups_header;
+    tracked_groups.header.frame_id = "odom";
 
     QList<AgentGroup *> sim_groups = SCENE.getGroups();
     foreach ( AgentGroup * ag, sim_groups )
@@ -406,18 +516,24 @@ void Simulator::publishRobotPosition()
         return;
 
     geometry_msgs::PoseStamped robot_pose;
-    std_msgs::Header header;
-    header.stamp = ros::Time::now();
-    robot_pose.header = header;
+    robot_pose.header.stamp = ros::Time::now();
+    robot_pose.header.frame_id = "odom";
 
     robot_pose.pose.position.x = robot_->getx();
     robot_pose.pose.position.y = robot_->gety();
 
-    Eigen::Quaternionf q = computePose ( robot_ );
-    robot_pose.pose.orientation.x = q.x();
-    robot_pose.pose.orientation.y = q.y();
-    robot_pose.pose.orientation.z = q.z();
-    robot_pose.pose.orientation.w = q.w();
+    if(hypot(robot_->getvx(), robot_->getvy()) < 0.05) {
+        robot_pose.pose.orientation = last_robot_orientation_;
+    }
+    else {
+        Eigen::Quaternionf q = computePose ( robot_ );
+        robot_pose.pose.orientation.x = q.x();
+        robot_pose.pose.orientation.y = q.y();
+        robot_pose.pose.orientation.z = q.z();
+        robot_pose.pose.orientation.w = q.w();
+
+        last_robot_orientation_ = robot_pose.pose.orientation;
+    }
 
     pub_robot_position_.publish ( robot_pose );
 }
@@ -445,7 +561,7 @@ void Simulator::publishAgents()
         marker.mesh_use_embedded_materials = true;
         marker.header.frame_id = "odom";
         marker.header.stamp = ros::Time();
-        marker.ns = "pedsim";
+        // marker.ns = "pedsim";
         marker.id = a->getId();
         marker.type = animated_marker_msgs::AnimatedMarker::MESH_RESOURCE;
         marker.mesh_resource = "package://pedsim_simulator/images/animated_walking_man.mesh";
@@ -462,7 +578,7 @@ void Simulator::publishAgents()
         visualization_msgs::Marker arrow;
         arrow.header.frame_id = "odom";
         arrow.header.stamp = ros::Time();
-        arrow.ns = "pedsim";
+        // arrow.ns = "pedsim";
         arrow.id = a->getId() + 3000;
 
         arrow.pose.position.x = a->getx();
@@ -477,6 +593,10 @@ void Simulator::publishAgents()
         arrow.scale.z = 0.05;
 
 		marker.color = getColor( a->getId() );
+
+        double agentsAlpha = 1.0;
+        nh_.getParamCached("/pedsim_simulator/agents_alpha", agentsAlpha);
+        marker.color.a *= agentsAlpha;
 
         Eigen::Quaternionf q = computePose ( a );
         marker.pose.orientation.x = q.x();
@@ -504,6 +624,7 @@ void Simulator::publishAgents()
             marker.animation_speed = 0.0;
         }
 
+        bool publishMarker = true, publishArrow = true;
         if ( robot_ != nullptr &&  a->getType() == robot_->getType() )
         {
             marker.type = visualization_msgs::Marker::MESH_RESOURCE;
@@ -525,10 +646,14 @@ void Simulator::publishAgents()
 
             marker.pose.position.z = 0.7;
             arrow.pose.position.z = 1.0;
+
+            nh_.getParamCached("/pedsim_simulator/show_robot", publishMarker);
+            nh_.getParamCached("/pedsim_simulator/show_robot_direction", publishArrow);
         }
 
-        marker_array.markers.push_back ( marker );
-        arrow_array.markers.push_back ( arrow );
+        if(publishMarker) marker_array.markers.push_back ( marker );
+        if(publishArrow)  arrow_array.markers.push_back ( arrow );
+
 
         /// status message
         /// TODO - remove this once, we publish internal states using
@@ -592,16 +717,16 @@ void Simulator::publishGroupVisuals()
             visualization_msgs::Marker marker;
             marker.header.frame_id = "odom";
             marker.header.stamp = ros::Time();
-            marker.ns = "pedsim";
+            // marker.ns = "pedsim";
             marker.id = m->getId() + 1000;
 
-            marker.color.a = 0.7;
+            marker.color.a = 1.0;
             marker.color.r = 1.0;
             marker.color.g = 1.0;
             marker.color.b = 0.0;
-            marker.scale.x = 0.05;
-            marker.scale.y = 0.05;
-            marker.scale.z = 0.05;
+            marker.scale.x = 0.1;
+            marker.scale.y = 0.1;
+            marker.scale.z = 0.1;
             marker.type = visualization_msgs::Marker::ARROW;
             geometry_msgs::Point p2;
             p2.x = m->getx();
@@ -633,10 +758,20 @@ void Simulator::publishObstacles()
     std::vector<Location>::const_iterator it = SCENE.obstacle_cells_.begin();
     while ( it != SCENE.obstacle_cells_.end() )
     {
+
         geometry_msgs::Point p;
         Location loc = ( *it );
-        p.x = loc.x - 0.5;
-        p.y = loc.y - 0.5;
+
+        // TODO: check it
+        // Location a=getEnclosingCell(loc.x,loc.y);
+        // p.x = a.x+0.5*(this->cellwidth);
+        // p.y = a.y+0.5*(this->cellheight);
+        // p.z = 0.0;
+
+        // p.x = loc.x +0.5;
+        // p.y = loc.y +0.5;
+        p.x = loc.x;
+        p.y = loc.y;
         p.z = 0.0;
         obstacles.cells.push_back ( p );
         it++;
@@ -644,6 +779,7 @@ void Simulator::publishObstacles()
 
     pub_obstacles_.publish ( obstacles );
 }
+
 
 
 /// -----------------------------------------------------------------
@@ -656,7 +792,7 @@ void Simulator::publishWalls()
     visualization_msgs::Marker marker;
     marker.header.frame_id = "odom";
     marker.header.stamp = ros::Time();
-    marker.ns = "pedsim";
+    // marker.ns = "pedsim";
     marker.id = 10000;
     marker.color.a = 1.0;
     marker.color.r = 1.0;
@@ -673,8 +809,8 @@ void Simulator::publishWalls()
     {
         geometry_msgs::Point p;
         Location loc = ( *it );
-        p.x = loc.x;
-        p.y = loc.y;
+        p.x = loc.x+0.5;
+        p.y = loc.y+0.5;
         p.z = 0.0;
         marker.points.push_back ( p );
         it++;
@@ -698,7 +834,7 @@ void Simulator::publishAttractions()
 		visualization_msgs::Marker marker;
         marker.header.frame_id = "odom";
         marker.header.stamp = ros::Time();
-        marker.ns = "pedsim";
+        // marker.ns = "pedsim";
         marker.id = wp->getId();
 
         marker.color.a = 0.15;
@@ -706,7 +842,7 @@ void Simulator::publishAttractions()
         marker.color.g = 0.0;
         marker.color.b = 1.0;
 
-	// TODO - get radius information from waypoints
+		// TODO - get radius information from waypoints
         marker.scale.x = 3.0;
         marker.scale.y = 3.0;
         marker.scale.z = 0.02;
@@ -727,7 +863,7 @@ void Simulator::publishAttractions()
         visualization_msgs::Marker marker;
         marker.header.frame_id = "odom";
         marker.header.stamp = ros::Time();
-        marker.ns = "pedsim";
+        // marker.ns = "pedsim";
         marker.id = atr->getId();
 
         marker.color.a = 0.35;

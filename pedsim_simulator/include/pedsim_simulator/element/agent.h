@@ -33,7 +33,7 @@
 #define _agent_h_
 
 #include <pedsim_simulator/element/scenarioelement.h>
-#include <libpedsim/ped_agent.h>
+#include <pedsim/ped_agent.h>
 #include <QGraphicsRectItem>	// TODO -remove qgraphics dependencies
 #include <ros/ros.h>
 

@@ -38,8 +38,9 @@ Config* Config::Config::instance = nullptr;
 
 Config::Config ( QObject* parent )
 {
-    timeStepSize = 0.05;
-    simSpeed = int(1000.0/50);
+    updateRate = 25.0;
+    simulationFactor = 1.0;
+
     forceObstacle = 10.0;
     sigmaObstacle = 0.2;
     forceSocial = 5.1;
@@ -53,16 +54,12 @@ Config::Config ( QObject* parent )
 	cell_width = 1.0;
     cell_height = 1.0;
 
-    robot_mode = RobotMode::SOCIAL_DRIVE;
+    robot_mode = RobotMode::TELEOPERATION;
     robot_wait_time = 15;
 	max_robot_speed = 2.0;
 
 	groups_enabled = true;
-
-    // distribution parameters
-    // TODO - move all magic numbers here
-	// use YAML file for loading configuration parameters
-    group_size_lambda = 1.3;
+    group_size_lambda = 1.1;
     wait_time_beta = 0.2;
 }
 
@@ -72,40 +69,6 @@ Config& Config::getInstance()
         instance = new Config();
 
     return *instance;
-}
-
-void Config::setTimeStepSize ( double valueIn )
-{
-    timeStepSize = valueIn;
-
-    // inform users
-    emit timeStepSizeChanged ( valueIn );
-}
-
-void Config::setSimSpeed ( int valueIn )
-{
-    // keep simulation speed in bounds
-    simSpeed = qBound ( 10, valueIn, 1000 );
-}
-
-void Config::decreaseSimSpeed()
-{
-    setSimSpeed ( simSpeed+1 );
-}
-
-void Config::increaseSimSpeed()
-{
-    setSimSpeed ( simSpeed-1 );
-}
-
-void Config::halveSimSpeed()
-{
-    setSimSpeed ( simSpeed*2 );
-}
-
-void Config::doubleSimSpeed()
-{
-    setSimSpeed ( simSpeed/2 );
 }
 
 void Config::setObstacleForce ( double valueIn )

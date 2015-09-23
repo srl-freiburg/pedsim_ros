@@ -33,7 +33,7 @@
 #define _queueingplanner_h_
 
 #include <pedsim_simulator/waypointplanner/waypointplanner.h>
-#include <libpedsim/ped_vector.h>
+#include <pedsim/ped_vector.h>
 
 
 // Forward Declarations

@@ -21,13 +21,13 @@
     <waypoint id="c" x="20" y="20" r="2"/>
     <waypoint id="d" x="20" y="5" r="2"/>
 
-    <!-- <agent x="4" y="4" n="1" dx="0" dy="0" type="2">
+    <agent x="4" y="4" n="1" dx="0" dy="0" type="2">
         <addwaypoint id="a"/>
         <addwaypoint id="b"/>
         <addwaypoint id="c"/>
         <addwaypoint id="d"/>
     </agent>
- -->
+
 
     <!--AgentClusters-->
     <agent x="5" y="20" n="10" dx="5" dy="5" type="3">

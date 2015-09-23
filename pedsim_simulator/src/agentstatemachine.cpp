@@ -110,7 +110,7 @@ void AgentStateMachine::doStateTransition()
                 double probability = baseProbability
                                      * attraction->getStrength()
                                      * ( ( distance<maxAttractionDist ) ? ( 1- ( distance/maxAttractionDist ) ) :0 )
-                                     * CONFIG.timeStepSize;
+                                     * CONFIG.getTimeStepSize();
                 std::bernoulli_distribution isAttracted ( probability );
 
                 if ( isAttracted ( RNG() ) )
@@ -128,7 +128,7 @@ void AgentStateMachine::doStateTransition()
         // check whether agent loses attraction
         //TODO: make this dependent from the distance to CoM
         double probability = 0.03;
-        std::bernoulli_distribution isAttracted ( probability * CONFIG.timeStepSize );
+        std::bernoulli_distribution isAttracted ( probability * CONFIG.getTimeStepSize() );
 
         if ( shallLoseAttraction || isAttracted ( RNG() ) )
         {

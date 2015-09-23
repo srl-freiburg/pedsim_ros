@@ -2,23 +2,23 @@
 <!--This scenario file was created by SGDiCoP on 2014-06-18T15:11:51-->
 <scenario>
     <!--Obstacles-->
-    <obstacle x1="0" y1="0" x2="30" y2="0"/>
-    <obstacle x1="0" y1="0" x2="0" y2="30"/>
-    <obstacle x1="0" y1="30" x2="30" y2="30"/>
-    <obstacle x1="30" y1="30" x2="30" y2="0"/>
+    <obstacle x1="0.5" y1="0.5" x2="30.5" y2="0.5"/>
+    <obstacle x1="0.5" y1="0.5" x2="0.5" y2="30.5"/>
+    <obstacle x1="0.5" y1="30.5" x2="30.5" y2="30.5"/>
+    <obstacle x1="30.5" y1="30.5" x2="30.5" y2="0.5"/>
     <!--Waypoints (incl. WaitingQueues)-->
-    <waypoint id="a" x="5" y="5" r="2"/>
-    <waypoint id="b" x="5" y="20" r="2"/>
-    <waypoint id="c" x="20" y="20" r="2"/>
-    <waypoint id="d" x="20" y="5" r="2"/>
+    <waypoint id="a" x="5.5" y="5.5" r="2"/>
+    <waypoint id="b" x="5.5" y="20.5" r="2"/>
+    <waypoint id="c" x="20.5" y="20.5" r="2"/>
+    <waypoint id="d" x="20.5" y="5.5" r="2"/>
 
-    <waypoint id="start" x="14" y="5" r="2"/>
-    <waypoint id="goal" x="25" y="27" r="2"/>
+    <waypoint id="start" x="14.5" y="5.5" r="2"/>
+    <waypoint id="goal" x="25.5" y="27.5" r="2"/>
 
     <!--Attractions-->
     <!--Agents-->
     <!--AgentClusters-->
-    <agent x="14" y="6" n="1" dx="0" dy="0" type="2">
+    <agent x="13.5" y="10.5" n="1" dx="0" dy="0" type="2">
         <addwaypoint id="goal"/>
         <addwaypoint id="start"/>
 
@@ -27,16 +27,26 @@
         <addwaypoint id="c"/>
         <addwaypoint id="d"/> -->
     </agent>
-    <agent x="8" y="21" n="20" dx="15" dy="15" type="3">
+
+    <agent x="20.5" y="10.5" n="30" dx="15" dy="15" type="3">
         <addwaypoint id="a"/>
         <addwaypoint id="b"/>
     </agent>
-    <agent x="22" y="21" n="20" dx="15" dy="15" type="3">
+    <agent x="10.5" y="20.5" n="30" dx="16" dy="15" type="3">
         <addwaypoint id="a"/>
         <addwaypoint id="b"/>
     </agent>
-    <agent x="12" y="11" n="40" dx="15" dy="15" type="3">
+
+    <!-- <agent x="8.5" y="18.5" n="30" dx="15" dy="15" type="3">
         <addwaypoint id="a"/>
         <addwaypoint id="b"/>
     </agent>
+    <agent x="18.5" y="20.5" n="30" dx="20" dy="20" type="3">
+        <addwaypoint id="a"/>
+        <addwaypoint id="b"/>
+    </agent>
+    <agent x="12.5" y="11.5" n="20" dx="20" dy="20" type="3">
+        <addwaypoint id="a"/>
+        <addwaypoint id="b"/>
+    </agent> -->
 </scenario>

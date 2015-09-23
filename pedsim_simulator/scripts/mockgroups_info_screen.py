@@ -3,9 +3,9 @@
 import rospy
 import tf
 
-from pedsim_msgs.msg import TrackedPersons
-from pedsim_msgs.msg import TrackedGroup
-from pedsim_msgs.msg import TrackedGroups
+from spencer_tracking_msgs.msg import TrackedPersons
+from spencer_tracking_msgs.msg import TrackedGroup
+from spencer_tracking_msgs.msg import TrackedGroups
 
 
 def groups_sender():
@@ -14,14 +14,15 @@ def groups_sender():
     global group_id
 
     pub_groups = rospy.Publisher(
-        '/fake/tracked_groups', TrackedGroups, queue_size=1)
+        '/spencer/perception/tracked_groups', TrackedGroups, queue_size=1)
     sub_agents_poses = rospy.Subscriber(
-        '/fake/tracked_persons', TrackedPersons, ReadAgents, queue_size=1)
+        '/spencer/perception/tracked_persons', TrackedPersons, ReadAgents, queue_size=1)
     listener = tf.TransformListener()
     r = rospy.Rate(10)  # 10hz
 
     readagents = 0
     while not rospy.is_shutdown():
+        # rospy.loginfo("#Sending Groups")
         r.sleep()
 
 # Reading the Agents, associate them to a single group, and send
@@ -42,11 +43,18 @@ def ReadAgents(arg):
     groups.header.stamp = rospy.Time.now()
 
     group_id = 0
+
     # createGroup(arg.tracks, [1, 2, 3, 4])
+
     createGroup(arg.tracks, [1, 2])
     createGroup(arg.tracks, [1, 3])
     createGroup(arg.tracks, [1, 4])
     createGroup(arg.tracks, [1, 5])
+
+    # createGroup(arg.tracks, [5, 6])
+    # createGroup(arg.tracks, [7, 8])
+    # createGroup(arg.tracks, [9, 10])
+    # createGroup(arg.tracks, [11, 12])
     pub_groups.publish(groups)
 
 

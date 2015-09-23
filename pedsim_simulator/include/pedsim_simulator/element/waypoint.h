@@ -34,7 +34,7 @@
 
 
 #include <pedsim_simulator/element/scenarioelement.h>
-#include <libpedsim/ped_waypoint.h>
+#include <pedsim/ped_waypoint.h>
 
 
 class Waypoint : public ScenarioElement, public Ped::Twaypoint

@@ -1,13 +1,16 @@
-cmake_minimum_required(VERSION 2.6)
-project(pedsim_simulator)
+CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
+PROJECT(pedsim_simulator)
 
-add_definitions(-Wall -Wunused -std=c++0x -pipe) # C++ 11 is required
+ADD_DEFINITIONS(-Wall -Wunused -std=c++0x -pipe) # C++ 11 is required
 
 set( PEDSIM_SIMULATOR_DEPENDENCIES
     roscpp
     rospy
     std_msgs
+    pedsim
     pedsim_msgs
+    pedsim_srvs
+    std_srvs
     visualization_msgs
     animated_marker_msgs
     nav_msgs
@@ -20,19 +23,20 @@ set( PEDSIM_SIMULATOR_DEPENDENCIES
 find_package(catkin REQUIRED COMPONENTS ${PEDSIM_SIMULATOR_DEPENDENCIES})
 
 # add qt4 to the project
-find_package(Boost REQUIRED)
-find_package(Qt4 REQUIRED)
-find_package(Eigen REQUIRED)
+FIND_PACKAGE(Boost REQUIRED)
+FIND_PACKAGE(Qt4 REQUIRED)
+FIND_PACKAGE(Eigen REQUIRED)
 
-catkin_package(CATKIN_DEPENDS ${PEDSIM_SIMULATOR_DEPENDENCIES})
+INCLUDE(${QT_USE_FILE})
 
-include(${QT_USE_FILE})
+catkin_package(
+ CATKIN_DEPENDS ${PEDSIM_SIMULATOR_DEPENDENCIES}
+ INCLUDE_DIRS include
+)
+
 include_directories(include)
 include_directories(${Eigen_INCLUDE_DIRS})
-include_directories(
-    ${catkin_INCLUDE_DIRS}
-    ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty
-)
+include_directories(${catkin_INCLUDE_DIRS})
 
 set(SOURCES
 	src/simulator.cpp
@@ -102,26 +106,22 @@ set(MOC_FILES
 	include/pedsim_simulator/waypointplanner/queueingplanner.h
 )
 
-# Compile the basic pedsim library
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/libpedsim)
 
 QT4_WRAP_CPP(MOC_SRCS_UI ${MOC_FILES})
 
-
-## executables
-add_executable(simulator ${SOURCES} ${MOC_SRCS_UI} ${QT_RESOURCES_CPP} ${QT_FORMS_HPP} ${QT_MOC_HPP})
-target_link_libraries(simulator ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY}
-    pedsim ${BOOST_LIBRARIES} ${catkin_LIBRARIES}
+add_executable(simulator ${SOURCES}  ${MOC_SRCS_UI} ${QT_RESOURCES_CPP} ${QT_FORMS_HPP} ${QT_MOC_HPP})
+add_dependencies(simulator ${catkin_EXPORTED_TARGETS})
+TARGET_LINK_LIBRARIES(simulator
+    ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY} ${QT_QTOPENGL_LIBRARY} ${QWT_LIBRARIES}
+    ${BOOST_LIBRARIES} ${OpenCV_LIBS} ${catkin_LIBRARIES}
 )
 
-add_executable(robot_teleop_keyboard src/robot_teleop_keyboard.cpp)
-target_link_libraries(robot_teleop_keyboard ${BOOST_LIBRARIES} ${catkin_LIBRARIES})
+add_executable(simulate_diff_drive_robot src/simulate_diff_drive_robot.cpp)
+add_dependencies(simulate_diff_drive_robot ${catkin_EXPORTED_TARGETS})
+TARGET_LINK_LIBRARIES(simulate_diff_drive_robot ${BOOST_LIBRARIES} ${catkin_LIBRARIES})
 
-add_executable(robot_teleop_joystick src/robot_teleop_joystick.cpp)
-target_link_libraries(robot_teleop_joystick ${BOOST_LIBRARIES} ${catkin_LIBRARIES})
 
-## installations
-install(TARGETS simulator robot_teleop_joystick robot_teleop_keyboard
+INSTALL(TARGETS simulator simulate_diff_drive_robot
     RUNTIME DESTINATION bin
     LIBRARY DESTINATION lib
 )
