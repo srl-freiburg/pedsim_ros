@@ -1,5 +1,8 @@
 # `pedsim_ros`
 
+![Crowd](/pedsim_simulator/images/crowd1.png?raw=true "Pedsim Crowd") ![Costmap](/pedsim_simulator/images/costmap.png?raw=true "Pedsim Costmap")
+
+
 ROS meta package for PedSim (Pedestrian Simulator) based on social force
 model of [Helbing et. al](http://arxiv.org/pdf/cond-mat/9805244.pdf). The implementation is based on a modified version of Christian Gloor's [libpedsim](http://pedsim.silmaril.org/) library which has been extended to include additional behaviors and activities. All visualization is done via [Rviz](http://wiki.ros.org/rviz).
 
