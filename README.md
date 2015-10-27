@@ -11,6 +11,7 @@ model of [Helbing et. al](http://arxiv.org/pdf/cond-mat/9805244.pdf). The implem
 - Eigen3
 
 ### Dependencies
+* Pedsim library, available from [https://github.com/srl-freiburg/pedsim.git](https://github.com/srl-freiburg/pedsim.git)
 * Animated markers available from [https://github.com/srl-freiburg/animated_markers](https://github.com/srl-freiburg/animated_markers)
 * (Optional) Rviz plugins for tracking and social activity visualization. Installable via our `rviz` fork from [https://github.com/srl-freiburg/rviz](https://github.com/srl-freiburg/rviz).
 
@@ -20,6 +21,7 @@ Clone into you catkin workspace, then catkin magic;
 
 ```
 cd [workspace]/src
+git clone https://github.com/srl-freiburg/pedsim.git
 git clone https://github.com/srl-freiburg/pedsim_ros.git
 git clone https://github.com/srl-freiburg/rviz.git
 git clone https://github.com/srl-freiburg/animated_markers.git
