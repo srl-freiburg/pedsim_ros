@@ -20,7 +20,7 @@ boost::mutex mutex;
 void updateLoop() {
     ros::Rate rate(g_updateRate);
     double dt = g_simulationFactor / g_updateRate;
-    
+
     while(true) {
         // Get current pose
         double x = g_currentPose.getOrigin().x();
@@ -30,7 +30,7 @@ void updateLoop() {
         // Get requested translational and rotational velocity
         double v, omega;
         {
-            boost::mutex::scoped_lock lock(mutex);                    
+            boost::mutex::scoped_lock lock(mutex);
             v = g_currentTwist.linear.x;
             omega = g_currentTwist.angular.z;
         }
@@ -54,7 +54,7 @@ void updateLoop() {
 
 
 void onTwistReceived(const geometry_msgs::Twist::ConstPtr& twist) {
-    boost::mutex::scoped_lock lock(mutex);                    
+    boost::mutex::scoped_lock lock(mutex);
     g_currentTwist = *twist;
 }
 
@@ -66,11 +66,11 @@ int main(int argc, char **argv)
     ros::NodeHandle privateHandle("~");
 
     // Process parameters
-    privateHandle.param<std::string>("world_frame", g_worldFrame, "world");
+    privateHandle.param<std::string>("world_frame", g_worldFrame, "odom");
     privateHandle.param<std::string>("robot_frame", g_robotFrame, "base_footprint");
 
     privateHandle.param<double>("simulation_factor", g_simulationFactor, 1.0); // set to e.g. 2.0 for 2x speed
-    privateHandle.param<double>("update_rate", g_updateRate, 25.0); // in Hz    
+    privateHandle.param<double>("update_rate", g_updateRate, 25.0); // in Hz
 
     double initialX, initialY, initialTheta;
     privateHandle.param<double>("pose_initial_x", initialX, 0.0);

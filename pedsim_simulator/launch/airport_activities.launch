@@ -1,42 +1,18 @@
 <launch>
-   <!-- PEDSIM -->
     <arg name="teleop" default="false"/>
-    <arg name="publish_default_laser_collision_status" default="true"/>
 
-    <rosparam command="load" file="$(find irl_engine)/config/behavior_params.yaml" />
+    <group ns="/pedbot/control">
+      <!-- robot driving controller -->
+      <node name="driving_controller" type="simulate_diff_drive_robot" pkg="pedsim_simulator" output="screen">
+          <param name="pose_initial_x" value="4.0"/>
+          <param name="pose_initial_y" value="4.0"/>
+          <param name="pose_initial_theta" value="0.70"/>
+      </node>
 
-
-    <!-- SPENCER robot-related -->
-    <group ns="/spencer/control">
-        <include file="$(find spencer_description)/launch/publish.launch"/>
-        <include file="$(find spencer_description)/launch/joints.launch"/>
-
-        <!-- SPENCER simulated driving controller -->
-        <include file="$(find spencer_control)/launch/driving_controller.launch" ns="/spencer/control" clear_params="true">
-          <arg name="simulated" value="true"/>
-        </include>
-
-        <!-- Override parameters -->
-        <group ns="driving_controller">
-          <param name="pose_initial_x" value="1.50"/>
-          <param name="pose_initial_y" value="2.60"/>
-          <param name="pose_initial_theta" value="0"/>
-          <param name="max_linear_velocity" value="1.6"/>
-          <param name="max_angular_velocity" value="1.0"/>
-        </group>
-
-         <!-- Collision status for front and rear laser -->
-        <group if="$(arg publish_default_laser_collision_status)">
-          <!-- Publish collision-free collision status for front and rear laser at 35 Hz -->
-          <node pkg="rostopic" type="rostopic" name="rostopic_laser_front" args="pub /spencer/control/collision/laser_front spencer_control_msgs/CollisionStatus '{collisionError: false, collisionWarning: false}' -r 35" />
-          <node pkg="rostopic" type="rostopic" name="rostopic_laser_rear" args="pub /spencer/control/collision/laser_rear spencer_control_msgs/CollisionStatus '{collisionError: false, collisionWarning: false}' -r 35" />
-        </group>
-
-        <!-- RQT robot steering -->
-        <node pkg="rqt_robot_steering" name="rqt_robot_steering" type="rqt_robot_steering" if="$(arg teleop)">
-          <remap from="/cmd_vel" to="/spencer/control/drive_velocity"/>
-        </node>
-
+      <!-- RQT robot steering -->
+      <node pkg="rqt_robot_steering" name="rqt_robot_steering" type="rqt_robot_steering" if="$(arg teleop)">
+          <remap from="/cmd_vel" to="/pedbot/control/cmd_vel"/>
+      </node>
     </group>
 
     <!-- Rviz -->
