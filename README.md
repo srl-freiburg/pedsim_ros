@@ -12,7 +12,7 @@ model of [Helbing et. al](http://arxiv.org/pdf/cond-mat/9805244.pdf). The implem
 
 ### Dependencies
 * Animated markers available from [https://github.com/srl-freiburg/animated_markers](https://github.com/srl-freiburg/animated_markers)
-* Rviz plugins for tracking and social activity visualization. Installable via our `rviz` fork from [https://github.com/srl-freiburg/rviz](https://github.com/srl-freiburg/rviz).
+* (Optional) Rviz plugins for tracking and social activity visualization. Installable via our `rviz` fork from [https://github.com/srl-freiburg/rviz](https://github.com/srl-freiburg/rviz).
 
 
 ### Installation
@@ -24,13 +24,13 @@ git clone https://github.com/srl-freiburg/pedsim_ros.git
 git clone https://github.com/srl-freiburg/rviz.git
 git clone https://github.com/srl-freiburg/animated_markers.git
 cd ..
-catkin_make
+catkin_make  # or use the awesome catkin build -c
 ```
 
 
 ### Sample usage
 ```
-roslaunch pedsim_simulator social_contexts.launch
+roslaunch pedsim_simulator simple_pedestrians.launch
 ```
 
 #### TODO
