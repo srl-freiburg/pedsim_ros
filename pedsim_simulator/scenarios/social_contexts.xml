@@ -20,8 +20,8 @@
     <waypoint id="c" x="20" y="20" r="2"/>
 	
     <!--Attractions-->
-<!--     <attraction id="Bookshop" x="27" y="15" width="5" height="10" strength="1"/> -->
-<!--     <attraction id="starbucksky" x="3" y="15" width="5" height="10" strength="2"/> -->
+    <attraction id="Bookshop" x="27" y="15" width="5" height="10" strength="1"/>
+    <attraction id="starbucksky" x="3" y="15" width="5" height="10" strength="2"/>
     <!--Agents-->
     <agent x="4" y="4" n="1" dx="0" dy="0" type="2">
         <addwaypoint id="robot_start"/>

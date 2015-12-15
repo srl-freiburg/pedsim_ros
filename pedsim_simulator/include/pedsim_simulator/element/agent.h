@@ -35,7 +35,9 @@
 #include <pedsim_simulator/element/scenarioelement.h>
 #include <libpedsim/ped_agent.h>
 #include <QGraphicsRectItem>	// TODO -remove qgraphics dependencies
+#ifndef Q_MOC_RUN 
 #include <ros/ros.h>
+#endif
 
 // Forward Declarations
 class AgentGroup;

@@ -32,6 +32,7 @@
 #ifndef UTILITIES_H
 #define UTILITIES_H
 
+#ifndef Q_MOC_RUN
 #include <boost/random.hpp>
 #include <boost/random/normal_distribution.hpp>
 #include <boost/random/uniform_real.hpp>
@@ -39,7 +40,7 @@
 
 #include <boost/shared_ptr.hpp>
 #include <boost/foreach.hpp>
-
+#endif
 #include <ctime>
 
 

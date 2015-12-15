@@ -53,8 +53,9 @@
 #include <geometry_msgs/TwistWithCovariance.h>
 #include <animated_marker_msgs/AnimatedMarker.h>
 #include <animated_marker_msgs/AnimatedMarkerArray.h>
-
+#ifndef Q_MOC_RUN 
 #include <boost/foreach.hpp>
+#endif
 #include <functional>
 
 #include <pedsim_simulator/scene.h>
