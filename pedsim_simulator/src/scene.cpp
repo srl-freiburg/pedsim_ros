@@ -43,7 +43,7 @@
 #include <pedsim_simulator/force/grouprepulsionforce.h>
 #include <pedsim_simulator/force/randomforce.h>
 #include <pedsim_simulator/force/alongwallforce.h>
-#include <libpedsim/ped_tree.h>
+#include <pedsim/ped_tree.h>
 #include <QGraphicsScene>
 
 #include <ros/ros.h>
@@ -600,7 +600,7 @@ void Scene::moveAllAgents()
 
     // clean up scene if necessary
     double cleanupInterval = 2.0;
-    if ( fmod ( sceneTime, cleanupInterval ) < CONFIG.timeStepSize )
+    if ( fmod ( sceneTime, cleanupInterval ) < CONFIG.getTimeStepSize() )
         cleanupScene();
 
     // inform users that there will be an update
@@ -611,11 +611,11 @@ void Scene::moveAllAgents()
         dissolveClusters();
 
     // update scene time
-    sceneTime += CONFIG.timeStepSize;
+    sceneTime += CONFIG.getTimeStepSize();
     emit sceneTimeChanged ( sceneTime );
 
     // move the agents
-    Ped::Tscene::moveAgents ( CONFIG.timeStepSize );
+    Ped::Tscene::moveAgents ( CONFIG.getTimeStepSize() );
 
     // inform users
     emit movedAgents();
@@ -632,10 +632,10 @@ void Scene::drawObstacles ( float x1, float y1, float x2, float y2 )
     int ystep, xstep;    // the step on y and x axis
     int error;           // the error accumulated during the increment
     int errorprev;       // *vision the previous value of the error variable
-    int y = y1, x = x1;  // the line points
+    int y = y1-0.5, x = x1-0.5;  // the line points
     int ddy, ddx;        // compulsory variables: the double values of dy and dx
     int dx = x2 - x1;
-    int dy = y2 - y1;
+    int dy = y2 - y1; 
     double unit_x, unit_y;
     unit_x = 1;
     unit_y = 1;
@@ -661,7 +661,7 @@ void Scene::drawObstacles ( float x1, float y1, float x2, float y2 )
 
     ddy = 2 * dy;  // work with double values for full precision
     ddx = 2 * dx;
-    obstacle_cells_.push_back ( Location ( x1, y1 ) );
+    obstacle_cells_.push_back ( Location ( x, y ) );
 
     if ( ddx >= ddy )
     {

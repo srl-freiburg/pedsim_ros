@@ -30,7 +30,7 @@
 */
 
 #include <pedsim_simulator/element/queueingwaypoint.h>
-#include <libpedsim/ped_agent.h>
+#include <pedsim/ped_agent.h>
 
 
 

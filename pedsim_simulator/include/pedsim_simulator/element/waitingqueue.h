@@ -34,7 +34,7 @@
 
 
 #include <pedsim_simulator/element/waypoint.h>
-#include <libpedsim/ped_vector.h>
+#include <pedsim/ped_vector.h>
 #include <QPointF>
 #ifndef Q_MOC_RUN
 #include <ros/ros.h>

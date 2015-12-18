@@ -46,6 +46,7 @@
 #include <visualization_msgs/MarkerArray.h>
 #include <std_msgs/Header.h>
 #include <std_msgs/ColorRGBA.h>
+#include <std_srvs/Empty.h>
 #include <nav_msgs/GridCells.h>
 #include <geometry_msgs/Point.h>
 #include <geometry_msgs/PoseWithCovariance.h>
@@ -97,16 +98,28 @@ public:
     void publishAttractions();
     void publishRobotPosition();
 
-    /// subscriber helpers
-    // Drive robot based on topic messages
-    void callbackRobotCommand(const pedsim_msgs::AgentState::ConstPtr &msg);
+    // callbacks
+    bool onPauseSimulation(std_srvs::Empty::Request& request, std_srvs::Empty::Response& response);
+    bool onUnpauseSimulation(std_srvs::Empty::Request& request, std_srvs::Empty::Response& response);
+
+    // update robot position based upon data from TF
+    void updateRobotPositionFromTF();
+
+    // update parameters online from ROS param servr
+    void updateConfigParams();
 
 private:
 
     // robot agent
     Agent *robot_;
 
+    tf::StampedTransform last_robot_pose_; // pose of robot in previous timestep
+    geometry_msgs::Quaternion last_robot_orientation_;  // only updated while robot is moving
+
     ros::NodeHandle nh_;
+
+    // simulation state
+    bool paused_;
 
     /// publishers
     // - data messages
@@ -115,6 +128,10 @@ private:
     ros::Publisher pub_tracked_persons_;	// in spencer format
     ros::Publisher pub_tracked_groups_;
     ros::Publisher pub_social_activities_;
+
+    // provided services
+    ros::ServiceServer srv_pause_simulation_;
+    ros::ServiceServer srv_unpause_simulation_;
 
     // - visualization related messages (e.g. markers)
     ros::Publisher pub_attractions_;
@@ -126,8 +143,8 @@ private:
     ros::Publisher pub_agent_arrows_;
     ros::Publisher pub_robot_position_;
 
-    /// subscribers
-    ros::Subscriber sub_robot_command_;
+    // Transform listener for retrieving externally provided robot position
+    boost::shared_ptr< tf::TransformListener > transform_listener_;
 
     // - Covenient object to handling quaternions
     OrientationHandlerPtr orientation_handler_;

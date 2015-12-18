@@ -168,38 +168,47 @@ void Agent::updateState()
 
 void Agent::move ( double h )
 {
-	if ( getType() == Ped::Tagent::ROBOT && CONFIG.robot_mode == RobotMode::TELEOPERATION)
-	{
-		Ped::Tagent::setForceFactorSocial ( 0.1 );
-		Ped::Tagent::setForceFactorObstacle ( 0.1 );
-		Ped::Tagent::setForceFactorDesired ( 0.1 );
-
-        if ( SCENE.getTime() >= CONFIG.robot_wait_time )
-        {
-            Ped::Tagent::move ( h );
-        }
-	}
-	else if ( getType() == Ped::Tagent::ROBOT && CONFIG.robot_mode == RobotMode::CONTROLLED )
-	{
-		Ped::Tagent::setForceFactorSocial ( 0.1 * CONFIG.forceSocial );
-		Ped::Tagent::setForceFactorObstacle ( 350 );
-		// Ped::Tagent::setForceFactorDesired ( 1.5 );
-        Ped::Tagent::setForceFactorDesired ( 0.5 );
-
-		if ( SCENE.getTime() >= CONFIG.robot_wait_time )
-        {
-            Ped::Tagent::move ( h );
-        }
-	}
-    else if ( getType() == Ped::Tagent::ROBOT && CONFIG.robot_mode == RobotMode::SOCIAL_DRIVE )
+    if ( getType() == Ped::Tagent::ROBOT )
     {
-        Ped::Tagent::setForceFactorSocial ( CONFIG.forceSocial * 0.7 );
-        Ped::Tagent::setForceFactorObstacle ( 350 );
-        Ped::Tagent::setForceFactorDesired ( 4.2 );
+        if ( CONFIG.robot_mode == RobotMode::TELEOPERATION)
+        {
+            Ped::Tagent::setForceFactorSocial ( 0.1 );
+            Ped::Tagent::setForceFactorObstacle ( 0.1 );
+            Ped::Tagent::setForceFactorDesired ( 0.1 );
 
-        Ped::Tagent::setVmax ( 1.8 );
-		Ped::Tagent::SetRadius( 0.5 );
-        Ped::Tagent::move ( h );
+            // NOTE: Moving is now done by setting x, y position directly in simulator.cpp
+            // Robot's vx, vy will still be set for the social force model to work properly wrt. other agents.
+
+            // FIXME: This is a very hacky way of making the robot "move" (=update position in hash tree) without actually moving it
+            double vx = getvx(), vy = getvy();
+
+            setvx(0); setvy(0);
+            Ped::Tagent::move( h );
+            setvx(vx); setvy(vy);
+        }
+        else if ( CONFIG.robot_mode == RobotMode::CONTROLLED )
+        {
+            //Ped::Tagent::setForceFactorSocial ( 0.1 * CONFIG.forceSocial );
+            //Ped::Tagent::setForceFactorObstacle ( 35 );
+            //Ped::Tagent::setForceFactorDesired ( 0.5 );
+
+            if ( SCENE.getTime() >= CONFIG.robot_wait_time )
+            {
+                Ped::Tagent::move ( h );
+            }
+
+            // NOTE - never move in the controlled mode (all moving done by planner)
+        }
+        else if ( CONFIG.robot_mode == RobotMode::SOCIAL_DRIVE )
+        {
+            Ped::Tagent::setForceFactorSocial ( CONFIG.forceSocial * 0.7 );
+            Ped::Tagent::setForceFactorObstacle ( 35 );
+            Ped::Tagent::setForceFactorDesired ( 4.2 );
+
+            Ped::Tagent::setVmax ( 1.2 );
+            Ped::Tagent::SetRadius( 0.5 );
+            Ped::Tagent::move ( h );
+        }
     }
 	else if ( getType() != Ped::Tagent::ROBOT )
 	{

@@ -34,7 +34,7 @@
 
 
 #include <pedsim_simulator/element/scenarioelement.h>
-#include <libpedsim/ped_obstacle.h>
+#include <pedsim/ped_obstacle.h>
 #include <QGraphicsLineItem>
 
 

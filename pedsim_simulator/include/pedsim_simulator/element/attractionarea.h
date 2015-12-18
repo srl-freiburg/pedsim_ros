@@ -34,7 +34,7 @@
 
 
 #include <pedsim_simulator/element/scenarioelement.h>
-#include <libpedsim/ped_vector.h>
+#include <pedsim/ped_vector.h>
 #include <QSizeF>
 
 

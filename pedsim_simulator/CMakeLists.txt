@@ -7,7 +7,10 @@ set( PEDSIM_SIMULATOR_DEPENDENCIES
     roscpp
     rospy
     std_msgs
+    pedsim
     pedsim_msgs
+    pedsim_srvs
+    std_srvs
     visualization_msgs
     animated_marker_msgs
     nav_msgs
@@ -28,14 +31,12 @@ INCLUDE(${QT_USE_FILE})
 
 catkin_package(
  CATKIN_DEPENDS ${PEDSIM_SIMULATOR_DEPENDENCIES}
+ INCLUDE_DIRS include
 )
 
 include_directories(include)
 include_directories(${Eigen_INCLUDE_DIRS})
-include_directories(
-  ${catkin_INCLUDE_DIRS}
-  ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty
-)
+include_directories(${catkin_INCLUDE_DIRS})
 
 set(SOURCES
 	src/simulator.cpp
@@ -105,18 +106,14 @@ set(MOC_FILES
 	include/pedsim_simulator/waypointplanner/queueingplanner.h
 )
 
-# Compile the basic pedsim library
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/libpedsim)
 
 QT4_WRAP_CPP(MOC_SRCS_UI ${MOC_FILES})
 
 add_executable(simulator ${SOURCES}  ${MOC_SRCS_UI} ${QT_RESOURCES_CPP} ${QT_FORMS_HPP} ${QT_MOC_HPP})
-
-add_executable(robot_teleop_keyboard src/robot_teleop_keyboard.cpp)
-TARGET_LINK_LIBRARIES(robot_teleop_keyboard ${BOOST_LIBRARIES} ${catkin_LIBRARIES})
-INSTALL(TARGETS simulator robot_teleop_keyboard
-    RUNTIME DESTINATION bin
-    LIBRARY DESTINATION lib
+add_dependencies(simulator ${catkin_EXPORTED_TARGETS})
+TARGET_LINK_LIBRARIES(simulator
+    ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY} ${QT_QTOPENGL_LIBRARY} ${QWT_LIBRARIES}
+    ${BOOST_LIBRARIES} ${OpenCV_LIBS} ${catkin_LIBRARIES}
 )
 
 add_executable(robot_teleop_joystick_vxy src/robot_teleop_joystick_vxy.cpp)
@@ -133,11 +130,13 @@ INSTALL(TARGETS simulator robot_teleop_joystick
     LIBRARY DESTINATION lib
 )
 
-# add_executable(robot_teleop_joystick src/robot_teleop_joystick.cpp)
-
-TARGET_LINK_LIBRARIES(simulator
-    ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY} ${QT_QTOPENGL_LIBRARY} ${QWT_LIBRARIES} pedsim
-    ${BOOST_LIBRARIES} ${OpenCV_LIBS} ${catkin_LIBRARIES}
+add_executable(simulate_diff_drive_robot src/simulate_diff_drive_robot.cpp)
+add_dependencies(simulate_diff_drive_robot ${catkin_EXPORTED_TARGETS})
+TARGET_LINK_LIBRARIES(simulate_diff_drive_robot ${BOOST_LIBRARIES} ${catkin_LIBRARIES})
+INSTALL(TARGETS simulator simulate_diff_drive_robot
+    RUNTIME DESTINATION bin
+    LIBRARY DESTINATION lib
 )
+
 
 ## Unit Tests

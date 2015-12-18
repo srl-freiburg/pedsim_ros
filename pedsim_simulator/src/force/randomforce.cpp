@@ -91,7 +91,7 @@ Ped::Tvector RandomForce::getForce ( Ped::Tvector walkingDirection )
     double progress = fmod ( time, fadingDuration );
 
     // create a new fading goal when necessary
-    if ( progress < CONFIG.timeStepSize )
+    if ( progress < CONFIG.getTimeStepSize() )
     {
         lastDeviation = nextDeviation;
         nextDeviation = computeNewDeviation();
