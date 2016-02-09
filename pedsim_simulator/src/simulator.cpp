@@ -329,7 +329,7 @@ void Simulator::updateRobotPositionFromTF ()
             // transform_listener_->lookupTransform("world", "base_footprint", ros::Time(0), tfTransform);
             transform_listener_->lookupTransform("odom", "base_footprint", ros::Time(0), tfTransform);
         }
-        catch(tf::TransformException e) {
+        catch(tf::TransformException& e) {
             ROS_WARN_STREAM_THROTTLE(5.0, "TF lookup from base_footprint to odom failed. Reason: " << e.what());
             return;
         }
@@ -774,7 +774,7 @@ void Simulator::publishObstacles()
         p.y = loc.y;
         p.z = 0.0;
         obstacles.cells.push_back ( p );
-        it++;
+        ++it;
     }
 
     pub_obstacles_.publish ( obstacles );
@@ -813,7 +813,7 @@ void Simulator::publishWalls()
         p.y = loc.y+0.5;
         p.z = 0.0;
         marker.points.push_back ( p );
-        it++;
+        ++it;
     }
 
     pub_walls_.publish ( marker );

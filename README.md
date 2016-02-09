@@ -8,7 +8,7 @@ model of [Helbing et. al](http://arxiv.org/pdf/cond-mat/9805244.pdf). The implem
 
 
 ### Requirements
-- ROS ( including visualization rools -> `rviz` )
+- ROS (currently tested on `hydro`, `indigo` )
 - C++11 compiler
 - Qt4
 - Eigen3
@@ -16,7 +16,8 @@ model of [Helbing et. al](http://arxiv.org/pdf/cond-mat/9805244.pdf). The implem
 ### Dependencies
 * Pedsim library, available from [https://github.com/srl-freiburg/pedsim.git](https://github.com/srl-freiburg/pedsim.git)
 * Animated markers available from [https://github.com/srl-freiburg/animated_markers](https://github.com/srl-freiburg/animated_markers)
-* (Optional) Rviz plugins for tracking and social activity visualization. Installable via our `rviz` fork from [https://github.com/srl-freiburg/rviz](https://github.com/srl-freiburg/rviz).
+* (**Optional**) Rviz additional costmap visualization colors (jet, hot, etc). Installable via our `rviz` fork from [https://github.com/srl-freiburg/rviz](https://github.com/srl-freiburg/rviz).
+* (**Optional**) Rviz plugins for visualizing tracked people, groups, social relations, etc. See [plugin page for more details](https://github.com/spencer-project/spencer_people_tracking/tree/master/visualization/spencer_tracking_rviz_plugin)
 
 
 ### Installation
@@ -26,12 +27,13 @@ Clone into you catkin workspace, then catkin magic;
 cd [workspace]/src
 git clone https://github.com/srl-freiburg/pedsim.git
 git clone https://github.com/srl-freiburg/pedsim_ros.git
+# remaining clones are optional
 git clone https://github.com/srl-freiburg/rviz.git
 git clone https://github.com/srl-freiburg/animated_markers.git
+git clone https://github.com/spencer-project/spencer_people_tracking.git
 cd ..
-catkin_make  # or use the awesome catkin build -c
+catkin build -c
 ```
-
 
 ### Sample usage
 ```
@@ -39,7 +41,6 @@ roslaunch pedsim_simulator simple_pedestrians.launch
 ```
 
 #### TODO
-- [ ] Make more documentation
 - [ ] Add additional crowd behaviours
 - [ ] Scenario build tool (GUI)
 
@@ -54,7 +55,6 @@ roslaunch pedsim_simulator simple_pedestrians.launch
 * Dizan Vasquez
 * Sven Wehner
 
-The package is still a **work in progress** and pull requests are highly
-encouraged.
+The package is a **work in progress** used in research prototyping. Pull requests and/or issues are highly encouraged.
 
 
