@@ -1,22 +1,21 @@
-# `pedsim_ros`
+# `Pedestrian Simulator`
 <img src=https://github.com/srl-freiburg/pedsim_ros/blob/master/pedsim_simulator/images/crowd1.png width=400/> | <img src=https://github.com/srl-freiburg/pedsim_ros/blob/master/pedsim_simulator/images/costmap.png width=400/>
 
-ROS meta package for PedSim (Pedestrian Simulator) based on social force
-model of [Helbing et. al](http://arxiv.org/pdf/cond-mat/9805244.pdf). The implementation is based on a modified version of Christian Gloor's [libpedsim](http://pedsim.silmaril.org/) library which has been extended to include additional behaviors and activities. All visualization is done via [Rviz](http://wiki.ros.org/rviz).
+A ROS meta package for a pedestrian simulator based on social force
+model of [Helbing et. al](http://arxiv.org/pdf/cond-mat/9805244.pdf). The implementation is based on a modified version of Christian Gloor's [libpedsim](http://pedsim.silmaril.org/) library which has been extended to include additional behaviors and activities. All visualization is done via [Rviz](http://wiki.ros.org/rviz). The package is useful for robot navigation experiments with crowded scenes which are hard to acquire in practice.
 
 
 ### Requirements
-- ROS (currently tested on `hydro`, `indigo` )
+- ROS with the visualization stack (currently tested on `hydro`, `indigo` )
 - C++11 compiler
 - Qt4
 - Eigen3
 
 ### Dependencies
-* (**Optional**) Rviz additional costmap visualization colors (jet, hot, etc). Installable via our `rviz` fork from [https://github.com/srl-freiburg/rviz](https://github.com/srl-freiburg/rviz).
+* (**Optional**) Our rviz fork with  additional costmap visualization colors (jet, hot, etc). Installable from [https://github.com/srl-freiburg/rviz](https://github.com/srl-freiburg/rviz).
 
 
 ### Installation
-Clone into you catkin workspace, then catkin magic;
 
 ```
 cd [workspace]/src
