@@ -1,0 +1,29 @@
+<package>
+  <name>animated_marker_rviz_plugin</name>
+  <version>0.1.0</version>
+
+  <description>
+     <p>RViz plugin for displaying animated mesh markers. Based upon code from the rviz default_plugin for displaying mesh markers.
+     Animations are ONLY supported in OGRE *.mesh + *.skeleton files, which can be exported using various third-party plugins
+     from e.g. 3ds max or Blender.</p>
+     <p>Works similar to visualization_msgs/Marker; just use animated_marker_msgs/AnimatedMarker instead.</p>
+  </description>
+
+  <maintainer email="linder@cs.uni-freiburg.de">Timm Linder</maintainer>
+
+  <author email="linder@cs.uni-freiburg.de">Timm Linder</author>
+  <author>Dave Hershberger</author>
+  <author>David Gossow</author>
+  <author>Josh Faust</author>
+
+  <license>BSD</license>
+  
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <build_depend>rviz</build_depend>
+  <run_depend>rviz</run_depend>
+
+  <export>
+      <rviz plugin="${prefix}/plugin_description.xml"/>
+  </export>
+</package>

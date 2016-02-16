@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<package>
+  <name>pedsim</name>
+  <version>0.0.1</version>
+  <description>The pedsim package</description>
+  <maintainer email="palmieri@cs.uni-freiburg.de">palmieri</maintainer>
+  <license>BSD</license>
+
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <build_depend>roscpp</build_depend>
+  
+  <run_depend>roscpp</run_depend>
+
+
+</package>

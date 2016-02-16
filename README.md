@@ -14,10 +14,7 @@ model of [Helbing et. al](http://arxiv.org/pdf/cond-mat/9805244.pdf). The implem
 - Eigen3
 
 ### Dependencies
-* Pedsim library, available from [https://github.com/srl-freiburg/pedsim.git](https://github.com/srl-freiburg/pedsim.git)
-* Animated markers available from [https://github.com/srl-freiburg/animated_markers](https://github.com/srl-freiburg/animated_markers)
 * (**Optional**) Rviz additional costmap visualization colors (jet, hot, etc). Installable via our `rviz` fork from [https://github.com/srl-freiburg/rviz](https://github.com/srl-freiburg/rviz).
-* (**Optional**) Rviz plugins for visualizing tracked people, groups, social relations, etc. See [plugin page for more details](https://github.com/spencer-project/spencer_people_tracking/tree/master/visualization/spencer_tracking_rviz_plugin)
 
 
 ### Installation
@@ -25,12 +22,9 @@ Clone into you catkin workspace, then catkin magic;
 
 ```
 cd [workspace]/src
-git clone https://github.com/srl-freiburg/pedsim.git
 git clone https://github.com/srl-freiburg/pedsim_ros.git
 # remaining clones are optional
 git clone https://github.com/srl-freiburg/rviz.git
-git clone https://github.com/srl-freiburg/animated_markers.git
-git clone https://github.com/spencer-project/spencer_people_tracking.git
 cd ..
 catkin build -c
 ```

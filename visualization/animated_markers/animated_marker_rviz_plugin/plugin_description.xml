@@ -1,0 +1,10 @@
+<library path="lib/libanimated_marker_rviz_plugin">
+
+  <class name="animated_marker_rviz_plugin/AnimatedMarkerArray" type="animated_marker_rviz_plugin::MarkerArrayDisplay" base_class_type="rviz::Display">
+    <description>
+      Displays animated mesh markers
+    </description>
+    <message_type>animated_marker_msgs/AnimatedMarkerArray</message_type>
+  </class>
+
+</library>
