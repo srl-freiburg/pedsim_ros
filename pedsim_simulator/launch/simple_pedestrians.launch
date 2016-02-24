@@ -2,7 +2,6 @@
   <arg name="teleop" default="true"/>
 
   <!-- params -->
-  <rosparam command="load" file="$(find pedsim_simulator)/config/simulation_parameters.yaml" />
   <param name="/pedsim/scene_file" value="$(find pedsim_simulator)scenarios/social_contexts.xml" type="string"/>
   <param name="/use_sim_time" value="false"/>
 
