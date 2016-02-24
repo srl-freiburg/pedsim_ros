@@ -1,8 +1,10 @@
 <?xml version="1.0"?>
 <package>
   <name>pedsim_simulator</name>
-  <version>0.0.3</version>
-  <description>Pedestrian Simulator</description>
+  <version>0.1.0</version>
+  <description>
+    Pedestrian Simulator: a social force model based simulation of pedestrians and their activities including, walking, grouping, etc
+  </description>
 
   <maintainer email="okal@cs.uni-freiburg.de">Billy Okal</maintainer>
   <maintainer email="omar@email.todo">Omar Islas</maintainer>
@@ -26,6 +28,7 @@
   <build_depend>tf</build_depend>
   <build_depend>animated_marker_msgs</build_depend>
   <build_depend>cmake_modules</build_depend>
+  <build_depend>dynamic_reconfigure</build_depend>
 
   <run_depend>cmake_modules</run_depend>
   <run_depend>animated_marker_msgs</run_depend>
@@ -40,5 +43,6 @@
   <run_depend>visualization_msgs</run_depend>
   <run_depend>nav_msgs</run_depend>
   <run_depend>geometry_msgs</run_depend>
+  <run_depend>dynamic_reconfigure</run_depend>
 
 </package>

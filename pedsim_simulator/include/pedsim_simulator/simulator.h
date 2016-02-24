@@ -70,6 +70,10 @@
 #include <pedsim_simulator/agentstatemachine.h>
 #include <pedsim_simulator/orientationhandler.h>
 
+#include <dynamic_reconfigure/server.h>
+#include <pedsim_simulator/PedsimSimulatorConfig.h>
+
+
 
 /// -----------------------------------------------------------------
 /// \class Simulator
@@ -104,8 +108,10 @@ public:
     // update robot position based upon data from TF
     void updateRobotPositionFromTF();
 
-    // update parameters online from ROS param servr
-    void updateConfigParams();
+protected:
+
+    void reconfigureCB(pedsim_simulator::PedsimSimulatorConfig& config, uint32_t level);
+    dynamic_reconfigure::Server<pedsim_simulator::PedsimSimulatorConfig>* dsrv_;
 
 private:
 

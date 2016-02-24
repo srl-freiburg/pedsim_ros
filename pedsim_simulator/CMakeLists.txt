@@ -1,9 +1,10 @@
-CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
-PROJECT(pedsim_simulator)
+cmake_minimum_required(VERSION 2.8)
 
-ADD_DEFINITIONS(-Wall -Wunused -std=c++0x -pipe) # C++ 11 is required
+project(pedsim_simulator)
 
-set( PEDSIM_SIMULATOR_DEPENDENCIES
+add_definitions(-Wall -Wunused -std=c++0x -pipe) # C++ 11 is required
+
+set(PEDSIM_SIMULATOR_DEPENDENCIES
     roscpp
     rospy
     std_msgs
@@ -17,21 +18,24 @@ set( PEDSIM_SIMULATOR_DEPENDENCIES
     geometry_msgs
     tf
     cmake_modules
+    dynamic_reconfigure
 )
 
 ## Find catkin macros and libraries
 find_package(catkin REQUIRED COMPONENTS ${PEDSIM_SIMULATOR_DEPENDENCIES})
+find_package(Boost REQUIRED)
+find_package(Qt4 REQUIRED)
+find_package(Eigen REQUIRED)
 
-# add qt4 to the project
-FIND_PACKAGE(Boost REQUIRED)
-FIND_PACKAGE(Qt4 REQUIRED)
-FIND_PACKAGE(Eigen REQUIRED)
+# dynamic reconfigure parameters
+generate_dynamic_reconfigure_options(config/PedsimSimulator.cfg)
 
-INCLUDE(${QT_USE_FILE})
+
+include(${QT_USE_FILE})
 
 catkin_package(
- CATKIN_DEPENDS ${PEDSIM_SIMULATOR_DEPENDENCIES}
- INCLUDE_DIRS include
+    CATKIN_DEPENDS ${PEDSIM_SIMULATOR_DEPENDENCIES}
+    INCLUDE_DIRS include
 )
 
 include_directories(include)
@@ -111,17 +115,18 @@ QT4_WRAP_CPP(MOC_SRCS_UI ${MOC_FILES})
 
 add_executable(simulator ${SOURCES}  ${MOC_SRCS_UI} ${QT_RESOURCES_CPP} ${QT_FORMS_HPP} ${QT_MOC_HPP})
 add_dependencies(simulator ${catkin_EXPORTED_TARGETS})
-TARGET_LINK_LIBRARIES(simulator
+add_dependencies(simulator ${PROJECT_NAME}_gencfg)
+target_link_libraries(simulator
     ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY} ${QT_QTOPENGL_LIBRARY} ${QWT_LIBRARIES}
     ${BOOST_LIBRARIES} ${OpenCV_LIBS} ${catkin_LIBRARIES}
 )
 
 add_executable(simulate_diff_drive_robot src/simulate_diff_drive_robot.cpp)
 add_dependencies(simulate_diff_drive_robot ${catkin_EXPORTED_TARGETS})
-TARGET_LINK_LIBRARIES(simulate_diff_drive_robot ${BOOST_LIBRARIES} ${catkin_LIBRARIES})
+target_link_libraries(simulate_diff_drive_robot ${BOOST_LIBRARIES} ${catkin_LIBRARIES})
 
 
-INSTALL(TARGETS simulator simulate_diff_drive_robot
+install(TARGETS simulator simulate_diff_drive_robot
     RUNTIME DESTINATION bin
     LIBRARY DESTINATION lib
 )

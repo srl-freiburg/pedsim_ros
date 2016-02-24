@@ -122,36 +122,17 @@ bool Simulator::initializeSimulation()
         return false;
     }
 
-    /// load the remaining parameters
-    // loadConfigParameters();
-
     /// cleanup containers
     agent_activities_.clear();
 
+    // Setup dynamic reconfigure callbacks
+    dsrv_ = new dynamic_reconfigure::Server<pedsim_simulator::PedsimSimulatorConfig>(nh_);
+    dynamic_reconfigure::Server<pedsim_simulator::PedsimSimulatorConfig>::CallbackType cb = boost::bind(
+        &Simulator::reconfigureCB, this, _1, _2);
+    dsrv_->setCallback(cb);
+
     return true;
 }
-
-/// -----------------------------------------------------------------
-/// \brief loadConfigParameters
-/// \details Load configuration parameter from ROS parameter server
-/// -----------------------------------------------------------------
-// void Simulator::loadConfigParameters()
-// {
-//     double robot_wait_time;
-//     ros::param::param<double> ( "/pedsim/robot_wait_time", robot_wait_time, 10.0 );
-//     CONFIG.robot_wait_time = robot_wait_time;
-
-//     double max_robot_speed;
-//     ros::param::param<double> ( "/pedsim/max_robot_speed", max_robot_speed, 2.0 );
-//     CONFIG.max_robot_speed = max_robot_speed;
-
-//     ros::param::param<double> ( "/pedsim/update_rate", CONFIG.updateRate, 25.0 );
-//     ros::param::param<double> ( "/pedsim/simulation_factor", CONFIG.simulationFactor, 1.0 );
-
-//     double teleop_flag;
-//     ros::param::param<double> ( "/pedsim/teleop_flag", teleop_flag, 0.0 );
-//     CONFIG.robot_mode = static_cast<RobotMode> ( teleop_flag );
-// }
 
 /// -----------------------------------------------------------------
 /// \brief runSimulation
@@ -162,9 +143,6 @@ void Simulator::runSimulation()
     ros::Rate r(CONFIG.updateRate); // Hz
 
     while (ros::ok()) {
-        // get the latest config parameters from the param server
-        updateConfigParams();
-
         if (SCENE.getTime() < 0.1) {
             // setup the robot
             for (Agent* a : SCENE.getAgents()) {
@@ -211,33 +189,48 @@ void Simulator::runSimulation()
     }
 }
 
-void Simulator::updateConfigParams()
+
+
+/**
+ * @brief reconfigure call back
+ * @details Callback function that receives parameters from the dynamic parameter
+ * server to run the simulation. Useful for experimentation with the model parameters
+ */
+void Simulator::reconfigureCB(pedsim_simulator::PedsimSimulatorConfig& config, uint32_t level)
 {
-    // ROS_INFO("Loading parameters from the param server");
+    CONFIG.updateRate = config.update_rate;
+    CONFIG.simulationFactor = config.simulation_factor;
 
-    // double teleop_flag;
-    // ros::param::param<double> ( "/pedsim/teleop_flag", teleop_flag, 0.0 );
-    // CONFIG.robot_mode = static_cast<RobotMode> ( teleop_flag );
+    // → Forces
+    CONFIG.forceObstacle = config.force_obstacle;
+    CONFIG.sigmaObstacle = config.sigma_obstacle;
+    CONFIG.forceSocial = config.force_social;
+    CONFIG.forceGroupGaze = config.force_group_gaze;
+    CONFIG.forceGroupCoherence = config.force_group_coherence;
+    CONFIG.forceGroupRepulsion = config.force_group_repulsion;
+    CONFIG.forceRandom = config.force_random;
+    CONFIG.forceAlongWall = config.force_wall;
 
-    // ros::param::param<double> ( "/pedsim/update_rate", CONFIG.updateRate, 25.0 );
-    // ros::param::param<double> ( "/pedsim/simulation_factor", CONFIG.simulationFactor, 1.0 );
-    // ros::param::param<double> ( "/pedsim/max_robot_speed", CONFIG.max_robot_speed, 2.0 );
-    // ros::param::param<int> ( "/pedsim/robot_wait_time", CONFIG.robot_wait_time, 10 );
+    // robot control
+    CONFIG.robot_mode = static_cast<RobotMode>(config.robot_mode);
+    CONFIG.robot_wait_time = config.robot_wait_time;
+    CONFIG.max_robot_speed = config.max_robot_speed;
 
-    // // Social force simulation parameters and additional custom forces
-    // ros::param::param<double> ( "/pedsim/obstacle_force", CONFIG.forceObstacle, 10.0 );
-    // ros::param::param<double> ( "/pedsim/obstacle_sigma", CONFIG.sigmaObstacle, 0.2 );
-    // ros::param::param<double> ( "/pedsim/social_force", CONFIG.forceSocial, 5.1 );
-    // ros::param::param<double> ( "/pedsim/group_gaze_force", CONFIG.forceGroupGaze, 3.0 );
-    // ros::param::param<double> ( "/pedsim/group_coherence_force", CONFIG.forceGroupCoherence, 2.0 );
-    // ros::param::param<double> ( "/pedsim/group_repulsion_force", CONFIG.forceGroupRepulsion, 1.0 );
-    // ros::param::param<double> ( "/pedsim/random_force", CONFIG.forceRandom, 0.1 );
-    // ros::param::param<double> ( "/pedsim/along_wall_force", CONFIG.forceAlongWall, 2.0 );
-    // ros::param::param<double> ( "/pedsim/cell_width", CONFIG.cell_width, 1.0 );
-    // ros::param::param<double> ( "/pedsim/cell_height", CONFIG.cell_height, 1.0 );
-    // ros::param::param<bool> ( "/pedsim/enable_groups", CONFIG.groups_enabled, true );
-    // ros::param::param<double> ( "/pedsim/group_size_lambda", CONFIG.group_size_lambda, 1.7 );
-    // ros::param::param<double> ( "/pedsim/wait_time_beta", CONFIG.wait_time_beta, 0.2 );
+    // enable/disable groups behaviour
+    CONFIG.groups_enabled = config.enable_groups;
+
+    // cells
+    CONFIG.cell_width = config.cell_width;
+    CONFIG.cell_height = config.cell_height;
+
+    // internal model parameters (distributions, etc)
+    CONFIG.group_size_lambda = config.group_size_lambda;
+    CONFIG.wait_time_beta = config.wait_time_beta;
+
+    // puase or unpause the simulation
+    if (paused_ != config.paused) {
+        paused_ = config.paused;
+    }
 }
 
 /// -----------------------------------------------------------------

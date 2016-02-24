@@ -81,11 +81,6 @@ public:
     // TODO - change to std::unordered_map
     QMap<QString, double> getForceMap() const;
 
-    //TODO: make member variables protected and add getter functions
-    //TODO - add distribution parameters here
-    double group_size_lambda;
-    double wait_time_beta;
-
     double getTimeStepSize()
     {
         return simulationFactor / updateRate;
@@ -93,11 +88,11 @@ public:
 
     // Attributes
 public:
-    // → Simulation
+    // Simulation
     double updateRate;
     double simulationFactor;
 
-    // → Forces
+    // Forces
     double forceObstacle;
     double sigmaObstacle;
     double forceSocial;
@@ -118,6 +113,10 @@ public:
     // cells
     double cell_width;
     double cell_height;
+
+    // distribution parameters
+    double group_size_lambda;
+    double wait_time_beta;
 };
 
 #endif
