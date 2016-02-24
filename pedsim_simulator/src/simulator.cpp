@@ -167,7 +167,7 @@ void Simulator::runSimulation()
 
         if (SCENE.getTime() < 0.1) {
             // setup the robot
-            BOOST_FOREACH (Agent* a, SCENE.getAgents()) {
+            for (Agent* a : SCENE.getAgents()) {
                 if (a->getType() == Ped::Tagent::ROBOT) {
                     robot_ = a;
 
@@ -201,8 +201,7 @@ void Simulator::runSimulation()
 
         // only publish the obstacles in the beginning
         // FIXME: Need to be re-published continously if the fixed frame in Rviz is moving!
-        //if ( SCENE.getTime() < 10 )
-        {
+        if (SCENE.getTime() < 20) {
             publishAttractions();
             publishWalls();
         }
@@ -271,7 +270,7 @@ void Simulator::updateAgentActivities()
 
     //TODO - add a switch between using simulated activities of showing detected ones
 
-    foreach (Agent* a, SCENE.getAgents()) {
+    for (Agent* a : SCENE.getAgents()) {
         // activity of the current agent
         AgentStateMachine::AgentState sact = a->getStateMachine()->getCurrentState();
 
@@ -362,7 +361,7 @@ void Simulator::publishSocialActivities()
     pedsim_msgs::SocialActivity group_moving_activity;
     pedsim_msgs::SocialActivity individual_moving_activity;
 
-    foreach (Agent* a, SCENE.getAgents()) {
+    for (Agent* a : SCENE.getAgents()) {
         /// activity of the current agent
         AgentStateMachine::AgentState sact = a->getStateMachine()->getCurrentState();
 
@@ -420,7 +419,7 @@ void Simulator::publishData()
     tracked_people.header = tracked_people_header;
     tracked_people.header.frame_id = "odom";
 
-    foreach (Agent* a, SCENE.getAgents()) {
+    for (Agent* a : SCENE.getAgents()) {
         if (a->getType() == Ped::Tagent::ROBOT)
             continue;
 
@@ -465,14 +464,14 @@ void Simulator::publishData()
     tracked_groups.header.frame_id = "odom";
 
     QList<AgentGroup*> sim_groups = SCENE.getGroups();
-    foreach (AgentGroup* ag, sim_groups) {
+    for (AgentGroup* ag : sim_groups) {
         pedsim_msgs::TrackedGroup group;
         group.group_id = ag->getId();
         // group.age = 0; //NOTE  not simulated so far
         // Ped::Tvector com = ag->getCenterOfMass();
         // group.centerOfGravity = ... // TODO - convert CoM to Pose with Covariance
 
-        BOOST_FOREACH (Agent* m, ag->getMembers()) {
+        for (Agent* m : ag->getMembers()) {
             group.track_ids.push_back(m->getId());
         }
 
@@ -533,7 +532,7 @@ void Simulator::publishAgents()
     all_header.stamp = ros::Time::now();
     all_status.header = all_header;
 
-    foreach (Agent* a, SCENE.getAgents()) {
+    for (Agent* a : SCENE.getAgents()) {
         /// walking people message
         animated_marker_msgs::AnimatedMarker marker;
         marker.mesh_use_embedded_materials = true;
@@ -673,7 +672,7 @@ void Simulator::publishGroupVisuals()
     QList<AgentGroup*> groups = SCENE.getGroups();
 
     /// visualize groups (sketchy)
-    foreach (AgentGroup* ag, groups) {
+    for (AgentGroup* ag : groups) {
         // skip empty ones
         if (ag->memberCount() < 1)
             continue;
@@ -686,7 +685,7 @@ void Simulator::publishGroupVisuals()
         p1.z = 1.4;
         visualization_msgs::MarkerArray lines_array;
 
-        foreach (Agent* m, ag->getMembers()) {
+        for (Agent* m : ag->getMembers()) {
             visualization_msgs::Marker marker;
             marker.header.frame_id = "odom";
             marker.header.stamp = ros::Time();

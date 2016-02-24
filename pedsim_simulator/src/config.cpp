@@ -31,12 +31,10 @@
 
 #include <pedsim_simulator/config.h>
 
-
 // initialize static value
 Config* Config::Config::instance = nullptr;
 
-
-Config::Config ( QObject* parent )
+Config::Config(QObject* parent)
 {
     updateRate = 25.0;
     simulationFactor = 1.0;
@@ -51,102 +49,102 @@ Config::Config ( QObject* parent )
     forceRandom = 0.1;
     forceAlongWall = 2.0;
 
-	cell_width = 1.0;
+    cell_width = 1.0;
     cell_height = 1.0;
 
     robot_mode = RobotMode::TELEOPERATION;
     robot_wait_time = 15;
-	max_robot_speed = 2.0;
+    max_robot_speed = 2.0;
 
-	groups_enabled = true;
+    groups_enabled = true;
     group_size_lambda = 1.1;
     wait_time_beta = 0.2;
 }
 
 Config& Config::getInstance()
 {
-    if ( instance == nullptr )
+    if (instance == nullptr)
         instance = new Config();
 
     return *instance;
 }
 
-void Config::setObstacleForce ( double valueIn )
+void Config::setObstacleForce(double valueIn)
 {
     forceObstacle = valueIn;
 
     // inform users
-    emit forceFactorChanged ( "obstacle", valueIn );
-    emit forceFactorObstacleChanged ( valueIn );
+    emit forceFactorChanged("obstacle", valueIn);
+    emit forceFactorObstacleChanged(valueIn);
 }
 
-void Config::setObstacleSigma ( double valueIn )
+void Config::setObstacleSigma(double valueIn)
 {
     sigmaObstacle = valueIn;
 
     // inform users
-    emit forceFactorChanged ( "obstacle_sigma", valueIn );
-    emit forceSigmaObstacleChanged ( valueIn );
+    emit forceFactorChanged("obstacle_sigma", valueIn);
+    emit forceSigmaObstacleChanged(valueIn);
 }
 
-void Config::setSocialForce ( double valueIn )
+void Config::setSocialForce(double valueIn)
 {
     forceSocial = valueIn;
 
     // inform users
-    emit forceFactorChanged ( "social", valueIn );
-    emit forceFactorSocialChanged ( valueIn );
+    emit forceFactorChanged("social", valueIn);
+    emit forceFactorSocialChanged(valueIn);
 }
 
-void Config::setGroupGazeForce ( double valueIn )
+void Config::setGroupGazeForce(double valueIn)
 {
     forceGroupGaze = valueIn;
 
     // inform users
-    emit forceFactorChanged ( "group_gaze", valueIn );
-    emit forceFactorGroupGazeChanged ( valueIn );
+    emit forceFactorChanged("group_gaze", valueIn);
+    emit forceFactorGroupGazeChanged(valueIn);
 }
 
-void Config::setGroupCoherenceForce ( double valueIn )
+void Config::setGroupCoherenceForce(double valueIn)
 {
     forceGroupCoherence = valueIn;
 
     // inform users
-    emit forceFactorChanged ( "group_coherence", valueIn );
-    emit forceFactorGroupCoherenceChanged ( valueIn );
+    emit forceFactorChanged("group_coherence", valueIn);
+    emit forceFactorGroupCoherenceChanged(valueIn);
 }
 
-void Config::setGroupRepulsionForce ( double valueIn )
+void Config::setGroupRepulsionForce(double valueIn)
 {
     forceGroupRepulsion = valueIn;
 
     // inform users
-    emit forceFactorChanged ( "group_repulsion", valueIn );
-    emit forceFactorGroupRepulsionChanged ( valueIn );
+    emit forceFactorChanged("group_repulsion", valueIn);
+    emit forceFactorGroupRepulsionChanged(valueIn);
 }
 
-void Config::setRandomForce ( double valueIn )
+void Config::setRandomForce(double valueIn)
 {
     forceRandom = valueIn;
 
     // inform users
-    emit forceFactorChanged ( "random", valueIn );
-    emit forceFactorRandomChanged ( valueIn );
+    emit forceFactorChanged("random", valueIn);
+    emit forceFactorRandomChanged(valueIn);
 }
 
-void Config::setAlongWallForce ( double valueIn )
+void Config::setAlongWallForce(double valueIn)
 {
     forceAlongWall = valueIn;
 
     // inform users
-    emit forceFactorChanged ( "alongwall", valueIn );
-    emit forceFactorAlongWallChanged ( valueIn );
+    emit forceFactorChanged("alongwall", valueIn);
+    emit forceFactorAlongWallChanged(valueIn);
 }
 
-QMap<QString,double> Config::getForceMap() const
+QMap<QString, double> Config::getForceMap() const
 {
     // create output map
-    QMap<QString,double> forceMap;
+    QMap<QString, double> forceMap;
     // → fill map
     forceMap["obstacle"] = forceObstacle;
     forceMap["obstacle_sigma"] = sigmaObstacle;

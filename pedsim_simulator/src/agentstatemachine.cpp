@@ -44,7 +44,7 @@
 
 #include <ros/ros.h>
 
-AgentStateMachine::AgentStateMachine ( Agent* agentIn )
+AgentStateMachine::AgentStateMachine(Agent* agentIn)
 {
     // initialize values
     agent = agentIn;
@@ -78,27 +78,23 @@ void AgentStateMachine::doStateTransition()
 {
     // determine new state
     // → randomly get attracted by attractions
-    if ( ( state != StateShopping ) && ( state != StateQueueing ) )
-    {
+    if ((state != StateShopping) && (state != StateQueueing)) {
         double distance = INFINITY;
         AttractionArea* attraction = nullptr;
-        bool hasGroupAttraction = checkGroupForAttractions ( &attraction );
-        if ( hasGroupAttraction )
-        {
+        bool hasGroupAttraction = checkGroupForAttractions(&attraction);
+        if (hasGroupAttraction) {
             // inherit groups' attraction
             groupAttraction = attraction;
 
             normalState = state;
-            activateState ( StateShopping );
+            activateState(StateShopping);
             return;
         }
-        else
-        {
+        else {
             //TODO: attraction must be visible!
-            attraction = SCENE.getClosestAttraction ( agent->getPosition(), &distance );
+            attraction = SCENE.getClosestAttraction(agent->getPosition(), &distance);
 
-            if ( attraction != nullptr )
-            {
+            if (attraction != nullptr) {
                 // check whether agent is attracted
                 // NOTE: The Cumulative Geometric Distribution determines the
                 //       number of Bernoulli trials needed to get one success.
@@ -108,32 +104,29 @@ void AgentStateMachine::doStateTransition()
                 // → probability dependents on strength, distance,
                 //   and whether another group member are attracted
                 double probability = baseProbability
-                                     * attraction->getStrength()
-                                     * ( ( distance<maxAttractionDist ) ? ( 1- ( distance/maxAttractionDist ) ) :0 )
-                                     * CONFIG.getTimeStepSize();
-                std::bernoulli_distribution isAttracted ( probability );
+                    * attraction->getStrength()
+                    * ((distance < maxAttractionDist) ? (1 - (distance / maxAttractionDist)) : 0)
+                    * CONFIG.getTimeStepSize();
+                std::bernoulli_distribution isAttracted(probability);
 
-                if ( isAttracted ( RNG() ) )
-                {
+                if (isAttracted(RNG())) {
                     normalState = state;
-                    activateState ( StateShopping );
+                    activateState(StateShopping);
                     return;
                 }
             }
         }
     }
     // → randomly lose attraction
-    if ( state == StateShopping )
-    {
+    if (state == StateShopping) {
         // check whether agent loses attraction
         //TODO: make this dependent from the distance to CoM
         double probability = 0.03;
-        std::bernoulli_distribution isAttracted ( probability * CONFIG.getTimeStepSize() );
+        std::bernoulli_distribution isAttracted(probability * CONFIG.getTimeStepSize());
 
-        if ( shallLoseAttraction || isAttracted ( RNG() ) )
-        {
+        if (shallLoseAttraction || isAttracted(RNG())) {
             // reactivate previous state
-            activateState ( normalState );
+            activateState(normalState);
 
             // alreade picked a new state, so nothing to do
             return;
@@ -141,35 +134,33 @@ void AgentStateMachine::doStateTransition()
     }
 
     // → operate on waypoints/destinations
-    if ( ( state == StateNone ) || agent->needNewDestination() )
-    {
+    if ((state == StateNone) || agent->needNewDestination()) {
         Ped::Twaypoint* destination = agent->updateDestination();
-        Waypoint* waypoint = dynamic_cast<Waypoint*> ( destination );
+        Waypoint* waypoint = dynamic_cast<Waypoint*>(destination);
         //TODO: move this to the agent
-        WaitingQueue* waitingQueue = dynamic_cast<WaitingQueue*> ( waypoint );
+        WaitingQueue* waitingQueue = dynamic_cast<WaitingQueue*>(waypoint);
 
-        if ( destination == nullptr )
-            activateState ( StateWaiting );
-        else if ( waitingQueue != nullptr )
-            activateState ( StateQueueing );
-        else
-        {
-            if ( agent->isInGroup() )
-                activateState ( StateGroupWalking );
+        if (destination == nullptr)
+            activateState(StateWaiting);
+        else if (waitingQueue != nullptr)
+            activateState(StateQueueing);
+        else {
+            if (agent->isInGroup())
+                activateState(StateGroupWalking);
             else
-                activateState ( StateWalking );
+                activateState(StateWalking);
         }
     }
 }
 
-void AgentStateMachine::activateState ( AgentState stateIn )
+void AgentStateMachine::activateState(AgentState stateIn)
 {
-	ROS_DEBUG("Agent %d activating state '%s' (time: %f)",
-		agent->getId(), stateToName(stateIn).toStdString().c_str(),
-		SCENE.getTime());
+    ROS_DEBUG("Agent %d activating state '%s' (time: %f)",
+        agent->getId(), stateToName(stateIn).toStdString().c_str(),
+        SCENE.getTime());
 
     // de-activate old state
-    deactivateState ( state );
+    deactivateState(state);
 
     // re-activate all forces
     agent->enableAllForces();
@@ -177,60 +168,57 @@ void AgentStateMachine::activateState ( AgentState stateIn )
     // set state
     state = stateIn;
 
-    Waypoint* destination = dynamic_cast<Waypoint*> ( agent->getCurrentDestination() );
+    Waypoint* destination = dynamic_cast<Waypoint*>(agent->getCurrentDestination());
 
-    switch ( state )
-    {
+    switch (state) {
     case StateNone:
-        agent->setWaypointPlanner ( nullptr );
+        agent->setWaypointPlanner(nullptr);
         break;
     case StateWaiting:
-        agent->setWaypointPlanner ( nullptr );
+        agent->setWaypointPlanner(nullptr);
         break;
     case StateWalking:
-        if ( individualPlanner == nullptr )
+        if (individualPlanner == nullptr)
             individualPlanner = new IndividualWaypointPlanner();
-        individualPlanner->setAgent ( agent );
-        individualPlanner->setDestination ( destination );
-        agent->setWaypointPlanner ( individualPlanner );
+        individualPlanner->setAgent(agent);
+        individualPlanner->setDestination(destination);
+        agent->setWaypointPlanner(individualPlanner);
         break;
     case StateQueueing:
-        if ( queueingPlanner == nullptr )
+        if (queueingPlanner == nullptr)
             queueingPlanner = new QueueingWaypointPlanner();
-        queueingPlanner->setAgent ( agent );
-        queueingPlanner->setDestination ( destination );
-        agent->setWaypointPlanner ( queueingPlanner );
+        queueingPlanner->setAgent(agent);
+        queueingPlanner->setDestination(destination);
+        agent->setWaypointPlanner(queueingPlanner);
         break;
     case StateGroupWalking:
-        if ( groupWaypointPlanner == nullptr )
+        if (groupWaypointPlanner == nullptr)
             groupWaypointPlanner = new GroupWaypointPlanner();
-        groupWaypointPlanner->setDestination ( destination );
-        groupWaypointPlanner->setGroup ( agent->getGroup() );
-        agent->setWaypointPlanner ( groupWaypointPlanner );
+        groupWaypointPlanner->setDestination(destination);
+        groupWaypointPlanner->setGroup(agent->getGroup());
+        agent->setWaypointPlanner(groupWaypointPlanner);
         break;
     case StateShopping:
         shallLoseAttraction = false;
-        if ( shoppingPlanner == nullptr )
+        if (shoppingPlanner == nullptr)
             shoppingPlanner = new ShoppingPlanner();
-        AttractionArea* attraction = SCENE.getClosestAttraction ( agent->getPosition() );
-        shoppingPlanner->setAgent ( agent );
-        shoppingPlanner->setAttraction ( attraction );
-        agent->setWaypointPlanner ( shoppingPlanner );
-        agent->disableForce ( "GroupCoherence" );
-        agent->disableForce ( "GroupGaze" );
+        AttractionArea* attraction = SCENE.getClosestAttraction(agent->getPosition());
+        shoppingPlanner->setAgent(agent);
+        shoppingPlanner->setAttraction(attraction);
+        agent->setWaypointPlanner(shoppingPlanner);
+        agent->disableForce("GroupCoherence");
+        agent->disableForce("GroupGaze");
 
         // keep other agents informed about the attraction
         AgentGroup* group = agent->getGroup();
-        if ( group != nullptr )
-        {
-            foreach ( Agent* member, group->getMembers() )
-            {
-                if ( member == agent )
+        if (group != nullptr) {
+            foreach (Agent* member, group->getMembers()) {
+                if (member == agent)
                     continue;
 
                 AgentStateMachine* memberStateMachine = member->getStateMachine();
-                connect ( shoppingPlanner, SIGNAL ( lostAttraction() ),
-                          memberStateMachine, SLOT ( loseAttraction() ) );
+                connect(shoppingPlanner, SIGNAL(lostAttraction()),
+                    memberStateMachine, SLOT(loseAttraction()));
             }
         }
 
@@ -238,13 +226,12 @@ void AgentStateMachine::activateState ( AgentState stateIn )
     }
 
     // inform users
-    emit stateChanged ( state );
+    emit stateChanged(state);
 }
 
-void AgentStateMachine::deactivateState ( AgentState state )
+void AgentStateMachine::deactivateState(AgentState state)
 {
-    switch ( state )
-    {
+    switch (state) {
     case StateNone:
         // nothing to do
         break;
@@ -266,16 +253,14 @@ void AgentStateMachine::deactivateState ( AgentState state )
 
         // don't worry about other group members
         AgentGroup* group = agent->getGroup();
-        if ( group != nullptr )
-        {
-            foreach ( Agent* member, group->getMembers() )
-            {
-                if ( member == agent )
+        if (group != nullptr) {
+            foreach (Agent* member, group->getMembers()) {
+                if (member == agent)
                     continue;
 
                 AgentStateMachine* memberStateMachine = member->getStateMachine();
-                disconnect ( shoppingPlanner, SIGNAL ( lostAttraction() ),
-                             memberStateMachine, SLOT ( loseAttraction() ) );
+                disconnect(shoppingPlanner, SIGNAL(lostAttraction()),
+                    memberStateMachine, SLOT(loseAttraction()));
             }
         }
 
@@ -283,36 +268,32 @@ void AgentStateMachine::deactivateState ( AgentState state )
     }
 }
 
-bool AgentStateMachine::checkGroupForAttractions ( AttractionArea** attractionOut ) const
+bool AgentStateMachine::checkGroupForAttractions(AttractionArea** attractionOut) const
 {
     AgentGroup* group = agent->getGroup();
 
     // check whether the agent is even in a group
-    if ( group == nullptr )
-    {
-        if ( attractionOut != nullptr )
+    if (group == nullptr) {
+        if (attractionOut != nullptr)
             *attractionOut = nullptr;
         return false;
     }
 
     // check all group members
-    foreach ( Agent* member, group->getMembers() )
-    {
+    foreach (Agent* member, group->getMembers()) {
         // ignore agent himself
-        if ( member == agent )
+        if (member == agent)
             continue;
 
         // check whether the group member uses ShoppingPlanner
         WaypointPlanner* planner = member->getWaypointPlanner();
-        ShoppingPlanner* typedPlanner = dynamic_cast<ShoppingPlanner*> ( planner );
-        if ( typedPlanner != nullptr )
-        {
+        ShoppingPlanner* typedPlanner = dynamic_cast<ShoppingPlanner*>(planner);
+        if (typedPlanner != nullptr) {
             AttractionArea* attraction = typedPlanner->getAttraction();
 
-            if ( attraction != nullptr )
-            {
-// 				ROS_DEBUG("Agent%1's Group Member (%2) is attracted to: %3",
-// 					agent->getId(), member->getId(), attraction->getName());
+            if (attraction != nullptr) {
+                //              ROS_DEBUG("Agent%1's Group Member (%2) is attracted to: %3",
+                //                  agent->getId(), member->getId(), attraction->getName());
                 attractionOut = &attraction;
                 return true;
             }
@@ -320,15 +301,14 @@ bool AgentStateMachine::checkGroupForAttractions ( AttractionArea** attractionOu
     }
 
     // no group member is attracted to something
-    if ( attractionOut != nullptr )
+    if (attractionOut != nullptr)
         *attractionOut = nullptr;
     return false;
 }
 
-QString AgentStateMachine::stateToName ( AgentState stateIn ) const
+QString AgentStateMachine::stateToName(AgentState stateIn) const
 {
-    switch ( stateIn )
-    {
+    switch (stateIn) {
     case StateNone:
         return "StateNone";
     case StateWaiting:

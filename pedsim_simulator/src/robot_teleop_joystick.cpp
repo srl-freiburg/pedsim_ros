@@ -36,10 +36,10 @@
 #include "boost/thread/thread.hpp"
 #include "ros/console.h"
 
-class JoyTeleop
-{
+class JoyTeleop {
 public:
     JoyTeleop();
+
 private:
     void joyCallback(const sensor_msgs::Joy::ConstPtr& joy);
     void publish();
@@ -54,13 +54,15 @@ private:
     bool zero_twist_published_;
     ros::Timer timer_;
 };
-JoyTeleop::JoyTeleop():
-    ph_("~"),
-    linear_x(2),
-    linear_y(3),
-    deadman_axis_(4),
-    l_scale_(1),
-    a_scale_(0.9)
+
+
+JoyTeleop::JoyTeleop()
+    : ph_("~")
+    , linear_x(2)
+    , linear_y(3)
+    , deadman_axis_(4)
+    , l_scale_(1)
+    , a_scale_(0.9)
 {
     ph_.param("axis_linear_x", linear_x, linear_x);
     ph_.param("axis_linear_y", linear_y, linear_y);
@@ -73,31 +75,41 @@ JoyTeleop::JoyTeleop():
     joy_sub_ = nh_.subscribe<sensor_msgs::Joy>("joy", 10, &JoyTeleop::joyCallback, this);
     timer_ = nh_.createTimer(ros::Duration(0.1), boost::bind(&JoyTeleop::publish, this));
 }
-void JoyTeleop::joyCallback(const sensor_msgs::Joy::ConstPtr& joy) {
+
+
+void JoyTeleop::joyCallback(const sensor_msgs::Joy::ConstPtr& joy)
+{
     pedsim_msgs::AgentState vel;
     deadman_pressed_ = joy->buttons[deadman_axis_];
     vel.type = 2;
     if (deadman_pressed_) {
         // vel.twist.linear.x = l_scale_*joy->axes[linear_x];
         // vel.twist.angular.z = a_scale_*joy->axes[linear_y];
-        vel.twist.linear.x = -l_scale_*joy->axes[linear_x];
-        vel.twist.linear.y = l_scale_*joy->axes[linear_y];
+        vel.twist.linear.x = -l_scale_ * joy->axes[linear_x];
+        vel.twist.linear.y = l_scale_ * joy->axes[linear_y];
         // double stepx = robot_speed * vx;
         // double stepy = robot_speed * vy;
 
         last_published_ = vel;
-    } else if (!deadman_pressed_ && !zero_twist_published_) {
+    }
+    else if (!deadman_pressed_ && !zero_twist_published_) {
         vel.twist.linear.x = 0;
         vel.twist.angular.z = 0;
         last_published_ = vel;
         zero_twist_published_ = true;
     }
 }
-void JoyTeleop::publish() {
+
+
+void JoyTeleop::publish()
+{
     boost::mutex::scoped_lock lock(publish_mutex_);
     vel_pub_.publish(last_published_);
 }
-int main(int argc, char** argv) {
+
+
+int main(int argc, char** argv)
+{
     ros::init(argc, argv, "robot_teleop_joy");
     JoyTeleop joy_teleop;
     ros::spin();

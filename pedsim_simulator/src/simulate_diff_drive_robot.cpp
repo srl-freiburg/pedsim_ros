@@ -13,19 +13,19 @@ tf::Transform g_currentPose;
 boost::shared_ptr<tf::TransformBroadcaster> g_transformBroadcaster;
 boost::mutex mutex;
 
-
 /// Simulates robot motion of a differential-drive robot with translational and rotational velocities as input
 /// These are provided in the form of a geometry_msgs::Twist, e.g. by turtlebot_teleop/turtlebot_teleop_key.
 /// The resulting robot position is published as a TF transform from world --> base_footprint frame.
-void updateLoop() {
+void updateLoop()
+{
     ros::Rate rate(g_updateRate);
     double dt = g_simulationFactor / g_updateRate;
 
-    while(true) {
+    while (true) {
         // Get current pose
         double x = g_currentPose.getOrigin().x();
         double y = g_currentPose.getOrigin().y();
-        double theta = tf::getYaw( g_currentPose.getRotation() );
+        double theta = tf::getYaw(g_currentPose.getRotation());
 
         // Get requested translational and rotational velocity
         double v, omega;
@@ -43,23 +43,22 @@ void updateLoop() {
         // Update pose
         g_currentPose.getOrigin().setX(x);
         g_currentPose.getOrigin().setY(y);
-        g_currentPose.setRotation( tf::createQuaternionFromRPY(0, 0, theta) );
+        g_currentPose.setRotation(tf::createQuaternionFromRPY(0, 0, theta));
 
         // Broadcast transform
-        g_transformBroadcaster->sendTransform( tf::StampedTransform(g_currentPose, ros::Time::now(), g_worldFrame, g_robotFrame) );
+        g_transformBroadcaster->sendTransform(tf::StampedTransform(g_currentPose, ros::Time::now(), g_worldFrame, g_robotFrame));
 
         rate.sleep();
     }
 }
 
-
-void onTwistReceived(const geometry_msgs::Twist::ConstPtr& twist) {
+void onTwistReceived(const geometry_msgs::Twist::ConstPtr& twist)
+{
     boost::mutex::scoped_lock lock(mutex);
     g_currentTwist = *twist;
 }
 
-
-int main(int argc, char **argv)
+int main(int argc, char** argv)
 {
     ros::init(argc, argv, "simulate_diff_drive_robot");
     ros::NodeHandle nodeHandle("");
@@ -79,10 +78,10 @@ int main(int argc, char **argv)
 
     g_currentPose.getOrigin().setX(initialX);
     g_currentPose.getOrigin().setY(initialY);
-    g_currentPose.setRotation( tf::createQuaternionFromRPY(0, 0, initialTheta) );
+    g_currentPose.setRotation(tf::createQuaternionFromRPY(0, 0, initialTheta));
 
     // Create ROS subscriber and TF broadcaster
-    g_transformBroadcaster.reset( new tf::TransformBroadcaster() );
+    g_transformBroadcaster.reset(new tf::TransformBroadcaster());
     ros::Subscriber twistSubscriber = nodeHandle.subscribe<geometry_msgs::Twist>("cmd_vel", 3, onTwistReceived);
 
     // Run

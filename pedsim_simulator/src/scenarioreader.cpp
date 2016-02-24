@@ -42,40 +42,35 @@
 
 #include <ros/ros.h>
 
-
 ScenarioReader::ScenarioReader()
 {
     // initialize values
     currentAgents = nullptr;
 }
 
-
-bool ScenarioReader::readFromFile ( const QString& filename )
+bool ScenarioReader::readFromFile(const QString& filename)
 {
-	ROS_DEBUG("Loading scenario file '%s'.", filename.toStdString().c_str());
+    ROS_DEBUG("Loading scenario file '%s'.", filename.toStdString().c_str());
 
     // open file
-    QFile file ( filename );
-    if ( !file.open ( QIODevice::ReadOnly | QIODevice::Text ) )
-    {
-		ROS_DEBUG("Couldn't open scenario file!");
+    QFile file(filename);
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        ROS_DEBUG("Couldn't open scenario file!");
         return false;
     }
 
     // read input
-    xmlReader.setDevice ( &file );
+    xmlReader.setDevice(&file);
 
-    while ( !xmlReader.atEnd() )
-    {
+    while (!xmlReader.atEnd()) {
         xmlReader.readNext();
         processData();
     }
 
     // check for errors
-    if ( xmlReader.hasError() )
-    {
+    if (xmlReader.hasError()) {
         // TODO - fix qstring and std string issues here to show error lines
-		// ROS_DEBUG("Error while reading scenario file: %s (line: %s)", xmlReader.errorString().toStdString().c_str(), xmlReader.lineNumber().toStdString().c_str());
+        ROS_DEBUG("Error while reading scenario file");
         return false;
     }
 
@@ -83,118 +78,103 @@ bool ScenarioReader::readFromFile ( const QString& filename )
     return true;
 }
 
-
 void ScenarioReader::processData()
 {
-    if ( xmlReader.isStartElement() )
-    {
+    if (xmlReader.isStartElement()) {
         const QString elementName = xmlReader.name().toString();
         const QXmlStreamAttributes elementAttributes = xmlReader.attributes();
 
-        if ( ( elementName == "scenario" ) || ( elementName == "welcome" ) )
-        {
+        if ((elementName == "scenario") || (elementName == "welcome")) {
             // nothing to do
         }
-        else if ( elementName == "obstacle" )
-        {
-            double x1 = elementAttributes.value ( "x1" ).toString().toDouble();
-            double y1 = elementAttributes.value ( "y1" ).toString().toDouble();
-            double x2 = elementAttributes.value ( "x2" ).toString().toDouble();
-            double y2 = elementAttributes.value ( "y2" ).toString().toDouble();
-            Obstacle* obs = new Obstacle ( x1, y1, x2, y2 );
-            SCENE.addObstacle ( obs );
-            SCENE.drawObstacles ( x1, y1, x2, y2 );
+        else if (elementName == "obstacle") {
+            double x1 = elementAttributes.value("x1").toString().toDouble();
+            double y1 = elementAttributes.value("y1").toString().toDouble();
+            double x2 = elementAttributes.value("x2").toString().toDouble();
+            double y2 = elementAttributes.value("y2").toString().toDouble();
+            Obstacle* obs = new Obstacle(x1, y1, x2, y2);
+            SCENE.addObstacle(obs);
+            SCENE.drawObstacles(x1, y1, x2, y2);
         }
-        else if ( elementName == "waypoint" )
-        {
-            QString id = elementAttributes.value ( "id" ).toString();
-            double x = elementAttributes.value ( "x" ).toString().toDouble();
-            double y = elementAttributes.value ( "y" ).toString().toDouble();
-            double r = elementAttributes.value ( "r" ).toString().toDouble();
-            AreaWaypoint* w = new AreaWaypoint ( id, x, y, r );
-            SCENE.addWaypoint ( w );
+        else if (elementName == "waypoint") {
+            QString id = elementAttributes.value("id").toString();
+            double x = elementAttributes.value("x").toString().toDouble();
+            double y = elementAttributes.value("y").toString().toDouble();
+            double r = elementAttributes.value("r").toString().toDouble();
+            AreaWaypoint* w = new AreaWaypoint(id, x, y, r);
+            SCENE.addWaypoint(w);
         }
-        else if ( elementName == "queue" )
-        {
-            QString id = elementAttributes.value ( "id" ).toString();
-            double x = elementAttributes.value ( "x" ).toString().toDouble();
-            double y = elementAttributes.value ( "y" ).toString().toDouble();
-            double directionValue = elementAttributes.value ( "direction" ).toString().toDouble();
+        else if (elementName == "queue") {
+            QString id = elementAttributes.value("id").toString();
+            double x = elementAttributes.value("x").toString().toDouble();
+            double y = elementAttributes.value("y").toString().toDouble();
+            double directionValue = elementAttributes.value("direction").toString().toDouble();
 
-            Ped::Tvector position ( x, y );
-            Ped::Tangle direction = Ped::Tangle::fromDegree ( directionValue );
+            Ped::Tvector position(x, y);
+            Ped::Tangle direction = Ped::Tangle::fromDegree(directionValue);
 
-            WaitingQueue* queue = new WaitingQueue ( id, position, direction );
-            SCENE.addWaitingQueue ( queue );
+            WaitingQueue* queue = new WaitingQueue(id, position, direction);
+            SCENE.addWaitingQueue(queue);
         }
-        else if ( elementName == "attraction" )
-        {
-            QString id = elementAttributes.value ( "id" ).toString();
-            double x = elementAttributes.value ( "x" ).toString().toDouble();
-            double y = elementAttributes.value ( "y" ).toString().toDouble();
-            double width = elementAttributes.value ( "width" ).toString().toDouble();
-            double height = elementAttributes.value ( "height" ).toString().toDouble();
-            double strength = elementAttributes.value ( "strength" ).toString().toDouble();
+        else if (elementName == "attraction") {
+            QString id = elementAttributes.value("id").toString();
+            double x = elementAttributes.value("x").toString().toDouble();
+            double y = elementAttributes.value("y").toString().toDouble();
+            double width = elementAttributes.value("width").toString().toDouble();
+            double height = elementAttributes.value("height").toString().toDouble();
+            double strength = elementAttributes.value("strength").toString().toDouble();
 
-            AttractionArea* attraction = new AttractionArea ( id );
-            attraction->setPosition ( x, y );
-            attraction->setSize ( width, height );
-            attraction->setStrength ( strength );
-            SCENE.addAttraction ( attraction );
+            AttractionArea* attraction = new AttractionArea(id);
+            attraction->setPosition(x, y);
+            attraction->setSize(width, height);
+            attraction->setStrength(strength);
+            SCENE.addAttraction(attraction);
         }
-        else if ( elementName == "agent" )
-        {
-            double x = elementAttributes.value ( "x" ).toString().toDouble();
-            double y = elementAttributes.value ( "y" ).toString().toDouble();
-            int n = elementAttributes.value ( "n" ).toString().toInt();
-            double dx = elementAttributes.value ( "dx" ).toString().toDouble();
-            double dy = elementAttributes.value ( "dy" ).toString().toDouble();
-            int type = elementAttributes.value ( "type" ).toString().toInt();
-            AgentCluster* agentCluster = new AgentCluster ( x, y, n );
-            agentCluster->setDistribution ( dx, dy );
-			
-			/// TODO - change agents Vmax distribution based on agent type
-			/// and other force parameters to realize different behaviours
-            agentCluster->setType ( static_cast<Ped::Tagent::AgentType> ( type ) );
-            SCENE.addAgentCluster ( agentCluster );
+        else if (elementName == "agent") {
+            double x = elementAttributes.value("x").toString().toDouble();
+            double y = elementAttributes.value("y").toString().toDouble();
+            int n = elementAttributes.value("n").toString().toInt();
+            double dx = elementAttributes.value("dx").toString().toDouble();
+            double dy = elementAttributes.value("dy").toString().toDouble();
+            int type = elementAttributes.value("type").toString().toInt();
+            AgentCluster* agentCluster = new AgentCluster(x, y, n);
+            agentCluster->setDistribution(dx, dy);
+
+            /// TODO - change agents Vmax distribution based on agent type
+            /// and other force parameters to realize different behaviours
+            agentCluster->setType(static_cast<Ped::Tagent::AgentType>(type));
+            SCENE.addAgentCluster(agentCluster);
             currentAgents = agentCluster;
         }
-        else if ( elementName == "addwaypoint" )
-        {
-            if ( currentAgents == nullptr )
-            {
-				ROS_DEBUG("Invalid <addwaypoint> element outside of agent element!");
+        else if (elementName == "addwaypoint") {
+            if (currentAgents == nullptr) {
+                ROS_DEBUG("Invalid <addwaypoint> element outside of agent element!");
                 return;
             }
 
             // add waypoints to current <agent> element
-            QString id = elementAttributes.value ( "id" ).toString();
-            currentAgents->addWaypoint ( SCENE.getWaypointByName ( id ) );
+            QString id = elementAttributes.value("id").toString();
+            currentAgents->addWaypoint(SCENE.getWaypointByName(id));
         }
-        else if ( elementName == "addqueue" )
-        {
-            if ( currentAgents == nullptr )
-            {
-				ROS_DEBUG("Invalid <addqueue> element outside of agent element!");
+        else if (elementName == "addqueue") {
+            if (currentAgents == nullptr) {
+                ROS_DEBUG("Invalid <addqueue> element outside of agent element!");
                 return;
             }
 
             // add waiting queue to current <agent> element
-            QString id = elementAttributes.value ( "id" ).toString();
-            currentAgents->addWaitingQueue ( SCENE.getWaitingQueueByName ( id ) );
+            QString id = elementAttributes.value("id").toString();
+            currentAgents->addWaitingQueue(SCENE.getWaitingQueueByName(id));
         }
-        else
-        {
+        else {
             // inform the user about invalid elements
-			ROS_DEBUG("Unknown element: <%s>", elementName.toStdString().c_str());
+            ROS_DEBUG("Unknown element: <%s>", elementName.toStdString().c_str());
         }
     }
-    else if ( xmlReader.isEndElement() )
-    {
+    else if (xmlReader.isEndElement()) {
         const QString elementName = xmlReader.name().toString();
 
-        if ( elementName == "agent" )
-        {
+        if (elementName == "agent") {
             currentAgents = nullptr;
         }
     }

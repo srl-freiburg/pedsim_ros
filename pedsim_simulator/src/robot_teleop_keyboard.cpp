@@ -36,13 +36,11 @@
 #include <pedsim_msgs/AgentState.h>
 #include <std_msgs/Header.h>
 
-
 #define KEYCODE_R 0x43
 #define KEYCODE_L 0x44
 #define KEYCODE_U 0x41
 #define KEYCODE_D 0x42
 #define KEYCODE_Q 0x71
-
 
 /// -----------------------------------------------------------------
 /// \class Teleop
@@ -54,7 +52,6 @@ public:
     void keyLoop();
 
 private:
-
     ros::NodeHandle nh_;
     double linear_, angular_, l_scale_, a_scale_;
     double rot_angle_;
@@ -62,42 +59,43 @@ private:
     ros::Publisher vel_pub_;
 };
 
-Teleop::Teleop() :
-    linear_(0),
-    angular_(0),
-    l_scale_(2.0),
-    a_scale_(2.0),
-    rot_angle_(90.0),
-    robot_speed(0.8) {
+Teleop::Teleop()
+    : linear_(0)
+    , angular_(0)
+    , l_scale_(2.0)
+    , a_scale_(2.0)
+    , rot_angle_(90.0)
+    , robot_speed(0.8)
+{
     // TODO(?) - add these params to launch file
     nh_.param("scale_angular", a_scale_, a_scale_);
     nh_.param("scale_linear", l_scale_, l_scale_);
-    vel_pub_ = 
-        nh_.advertise<pedsim_msgs::AgentState>("/pedsim/robot_command", 0);
+    vel_pub_ = nh_.advertise<pedsim_msgs::AgentState>("/pedsim/robot_command", 0);
 }
 
 int kfd = 0;
 struct termios cooked, raw;
 
-void quit(int sig) {
+void quit(int sig)
+{
     tcsetattr(kfd, TCSANOW, &cooked);
     ros::shutdown();
     exit(0);
 }
 
-
 // main
-int main(int argc, char **argv) {
+int main(int argc, char** argv)
+{
     ros::init(argc, argv, "robot_teleop_keyboard");
     Teleop robot;
     signal(SIGINT, quit);
     robot.keyLoop();
-    return ( 0 );
+    return (0);
 }
 
-
 // Key loop (for driving the robot)
-void Teleop::keyLoop() {
+void Teleop::keyLoop()
+{
     char c;
     bool dirty = false;
 
@@ -117,7 +115,7 @@ void Teleop::keyLoop() {
     ROS_INFO("UP | DOWN control speed (0.1 m/s steps)");
 
     // for(;;)
-    while ( true ) {
+    while (true) {
         // get the next event from the keyboard
         if (read(kfd, &c, 1) < 0) {
             perror("read():");
@@ -159,10 +157,10 @@ void Teleop::keyLoop() {
             robot_speed = 0.0;
         }
 
-        if ( rot_angle_ > 360.0 )
+        if (rot_angle_ > 360.0)
             rot_angle_ = acos(cos(rot_angle_));
 
-        if ( rot_angle_ < -360.0 )
+        if (rot_angle_ < -360.0)
             rot_angle_ = acos(cos(rot_angle_));
 
         ROS_INFO("Current Speed, Angle [%f, %f]", robot_speed, rot_angle_);
@@ -184,7 +182,7 @@ void Teleop::keyLoop() {
         astate.twist.linear.x = stepx;
         astate.twist.linear.y = stepy;
 
-        if ( dirty == true ) {
+        if (dirty == true) {
             vel_pub_.publish(astate);
             dirty = false;
         }

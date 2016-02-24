@@ -37,60 +37,57 @@
 
 #include <pedsim_simulator/utilities.h>
 
-
-class Config : public QObject
-{
+class Config : public QObject {
     Q_OBJECT
 
 protected:
-    Config ( QObject* parent = 0 );
+    Config(QObject* parent = 0);
 
-    // Singleton Design Pattern
+// Singleton Design Pattern
 #define CONFIG Config::getInstance()
 protected:
     static Config* instance;
+
 public:
     static Config& getInstance();
 
-
-    // Signals
+// Signals
 signals:
     // → Forces
-    void forceFactorChanged ( QString name, double value );
-    void forceFactorObstacleChanged ( double value );
-    void forceSigmaObstacleChanged ( double value );
-    void forceFactorSocialChanged ( double value );
-    void forceFactorGroupGazeChanged ( double value );
-    void forceFactorGroupCoherenceChanged ( double value );
-    void forceFactorGroupRepulsionChanged ( double value );
-    void forceFactorRandomChanged ( double value );
-    void forceFactorAlongWallChanged ( double value );
-
+    void forceFactorChanged(QString name, double value);
+    void forceFactorObstacleChanged(double value);
+    void forceSigmaObstacleChanged(double value);
+    void forceFactorSocialChanged(double value);
+    void forceFactorGroupGazeChanged(double value);
+    void forceFactorGroupCoherenceChanged(double value);
+    void forceFactorGroupRepulsionChanged(double value);
+    void forceFactorRandomChanged(double value);
+    void forceFactorAlongWallChanged(double value);
 
     // Slots
 public slots:
     // → Forces
-    void setObstacleForce ( double valueIn );
-    void setObstacleSigma ( double valueIn );
-    void setSocialForce ( double valueIn );
-    void setGroupGazeForce ( double valueIn );
-    void setGroupCoherenceForce ( double valueIn );
-    void setGroupRepulsionForce ( double valueIn );
-    void setRandomForce ( double valueIn );
-    void setAlongWallForce ( double valueIn );
-
+    void setObstacleForce(double valueIn);
+    void setObstacleSigma(double valueIn);
+    void setSocialForce(double valueIn);
+    void setGroupGazeForce(double valueIn);
+    void setGroupCoherenceForce(double valueIn);
+    void setGroupRepulsionForce(double valueIn);
+    void setRandomForce(double valueIn);
+    void setAlongWallForce(double valueIn);
 
     // Methods
 public:
     // TODO - change to std::unordered_map
-    QMap<QString,double> getForceMap() const;
+    QMap<QString, double> getForceMap() const;
 
     //TODO: make member variables protected and add getter functions
-	//TODO - add distribution parameters here
+    //TODO - add distribution parameters here
     double group_size_lambda;
     double wait_time_beta;
 
-    double getTimeStepSize() {
+    double getTimeStepSize()
+    {
         return simulationFactor / updateRate;
     }
 
@@ -113,7 +110,7 @@ public:
     // robot control
     RobotMode robot_mode;
     int robot_wait_time;
-	double max_robot_speed;
+    double max_robot_speed;
 
     // enable/disable groups behaviour
     bool groups_enabled;
