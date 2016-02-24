@@ -43,8 +43,6 @@ namespace Ped {
 			CHILD = 1,
 			ROBOT = 2,
 			ELDER = 3
-			// AIRPORT_CART = 4,
-			// AIRPLANE = 5
 		};
 
 
