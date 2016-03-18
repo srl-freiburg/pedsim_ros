@@ -1,9 +1,17 @@
-# `Pedestrian Simulator`
+# Pedestrian Simulator
 <img src=https://github.com/srl-freiburg/pedsim_ros/blob/master/pedsim_simulator/images/crowd1.png width=400/> | <img src=https://github.com/srl-freiburg/pedsim_ros/blob/master/pedsim_simulator/images/costmap.png width=400/>
 
 A ROS meta package for a pedestrian simulator based on social force
 model of [Helbing et. al](http://arxiv.org/pdf/cond-mat/9805244.pdf). The implementation is based on a modified version of Christian Gloor's [libpedsim](http://pedsim.silmaril.org/) library which has been extended to include additional behaviors and activities. All visualization is done via [Rviz](http://wiki.ros.org/rviz). The package is useful for robot navigation experiments with crowded scenes which are hard to acquire in practice.
 
+### Features
+- Individual walking using social force model for very large crowds in real time
+- Group walking using the extended social force model
+- Social activities simulation
+- Sensors simulation (point clouds in robot frame for people and walls)
+- XML based scene design
+- Extensive visualization using Rviz
+- Option to connect with gazebo for physics reasoning
 
 ### Requirements
 - ROS with the visualization stack (currently tested on `hydro`, `indigo` )
