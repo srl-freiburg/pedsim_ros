@@ -1,0 +1,6 @@
+<launch>
+
+    <!-- NODES -->
+    <node name="pedsim_point_clouds" pkg="pedsim_point_clouds" type="pedsim_point_clouds" output="screen"/>
+
+</launch>
