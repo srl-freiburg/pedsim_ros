@@ -1,4 +1,17 @@
 
+0.1.1 / 2016-06-04 
+==================
+
+ * Fixed point cloud sensor data problem with missing odometry topic
+ * Added sensors module for simulation point clouds
+ * Added (some) parameters to dynamic reconfigure
+ * Consolidated relavant dependencies into one place to allow single
+   clone development
+ * Many improvements on the interface
+ * Updated messages to match status of the SPENCER project 
+ * Added simple mock scripts for creating repeatable tracks and groups
+ * Cleanup many of the dependencies to have a lean setup
+
 0.0.4 / 2015-03-30
 ==================
 
