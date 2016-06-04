@@ -34,7 +34,6 @@
  * \author Billy Okal <okal@cs.uni-freiburg.de>
  */
 
-
 #include <tf/transform_listener.h> // must come first due to conflict with Boost signals
 
 /// ros
@@ -54,14 +53,12 @@
 #include <spencer_tracking_msgs/TrackedPerson.h>
 #include <spencer_tracking_msgs/TrackedPersons.h>
 
-
 /// -----------------------------------------------------------
 /// \class PedsimCloud
 /// \brief Receives data from pedsim containing obstacles and
 /// persons and published it as point clouds
 /// -----------------------------------------------------------
-class PedsimCloud
-{
+class PedsimCloud {
 public:
     PedsimCloud(const ros::NodeHandle& node)
         : nh_(node)
@@ -84,7 +81,7 @@ public:
 
         robot_position_.clear();
         robot_position_.resize(2);
-        robot_position_ = {0, 0};
+        robot_position_ = { 0, 0 };
 
         // read local zone setttings
         nh_.getParamCached("/move_base_node/local_costmap/width", local_width_);
@@ -103,9 +100,9 @@ public:
     void run();
 
     // subscriber callbacks
-    void callbackGridCells(const nav_msgs::GridCells::ConstPtr &msg);
-    void callbackTrackedPersons(const spencer_tracking_msgs::TrackedPersons::ConstPtr &msg);
-    void callbackRobotOdom(const nav_msgs::Odometry::ConstPtr &msg);
+    void callbackGridCells(const nav_msgs::GridCells::ConstPtr& msg);
+    void callbackTrackedPersons(const spencer_tracking_msgs::TrackedPersons::ConstPtr& msg);
+    void callbackRobotOdom(const nav_msgs::Odometry::ConstPtr& msg);
 
 private:
     ros::NodeHandle nh_;
@@ -132,10 +129,8 @@ private:
     boost::shared_ptr<tf::TransformListener> transform_listener_;
 
 protected:
-
     // check if a point is in the local zone of the robot
     bool inLocalZone(const std::array<double, 2>& point);
-
 };
 
 /// -----------------------------------------------------------
@@ -145,13 +140,11 @@ protected:
 void PedsimCloud::run()
 {
     ros::Rate r(30); // Hz
-    while(ros::ok())
-    {
+    while (ros::ok()) {
         ros::spinOnce();
         r.sleep();
     }
 }
-
 
 /// -----------------------------------------------------------
 /// \function inLocalZone
@@ -178,7 +171,7 @@ bool PedsimCloud::inLocalZone(const std::array<double, 2>& point)
 /// \function callbackGridCells
 /// \brief Receives grid cells fro pedsim to convert into pcs
 /// -----------------------------------------------------------
-void PedsimCloud::callbackGridCells(const nav_msgs::GridCells::ConstPtr &msg)
+void PedsimCloud::callbackGridCells(const nav_msgs::GridCells::ConstPtr& msg)
 {
     const unsigned int mplex = 200;
     int num_points = msg->cells.size() * mplex;
@@ -206,30 +199,27 @@ void PedsimCloud::callbackGridCells(const nav_msgs::GridCells::ConstPtr &msg)
     std::uniform_real_distribution<float> float_dist(0, 2);
     std::uniform_real_distribution<float> wide_dist(0, 1);
 
-     // Get the positions of people relative to the robot via TF transform
+    // Get the positions of people relative to the robot via TF transform
     tf::StampedTransform tfTransform;
     try {
         transform_listener_->lookupTransform("base_footprint", "odom", ros::Time(0), tfTransform);
     }
-    catch(tf::TransformException e) {
+    catch (tf::TransformException& e) {
         ROS_WARN_STREAM_THROTTLE(5.0, "TF lookup from base_footprint to odom failed. Reason: " << e.what());
         return;
     }
 
-    int index=0;
-    for(unsigned int i = 0; i < msg->cells.size(); i++)
-    {
+    int index = 0;
+    for (unsigned int i = 0; i < msg->cells.size(); i++) {
         geometry_msgs::Point cell = msg->cells[i];
-        std::array<double, 2> obstacle = {cell.x, cell.y};
+        std::array<double, 2> obstacle = { cell.x, cell.y };
         const bool inside = inLocalZone(obstacle);
 
-        for (unsigned int j = 0;  j < mplex; j++)
-        {
+        for (unsigned int j = 0; j < mplex; j++) {
             // positions relative the robot (local)
-            if (inside)
-            {
+            if (inside) {
                 tf::Pose source;
-                source.setOrigin(tf::Vector3(cell.x + wide_dist(generator) , cell.y + wide_dist(generator), 0));
+                source.setOrigin(tf::Vector3(cell.x + wide_dist(generator), cell.y + wide_dist(generator), 0));
                 tf::Matrix3x3 identity;
                 identity.setIdentity();
                 source.setBasis(identity);
@@ -238,14 +228,14 @@ void PedsimCloud::callbackGridCells(const nav_msgs::GridCells::ConstPtr &msg)
 
                 cloud_local.points[index].x = result.getOrigin().x();
                 cloud_local.points[index].y = result.getOrigin().y();
-                cloud_local.points[index].z = cell.z + float_dist(generator);  // random points in a line
+                cloud_local.points[index].z = cell.z + float_dist(generator); // random points in a line
                 cloud_local.channels[0].values[index] = 80;
             }
 
             // global positions
             cloud_global.points[index].x = cell.x + wide_dist(generator);
             cloud_global.points[index].y = cell.y + wide_dist(generator);
-            cloud_global.points[index].z = cell.z + float_dist(generator);  // random points in a line
+            cloud_global.points[index].z = cell.z + float_dist(generator); // random points in a line
             cloud_global.channels[0].values[index] = 50;
 
             index++;
@@ -259,13 +249,11 @@ void PedsimCloud::callbackGridCells(const nav_msgs::GridCells::ConstPtr &msg)
     pub_point_cloud_global_.publish(cloud_global);
 }
 
-
-
 /// -----------------------------------------------------------
 /// \function callbackTrackedPersons
 /// \brief Receives tracked persons messages and saves them
 /// -----------------------------------------------------------
-void PedsimCloud::callbackTrackedPersons(const spencer_tracking_msgs::TrackedPersons::ConstPtr &msg)
+void PedsimCloud::callbackTrackedPersons(const spencer_tracking_msgs::TrackedPersons::ConstPtr& msg)
 {
     const unsigned int mplex = 100;
     int num_points = msg->tracks.size() * mplex;
@@ -298,27 +286,24 @@ void PedsimCloud::callbackTrackedPersons(const spencer_tracking_msgs::TrackedPer
     try {
         transform_listener_->lookupTransform("base_footprint", "odom", ros::Time(0), tfTransform);
     }
-    catch(tf::TransformException e) {
+    catch (tf::TransformException& e) {
         ROS_WARN_STREAM_THROTTLE(5.0, "TFP lookup from base_footprint to odom failed. Reason: " << e.what());
         return;
     }
 
     int index = 0;
-    for(unsigned int i = 0; i < msg->tracks.size(); i++)
-    {
+    for (unsigned int i = 0; i < msg->tracks.size(); i++) {
         spencer_tracking_msgs::TrackedPerson p = msg->tracks[i];
-        std::array<double, 2> person = {p.pose.pose.position.x, p.pose.pose.position.y};
+        std::array<double, 2> person = { p.pose.pose.position.x, p.pose.pose.position.y };
         const bool inside = inLocalZone(person);
 
-        for (unsigned int j = 0;  j < mplex; j++)
-        {
+        for (unsigned int j = 0; j < mplex; j++) {
             // positions relative the robot (local)
-            if (inside)
-            {
+            if (inside) {
                 tf::Pose source;
                 source.setOrigin(tf::Vector3(p.pose.pose.position.x + wide_dist(generator),
-                                             p.pose.pose.position.y + wide_dist(generator),
-                                             0));
+                    p.pose.pose.position.y + wide_dist(generator),
+                    0));
                 tf::Matrix3x3 identity;
                 identity.setIdentity();
                 source.setBasis(identity);
@@ -327,38 +312,36 @@ void PedsimCloud::callbackTrackedPersons(const spencer_tracking_msgs::TrackedPer
 
                 cloud_local.points[index].x = result.getOrigin().x();
                 cloud_local.points[index].y = result.getOrigin().y();
-                cloud_local.points[index].z = float_dist(generator);  // random points in a line
+                cloud_local.points[index].z = float_dist(generator); // random points in a line
                 cloud_local.channels[0].values[index] = int_dist(generator);
             }
 
             // global
             cloud_global.points[index].x = p.pose.pose.position.x + wide_dist(generator);
             cloud_global.points[index].y = p.pose.pose.position.y + wide_dist(generator);
-            cloud_global.points[index].z = float_dist(generator);  // random points in a line
+            cloud_global.points[index].z = float_dist(generator); // random points in a line
             cloud_global.channels[0].values[index] = int_dist(generator);
 
             index++;
         }
     }
 
-     // avoid publishing empty local clouds
+    // avoid publishing empty local clouds
     if (cloud_local.channels[0].values.size() > 1)
         pub_people_cloud_local_.publish(cloud_local);
 
     pub_people_cloud_global_.publish(cloud_global);
 }
 
-
 /// -----------------------------------------------------------
 /// \function callbackRobotOdom
 /// \brief Receives robot position and cache it for use later
 /// -----------------------------------------------------------
-void PedsimCloud::callbackRobotOdom(const nav_msgs::Odometry::ConstPtr &msg)
+void PedsimCloud::callbackRobotOdom(const nav_msgs::Odometry::ConstPtr& msg)
 {
     robot_position_[0] = msg->pose.pose.position.x;
     robot_position_[1] = msg->pose.pose.position.y;
 }
-
 
 /// -----------------------------------------------------------
 /// main

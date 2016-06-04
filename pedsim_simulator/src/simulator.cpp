@@ -531,7 +531,6 @@ void Simulator::publishAgents()
         marker.mesh_use_embedded_materials = true;
         marker.header.frame_id = "odom";
         marker.header.stamp = ros::Time();
-        // marker.ns = "pedsim";
         marker.id = a->getId();
         marker.type = animated_marker_msgs::AnimatedMarker::MESH_RESOURCE;
         marker.mesh_resource = "package://pedsim_simulator/images/animated_walking_man.mesh";
@@ -548,7 +547,6 @@ void Simulator::publishAgents()
         visualization_msgs::Marker arrow;
         arrow.header.frame_id = "odom";
         arrow.header.stamp = ros::Time();
-        // arrow.ns = "pedsim";
         arrow.id = a->getId() + 3000;
 
         arrow.pose.position.x = a->getx();
@@ -682,7 +680,6 @@ void Simulator::publishGroupVisuals()
             visualization_msgs::Marker marker;
             marker.header.frame_id = "odom";
             marker.header.stamp = ros::Time();
-            // marker.ns = "pedsim";
             marker.id = m->getId() + 1000;
 
             marker.color.a = 1.0;
