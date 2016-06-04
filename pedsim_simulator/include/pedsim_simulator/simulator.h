@@ -48,6 +48,7 @@
 #include <std_msgs/ColorRGBA.h>
 #include <std_srvs/Empty.h>
 #include <nav_msgs/GridCells.h>
+#include <nav_msgs/Odometry.h>
 #include <geometry_msgs/Point.h>
 #include <geometry_msgs/PoseWithCovariance.h>
 #include <geometry_msgs/PoseStamped.h>

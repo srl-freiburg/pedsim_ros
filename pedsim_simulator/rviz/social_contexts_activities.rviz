@@ -5,6 +5,7 @@ Panels:
     Property Tree Widget:
       Expanded:
         - /Grid1/Offset1
+        - /RobotFrame1
       Splitter Ratio: 0.712794
     Tree Height: 835
   - Class: rviz/Selection
@@ -25,7 +26,7 @@ Panels:
     Experimental: false
     Name: Time
     SyncMode: 0
-    SyncSource: ""
+    SyncSource: PointCloud
 Visualization Manager:
   Class: ""
   Displays:
@@ -170,6 +171,42 @@ Visualization Manager:
       Z offset:
         Use Z position from message: false
         Value: 0
+    - Alpha: 1
+      Autocompute Intensity Bounds: true
+      Autocompute Value Bounds:
+        Max Value: 10
+        Min Value: -10
+        Value: true
+      Axis: Z
+      Channel Name: intensity
+      Class: rviz/PointCloud
+      Color: 255; 255; 255
+      Color Transformer: Intensity
+      Decay Time: 0
+      Enabled: false
+      Invert Rainbow: false
+      Max Color: 255; 255; 255
+      Max Intensity: 255
+      Min Color: 0; 0; 0
+      Min Intensity: 10
+      Name: PointCloud
+      Position Transformer: XYZ
+      Queue Size: 10
+      Selectable: true
+      Size (Pixels): 5
+      Size (m): 0.01
+      Style: Points
+      Topic: /pedsim/people_cloud_global
+      Use Fixed Frame: true
+      Use rainbow: true
+      Value: false
+    - Class: rviz/Axes
+      Enabled: true
+      Length: 1
+      Name: RobotFrame
+      Radius: 0.1
+      Reference Frame: base_footprint
+      Value: true
   Enabled: true
   Global Options:
     Background Color: 44; 44; 44
@@ -194,22 +231,22 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/XYOrbit
-      Distance: 24.848
+      Distance: 17.9492
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.06
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: 13.9146
-        Y: 4.68946
-        Z: 3.65297e-07
+        X: 13.824
+        Y: 5.31085
+        Z: 3.22632e-06
       Name: Current View
       Near Clip Distance: 0.01
-      Pitch: 0.780398
+      Pitch: 0.740398
       Target Frame: <Fixed Frame>
       Value: XYOrbit (rviz)
-      Yaw: 4.70857
+      Yaw: 4.71857
     Saved: ~
 Window Geometry:
   Displays:

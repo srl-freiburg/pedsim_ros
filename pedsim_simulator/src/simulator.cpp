@@ -96,7 +96,7 @@ bool Simulator::initializeSimulation()
     pub_tracked_persons_ = nh_.advertise<pedsim_msgs::TrackedPersons>("/pedsim/tracked_persons", defaultQueueSize);
     pub_tracked_groups_ = nh_.advertise<pedsim_msgs::TrackedGroups>("/pedsim/tracked_groups", defaultQueueSize);
     pub_social_activities_ = nh_.advertise<pedsim_msgs::SocialActivities>("/pedsim/social_activities", defaultQueueSize);
-    pub_robot_position_ = nh_.advertise<geometry_msgs::PoseStamped>("/pedsim/robot_position", defaultQueueSize);
+    pub_robot_position_ = nh_.advertise<nav_msgs::Odometry>("/pedsim/robot_position", defaultQueueSize);
 
     // services
     srv_pause_simulation_ = nh_.advertiseService("/pedsim/pause_simulation", &Simulator::onPauseSimulation, this);
@@ -486,27 +486,30 @@ void Simulator::publishRobotPosition()
     if (robot_ == nullptr)
         return;
 
-    geometry_msgs::PoseStamped robot_pose;
-    robot_pose.header.stamp = ros::Time::now();
-    robot_pose.header.frame_id = "odom";
+    nav_msgs::Odometry robot_location;
+    robot_location.header.stamp = ros::Time::now();
+    robot_location.header.frame_id = "odom";
+    robot_location.child_frame_id = "odom";
 
-    robot_pose.pose.position.x = robot_->getx();
-    robot_pose.pose.position.y = robot_->gety();
-
+    robot_location.pose.pose.position.x = robot_->getx();
+    robot_location.pose.pose.position.y = robot_->gety();
     if (hypot(robot_->getvx(), robot_->getvy()) < 0.05) {
-        robot_pose.pose.orientation = last_robot_orientation_;
+        robot_location.pose.pose.orientation = last_robot_orientation_;
     }
     else {
         Eigen::Quaternionf q = computePose(robot_);
-        robot_pose.pose.orientation.x = q.x();
-        robot_pose.pose.orientation.y = q.y();
-        robot_pose.pose.orientation.z = q.z();
-        robot_pose.pose.orientation.w = q.w();
+        robot_location.pose.pose.orientation.x = q.x();
+        robot_location.pose.pose.orientation.y = q.y();
+        robot_location.pose.pose.orientation.z = q.z();
+        robot_location.pose.pose.orientation.w = q.w();
 
-        last_robot_orientation_ = robot_pose.pose.orientation;
+        last_robot_orientation_ = robot_location.pose.pose.orientation;
     }
 
-    pub_robot_position_.publish(robot_pose);
+    robot_location.twist.twist.linear.x = robot_->getvx();
+    robot_location.twist.twist.linear.y = robot_->getvy();
+
+    pub_robot_position_.publish(robot_location);
 }
 
 /// -----------------------------------------------------------------

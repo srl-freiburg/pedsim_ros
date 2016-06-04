@@ -1,4 +1,6 @@
 <launch>
+    <param name="/pedsim_point_clouds/local_width" value="3.0" type="double"/>
+    <param name="/pedsim_point_clouds/local_height" value="3.0" type="double"/>
 
     <!-- NODES -->
     <node name="pedsim_point_clouds" pkg="pedsim_point_clouds" type="pedsim_point_clouds" output="screen"/>

@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package>
   <name>pedsim_point_clouds</name>
-  <version>0.1.0</version>
+  <version>0.1.1</version>
   <description>
     The pedsim_point_clouds package transforms the published obstacles (both walls and people) from pedsim into point_clouds which can then be used for planning using costmaps
   </description>
@@ -9,7 +9,7 @@
   <maintainer email="okal@cs.uni-freiburg.de">Billy Okal</maintainer>
   <license>BSD</license>
   <author email="okal@cs.uni-freiburg.de">Billy Okal</author>
-  
+
   <buildtool_depend>catkin</buildtool_depend>
 
   <build_depend>roscpp</build_depend>

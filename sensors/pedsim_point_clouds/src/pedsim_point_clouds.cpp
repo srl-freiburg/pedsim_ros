@@ -65,8 +65,8 @@ public:
     {
         // set up subscribers
         sub_grid_cells_ = nh_.subscribe("/pedsim/static_obstacles", 1, &PedsimCloud::callbackGridCells, this);
-        sub_tracked_persons_ = nh_.subscribe("/spencer/perception/tracked_persons", 1, &PedsimCloud::callbackTrackedPersons, this);
-        sub_robot_odom_ = nh_.subscribe("/spencer/sensors/odom", 1, &PedsimCloud::callbackRobotOdom, this);
+        sub_tracked_persons_ = nh_.subscribe("/pedsim/tracked_persons", 1, &PedsimCloud::callbackTrackedPersons, this);
+        sub_robot_odom_ = nh_.subscribe("/pedsim/robot_position", 1, &PedsimCloud::callbackRobotOdom, this);
 
         // set up publishers
         // publisher for static obstacles as point clouds
@@ -83,9 +83,11 @@ public:
         robot_position_.resize(2);
         robot_position_ = { 0, 0 };
 
-        // read local zone setttings
-        nh_.getParamCached("/move_base_node/local_costmap/width", local_width_);
-        nh_.getParamCached("/move_base_node/local_costmap/height", local_height_);
+        robot_frame_ = "odom";
+
+        // read local map dimensions
+        nh_.param("/pedsim_point_clouds/local_width", local_width_, 3.0);
+        nh_.param("/pedsim_point_clouds/local_height", local_height_, 3.0);
     }
     virtual ~PedsimCloud()
     {
@@ -113,6 +115,7 @@ private:
     // local zone around robot (used in local costmaps)
     double local_width_;
     double local_height_;
+    std::string robot_frame_;
 
     // publishers
     ros::Publisher pub_point_cloud_global_;
@@ -188,7 +191,7 @@ void PedsimCloud::callbackGridCells(const nav_msgs::GridCells::ConstPtr& msg)
     // local obstacle cloud
     sensor_msgs::PointCloud cloud_local;
     cloud_local.header.stamp = ros::Time::now();
-    cloud_local.header.frame_id = "base_footprint";
+    cloud_local.header.frame_id = robot_frame_;
     cloud_local.points.resize(num_points);
     cloud_local.channels.resize(1);
     cloud_local.channels[0].name = "intensities";
@@ -202,7 +205,7 @@ void PedsimCloud::callbackGridCells(const nav_msgs::GridCells::ConstPtr& msg)
     // Get the positions of people relative to the robot via TF transform
     tf::StampedTransform tfTransform;
     try {
-        transform_listener_->lookupTransform("base_footprint", "odom", ros::Time(0), tfTransform);
+        transform_listener_->lookupTransform(robot_frame_, msg->header.frame_id, ros::Time(0), tfTransform);
     }
     catch (tf::TransformException& e) {
         ROS_WARN_STREAM_THROTTLE(5.0, "TF lookup from base_footprint to odom failed. Reason: " << e.what());
@@ -270,7 +273,7 @@ void PedsimCloud::callbackTrackedPersons(const spencer_tracking_msgs::TrackedPer
     // local obstacle cloud
     sensor_msgs::PointCloud cloud_local;
     cloud_local.header.stamp = ros::Time::now();
-    cloud_local.header.frame_id = "base_footprint";
+    cloud_local.header.frame_id = robot_frame_;
     cloud_local.points.resize(num_points);
     cloud_local.channels.resize(1);
     cloud_local.channels[0].name = "intensities";
@@ -284,7 +287,7 @@ void PedsimCloud::callbackTrackedPersons(const spencer_tracking_msgs::TrackedPer
     // Get the positions of people relative to the robot via TF transform
     tf::StampedTransform tfTransform;
     try {
-        transform_listener_->lookupTransform("base_footprint", "odom", ros::Time(0), tfTransform);
+        transform_listener_->lookupTransform(robot_frame_, msg->header.frame_id, ros::Time(0), tfTransform);
     }
     catch (tf::TransformException& e) {
         ROS_WARN_STREAM_THROTTLE(5.0, "TFP lookup from base_footprint to odom failed. Reason: " << e.what());
@@ -341,6 +344,8 @@ void PedsimCloud::callbackRobotOdom(const nav_msgs::Odometry::ConstPtr& msg)
 {
     robot_position_[0] = msg->pose.pose.position.x;
     robot_position_[1] = msg->pose.pose.position.y;
+
+    robot_frame_ = msg->header.frame_id;
 }
 
 /// -----------------------------------------------------------
