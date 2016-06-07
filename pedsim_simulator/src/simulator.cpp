@@ -38,6 +38,8 @@
 #include <QApplication>
 #include <signal.h>
 
+const double PERSON_MESH_SCALE = 2.0 / 8.5 * 1.8;
+
 Simulator::Simulator(const ros::NodeHandle& node)
     : nh_(node)
 {
@@ -306,7 +308,6 @@ void Simulator::updateRobotPositionFromTF()
         // Get robot position via TF
         tf::StampedTransform tfTransform;
         try {
-            // transform_listener_->lookupTransform("world", "base_footprint", ros::Time(0), tfTransform);
             transform_listener_->lookupTransform("odom", "base_footprint", ros::Time(0), tfTransform);
         }
         catch (tf::TransformException& e) {
@@ -323,8 +324,6 @@ void Simulator::updateRobotPositionFromTF()
             vx = 0;
         if (!std::isfinite(vy))
             vy = 0;
-
-        //ROS_WARN("Robot velocity: %.3f, %.3f -- position: %.2f %.2f", vx, vy, x, y);
 
         robot_->setX(x);
         robot_->setY(y);
@@ -436,14 +435,9 @@ void Simulator::publishData()
         pcov.pose.orientation.w = q.w();
         person.pose = pcov;
 
-        // TODO - recheck this
         geometry_msgs::TwistWithCovariance tcov;
         tcov.twist.linear.x = a->getvx();
         tcov.twist.linear.y = a->getvy();
-        tcov.twist.linear.z = 0.0;
-        // tcov.twist.angular.x = 0;
-        // tcov.twist.angular.y = 0;
-        // tcov.twist.angular.z = 0;
         person.twist = tcov;
 
         tracked_people.tracks.push_back(person);
@@ -541,10 +535,9 @@ void Simulator::publishAgents()
         marker.pose.position.x = a->getx();
         marker.pose.position.y = a->gety();
         marker.action = 0; // add or modify
-        const double person_scale = 2.0 / 8.5 * 1.8; // TODO - move these magic numbers to a config file
-        marker.scale.x = person_scale;
-        marker.scale.y = person_scale;
-        marker.scale.z = person_scale;
+        marker.scale.x = PERSON_MESH_SCALE;
+        marker.scale.y = PERSON_MESH_SCALE;
+        marker.scale.z = PERSON_MESH_SCALE;
 
         /// arrows
         visualization_msgs::Marker arrow;

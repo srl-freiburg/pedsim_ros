@@ -205,31 +205,28 @@ private:
 	{
 		std::string act = agent_activities_[agent_id];
 		std_msgs::ColorRGBA color;
+        color.a = 1.0;
 
 		if ( act == "standing" )
         {
-            color.a = 1.0;
             color.r = 1.0;
             color.g = 1.0;
             color.b = 1.0;
         }
 		else if ( act == "queueing" )
         {
-            color.a = 1.0;
             color.r = 1.0;
             color.g = 0.0;
             color.b = 1.0;
         }
 		else if ( act == "shopping" )
         {
-            color.a = 1.0;
             color.r = 0.0;
             color.g = 0.0;
             color.b = 1.0;
         }
         else
         {
-            color.a = 1.0;
             color.r = 0.0;
             color.g = 0.7;
             color.b = 1.0;
