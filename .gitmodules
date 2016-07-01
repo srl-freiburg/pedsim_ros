@@ -1,0 +1,3 @@
+[submodule "visualization/animated_markers"]
+	path = visualization/animated_markers
+	url = https://github.com/srl-freiburg/animated_markers.git
