@@ -35,8 +35,7 @@
     <param name="/use_sim_time" value="false"/>
 
     <!-- main simulator node -->
-    <node name="pedsim_simulator" pkg="pedsim_simulator" type="simulator" output="screen">
-    </node>
+    <node name="pedsim_simulator" pkg="pedsim_simulator" type="pedsim_simulator" output="screen"/>
 
     <!-- tf broadcaster for aligning frames -->
     <node name="simulator_tf_broadcaster" pkg="pedsim_simulator" type="dummy_transforms.py" respawn="false" output="log"/>

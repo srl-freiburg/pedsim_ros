@@ -113,10 +113,10 @@ set(MOC_FILES
 
 QT4_WRAP_CPP(MOC_SRCS_UI ${MOC_FILES})
 
-add_executable(simulator ${SOURCES}  ${MOC_SRCS_UI} ${QT_RESOURCES_CPP} ${QT_FORMS_HPP} ${QT_MOC_HPP})
-add_dependencies(simulator ${catkin_EXPORTED_TARGETS})
-add_dependencies(simulator ${PROJECT_NAME}_gencfg)
-target_link_libraries(simulator
+add_executable(pedsim_simulator ${SOURCES}  ${MOC_SRCS_UI} ${QT_RESOURCES_CPP} ${QT_FORMS_HPP} ${QT_MOC_HPP})
+add_dependencies(pedsim_simulator ${catkin_EXPORTED_TARGETS})
+add_dependencies(pedsim_simulator ${PROJECT_NAME}_gencfg)
+target_link_libraries(pedsim_simulator
     ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY} ${QT_QTOPENGL_LIBRARY} ${QWT_LIBRARIES}
     ${BOOST_LIBRARIES} ${OpenCV_LIBS} ${catkin_LIBRARIES}
 )
@@ -126,9 +126,13 @@ add_dependencies(simulate_diff_drive_robot ${catkin_EXPORTED_TARGETS})
 target_link_libraries(simulate_diff_drive_robot ${BOOST_LIBRARIES} ${catkin_LIBRARIES})
 
 
-install(TARGETS simulator simulate_diff_drive_robot
-    RUNTIME DESTINATION bin
-    LIBRARY DESTINATION lib
+install(
+    TARGETS
+        pedsim_simulator
+        simulate_diff_drive_robot
+    ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+    LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+    RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
 
