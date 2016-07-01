@@ -6,20 +6,24 @@ catkin_package()
 include_directories(${catkin_INCLUDE_DIRS})
 link_directories(${catkin_LIBRARY_DIRS})
 
-find_package(Qt4 COMPONENTS QtCore QtGui REQUIRED)
-include(${QT_USE_FILE})
-add_definitions(-DQT_NO_KEYWORDS)
+## This setting causes Qt's "MOC" generation to happen automatically.
+set(CMAKE_AUTOMOC ON)
 
-qt4_wrap_cpp(MOC_FILES
-  src/detected_persons_display.h
-  src/tracked_persons_display.h
-  src/tracked_groups_display.h
-  src/social_relations_display.h
-  src/social_activities_display.h
-  src/human_attributes_display.h
-  src/person_display_common.h
-  src/additional_topic_subscriber.h
-)
+## This plugin includes Qt widgets, so we must include Qt.
+## We'll use the version that rviz used so they are compatible.
+if(rviz_QT_VERSION VERSION_LESS "5")
+  message(STATUS "Using Qt4 based on the rviz_QT_VERSION: ${rviz_QT_VERSION}")
+  find_package(Qt4 ${rviz_QT_VERSION} EXACT REQUIRED QtCore QtGui)
+  ## pull in all required include dirs, define QT_LIBRARIES, etc.
+  include(${QT_USE_FILE})
+else()
+  message(STATUS "Using Qt5 based on the rviz_QT_VERSION: ${rviz_QT_VERSION}")
+  find_package(Qt5 ${rviz_QT_VERSION} EXACT REQUIRED Core Widgets)
+  ## make target_link_libraries(${QT_LIBRARIES}) pull in all required dependencies
+  set(QT_LIBRARIES Qt5::Widgets)
+endif()
+
+add_definitions(-DQT_NO_KEYWORDS)
 
 set(SOURCE_FILES
   src/detected_persons_display.cpp
@@ -31,7 +35,6 @@ set(SOURCE_FILES
   src/person_display_common.cpp
   src/tracked_persons_cache.cpp
   src/visuals/person_visual.cpp
-  ${MOC_FILES}
 )
 
 
@@ -47,7 +50,7 @@ install(TARGETS
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
-install(FILES 
+install(FILES
   plugin_description.xml
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
 
