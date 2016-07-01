@@ -35,6 +35,7 @@ set(SOURCE_FILES
   src/person_display_common.cpp
   src/tracked_persons_cache.cpp
   src/visuals/person_visual.cpp
+  src/additional_topic_subscriber.cpp
 )
 
 
