@@ -1,9 +1,6 @@
 cmake_minimum_required(VERSION 2.8)
-
 project(pedsim_simulator)
-
 add_definitions(-Wall -Wunused -std=c++0x -pipe) # C++ 11 is required
-
 set(PEDSIM_SIMULATOR_DEPENDENCIES
     roscpp
     rospy
@@ -30,9 +27,6 @@ find_package(Eigen REQUIRED)
 # dynamic reconfigure parameters
 generate_dynamic_reconfigure_options(config/PedsimSimulator.cfg)
 
-
-include(${QT_USE_FILE})
-
 catkin_package(
     CATKIN_DEPENDS ${PEDSIM_SIMULATOR_DEPENDENCIES}
     INCLUDE_DIRS include
@@ -41,8 +35,10 @@ catkin_package(
 include_directories(include)
 include_directories(${Eigen_INCLUDE_DIRS})
 include_directories(${catkin_INCLUDE_DIRS})
+include(${QT_USE_FILE})
 
 set(SOURCES
+    src/simulator_node.cpp
 	src/simulator.cpp
     src/scene.cpp
     src/config.cpp
@@ -109,22 +105,18 @@ set(MOC_FILES
 	include/pedsim_simulator/waypointplanner/shoppingplanner.h
 	include/pedsim_simulator/waypointplanner/queueingplanner.h
 )
-
-
 QT4_WRAP_CPP(MOC_SRCS_UI ${MOC_FILES})
 
-add_executable(pedsim_simulator ${SOURCES}  ${MOC_SRCS_UI} ${QT_RESOURCES_CPP} ${QT_FORMS_HPP} ${QT_MOC_HPP})
+add_executable(pedsim_simulator ${SOURCES} ${MOC_SRCS_UI})
 add_dependencies(pedsim_simulator ${catkin_EXPORTED_TARGETS})
 add_dependencies(pedsim_simulator ${PROJECT_NAME}_gencfg)
 target_link_libraries(pedsim_simulator
-    ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY} ${QT_QTOPENGL_LIBRARY} ${QWT_LIBRARIES}
-    ${BOOST_LIBRARIES} ${OpenCV_LIBS} ${catkin_LIBRARIES}
+    ${QT_LIBRARIES} ${BOOST_LIBRARIES} ${catkin_LIBRARIES}
 )
 
 add_executable(simulate_diff_drive_robot src/simulate_diff_drive_robot.cpp)
 add_dependencies(simulate_diff_drive_robot ${catkin_EXPORTED_TARGETS})
 target_link_libraries(simulate_diff_drive_robot ${BOOST_LIBRARIES} ${catkin_LIBRARIES})
-
 
 install(
     TARGETS
