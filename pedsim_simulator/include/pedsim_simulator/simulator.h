@@ -35,6 +35,8 @@
 #include <ros/console.h>
 #include <ros/ros.h>
 
+#include <functional>
+#include <memory>
 #include <tf/transform_listener.h>
 
 #include <pedsim_msgs/AgentState.h>
@@ -61,9 +63,6 @@
 #include <visualization_msgs/Marker.h>
 #include <visualization_msgs/MarkerArray.h>
 
-#include <boost/foreach.hpp>
-#include <functional>
-
 #include <pedsim_simulator/agentstatemachine.h>
 #include <pedsim_simulator/agentstatemachine.h>
 #include <pedsim_simulator/config.h>
@@ -88,7 +87,7 @@ using SimConfig = pedsim_simulator::PedsimSimulatorConfig;
 /// -----------------------------------------------------------------
 class Simulator {
 public:
-    Simulator(const ros::NodeHandle& node);
+    explicit Simulator(const ros::NodeHandle& node);
     virtual ~Simulator();
 
     bool initializeSimulation();
@@ -120,11 +119,6 @@ protected:
     dynamic_reconfigure::Server<SimConfig> server_;
 
 private:
-    Agent* robot_; // robot agent
-    tf::StampedTransform last_robot_pose_; // pose of robot in previous timestep
-    geometry_msgs::Quaternion
-        last_robot_orientation_; // only updated while robot is moving
-
     ros::NodeHandle nh_;
     bool paused_; // simulation state
 
@@ -149,16 +143,16 @@ private:
     ros::ServiceServer srv_pause_simulation_;
     ros::ServiceServer srv_unpause_simulation_;
 
-    // Transform listener for retrieving externally provided robot position
-    boost::shared_ptr<tf::TransformListener> transform_listener_;
-
-    // - Covenient object to handling quaternions
-    OrientationHandlerPtr orientation_handler_;
-
-    // agent activity map
+    // agent id <-> activity map
     std::map<int, std::string> agent_activities_;
 
-private:
+    // pointers and additional data
+    std::unique_ptr<tf::TransformListener> transform_listener_;
+    std::unique_ptr<OrientationHandler> orientation_handler_;
+    Agent* robot_; // robot agent
+    tf::StampedTransform last_robot_pose_; // pose of robot in previous timestep
+    geometry_msgs::Quaternion last_robot_orientation_;
+
     inline Eigen::Quaternionf computePose(Agent* a);
     inline std::string agentStateToActivity(AgentStateMachine::AgentState state);
     inline std_msgs::ColorRGBA getColor(int agent_id);

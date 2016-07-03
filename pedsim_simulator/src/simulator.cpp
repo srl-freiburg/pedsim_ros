@@ -129,10 +129,8 @@ bool Simulator::initializeSimulation()
     srv_unpause_simulation_ = nh_.advertiseService(
         "/pedsim/unpause_simulation", &Simulator::onUnpauseSimulation, this);
 
-    /// setup TF listener for obtaining robot position
+    /// setup TF listener and other pointers
     transform_listener_.reset(new tf::TransformListener());
-
-    /// setup any pointers
     orientation_handler_.reset(new OrientationHandler());
     robot_ = nullptr;
 
