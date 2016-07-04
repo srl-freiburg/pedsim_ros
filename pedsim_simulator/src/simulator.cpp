@@ -76,52 +76,46 @@ Simulator::~Simulator()
 
 bool Simulator::initializeSimulation()
 {
-    // set up state
-    paused_ = false;
+    ros::NodeHandle private_nh("~");
 
-    // read default queue size from ROS parameters
-    // NOTE: The default value of 0 means that the queues have *infinite* size!
-    // For real-time scenarios / simulations,
-    // this might not be a good idea!
-    ros::NodeHandle privateNodeHandle("~");
-    int defaultQueueSize = 0;
-    privateNodeHandle.param<int>("default_queue_size", defaultQueueSize, 0);
+    int queue_size = 0;
+    private_nh.param<int>("default_queue_size", queue_size, 0);
     ROS_INFO_STREAM("Using default queue size of "
-        << defaultQueueSize << " for publisher queues... "
-        << (defaultQueueSize == 0
+        << queue_size << " for publisher queues... "
+        << (queue_size == 0
                             ? "NOTE: This means the queues are of infinite size!"
                             : ""));
 
     /// setup ros publishers
     // visualizations
     pub_agent_visuals_ = nh_.advertise<animated_marker_msgs::AnimatedMarkerArray>(
-        "/pedsim/agents_markers", defaultQueueSize);
+        "/pedsim/agents_markers", queue_size);
     pub_agent_arrows_ = nh_.advertise<visualization_msgs::MarkerArray>(
-        "/pedsim/agent_directions", defaultQueueSize);
+        "/pedsim/agent_directions", queue_size);
     pub_group_lines_ = nh_.advertise<visualization_msgs::MarkerArray>(
-        "/pedsim/group_relations", defaultQueueSize);
+        "/pedsim/group_relations", queue_size);
     pub_walls_ = nh_.advertise<visualization_msgs::Marker>(
-        "/pedsim/walls", defaultQueueSize, true);
+        "/pedsim/walls", queue_size, true);
     pub_attractions_ = nh_.advertise<visualization_msgs::Marker>(
-        "/pedsim/attractions", defaultQueueSize, true);
+        "/pedsim/attractions", queue_size, true);
     pub_queues_ = nh_.advertise<visualization_msgs::Marker>(
-        "/pedsim/queues", defaultQueueSize, true);
+        "/pedsim/queues", queue_size, true);
     pub_waypoints_ = nh_.advertise<visualization_msgs::Marker>(
-        "/pedsim/waypoints", defaultQueueSize, true);
+        "/pedsim/waypoints", queue_size, true);
 
     // informative topics (data)
     pub_obstacles_ = nh_.advertise<nav_msgs::GridCells>(
-        "/pedsim/static_obstacles", defaultQueueSize);
+        "/pedsim/static_obstacles", queue_size);
     pub_all_agents_ = nh_.advertise<pedsim_msgs::AllAgentsState>(
-        "/pedsim/dynamic_obstacles", defaultQueueSize);
+        "/pedsim/dynamic_obstacles", queue_size);
     pub_tracked_persons_ = nh_.advertise<pedsim_msgs::TrackedPersons>(
-        "/pedsim/tracked_persons", defaultQueueSize);
+        "/pedsim/tracked_persons", queue_size);
     pub_tracked_groups_ = nh_.advertise<pedsim_msgs::TrackedGroups>(
-        "/pedsim/tracked_groups", defaultQueueSize);
+        "/pedsim/tracked_groups", queue_size);
     pub_social_activities_ = nh_.advertise<pedsim_msgs::SocialActivities>(
-        "/pedsim/social_activities", defaultQueueSize);
+        "/pedsim/social_activities", queue_size);
     pub_robot_position_ = nh_.advertise<nav_msgs::Odometry>(
-        "/pedsim/robot_position", defaultQueueSize);
+        "/pedsim/robot_position", queue_size);
 
     // services
     srv_pause_simulation_ = nh_.advertiseService(
@@ -134,23 +128,22 @@ bool Simulator::initializeSimulation()
     orientation_handler_.reset(new OrientationHandler());
     robot_ = nullptr;
 
-    /// load parameters
+    /// load additional parameters
     std::string scene_file_param;
-    ros::param::param<std::string>("/pedsim/scene_file", scene_file_param,
-        "scene.xml");
+    private_nh.param<std::string>("scene_file", scene_file_param,
+        "package://pedsim_simulator/scenarios/singleagent.xml");
 
     // load scenario file
     QString scenefile = QString::fromStdString(scene_file_param);
     ScenarioReader scenario_reader;
     bool read_result = scenario_reader.readFromFile(scenefile);
     if (read_result == false) {
-        ROS_WARN("Could not load the scene file, please check the paths and param "
-                 "names");
+        ROS_ERROR("Could not load the scene file, please check the paths and param names");
         return false;
     }
 
-    /// cleanup containers
     agent_activities_.clear();
+    paused_ = false;
 
     return true;
 }

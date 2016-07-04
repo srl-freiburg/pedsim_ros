@@ -26,26 +26,10 @@
     <!-- Rviz -->
     <node pkg="rviz" type="rviz" name="rviz" args="-d $(find pedsim_simulator)/rviz/airport_activities.rviz"/>
 
-
-    <!-- params -->
-    <param name="/pedsim/scene_file" value="$(find pedsim_simulator)scenarios/airport_activities.xml" type="string"/>
-
-    <!-- other parameters -->
-    <param name="/pedsim/max_robot_speed" value="2.0" type="double"/>
-    <param name="/pedsim/robot_wait_time" value="30000" type="double"/>
-    <param name="/pedsim/agents_alpha" value="0.5" type="double"/>
-    <param name="/pedsim/show_robot" value="true"/>
-
-    <!-- ROBOT MODES: 0 = controlled, 1 = teleop, 2 = social drive -->
-    <param name="/pedsim/teleop_flag" value="0" type="double" unless="$(arg teleop)"/>
-    <param name="/pedsim/teleop_flag" value="1" type="double" if="$(arg teleop)"/>
-
-    <param name="/use_sim_time" value="false"/>
-
     <!-- main simulator node -->
-    <node name="pedsim_simulator" pkg="pedsim_simulator" type="pedsim_simulator" output="screen"/>
-
-    <!-- tf broadcaster for aligning frames -->
-    <!-- <node name="simulator_tf_broadcaster" pkg="pedsim_simulator" type="dummy_transforms.py" respawn="false" output="log"/> -->
+    <node name="pedsim_simulator" pkg="pedsim_simulator" type="pedsim_simulator" output="screen">
+        <param name="scene_file" value="$(find pedsim_simulator)scenarios/airport_activities.xml" type="string"/>
+        <param name="default_queue_size" value="10"/>
+    </node>
 
 </launch>
