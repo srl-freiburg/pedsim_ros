@@ -1,5 +1,6 @@
 <launch>
-  <arg name="teleop" default="true"/>
+  <arg name="kbd_teleop" default="true"/>
+  <arg name="rqt_teleop" default="false"/>
 
   <!-- params -->
   <param name="/pedsim/scene_file" value="$(find pedsim_simulator)scenarios/social_contexts.xml" type="string"/>
@@ -20,8 +21,13 @@
         <param name="pose_initial_theta" value="0.70"/>
     </node>
 
+    <!-- Keyboard robot steering -->
+    <node pkg="pedsim_simulator" name="pedsim_keyboard_teleop" type="keyboard_teleop.py" output="screen" if="$(arg kbd_teleop)">
+        <remap from="/pedbot/control/pedsim_keyboard_teleop/cmd_vel" to="/pedbot/control/cmd_vel"/>
+    </node>
+
     <!-- RQT robot steering -->
-    <node pkg="rqt_robot_steering" name="rqt_robot_steering" type="rqt_robot_steering" if="$(arg teleop)">
+    <node pkg="rqt_robot_steering" name="rqt_robot_steering" type="rqt_robot_steering" if="$(arg rqt_teleop)">
         <remap from="/cmd_vel" to="/pedbot/control/cmd_vel"/>
     </node>
   </group>
