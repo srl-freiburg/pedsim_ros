@@ -31,15 +31,15 @@
 
 #include <pedsim_simulator/agentstatemachine.h>
 #include <pedsim_simulator/config.h>
-#include <pedsim_simulator/rng.h>
-#include <pedsim_simulator/scene.h>
 #include <pedsim_simulator/element/agent.h>
 #include <pedsim_simulator/element/agentgroup.h>
-#include <pedsim_simulator/element/waitingqueue.h>
 #include <pedsim_simulator/element/attractionarea.h>
+#include <pedsim_simulator/element/waitingqueue.h>
+#include <pedsim_simulator/rng.h>
+#include <pedsim_simulator/scene.h>
+#include <pedsim_simulator/waypointplanner/groupwaypointplanner.h>
 #include <pedsim_simulator/waypointplanner/individualwaypointplanner.h>
 #include <pedsim_simulator/waypointplanner/queueingplanner.h>
-#include <pedsim_simulator/waypointplanner/groupwaypointplanner.h>
 #include <pedsim_simulator/waypointplanner/shoppingplanner.h>
 
 #include <ros/ros.h>
@@ -89,8 +89,7 @@ void AgentStateMachine::doStateTransition()
             normalState = state;
             activateState(StateShopping);
             return;
-        }
-        else {
+        } else {
             //TODO: attraction must be visible!
             attraction = SCENE.getClosestAttraction(agent->getPosition(), &distance);
 
@@ -292,8 +291,6 @@ bool AgentStateMachine::checkGroupForAttractions(AttractionArea** attractionOut)
             AttractionArea* attraction = typedPlanner->getAttraction();
 
             if (attraction != nullptr) {
-                //              ROS_DEBUG("Agent%1's Group Member (%2) is attracted to: %3",
-                //                  agent->getId(), member->getId(), attraction->getName());
                 attractionOut = &attraction;
                 return true;
             }

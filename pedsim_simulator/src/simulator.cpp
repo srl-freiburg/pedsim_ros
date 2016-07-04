@@ -233,7 +233,8 @@ void Simulator::reconfigureCB(pedsim_simulator::PedsimSimulatorConfig& config,
     CONFIG.max_robot_speed = config.max_robot_speed;
 
     // enable/disable groups behaviour
-    CONFIG.groups_enabled = config.enable_groups;
+    if (CONFIG.groups_enabled != config.enable_groups)
+        CONFIG.groups_enabled = config.enable_groups;
 
     // cells
     CONFIG.cell_width = config.cell_width;
@@ -445,7 +446,7 @@ void Simulator::publishData()
         pedsim_msgs::TrackedPerson person;
         person.track_id = a->getId();
         person.is_occluded = false;
-        // person.detection_id = 0;  // not simulated yet
+        person.detection_id = a->getId();
         // person.age = 0;   // also not simulated yet, use a distribution from data
         // collected
 
@@ -483,8 +484,9 @@ void Simulator::publishData()
         pedsim_msgs::TrackedGroup group;
         group.group_id = ag->getId();
         // group.age = 0; //NOTE  not simulated so far
-        // Ped::Tvector com = ag->getCenterOfMass();
-        // group.centerOfGravity = ... // TODO - convert CoM to Pose with Covariance
+        Ped::Tvector com = ag->getCenterOfMass();
+        group.centerOfGravity.pose.position.x = com.x;
+        group.centerOfGravity.pose.position.y = com.y;
 
         for (Agent* m : ag->getMembers()) {
             group.track_ids.push_back(m->getId());
