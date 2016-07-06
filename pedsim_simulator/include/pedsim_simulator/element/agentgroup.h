@@ -52,7 +52,7 @@ public:
     explicit AgentGroup(std::initializer_list<Agent*>& agentsIn);
     virtual ~AgentGroup();
 
-    // Signals
+// Signals
 signals:
     void membersChanged();
     void memberAdded(int id);
@@ -93,6 +93,7 @@ public:
     bool isRecollecting() const;
     double getMaxDistance();
     int getId() { return id_; }
+
 protected:
     void updateMaxDistance();
 

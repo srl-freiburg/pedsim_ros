@@ -250,7 +250,8 @@ bool AgentGroup::removeMember(Agent* agentIn)
         emit memberRemoved(agentIn->getId());
 
         return true;
-    } else {
+    }
+    else {
         return false;
     }
 }
@@ -329,7 +330,8 @@ void AgentGroup::setRecollect(bool recollectIn)
 
         ROS_DEBUG("AgentGroup needs to recollect! (%s)", toString().toStdString().c_str());
         recollecting = true;
-    } else {
+    }
+    else {
         // check whether recollecting mode hasn't been activated
         if (!recollecting)
             return;

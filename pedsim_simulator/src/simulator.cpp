@@ -35,9 +35,6 @@
 #include <pedsim_simulator/scene.h>
 #include <pedsim_simulator/simulator.h>
 
-// #include <QApplication>
-// #include <signal.h>
-
 const double PERSON_MESH_SCALE = 2.0 / 8.5 * 1.8;
 
 Simulator::Simulator(const ros::NodeHandle& node)
@@ -133,7 +130,6 @@ bool Simulator::initializeSimulation()
     private_nh.param<std::string>("scene_file", scene_file_param,
         "package://pedsim_simulator/scenarios/singleagent.xml");
 
-    // load scenario file
     QString scenefile = QString::fromStdString(scene_file_param);
     ScenarioReader scenario_reader;
     bool read_result = scenario_reader.readFromFile(scenefile);
@@ -141,6 +137,13 @@ bool Simulator::initializeSimulation()
         ROS_ERROR("Could not load the scene file, please check the paths and param names");
         return false;
     }
+
+    private_nh.param<bool>("enable_groups", CONFIG.groups_enabled, true);
+    private_nh.param<double>("max_robot_speed", CONFIG.max_robot_speed, 1.5);
+
+    int op_mode = 1;
+    private_nh.param<int>("robot_mode", op_mode, 1); // teleop
+    CONFIG.robot_mode = static_cast<RobotMode>(op_mode);
 
     agent_activities_.clear();
     paused_ = false;
@@ -217,32 +220,15 @@ void Simulator::reconfigureCB(pedsim_simulator::PedsimSimulatorConfig& config,
     CONFIG.updateRate = config.update_rate;
     CONFIG.simulationFactor = config.simulation_factor;
 
-    // → Forces
-    CONFIG.forceObstacle = config.force_obstacle;
-    CONFIG.sigmaObstacle = config.sigma_obstacle;
-    CONFIG.forceSocial = config.force_social;
-    CONFIG.forceGroupGaze = config.force_group_gaze;
-    CONFIG.forceGroupCoherence = config.force_group_coherence;
-    CONFIG.forceGroupRepulsion = config.force_group_repulsion;
-    CONFIG.forceRandom = config.force_random;
-    CONFIG.forceAlongWall = config.force_wall;
-
-    // robot control
-    CONFIG.robot_mode = static_cast<RobotMode>(config.robot_mode);
-    CONFIG.robot_wait_time = config.robot_wait_time;
-    CONFIG.max_robot_speed = config.max_robot_speed;
-
-    // enable/disable groups behaviour
-    if (CONFIG.groups_enabled != config.enable_groups)
-        CONFIG.groups_enabled = config.enable_groups;
-
-    // cells
-    CONFIG.cell_width = config.cell_width;
-    CONFIG.cell_height = config.cell_height;
-
-    // internal model parameters (distributions, etc)
-    CONFIG.group_size_lambda = config.group_size_lambda;
-    CONFIG.wait_time_beta = config.wait_time_beta;
+    // update force scaling factors
+    CONFIG.setObstacleForce(config.force_obstacle);
+    CONFIG.setObstacleSigma(config.sigma_obstacle);
+    CONFIG.setSocialForce(config.force_social);
+    CONFIG.setGroupGazeForce(config.force_group_gaze);
+    CONFIG.setGroupCoherenceForce(config.force_group_coherence);
+    CONFIG.setGroupRepulsionForce(config.force_group_repulsion);
+    CONFIG.setRandomForce(config.force_random);
+    CONFIG.setAlongWallForce(config.force_wall);
 
     // puase or unpause the simulation
     if (paused_ != config.paused) {
@@ -335,7 +321,8 @@ void Simulator::updateRobotPositionFromTF()
         try {
             transform_listener_->lookupTransform("odom", "base_footprint",
                 ros::Time(0), tfTransform);
-        } catch (tf::TransformException& e) {
+        }
+        catch (tf::TransformException& e) {
             ROS_WARN_STREAM_THROTTLE(
                 5.0,
                 "TF lookup from base_footprint to odom failed. Reason: " << e.what());
@@ -519,7 +506,8 @@ void Simulator::publishRobotPosition()
     robot_location.pose.pose.position.y = robot_->gety();
     if (hypot(robot_->getvx(), robot_->getvy()) < 0.05) {
         robot_location.pose.pose.orientation = last_robot_orientation_;
-    } else {
+    }
+    else {
         Eigen::Quaternionf q = computePose(robot_);
         robot_location.pose.pose.orientation.x = q.x();
         robot_location.pose.pose.orientation.y = q.y();
@@ -610,7 +598,8 @@ void Simulator::publishAgents()
             arrow.scale.x = xx > 0.0 ? xx : 0.01;
 
             marker.animation_speed = xx * 0.7;
-        } else {
+        }
+        else {
             marker.animation_speed = 0.0;
         }
 
@@ -920,15 +909,18 @@ std_msgs::ColorRGBA Simulator::getColor(int agent_id)
         color.r = 1.0;
         color.g = 1.0;
         color.b = 1.0;
-    } else if (agent_activity == "queueing") {
+    }
+    else if (agent_activity == "queueing") {
         color.r = 1.0;
         color.g = 0.0;
         color.b = 1.0;
-    } else if (agent_activity == "shopping") {
+    }
+    else if (agent_activity == "shopping") {
         color.r = 0.0;
         color.g = 0.0;
         color.b = 1.0;
-    } else {
+    }
+    else {
         color.r = 0.0;
         color.g = 0.7;
         color.b = 1.0;

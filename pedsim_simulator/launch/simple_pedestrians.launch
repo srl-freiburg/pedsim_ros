@@ -6,6 +6,9 @@
   <node name="pedsim_simulator" pkg="pedsim_simulator" type="pedsim_simulator" output="screen">
       <param name="scene_file" value="$(find pedsim_simulator)scenarios/social_contexts.xml" type="string"/>
       <param name="default_queue_size" value="10"/>
+      <param name="max_robot_speed" value="1.5" type="double"/>
+      <param name="robot_mode" value="1" type="int"/>
+      <param name="enable_groups" value="false" type="bool"/>
   </node>
 
   <!-- Rviz -->
