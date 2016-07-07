@@ -145,6 +145,10 @@ bool Simulator::initializeSimulation()
     private_nh.param<int>("robot_mode", op_mode, 1); // teleop
     CONFIG.robot_mode = static_cast<RobotMode>(op_mode);
 
+    int vis_mode = 1;
+    private_nh.param<int>("visual_mode", vis_mode, 1);
+    CONFIG.visual_mode = static_cast<VisualMode>(vis_mode);
+
     agent_activities_.clear();
     paused_ = false;
 
@@ -176,30 +180,32 @@ void Simulator::runSimulation()
             }
         }
 
-        // Move robot
-        updateRobotPositionFromTF();
-
-        // Move agents
+        updateRobotPositionFromTF(); // move robot
         if (!paused_)
-            SCENE.moveAllAgents();
+            SCENE.moveAllAgents(); // move all the pedestrians
 
-        publishAgents(); // TODO - remove this old piece
+        // mandatory data stream
         publishData();
         publishRobotPosition();
-        publishSocialActivities();
-        publishGroupVisuals();
-
-        updateAgentActivities();
-
-        // obstacle cells (planning needs these)
         publishObstacles();
 
-        // only publish the obstacles in the beginning
-        // FIXME: Need to be re-published continously if the fixed frame in Rviz is
-        // moving!
-        if (SCENE.getTime() < 20) {
-            publishAttractions();
-            publishWalls();
+        if (CONFIG.visual_mode == VisualMode::MINIMAL) {
+            publishAgents(); // animated markers
+
+            if (SCENE.getTime() < 20) {
+                publishWalls();
+            }
+        }
+
+        if (CONFIG.visual_mode == VisualMode::FULL) {
+            publishSocialActivities();
+            publishGroupVisuals();
+            updateAgentActivities();
+
+            if (SCENE.getTime() < 20) {
+                publishAttractions();
+                publishWalls();
+            }
         }
 
         ros::spinOnce();
@@ -610,8 +616,8 @@ void Simulator::publishAgents()
             marker.mesh_resource = "package://pedsim_simulator/images/darylbot_rotated_shifted.dae";
             marker.color.a = 1.0;
             marker.color.r = 1.0;
-            marker.color.g = 1.0;
-            marker.color.b = 1.0;
+            marker.color.g = 0.549;
+            marker.color.b = 0.0;
 
             marker.scale.x = 0.8;
             marker.scale.y = 0.8;
@@ -725,33 +731,20 @@ void Simulator::publishGroupVisuals()
 /// -----------------------------------------------------------------
 void Simulator::publishObstacles()
 {
-    nav_msgs::GridCells obstacles;
-    obstacles.header.frame_id = "odom";
-    obstacles.cell_width = 1.0;
-    obstacles.cell_height = 1.0;
+    nav_msgs::GridCells grid_cells;
+    grid_cells.header.frame_id = "odom";
+    grid_cells.cell_width = CONFIG.cell_width;
+    grid_cells.cell_height = CONFIG.cell_height;
 
-    std::vector<Location>::const_iterator it = SCENE.obstacle_cells_.begin();
-    while (it != SCENE.obstacle_cells_.end()) {
-
+    for (const auto& obstacle : SCENE.obstacle_cells_) {
         geometry_msgs::Point p;
-        Location loc = (*it);
-
-        // TODO: check it
-        // Location a=getEnclosingCell(loc.x,loc.y);
-        // p.x = a.x+0.5*(this->cellwidth);
-        // p.y = a.y+0.5*(this->cellheight);
-        // p.z = 0.0;
-
-        // p.x = loc.x +0.5;
-        // p.y = loc.y +0.5;
-        p.x = loc.x;
-        p.y = loc.y;
+        p.x = obstacle.x;
+        p.y = obstacle.y;
         p.z = 0.0;
-        obstacles.cells.push_back(p);
-        ++it;
+        grid_cells.cells.push_back(p);
     }
 
-    pub_obstacles_.publish(obstacles);
+    pub_obstacles_.publish(grid_cells);
 }
 
 /// -----------------------------------------------------------------
@@ -764,7 +757,6 @@ void Simulator::publishWalls()
     visualization_msgs::Marker marker;
     marker.header.frame_id = "odom";
     marker.header.stamp = ros::Time();
-    // marker.ns = "pedsim";
     marker.id = 10000;
     marker.color.a = 1.0;
     marker.color.r = 1.0;
@@ -772,19 +764,16 @@ void Simulator::publishWalls()
     marker.color.b = 0.0;
     marker.scale.x = 1.0;
     marker.scale.y = 1.0;
-    marker.scale.z = 3.0;
+    marker.scale.z = 2.0;
     marker.pose.position.z = marker.scale.z / 2.0;
     marker.type = visualization_msgs::Marker::CUBE_LIST;
 
-    std::vector<Location>::const_iterator it = SCENE.obstacle_cells_.begin();
-    while (it != SCENE.obstacle_cells_.end()) {
+    for (const auto& obstacle : SCENE.obstacle_cells_) {
         geometry_msgs::Point p;
-        Location loc = (*it);
-        p.x = loc.x + 0.5;
-        p.y = loc.y + 0.5;
+        p.x = obstacle.x + 0.5;
+        p.y = obstacle.y + 0.5;
         p.z = 0.0;
         marker.points.push_back(p);
-        ++it;
     }
 
     pub_walls_.publish(marker);
@@ -803,7 +792,6 @@ void Simulator::publishAttractions()
         visualization_msgs::Marker marker;
         marker.header.frame_id = "odom";
         marker.header.stamp = ros::Time();
-        // marker.ns = "pedsim";
         marker.id = wp->getId();
 
         marker.color.a = 0.15;
@@ -830,7 +818,6 @@ void Simulator::publishAttractions()
         visualization_msgs::Marker marker;
         marker.header.frame_id = "odom";
         marker.header.stamp = ros::Time();
-        // marker.ns = "pedsim";
         marker.id = atr->getId();
 
         marker.color.a = 0.35;
@@ -921,9 +908,9 @@ std_msgs::ColorRGBA Simulator::getColor(int agent_id)
         color.b = 1.0;
     }
     else {
-        color.r = 0.0;
-        color.g = 0.7;
-        color.b = 1.0;
+        color.r = 0.255;
+        color.g = 0.412;
+        color.b = 0.882;
     }
 
     return color;

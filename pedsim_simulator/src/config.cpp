@@ -59,6 +59,8 @@ Config::Config(QObject* parent)
     groups_enabled = true;
     group_size_lambda = 1.1;
     wait_time_beta = 0.2;
+
+    visual_mode = VisualMode::MINIMAL;
 }
 
 Config& Config::getInstance()

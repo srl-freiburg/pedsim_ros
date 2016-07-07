@@ -32,81 +32,75 @@
 #ifndef _queueingplanner_h_
 #define _queueingplanner_h_
 
-#include <pedsim_simulator/waypointplanner/waypointplanner.h>
 #include <pedsim/ped_vector.h>
-
+#include <pedsim_simulator/waypointplanner/waypointplanner.h>
+#include <pedsim_simulator/rng.h>
 
 // Forward Declarations
 class WaitingQueue;
 
+class QueueingWaypointPlanner : public WaypointPlanner {
+    Q_OBJECT
 
-class QueueingWaypointPlanner : public WaypointPlanner
-{
-	Q_OBJECT
+    // TODO - change to enum class
+    typedef enum {
+        Unknown,
+        Approaching,
+        Queued,
+        MayPass
+    } QueueingStatus;
 
-	// TODO - change to enum class
-	typedef enum {
-		Unknown,
-		Approaching,
-		Queued,
-		MayPass
-	} QueueingStatus;
-
-
-	// Constructor and Destructor
+    // Constructor and Destructor
 public:
-	QueueingWaypointPlanner();
+    QueueingWaypointPlanner();
 
-
-	// Slots
+    // Slots
 protected slots:
-	void onFollowedAgentPositionChanged(double xIn, double yIn);
-	void onAgentMayPassQueue(int id);
-	void onFollowedAgentLeftQueue();
-	void onQueueEndPositionChanged(double xIn, double yIn);
+    void onFollowedAgentPositionChanged(double xIn, double yIn);
+    void onAgentMayPassQueue(int id);
+    void onFollowedAgentLeftQueue();
+    void onQueueEndPositionChanged(double xIn, double yIn);
 
-
-	// Methods
+    // Methods
 public:
-	void reset();
+    void reset();
 
-	// → Agent
-	virtual Agent* getAgent() const;
-	virtual bool setAgent(Agent* agentIn);
+    // → Agent
+    virtual Agent* getAgent() const;
+    virtual bool setAgent(Agent* agentIn);
 
-	// → WaitingQueue
-	void setDestination(Waypoint* waypointIn);
-	void setWaitingQueue(WaitingQueue* queueIn);
-	WaitingQueue* getWaitingQueue() const;
-	bool hasReachedQueueEnd() const;
-	void activateApproachingMode();
-	void activateQueueingMode();
+    // → WaitingQueue
+    void setDestination(Waypoint* waypointIn);
+    void setWaitingQueue(WaitingQueue* queueIn);
+    WaitingQueue* getWaitingQueue() const;
+    bool hasReachedQueueEnd() const;
+    void activateApproachingMode();
+    void activateQueueingMode();
 
 protected:
-	void addPrivateSpace(Ped::Tvector& queueEndIn) const;
-	QString createWaypointName() const;
+    void addPrivateSpace(Ped::Tvector& queueEndIn) const;
+    QString createWaypointName() const;
 
-	// → WaypointPlanner Overrides
+    // → WaypointPlanner Overrides
 public:
-	static Type getPlannerType() { return WaypointPlanner::Individual; };
-	virtual Waypoint* getCurrentWaypoint();
-	virtual Waypoint* getNextWaypoint();
-	virtual bool hasCompletedWaypoint() const;
-	virtual bool hasCompletedDestination() const;
+    static Type getPlannerType() { return WaypointPlanner::Individual; };
+    virtual Waypoint* getCurrentWaypoint();
+    virtual Waypoint* getNextWaypoint();
+    virtual bool hasCompletedWaypoint() const;
+    virtual bool hasCompletedDestination() const;
 
-	virtual QString name() const;
+    virtual QString name() const;
 
-
-	// Attributes
+    // Attributes
 protected:
-	// → Agent
-	Agent* agent;
+    // → Agent
+    Agent* agent;
 
-	// → WaitingQueue
-	WaitingQueue* waitingQueue;
-	Waypoint* currentWaypoint;
-	const Agent* followedAgent;
-	QueueingStatus status;
+    // → WaitingQueue
+    WaitingQueue* waitingQueue;
+    Waypoint* currentWaypoint;
+    const Agent* followedAgent;
+    QueueingStatus status;
 };
 
 #endif

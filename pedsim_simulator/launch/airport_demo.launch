@@ -2,6 +2,8 @@
 
   <!-- main simulator node -->
   <node name="pedsim_simulator" pkg="pedsim_simulator" type="pedsim_simulator" output="screen">
+      <!-- 0 - headless, 1 - minimal, 2 - full -->
+      <param name="visual_mode" value="1" type="int"/>
       <param name="scene_file" value="$(find pedsim_simulator)scenarios/airport2.xml" type="string"/>
       <param name="default_queue_size" value="10"/>
       <param name="max_robot_speed" value="1.5" type="double"/>

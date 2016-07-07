@@ -52,7 +52,7 @@ public:
     Agent();
     virtual ~Agent();
 
-    // Signals
+// Signals
 signals:
     void positionChanged(double x, double y) const;
     void velocityChanged(double x, double y) const;

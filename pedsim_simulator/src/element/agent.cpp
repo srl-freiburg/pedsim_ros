@@ -172,20 +172,23 @@ void Agent::move(double h)
             Ped::Tagent::move(h);
             setvx(vx);
             setvy(vy);
-        } else if (CONFIG.robot_mode == RobotMode::CONTROLLED) {
+        }
+        else if (CONFIG.robot_mode == RobotMode::CONTROLLED) {
             if (SCENE.getTime() >= CONFIG.robot_wait_time) {
                 Ped::Tagent::move(h);
             }
-        } else if (CONFIG.robot_mode == RobotMode::SOCIAL_DRIVE) {
+        }
+        else if (CONFIG.robot_mode == RobotMode::SOCIAL_DRIVE) {
             Ped::Tagent::setForceFactorSocial(CONFIG.forceSocial * 0.7);
             Ped::Tagent::setForceFactorObstacle(35);
             Ped::Tagent::setForceFactorDesired(4.2);
 
             Ped::Tagent::setVmax(1.6);
-            Ped::Tagent::SetRadius(0.5);
+            Ped::Tagent::SetRadius(0.4);
             Ped::Tagent::move(h);
         }
-    } else {
+    }
+    else {
         Ped::Tagent::move(h);
     }
 

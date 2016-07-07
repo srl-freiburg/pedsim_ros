@@ -31,32 +31,27 @@
 #ifndef _rng_h_
 #define _rng_h_
 
-
 #include <random>
-
 
 /// -----------------------------------------------------------------
 /// \class RandomNumberGenerator
 /// \details Random number generation for various distributions
 /// -----------------------------------------------------------------
-class RandomNumberGenerator
-{
+class RandomNumberGenerator {
 protected:
     RandomNumberGenerator();
 
-
-    // Singleton Design Pattern
+// Singleton Design Pattern
 #define RNG RandomNumberGenerator::getInstance()
 protected:
     static RandomNumberGenerator* instance;
+
 public:
     static RandomNumberGenerator& getInstance();
 
-
     // Operators
 public:
-    std::default_random_engine& operator() ();
-
+    std::default_random_engine& operator()();
 
     // Attributes
 public:

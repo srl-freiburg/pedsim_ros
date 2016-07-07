@@ -31,26 +31,24 @@
 
 #include <pedsim_simulator/rng.h>
 
-
 // Initialize Static Variables
 RandomNumberGenerator* RandomNumberGenerator::instance;
-
 
 RandomNumberGenerator::RandomNumberGenerator()
 {
     std::random_device randomDevice;
     uint seed = randomDevice();
-    randomEngine.seed ( seed );
+    randomEngine.seed(seed);
 }
 
 RandomNumberGenerator& RandomNumberGenerator::getInstance()
 {
-    if ( instance == nullptr )
+    if (instance == nullptr)
         instance = new RandomNumberGenerator;
     return *instance;
 }
 
-std::default_random_engine& RandomNumberGenerator::operator() ()
+std::default_random_engine& RandomNumberGenerator::operator()()
 {
     return randomEngine;
 }

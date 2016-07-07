@@ -29,13 +29,11 @@
 * \author Sven Wehner <mail@svenwehner.de>
 */
 
-
 #include <pedsim_simulator/waypointplanner/queueingplanner.h>
 #include <pedsim_simulator/element/agent.h>
 #include <pedsim_simulator/element/queueingwaypoint.h>
 #include <pedsim_simulator/element/waitingqueue.h>
 #include <pedsim_simulator/utilities.h>
-
 
 QueueingWaypointPlanner::QueueingWaypointPlanner()
 {
@@ -47,45 +45,42 @@ QueueingWaypointPlanner::QueueingWaypointPlanner()
     status = QueueingWaypointPlanner::Unknown;
 }
 
-void QueueingWaypointPlanner::onFollowedAgentPositionChanged ( double xIn, double yIn )
+void QueueingWaypointPlanner::onFollowedAgentPositionChanged(double xIn, double yIn)
 {
     // sanity checks
-    if ( currentWaypoint == nullptr )
-    {
-        ROS_DEBUG ( "Queued agent cannot update queueing position, because there's no waypoint set!" );
+    if (currentWaypoint == nullptr) {
+        ROS_DEBUG("Queued agent cannot update queueing position, because there's no waypoint set!");
         return;
     }
 
-    Ped::Tvector followedPosition ( xIn, yIn );
-    addPrivateSpace ( followedPosition );
+    Ped::Tvector followedPosition(xIn, yIn);
+    addPrivateSpace(followedPosition);
 
     //HACK: don't update minor changes (prevent over-correcting)
     //TODO: integrate update importance to waypoint (force?)
     const double minUpdateDistance = 0.7;
     Ped::Tvector diff = followedPosition - currentWaypoint->getPosition();
-    if ( diff.length() < minUpdateDistance )
+    if (diff.length() < minUpdateDistance)
         return;
 
-    currentWaypoint->setPosition ( followedPosition );
+    currentWaypoint->setPosition(followedPosition);
 }
 
-void QueueingWaypointPlanner::onAgentMayPassQueue ( int id )
+void QueueingWaypointPlanner::onAgentMayPassQueue(int id)
 {
     // check who will leave queue
-    if ( ( agent != nullptr ) && ( id == agent->getId() ) )
-    {
+    if ((agent != nullptr) && (id == agent->getId())) {
         // the agent may pass
         // → update waypoint
         status = QueueingWaypointPlanner::MayPass;
 
         // remove references to old queue
-        disconnect ( waitingQueue, SIGNAL ( agentMayPass ( int ) ),
-                     this, SLOT ( onAgentMayPassQueue ( int ) ) );
-        disconnect ( waitingQueue, SIGNAL ( queueEndPositionChanged ( double,double ) ),
-                     this, SLOT ( onQueueEndPositionChanged ( double,double ) ) );
+        disconnect(waitingQueue, SIGNAL(agentMayPass(int)),
+            this, SLOT(onAgentMayPassQueue(int)));
+        disconnect(waitingQueue, SIGNAL(queueEndPositionChanged(double, double)),
+            this, SLOT(onQueueEndPositionChanged(double, double)));
     }
-    else if ( ( followedAgent != nullptr ) && ( id == followedAgent->getId() ) )
-    {
+    else if ((followedAgent != nullptr) && (id == followedAgent->getId())) {
         // followed agent leaves queue
         onFollowedAgentLeftQueue();
     }
@@ -95,54 +90,50 @@ void QueueingWaypointPlanner::onFollowedAgentLeftQueue()
 {
     // followed agent leaves queue
     // → remove all connections to old followed agent
-    disconnect ( followedAgent, SIGNAL ( positionChanged ( double,double ) ),
-                 this, SLOT ( onFollowedAgentPositionChanged ( double,double ) ) );
+    disconnect(followedAgent, SIGNAL(positionChanged(double, double)),
+        this, SLOT(onFollowedAgentPositionChanged(double, double)));
 
     // → move to queue's front
     //HACK: actually we have to check our position and eventually bind to a new followed agent
     Ped::Tvector queueingPosition = waitingQueue->getPosition();
-    currentWaypoint->setPosition ( queueingPosition );
+    currentWaypoint->setPosition(queueingPosition);
 }
 
-void QueueingWaypointPlanner::onQueueEndPositionChanged ( double xIn, double yIn )
+void QueueingWaypointPlanner::onQueueEndPositionChanged(double xIn, double yIn)
 {
     // there's nothing to do when the agent is already enqueued
-    if ( status != QueueingWaypointPlanner::Approaching )
+    if (status != QueueingWaypointPlanner::Approaching)
         return;
 
-    if ( hasReachedQueueEnd() )
-    {
+    if (hasReachedQueueEnd()) {
         // change mode
         activateQueueingMode();
     }
-    else
-    {
+    else {
         // don't update if the planner hasn't determined waypoint yet
-        if ( currentWaypoint == nullptr )
+        if (currentWaypoint == nullptr)
             return;
 
         // update destination
-        Ped::Tvector newDestination ( xIn, yIn );
-        if ( !waitingQueue->isEmpty() )
-            addPrivateSpace ( newDestination );
-        currentWaypoint->setPosition ( newDestination );
+        Ped::Tvector newDestination(xIn, yIn);
+        if (!waitingQueue->isEmpty())
+            addPrivateSpace(newDestination);
+        currentWaypoint->setPosition(newDestination);
     }
 }
 
 void QueueingWaypointPlanner::reset()
 {
     // disconnect signals
-    if ( followedAgent != nullptr )
-    {
-        disconnect ( followedAgent, SIGNAL ( positionChanged ( double,double ) ),
-                     this, SLOT ( onFollowedAgentPositionChanged ( double,double ) ) );
+    if (followedAgent != nullptr) {
+        disconnect(followedAgent, SIGNAL(positionChanged(double, double)),
+            this, SLOT(onFollowedAgentPositionChanged(double, double)));
     }
-    if ( waitingQueue != nullptr )
-    {
-        disconnect ( waitingQueue, SIGNAL ( agentMayPass ( int ) ),
-                     this, SLOT ( onAgentMayPassQueue ( int ) ) );
-        disconnect ( waitingQueue, SIGNAL ( queueEndPositionChanged ( double,double ) ),
-                     this, SLOT ( onQueueEndPositionChanged ( double,double ) ) );
+    if (waitingQueue != nullptr) {
+        disconnect(waitingQueue, SIGNAL(agentMayPass(int)),
+            this, SLOT(onAgentMayPassQueue(int)));
+        disconnect(waitingQueue, SIGNAL(queueEndPositionChanged(double, double)),
+            this, SLOT(onQueueEndPositionChanged(double, double)));
     }
 
     // unset variables
@@ -157,43 +148,41 @@ Agent* QueueingWaypointPlanner::getAgent() const
     return agent;
 }
 
-bool QueueingWaypointPlanner::setAgent ( Agent* agentIn )
+bool QueueingWaypointPlanner::setAgent(Agent* agentIn)
 {
     agent = agentIn;
     return true;
 }
 
-void QueueingWaypointPlanner::setDestination ( Waypoint* waypointIn )
+void QueueingWaypointPlanner::setDestination(Waypoint* waypointIn)
 {
-    WaitingQueue* queue = dynamic_cast<WaitingQueue*> ( waypointIn );
+    WaitingQueue* queue = dynamic_cast<WaitingQueue*>(waypointIn);
 
     // sanity checks
-    if ( queue == nullptr )
-    {
-		ROS_ERROR("Waypoint provided to QueueingWaypointPlanner isn't a waiting queue! (%s)",
-			(waypointIn==nullptr)?"null":waypointIn->toString().toStdString().c_str());
+    if (queue == nullptr) {
+        ROS_ERROR("Waypoint provided to QueueingWaypointPlanner isn't a waiting queue! (%s)",
+            (waypointIn == nullptr) ? "null" : waypointIn->toString().toStdString().c_str());
         return;
     }
 
     // apply new destination
-    setWaitingQueue ( queue );
+    setWaitingQueue(queue);
 }
 
-void QueueingWaypointPlanner::setWaitingQueue ( WaitingQueue* queueIn )
+void QueueingWaypointPlanner::setWaitingQueue(WaitingQueue* queueIn)
 {
     // clean up old waiting queue
     reset();
 
     // set up for new waiting queue
     waitingQueue = queueIn;
-    if ( waitingQueue != nullptr )
-    {
+    if (waitingQueue != nullptr) {
         status = QueueingWaypointPlanner::Approaching;
         // connect signals
-        connect ( waitingQueue, SIGNAL ( agentMayPass ( int ) ),
-                  this, SLOT ( onAgentMayPassQueue ( int ) ) );
-        connect ( waitingQueue, SIGNAL ( queueEndPositionChanged ( double,double ) ),
-                  this, SLOT ( onQueueEndPositionChanged ( double,double ) ) );
+        connect(waitingQueue, SIGNAL(agentMayPass(int)),
+            this, SLOT(onAgentMayPassQueue(int)));
+        connect(waitingQueue, SIGNAL(queueEndPositionChanged(double, double)),
+            this, SLOT(onQueueEndPositionChanged(double, double)));
     }
 }
 
@@ -207,13 +196,13 @@ bool QueueingWaypointPlanner::hasReachedQueueEnd() const
     const double endPositionRadius = 2.0;
 
     // sanity checks
-    if ( waitingQueue == nullptr )
+    if (waitingQueue == nullptr)
         return false;
 
     Ped::Tvector queueEnd = waitingQueue->getQueueEndPosition();
     Ped::Tvector diff = queueEnd - agent->getPosition();
 
-    if ( diff.length() <= endPositionRadius )
+    if (diff.length() <= endPositionRadius)
         return true;
     else
         return false;
@@ -230,12 +219,12 @@ void QueueingWaypointPlanner::activateApproachingMode()
 
     // reset waypoint (remove old one)
     delete currentWaypoint;
-    currentWaypoint = new QueueingWaypoint ( waypointName, destination );
-	
-	// NOTE - wild experiment
-	agent->disableForce ( "GroupCoherence" );
-    agent->disableForce ( "GroupGaze" );
-    agent->disableForce ( "GroupRepulsion" );
+    currentWaypoint = new QueueingWaypoint(waypointName, destination);
+
+    // NOTE - wild experiment
+    agent->disableForce("GroupCoherence");
+    agent->disableForce("GroupGaze");
+    agent->disableForce("GroupRepulsion");
 }
 
 void QueueingWaypointPlanner::activateQueueingMode()
@@ -246,54 +235,55 @@ void QueueingWaypointPlanner::activateQueueingMode()
     // set new waypoint
     QString waypointName = createWaypointName();
     Ped::Tvector queueingPosition;
-    followedAgent = waitingQueue->enqueueAgent ( agent );
-    if ( followedAgent != nullptr )
-    {
+    followedAgent = waitingQueue->enqueueAgent(agent);
+    if (followedAgent != nullptr) {
         queueingPosition = followedAgent->getPosition();
-        addPrivateSpace ( queueingPosition );
+        addPrivateSpace(queueingPosition);
 
         // keep updating the waypoint
-        connect ( followedAgent, SIGNAL ( positionChanged ( double,double ) ),
-                  this, SLOT ( onFollowedAgentPositionChanged ( double,double ) ) );
+        connect(followedAgent, SIGNAL(positionChanged(double, double)),
+            this, SLOT(onFollowedAgentPositionChanged(double, double)));
     }
-    else
-    {
+    else {
         queueingPosition = waitingQueue->getPosition();
     }
 
     // deactivate problematic forces
-    agent->disableForce ( "Social" ); 	/// Uncomment to enable chaotic queues mode
-    agent->disableForce ( "Random" );
-    agent->disableForce ( "GroupCoherence" );
-    agent->disableForce ( "GroupGaze" );
-    agent->disableForce ( "GroupRepulsion" );
+    agent->disableForce("Social"); /// Uncomment to enable chaotic queues mode
+    agent->disableForce("Random");
+    agent->disableForce("GroupCoherence");
+    agent->disableForce("GroupGaze");
+    agent->disableForce("GroupRepulsion");
 
     // reset waypoint (remove old one)
     delete currentWaypoint;
-    currentWaypoint = new QueueingWaypoint ( waypointName, queueingPosition );
+    currentWaypoint = new QueueingWaypoint(waypointName, queueingPosition);
 }
 
 /// Affects the behavior at the end of the queue and hence the shape
-void QueueingWaypointPlanner::addPrivateSpace ( Ped::Tvector& queueEndIn ) const
+void QueueingWaypointPlanner::addPrivateSpace(Ped::Tvector& queueEndIn) const
 {
-    // const double privateSpaceDistance = 0.4;
-    const double privateSpaceDistance = randRange(0.2, 0.8);    // distance between agents in queue
-    const double privateSpaceDirection = randRange(-45.0, 45.0);    // relative orientations
-    Ped::Tangle orientation;
-    orientation.setDegree( privateSpaceDirection );
+    std::uniform_real_distribution<double> spacing_range_(0.2, 0.8);
+    std::uniform_real_distribution<double> heading_range_(-45.0, 45.0);
 
-    Ped::Tvector queueOffset ( Ped::Tvector::fromPolar ( waitingQueue->getDirection() + orientation, privateSpaceDistance ) );
+    // randomize spacing and heading in queues
+    double privateSpaceDirection = heading_range_(RNG());
+    Ped::Tangle orientation;
+    orientation.setDegree(privateSpaceDirection);
+
+    double privateSpaceDistance = spacing_range_(RNG());
+    Ped::Tvector queueOffset(Ped::Tvector::fromPolar(waitingQueue->getDirection() + orientation, privateSpaceDistance));
     queueEndIn -= queueOffset;
 }
 
 QString QueueingWaypointPlanner::createWaypointName() const
 {
-    return QString ( "QueueHelper_A%1_Q%2" ).arg ( agent->getId() ).arg ( waitingQueue->getName() );
+    return QString("QueueHelper_A%1_Q%2").arg(agent->getId()).arg(waitingQueue->getName());
 }
 
 Waypoint* QueueingWaypointPlanner::getCurrentWaypoint()
 {
-    if ( hasCompletedWaypoint() )
+    if (hasCompletedWaypoint())
         currentWaypoint = getNextWaypoint();
 
     return currentWaypoint;
@@ -302,19 +292,17 @@ Waypoint* QueueingWaypointPlanner::getCurrentWaypoint()
 Waypoint* QueueingWaypointPlanner::getNextWaypoint()
 {
     // sanity checks
-    if ( agent == nullptr )
-    {
-        ROS_DEBUG ( "Cannot determine queueing waypoint without agent!" );
+    if (agent == nullptr) {
+        ROS_DEBUG("Cannot determine queueing waypoint without agent!");
         return nullptr;
     }
-    if ( waitingQueue == nullptr )
-    {
-        ROS_DEBUG ( "Cannot determine queueing waypoint without waiting queues!" );
+    if (waitingQueue == nullptr) {
+        ROS_DEBUG("Cannot determine queueing waypoint without waiting queues!");
         return nullptr;
     }
 
     // set mode
-    if ( hasReachedQueueEnd() )
+    if (hasReachedQueueEnd())
         activateQueueingMode();
     else
         activateApproachingMode();
@@ -324,35 +312,32 @@ Waypoint* QueueingWaypointPlanner::getNextWaypoint()
 
 bool QueueingWaypointPlanner::hasCompletedWaypoint() const
 {
-    if ( currentWaypoint == nullptr )
+    if (currentWaypoint == nullptr)
         return true;
 
     // update waypoint, if necessary
-    if ( status == QueueingWaypointPlanner::Approaching )
-    {
-        if ( hasReachedQueueEnd() )
-        {
+    if (status == QueueingWaypointPlanner::Approaching) {
+        if (hasReachedQueueEnd()) {
             return true;
         }
     }
 
     // check whether agent has reached waypoint
-    return ( status == QueueingWaypointPlanner::MayPass );
+    return (status == QueueingWaypointPlanner::MayPass);
 }
 
 bool QueueingWaypointPlanner::hasCompletedDestination() const
 {
-    if ( waitingQueue == nullptr )
-    {
-        ROS_DEBUG ( "QueueingWaypointPlanner: No waiting queue set!" );
+    if (waitingQueue == nullptr) {
+        ROS_DEBUG("QueueingWaypointPlanner: No waiting queue set!");
         return true;
     }
 
     // check whether agent has reached waypoint
-    return ( status == QueueingWaypointPlanner::MayPass );
+    return (status == QueueingWaypointPlanner::MayPass);
 }
 
 QString QueueingWaypointPlanner::name() const
 {
-    return tr ( "QueueingWaypointPlanner" );
+    return tr("QueueingWaypointPlanner");
 }

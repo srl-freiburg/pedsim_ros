@@ -40,7 +40,6 @@
 
 #include <pedsim_simulator/utilities.h>
 
-
 // Forward Declarations
 class QGraphicsScene;
 class Agent;
@@ -51,108 +50,107 @@ class AgentCluster;
 class AgentGroup;
 class WaitingQueue;
 
-
-class Scene : public QObject, protected Ped::Tscene
-{
-	Q_OBJECT
+class Scene : public QObject, protected Ped::Tscene {
+    Q_OBJECT
 
 public:
-	Scene(QObject* parent = 0);
-	virtual ~Scene();
+    Scene(QObject* parent = 0);
+    virtual ~Scene();
 
-    // Singleton Design Pattern
-	#define SCENE Scene::getInstance()
+// Singleton Design Pattern
+#define SCENE Scene::getInstance()
 protected:
-	static Scene* instance;
-public:
-	static Scene& getInstance();
+    static Scene* instance;
 
-	// Signals
+public:
+    static Scene& getInstance();
+
+// Signals
 signals:
-	void aboutToStart();
-	void aboutToMoveAgents();
-	void movedAgents();
-	void sceneTimeChanged(double time);
+    void aboutToStart();
+    void aboutToMoveAgents();
+    void movedAgents();
+    void sceneTimeChanged(double time);
 
-	// → added/removed elements
-	void agentAdded(int id);
-	void agentRemoved(int id);
-	void obstacleAdded(int id);
-	void obstacleRemoved(int id);
-	void waypointAdded(int id);
-	void waypointRemoved(int id);
-	void agentClusterAdded(int id);
-	void agentClusterRemoved(int id);
-	void waitingQueueAdded(QString name);
-	void waitingQueueRemoved(QString name);
-	void attractionAdded(QString name);
-	void attractionRemoved(QString name);
+    // → added/removed elements
+    void agentAdded(int id);
+    void agentRemoved(int id);
+    void obstacleAdded(int id);
+    void obstacleRemoved(int id);
+    void waypointAdded(int id);
+    void waypointRemoved(int id);
+    void agentClusterAdded(int id);
+    void agentClusterRemoved(int id);
+    void waitingQueueAdded(QString name);
+    void waitingQueueRemoved(QString name);
+    void attractionAdded(QString name);
+    void attractionRemoved(QString name);
 
-	// Slots
+    // Slots
 public slots:
-	void moveAllAgents();
+    void moveAllAgents();
 protected slots:
-	void cleanupScene();
+    void cleanupScene();
 
-	// Methods
+    // Methods
 public:
-	void clear();
-	void drawObstacles ( float x1, float y1, float x2, float y2 );
+    void clear();
+    void drawObstacles(float x1, float y1, float x2, float y2);
 
-	QRectF itemsBoundingRect() const;
+    QRectF itemsBoundingRect() const;
 
-	// → elements
-	const QList<Agent*>& getAgents() const;
-	Agent* getAgentById(int idIn) const;
-	QList<AgentGroup*> getGroups();
-	QMap<QString, AttractionArea*> getAttractions();
-	const QList<Obstacle*>& getObstacles() const;
-	const QMap<QString, Waypoint*>& getWaypoints() const;
-	const QMap<QString, AttractionArea*>& getAttractions() const;
-	Waypoint* getWaypointById(int idIn) const;
-	Waypoint* getWaypointByName(const QString& nameIn) const;
-	WaitingQueue* getWaitingQueueByName(const QString& nameIn) const;
-	const QList<AgentCluster*>& getAgentClusters() const;
-	AttractionArea* getAttractionByName(const QString& nameIn) const;
-	AttractionArea* getClosestAttraction(const Ped::Tvector& positionIn, double* distanceOut = nullptr) const;
+    // → elements
+    const QList<Agent*>& getAgents() const;
+    Agent* getAgentById(int idIn) const;
+    QList<AgentGroup*> getGroups();
+    QMap<QString, AttractionArea*> getAttractions();
+    const QList<Obstacle*>& getObstacles() const;
+    const QMap<QString, Waypoint*>& getWaypoints() const;
+    const QMap<QString, AttractionArea*>& getAttractions() const;
+    Waypoint* getWaypointById(int idIn) const;
+    Waypoint* getWaypointByName(const QString& nameIn) const;
+    WaitingQueue* getWaitingQueueByName(const QString& nameIn) const;
+    const QList<AgentCluster*>& getAgentClusters() const;
+    AttractionArea* getAttractionByName(const QString& nameIn) const;
+    AttractionArea* getClosestAttraction(const Ped::Tvector& positionIn, double* distanceOut = nullptr) const;
 
-	// → simulation time
-	double getTime() const;
-	bool hasStarted() const;
+    // → simulation time
+    double getTime() const;
+    bool hasStarted() const;
 
 protected:
-	void dissolveClusters();
+    void dissolveClusters();
 
 public:
-	virtual void addAgent(Agent* agent);
-	virtual void addObstacle(Obstacle* obstacle);
-	virtual void addWaypoint(Waypoint* waypoint);
-	virtual void addAgentCluster(AgentCluster* clusterIn);
-	virtual void addWaitingQueue(WaitingQueue* queueIn);
-	virtual void addAttraction(AttractionArea* attractionIn);
-	virtual bool removeAgent(Agent* agent);
-	virtual bool removeObstacle(Obstacle* obstacle);
-	virtual bool removeWaypoint(Waypoint* waypoint);
-	virtual bool removeAgentCluster(AgentCluster* clusterIn);
-	virtual bool removeWaitingQueue(WaitingQueue* queueIn);
-	virtual bool removeAttraction(AttractionArea* attractionInIn);
+    virtual void addAgent(Agent* agent);
+    virtual void addObstacle(Obstacle* obstacle);
+    virtual void addWaypoint(Waypoint* waypoint);
+    virtual void addAgentCluster(AgentCluster* clusterIn);
+    virtual void addWaitingQueue(WaitingQueue* queueIn);
+    virtual void addAttraction(AttractionArea* attractionIn);
+    virtual bool removeAgent(Agent* agent);
+    virtual bool removeObstacle(Obstacle* obstacle);
+    virtual bool removeWaypoint(Waypoint* waypoint);
+    virtual bool removeAgentCluster(AgentCluster* clusterIn);
+    virtual bool removeWaitingQueue(WaitingQueue* queueIn);
+    virtual bool removeAttraction(AttractionArea* attractionInIn);
 
-	virtual std::set<const Ped::Tagent*> getNeighbors(double x, double y, double maxDist);
+    virtual std::set<const Ped::Tagent*> getNeighbors(double x, double y, double maxDist);
 
-	// obstacle cell locations
+    // obstacle cell locations
     std::vector<Location> obstacle_cells_;
 
-	// Attributes
+    // Attributes
 protected:
-	QList<Agent*> agents;
-	QList<Obstacle*> obstacles;
-	QMap<QString, Waypoint*> waypoints;
-	QMap<QString, AttractionArea*> attractions;
-	QList<AgentCluster*> agentClusters;
-	QList<AgentGroup*> agentGroups;
+    QList<Agent*> agents;
+    QList<Obstacle*> obstacles;
+    QMap<QString, Waypoint*> waypoints;
+    QMap<QString, AttractionArea*> attractions;
+    QList<AgentCluster*> agentClusters;
+    QList<AgentGroup*> agentGroups;
 
-	// → simulated time
-	double sceneTime;
+    // → simulated time
+    double sceneTime;
 };
 
 #endif
