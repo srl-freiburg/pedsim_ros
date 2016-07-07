@@ -5,8 +5,10 @@ Panels:
     Property Tree Widget:
       Expanded:
         - /Grid1/Offset1
+        - /Pedsim-Visuals1
+        - /Tracking-Visuals1
       Splitter Ratio: 0.712794
-    Tree Height: 794
+    Tree Height: 348
   - Class: rviz/Selection
     Name: Selection
   - Class: rviz/Tool Properties
@@ -32,7 +34,7 @@ Visualization Manager:
     - Alpha: 0.15
       Cell Size: 1
       Class: rviz/Grid
-      Color: 255; 255; 255
+      Color: 52; 52; 52
       Enabled: true
       Line Style:
         Line Width: 0.03
@@ -47,158 +49,6 @@ Visualization Manager:
       Plane Cell Count: 40
       Reference Frame: <Fixed Frame>
       Value: true
-    - Class: rviz/Marker
-      Enabled: true
-      Marker Topic: /pedsim/walls
-      Name: Marker
-      Namespaces:
-        {}
-      Queue Size: 0
-      Value: true
-    - Class: rviz/Marker
-      Enabled: true
-      Marker Topic: /pedsim/queues
-      Name: Marker
-      Namespaces:
-        {}
-      Queue Size: 1
-      Value: true
-    - Class: rviz/Marker
-      Enabled: true
-      Marker Topic: /pedsim/attractions
-      Name: Marker
-      Namespaces:
-        {}
-      Queue Size: 1
-      Value: true
-    - Class: rviz/MarkerArray
-      Enabled: false
-      Marker Topic: /pedsim/agent_directions
-      Name: MarkerArray
-      Namespaces:
-        {}
-      Queue Size: 0
-      Value: false
-    - Class: rviz/MarkerArray
-      Enabled: false
-      Marker Topic: /pedsim/group_relations
-      Name: MarkerArray
-      Namespaces:
-        {}
-      Queue Size: 0
-      Value: false
-    - Class: animated_marker_rviz_plugin/AnimatedMarkerArray
-      Enabled: false
-      Marker Topic: /pedsim/agents_markers
-      Name: AnimatedMarkerArray
-      Namespaces:
-        {}
-      Queue Size: 0
-      Value: false
-    - Alpha: 1
-      Class: spencer_tracking_rviz_plugin/TrackedPersons
-      Color: 130; 130; 130
-      Color map offset: 0
-      Color transform: Flat
-      Delete after no. cycles: 5
-      Enabled: true
-      Excluded person IDs: ""
-      Font color: 255; 255; 255
-      Font color style: Same color
-      Font scale: 2
-      History as line:
-        Line width: 0.05
-        Value: true
-      History size: 5
-      Included person IDs: ""
-      Min. history point distance: 0.4
-      Missed alpha: 1
-      Name: TrackedPersons
-      Occlusion alpha: 1
-      Render covariances:
-        Line width: 0.1
-        Value: false
-      Render detection IDs: false
-      Render history: false
-      Render person visual: true
-      Render track IDs: true
-      Render track state: false
-      Render velocities: false
-      Show DELETED tracks: false
-      Show MATCHED tracks: true
-      Show MISSED tracks: true
-      Show OCCLUDED tracks: true
-      Style:
-        Line width: 0.05
-        Scaling factor: 1
-        Value: Person meshes
-      Topic: /pedsim/tracked_persons
-      Value: true
-      Z offset:
-        Use Z position from message: false
-        Value: 0
-    - Alpha: 1
-      Class: spencer_tracking_rviz_plugin/TrackedGroups
-      Color: 130; 130; 130
-      Color map offset: 0
-      Color transform: Flat
-      Connect group members: true
-      Enabled: true
-      Excluded group IDs: ""
-      Excluded person IDs: ""
-      Font color: 255; 255; 255
-      Font color style: Same color
-      Font scale: 2
-      Global history size: 5
-      Group ID Z offset: 2
-      Included group IDs: ""
-      Included person IDs: ""
-      Name: TrackedGroups
-      Occlusion alpha: 1
-      Render group IDs:
-        Hide IDs of single-person groups: false
-        Value: false
-      Render history: false
-      Single-person groups in constant color: false
-      Style:
-        Line width: 0.05
-        Scaling factor: 1
-        Value: Simple
-      Topic: /pedsim/tracked_groups
-      Tracked persons topic: /pedsim/tracked_persons
-      Value: true
-      Z offset:
-        Use Z position from message: false
-        Value: 0
-    - Alpha: 1
-      Autocompute Intensity Bounds: true
-      Autocompute Value Bounds:
-        Max Value: 10
-        Min Value: -10
-        Value: true
-      Axis: Z
-      Channel Name: intensity
-      Class: rviz/PointCloud
-      Color: 255; 255; 255
-      Color Transformer: Intensity
-      Decay Time: 0
-      Enabled: false
-      Invert Rainbow: false
-      Max Color: 255; 255; 255
-      Max Intensity: 255
-      Min Color: 0; 0; 0
-      Min Intensity: 10
-      Name: PointCloud
-      Position Transformer: XYZ
-      Queue Size: 10
-      Selectable: true
-      Size (Pixels): 5
-      Size (m): 0.01
-      Style: Points
-      Topic: /pedsim/people_cloud_global
-      Use Fixed Frame: true
-      Use rainbow: true
-      Value: false
     - Class: rviz/Axes
       Enabled: true
       Length: 1
@@ -206,9 +56,131 @@ Visualization Manager:
       Radius: 0.1
       Reference Frame: base_footprint
       Value: true
+    - Class: rviz/Group
+      Displays:
+        - Class: animated_marker_rviz_plugin/AnimatedMarkerArray
+          Enabled: false
+          Marker Topic: /pedsim/agents_markers
+          Name: AnimatedMarkerArray
+          Namespaces:
+            {}
+          Queue Size: 0
+          Value: false
+        - Class: rviz/MarkerArray
+          Enabled: false
+          Marker Topic: /pedsim/group_relations
+          Name: Group-Relations
+          Namespaces:
+            {}
+          Queue Size: 0
+          Value: false
+        - Class: rviz/MarkerArray
+          Enabled: false
+          Marker Topic: /pedsim/agent_directions
+          Name: Headings
+          Namespaces:
+            {}
+          Queue Size: 0
+          Value: false
+        - Class: rviz/Marker
+          Enabled: false
+          Marker Topic: /pedsim/walls
+          Name: Walls
+          Namespaces:
+            {}
+          Queue Size: 0
+          Value: false
+        - Alpha: 1
+          Class: rviz/GridCells
+          Color: 255; 170; 0
+          Enabled: true
+          Name: GridCells
+          Topic: /pedsim/static_obstacles
+          Value: true
+      Enabled: true
+      Name: Pedsim-Visuals
+    - Class: rviz/Group
+      Displays:
+        - Alpha: 1
+          Class: spencer_tracking_rviz_plugin/TrackedPersons
+          Color: 130; 130; 130
+          Color map offset: 0
+          Color transform: Flat
+          Delete after no. cycles: 5
+          Enabled: true
+          Excluded person IDs: ""
+          Font color: 255; 255; 255
+          Font color style: Same color
+          Font scale: 2
+          History as line:
+            Line width: 0.05
+            Value: true
+          History size: 5
+          Included person IDs: ""
+          Min. history point distance: 0.4
+          Missed alpha: 1
+          Name: TrackedPersons
+          Occlusion alpha: 1
+          Render covariances:
+            Line width: 0.1
+            Value: false
+          Render detection IDs: false
+          Render history: false
+          Render person visual: true
+          Render track IDs: true
+          Render track state: false
+          Render velocities: false
+          Show DELETED tracks: false
+          Show MATCHED tracks: true
+          Show MISSED tracks: true
+          Show OCCLUDED tracks: true
+          Style:
+            Line width: 0.05
+            Scaling factor: 1
+            Value: Person meshes
+          Topic: /pedsim/tracked_persons
+          Value: true
+          Z offset:
+            Use Z position from message: false
+            Value: 0
+        - Alpha: 1
+          Class: spencer_tracking_rviz_plugin/TrackedGroups
+          Color: 130; 130; 130
+          Color map offset: 0
+          Color transform: Flat
+          Connect group members: true
+          Enabled: true
+          Excluded group IDs: ""
+          Excluded person IDs: ""
+          Font color: 255; 255; 255
+          Font color style: Same color
+          Font scale: 2
+          Global history size: 5
+          Group ID Z offset: 2
+          Included group IDs: ""
+          Included person IDs: ""
+          Name: TrackedGroups
+          Occlusion alpha: 1
+          Render group IDs:
+            Hide IDs of single-person groups: false
+            Value: false
+          Render history: false
+          Single-person groups in constant color: false
+          Style:
+            Line width: 0.05
+            Scaling factor: 1
+            Value: Simple
+          Topic: /pedsim/tracked_groups
+          Tracked persons topic: /pedsim/tracked_persons
+          Value: true
+          Z offset:
+            Use Z position from message: false
+            Value: 0
+      Enabled: true
+      Name: Tracking-Visuals
   Enabled: true
   Global Options:
-    Background Color: 44; 44; 44
+    Background Color: 244; 244; 244
     Fixed Frame: odom
     Frame Rate: 30
   Name: root
@@ -230,22 +202,22 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/XYOrbit
-      Distance: 17.9492
+      Distance: 13.0809
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.06
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: 13.824
-        Y: 5.31085
-        Z: 3.22632e-06
+        X: 3.74754
+        Y: 4.3121
+        Z: -8.21775e-06
       Name: Current View
       Near Clip Distance: 0.01
-      Pitch: 0.740398
+      Pitch: 0.555398
       Target Frame: <Fixed Frame>
       Value: XYOrbit (rviz)
-      Yaw: 4.71857
+      Yaw: 3.84357
     Saved: ~
 Window Geometry:
   Displays:
@@ -263,5 +235,5 @@ Window Geometry:
   Views:
     collapsed: true
   Width: 1493
-  X: 63
+  X: 33
   Y: 14
