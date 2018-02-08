@@ -23,29 +23,27 @@
   <build_depend>pedsim</build_depend>
   <build_depend>pedsim_msgs</build_depend>
   <build_depend>pedsim_srvs</build_depend>
+  <build_depend>pedsim_utils</build_depend>
   <build_depend>std_msgs</build_depend>
   <build_depend>std_srvs</build_depend>
-  <build_depend>visualization_msgs</build_depend>
-  <build_depend>nav_msgs</build_depend>
   <build_depend>geometry_msgs</build_depend>
+  <build_depend>nav_msgs</build_depend>
   <build_depend>tf</build_depend>
-  <build_depend>animated_marker_msgs</build_depend>
   <build_depend>cmake_modules</build_depend>
   <build_depend>dynamic_reconfigure</build_depend>
 
   <run_depend>cmake_modules</run_depend>
-  <run_depend>animated_marker_msgs</run_depend>
   <run_depend>tf</run_depend>
   <run_depend>roscpp</run_depend>
   <run_depend>rospy</run_depend>
   <run_depend>pedsim</run_depend>
   <run_depend>pedsim_msgs</run_depend>
   <run_depend>pedsim_srvs</run_depend>
+  <run_depend>pedsim_utils</run_depend>
   <run_depend>std_msgs</run_depend>
   <run_depend>std_srvs</run_depend>
-  <run_depend>visualization_msgs</run_depend>
-  <run_depend>nav_msgs</run_depend>
   <run_depend>geometry_msgs</run_depend>
+  <run_depend>nav_msgs</run_depend>
   <run_depend>dynamic_reconfigure</run_depend>
 
 </package>

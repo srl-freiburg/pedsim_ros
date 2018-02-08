@@ -34,26 +34,25 @@
 
 #include <QObject>
 
-
 class ScenarioElement : public QObject {
-	Q_OBJECT
+  Q_OBJECT
 
-	// Constructor and Destructor
-public:
-	ScenarioElement(QObject* parent = nullptr);
+  // Constructor and Destructor
+ public:
+  ScenarioElement(QObject* parent = nullptr);
 
+  // Signals
+ signals:
+  void selectionChanged(bool selected);
 
-	// Signals
-signals:
-	void selectionChanged(bool selected);
+  // Methods
+ public:
+  // → Selection
+  virtual void setSelected(bool selectedIn) {
+    emit selectionChanged(selectedIn);
+  };
 
-
-	// Methods
-public:
-	// → Selection
-	virtual void setSelected(bool selectedIn) { emit selectionChanged(selectedIn); };
-
-	virtual QString toString() const = 0;
+  virtual QString toString() const = 0;
 };
 
 #endif

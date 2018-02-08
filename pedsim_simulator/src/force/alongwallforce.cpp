@@ -29,96 +29,87 @@
 * \author Sven Wehner <mail@svenwehner.de>
 */
 
-#include <pedsim_simulator/force/alongwallforce.h>
 #include <pedsim_simulator/config.h>
-#include <pedsim_simulator/scene.h>
 #include <pedsim_simulator/element/agent.h>
 #include <pedsim_simulator/element/obstacle.h>
+#include <pedsim_simulator/force/alongwallforce.h>
+#include <pedsim_simulator/scene.h>
 
 #include <ros/ros.h>
 
+AlongWallForce::AlongWallForce(Agent* agentIn) : Force(agentIn) {
+  // initialize values
+  // TODO - put these magic values into a yaml parameter file
+  speedThreshold = 0.2;
+  distanceThreshold = 0.6;
+  angleThresholdDegree = 20;
+  setFactor(CONFIG.forceAlongWall);
 
-AlongWallForce::AlongWallForce ( Agent* agentIn )
-    : Force ( agentIn )
-{
-    // initialize values
-    // TODO - put these magic values into a yaml parameter file
-    speedThreshold = 0.2;
-    distanceThreshold = 0.6;
-    angleThresholdDegree = 20;
-    setFactor ( CONFIG.forceAlongWall );
-
-    // connect signals
-    connect ( &CONFIG, SIGNAL ( forceFactorAlongWallChanged ( double ) ),
-              this, SLOT ( onForceFactorChanged ( double ) ) );
+  // connect signals
+  connect(&CONFIG, SIGNAL(forceFactorAlongWallChanged(double)), this,
+          SLOT(onForceFactorChanged(double)));
 }
 
-void AlongWallForce::onForceFactorChanged ( double valueIn )
-{
-    setFactor ( valueIn );
+void AlongWallForce::onForceFactorChanged(double valueIn) {
+  setFactor(valueIn);
 }
 
-Ped::Tvector AlongWallForce::getForce ( Ped::Tvector walkingDirection )
-{
-    if ( agent == nullptr )
-    {
-		ROS_DEBUG("Cannot compute AlongWallForce for null agent!");
-        return Ped::Tvector();
+Ped::Tvector AlongWallForce::getForce(Ped::Tvector walkingDirection) {
+  if (agent == nullptr) {
+    ROS_DEBUG("Cannot compute AlongWallForce for null agent!");
+    return Ped::Tvector();
+  }
+
+  // check whether the agent is stuck
+  // → doesn't move
+  if (agent->getVelocity().length() > speedThreshold) return Ped::Tvector();
+
+  // → walks against an obstacle
+  Ped::Tvector force;
+  Ped::Tvector agentPosition = agent->getPosition();
+  const QList<Obstacle*>& obstacles = SCENE.getObstacles();
+  // → find closest obstacle
+  double minDistance = INFINITY;
+  Ped::Tvector minDiff;
+  Obstacle* minObstacle = nullptr;
+  foreach (Obstacle* currentObstacle, obstacles) {
+    Ped::Tvector closestPoint = currentObstacle->closestPoint(agentPosition);
+    Ped::Tvector diff = closestPoint - agentPosition;
+    double distance = diff.length();
+    if (distance < minDistance) {
+      minObstacle = currentObstacle;
+      minDiff = diff;
+      minDistance = distance;
     }
+  }
 
-    // check whether the agent is stuck
-    // → doesn't move
-    if ( agent->getVelocity().length() > speedThreshold )
-        return Ped::Tvector();
+  // check distance to closest obstacle
+  if (minDistance > distanceThreshold) return Ped::Tvector();
 
-    // → walks against an obstacle
-    Ped::Tvector force;
-    Ped::Tvector agentPosition = agent->getPosition();
-    const QList<Obstacle*>& obstacles = SCENE.getObstacles();
-    // → find closest obstacle
-    double minDistance = INFINITY;
-    Ped::Tvector minDiff;
-    Obstacle* minObstacle = nullptr;
-    foreach ( Obstacle* currentObstacle, obstacles )
-    {
-        Ped::Tvector closestPoint = currentObstacle->closestPoint ( agentPosition );
-        Ped::Tvector diff = closestPoint - agentPosition;
-        double distance = diff.length();
-        if ( distance < minDistance )
-        {
-            minObstacle = currentObstacle;
-            minDiff = diff;
-            minDistance = distance;
-        }
-    }
+  // check whether closest point is in walking direction
+  const Ped::Tangle angleThreshold =
+      Ped::Tangle::fromDegree(angleThresholdDegree);
+  Ped::Tangle angle = walkingDirection.angleTo(minDiff);
+  if (angle > angleThreshold) return Ped::Tvector();
 
-    // check distance to closest obstacle
-    if ( minDistance > distanceThreshold )
-        return Ped::Tvector();
+  ROS_DEBUG("Found Agent %d to be stuck!", agent->getId());
 
-    // check whether closest point is in walking direction
-    const Ped::Tangle angleThreshold = Ped::Tangle::fromDegree ( angleThresholdDegree );
-    Ped::Tangle angle = walkingDirection.angleTo ( minDiff );
-    if ( angle > angleThreshold )
-        return Ped::Tvector();
+  // set force
+  // → project to find walking direction
+  Ped::Tvector obstacleDirection =
+      minObstacle->getEndPoint() - minObstacle->getStartPoint();
+  bool projectionPositive =
+      (Ped::Tvector::dotProduct(walkingDirection, obstacleDirection) >= 0);
 
-	ROS_DEBUG("Found Agent %d to be stuck!", agent->getId());
+  Ped::Tvector forceDirection =
+      (projectionPositive) ? obstacleDirection : -obstacleDirection;
+  forceDirection.normalize();
 
-    // set force
-    // → project to find walking direction
-    Ped::Tvector obstacleDirection = minObstacle->getEndPoint() - minObstacle->getStartPoint();
-    bool projectionPositive = ( Ped::Tvector::dotProduct ( walkingDirection, obstacleDirection ) >= 0 );
-
-    Ped::Tvector forceDirection = ( projectionPositive ) ? obstacleDirection : -obstacleDirection;
-    forceDirection.normalize();
-
-    // scale force
-    force = factor * forceDirection;
-    return force;
+  // scale force
+  force = factor * forceDirection;
+  return force;
 }
 
-QString AlongWallForce::toString() const
-{
-    return tr ( "AlongWallForce (factor: %2)" )
-           .arg ( factor );
+QString AlongWallForce::toString() const {
+  return tr("AlongWallForce (factor: %2)").arg(factor);
 }

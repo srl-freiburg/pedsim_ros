@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--This scenario file was created by SGDiCoP on 2014-01-21T19:53:13-->
+<scenario>
+    <!--Obstacles-->
+    <obstacle x1="0" y1="0" x2="150" y2="0"/>
+    <obstacle x1="0" y1="0" x2="0" y2="25"/>
+    <obstacle x1="150" y1="0" x2="150" y2="25"/>
+    <obstacle x1="0" y1="25" x2="5" y2="30"/>
+    <obstacle x1="150" y1="25" x2="145" y2="30"/>
+    <obstacle x1="145" y1="30" x2="135" y2="30"/>
+    <obstacle x1="135" y1="30" x2="130" y2="35"/>
+    <obstacle x1="130" y1="35" x2="130" y2="50"/>
+    <obstacle x1="130" y1="50" x2="110" y2="50"/>
+    <obstacle x1="110" y1="50" x2="110" y2="35"/>
+    <obstacle x1="110" y1="35" x2="105" y2="30"/>
+    <obstacle x1="105" y1="30" x2="50" y2="30"/>
+    <obstacle x1="50" y1="30" x2="45" y2="35"/>
+    <obstacle x1="45" y1="35" x2="45" y2="50"/>
+    <obstacle x1="45" y1="50" x2="25" y2="50"/>
+    <obstacle x1="25" y1="50" x2="25" y2="35"/>
+    <obstacle x1="25" y1="35" x2="20" y2="30"/>
+    <obstacle x1="20" y1="30" x2="5" y2="30"/>
+    <!--Waypoints (incl. WaitingQueues)-->
+    <waypoint id="left_bottom" x="10" y="10" r="5"/>
+    <waypoint id="left_top" x="10" y="25" r="5"/>
+    <waypoint id="right_bottom" x="140" y="5" r="5"/>
+    <waypoint id="right_top" x="140" y="25" r="5"/>
+    <waypoint id="robot_goal" x="120" y="40" r="5"/>
+    <waypoint id="robot_start" x="35" y="40" r="5"/>
+    <!--Attractions-->
+    <!--Agents-->
+    <agent x="60" y="20" n="1" dx="0" dy="0" type="0">
+        <addwaypoint id="left_top"/>
+        <addwaypoint id="left_bottom"/>
+        <addwaypoint id="right_bottom"/>
+        <addwaypoint id="right_top"/>
+    </agent>
+    <!-- Robot agent (id = 1) -->
+    <agent x="30" y="30" n="1" dx="0" dy="0" type="2">
+        <addwaypoint id="robot_start"/>
+        <addwaypoint id="robot_goal"/>
+    </agent>
+    <!--AgentClusters-->
+    <agent x="95" y="25" n="100" dx="50" dy="10" type="0">
+        <addwaypoint id="left_top"/>
+        <addwaypoint id="left_bottom"/>
+        <addwaypoint id="right_bottom"/>
+        <addwaypoint id="right_top"/>
+    </agent>
+    <agent x="65" y="10" n="100" dx="100" dy="15" type="1">
+        <addwaypoint id="right_bottom"/>
+        <addwaypoint id="right_top"/>
+        <addwaypoint id="left_top"/>
+        <addwaypoint id="left_bottom"/>
+    </agent>
+    <agent x="130" y="10" n="60" dx="20" dy="15" type="1">
+        <!-- <addwaypoint id="right_bottom"/> -->
+        <addwaypoint id="right_top"/>
+        <addwaypoint id="left_top"/>
+        <addwaypoint id="left_bottom"/>
+    </agent>
+</scenario>

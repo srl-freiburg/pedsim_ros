@@ -29,268 +29,230 @@
 * \author Sven Wehner <mail@svenwehner.de>
 */
 
+#include <pedsim_simulator/config.h>
+#include <pedsim_simulator/element/agent.h>
 #include <pedsim_simulator/element/waitingqueue.h>
 #include <pedsim_simulator/rng.h>
 #include <pedsim_simulator/scene.h>
-#include <pedsim_simulator/element/agent.h>
-#include <pedsim_simulator/config.h>
 
+WaitingQueue::WaitingQueue(const QString& nameIn, Ped::Tvector positionIn,
+                           Ped::Tangle directionIn)
+    : Waypoint(nameIn, positionIn), direction(directionIn) {
+  // initialize values
+  dequeueTime = INFINITY;
+  waitDurationLambda = CONFIG.wait_time_beta;
 
-WaitingQueue::WaitingQueue ( const QString& nameIn, Ped::Tvector positionIn, Ped::Tangle directionIn )
-    : Waypoint ( nameIn, positionIn ), direction ( directionIn )
-{
-    // initialize values
-    dequeueTime = INFINITY;
-    waitDurationLambda = CONFIG.wait_time_beta;
-
-    // connect signals
-    connect ( &SCENE, SIGNAL ( sceneTimeChanged ( double ) ), this, SLOT ( onTimeChanged ( double ) ) );
+  // connect signals
+  connect(&SCENE, SIGNAL(sceneTimeChanged(double)), this,
+          SLOT(onTimeChanged(double)));
 }
 
-WaitingQueue::~WaitingQueue()
-{
-}
+WaitingQueue::~WaitingQueue() {}
 
-void WaitingQueue::onTimeChanged ( double timeIn )
-{
-    // skip when there is none
-    if ( queuedAgents.empty() )
-    {
-        return;
+void WaitingQueue::onTimeChanged(double timeIn) {
+  // skip when there is none
+  if (queuedAgents.empty()) {
+    return;
+  }
+
+  Agent* firstInLine = queuedAgents.first();
+
+  // check whether waiting started
+  if (std::isinf(dequeueTime)) {
+    if (hasReachedWaitingPosition()) {
+      // set the time when to dequeue leading agent
+      startDequeueTime();
     }
+  }
 
-    Agent* firstInLine = queuedAgents.first();
+  // let first agent in line pass
+  if (dequeueTime <= timeIn) {
+    // dequeue agent and inform users
+    emit agentMayPass(firstInLine->getId());
+    dequeueAgent(firstInLine);
+  }
+}
 
-    // check whether waiting started
-    if ( std::isinf ( dequeueTime ) )
-    {
-        if ( hasReachedWaitingPosition() )
-        {
-            // set the time when to dequeue leading agent
-            startDequeueTime();
-        }
+void WaitingQueue::onLastAgentPositionChanged(double xIn, double yIn) {
+  emit queueEndPositionChanged(xIn, yIn);
+}
+
+Ped::Tangle WaitingQueue::getDirection() const { return direction; }
+
+void WaitingQueue::setDirection(const Ped::Tangle& angleIn) {
+  direction = angleIn;
+
+  // inform users
+  emit directionChanged(direction.toRadian());
+}
+
+void WaitingQueue::setDirection(double xIn, double yIn) {
+  setDirection(Ped::Tvector(xIn, yIn));
+}
+
+void WaitingQueue::setDirection(const Ped::Tvector& directionIn) {
+  direction = directionIn.polarAngle();
+
+  // inform users
+  emit directionChanged(direction.toRadian());
+}
+
+bool WaitingQueue::isEmpty() const { return queuedAgents.isEmpty(); }
+
+Ped::Tvector WaitingQueue::getQueueEndPosition() const {
+  if (queuedAgents.isEmpty())
+    return position;
+  else
+    return queuedAgents.last()->getPosition();
+}
+
+const Agent* WaitingQueue::enqueueAgent(Agent* agentIn) {
+  // determine output
+  const Agent* aheadAgent =
+      (queuedAgents.isEmpty()) ? nullptr : queuedAgents.last();
+
+  // add agent to queue
+  queuedAgents.append(agentIn);
+
+  // inform about new first in line
+  if (aheadAgent == nullptr) {
+    emit queueLeaderChanged(agentIn->getId());
+  }
+
+  // stay informed about updates on queue end
+  connect(agentIn, SIGNAL(positionChanged(double, double)), this,
+          SLOT(onLastAgentPositionChanged(double, double)));
+  // ignore updates from previous queue end
+  if (aheadAgent != nullptr) {
+    disconnect(aheadAgent, SIGNAL(positionChanged(double, double)), this,
+               SLOT(onLastAgentPositionChanged(double, double)));
+  }
+
+  // inform users
+  emit queueEndChanged();
+  informAboutEndPosition();
+
+  // return agent ahead of the new agent
+  return aheadAgent;
+}
+
+bool WaitingQueue::dequeueAgent(Agent* agentIn) {
+  // sanity checks
+  if (queuedAgents.isEmpty()) {
+    ROS_DEBUG("Cannot dequeue agent from empty waiting queue!");
+    return false;
+  }
+
+  // remove agent from queue
+  bool dequeueSuccess;
+  bool dequeuedWasFirst = (queuedAgents.first() == agentIn);
+  bool dequeuedWasLast = (queuedAgents.last() == agentIn);
+  if (dequeuedWasFirst) {
+    queuedAgents.removeFirst();
+    dequeueSuccess = true;
+  } else {
+    ROS_DEBUG("Dequeueing agent from queue (%s), not in front of the queue",
+              agentIn->toString().toStdString().c_str());
+    int removedCount = queuedAgents.removeAll(agentIn);
+    dequeueSuccess = (removedCount >= 1);
+
+    if (dequeueSuccess == false) {
+      ROS_DEBUG("Agent isn't waiting in queue! (Agent: %s, Queue: %s)",
+                agentIn->toString().toStdString().c_str(),
+                this->toString().toStdString().c_str());
+      return false;
     }
+  }
 
-    // let first agent in line pass
-    if ( dequeueTime <= timeIn )
-    {
-        // dequeue agent and inform users
-        emit agentMayPass ( firstInLine->getId() );
-        dequeueAgent ( firstInLine );
-    }
-}
+  // inform other agents
+  emit agentDequeued(agentIn->getId());
 
-void WaitingQueue::onLastAgentPositionChanged ( double xIn, double yIn )
-{
-    emit queueEndPositionChanged ( xIn, yIn );
-}
+  // update leading position
+  if (dequeuedWasFirst) {
+    // determine new first agent in line
+    const Agent* newFront =
+        (queuedAgents.isEmpty()) ? nullptr : queuedAgents.first();
 
-Ped::Tangle WaitingQueue::getDirection() const
-{
-    return direction;
-}
+    // reset time for next agent
+    resetDequeueTime();
 
-void WaitingQueue::setDirection ( const Ped::Tangle& angleIn )
-{
-    direction = angleIn;
+    // inform users about changed front position
+    int frontId = (newFront != nullptr) ? newFront->getId() : -1;
+    emit queueLeaderChanged(frontId);
+  }
 
-    // inform users
-    emit directionChanged ( direction.toRadian() );
-}
+  // update queue end
+  if (dequeuedWasLast) {
+    disconnect(agentIn, SIGNAL(positionChanged(double, double)), this,
+               SLOT(onLastAgentPositionChanged(double, double)));
 
-void WaitingQueue::setDirection ( double xIn, double yIn )
-{
-    setDirection ( Ped::Tvector ( xIn, yIn ) );
-}
-
-void WaitingQueue::setDirection ( const Ped::Tvector& directionIn )
-{
-    direction = directionIn.polarAngle();
-
-    // inform users
-    emit directionChanged ( direction.toRadian() );
-}
-
-bool WaitingQueue::isEmpty() const
-{
-    return queuedAgents.isEmpty();
-}
-
-Ped::Tvector WaitingQueue::getQueueEndPosition() const
-{
-    if ( queuedAgents.isEmpty() )
-        return position;
-    else
-        return queuedAgents.last()->getPosition();
-}
-
-const Agent* WaitingQueue::enqueueAgent ( Agent* agentIn )
-{
-    // determine output
-    const Agent* aheadAgent = ( queuedAgents.isEmpty() ) ?nullptr:queuedAgents.last();
-
-    // add agent to queue
-    queuedAgents.append ( agentIn );
-
-    // inform about new first in line
-    if ( aheadAgent == nullptr )
-    {
-        emit queueLeaderChanged ( agentIn->getId() );
-    }
-
-    // stay informed about updates on queue end
-    connect ( agentIn, SIGNAL ( positionChanged ( double,double ) ),
-              this, SLOT ( onLastAgentPositionChanged ( double,double ) ) );
-    // ignore updates from previous queue end
-    if ( aheadAgent != nullptr )
-    {
-        disconnect ( aheadAgent, SIGNAL ( positionChanged ( double,double ) ),
-                     this, SLOT ( onLastAgentPositionChanged ( double,double ) ) );
-    }
-
-    // inform users
     emit queueEndChanged();
     informAboutEndPosition();
+  }
 
-    // return agent ahead of the new agent
-    return aheadAgent;
+  return dequeueSuccess;
 }
 
-bool WaitingQueue::dequeueAgent ( Agent* agentIn )
-{
-    // sanity checks
-    if ( queuedAgents.isEmpty() )
-    {
-        ROS_DEBUG ( "Cannot dequeue agent from empty waiting queue!" );
-        return false;
-    }
+bool WaitingQueue::hasReachedWaitingPosition() {
+  if (queuedAgents.isEmpty()) return false;
 
-    // remove agent from queue
-    bool dequeueSuccess;
-    bool dequeuedWasFirst = ( queuedAgents.first() == agentIn );
-    bool dequeuedWasLast = ( queuedAgents.last() == agentIn );
-    if ( dequeuedWasFirst )
-    {
-        queuedAgents.removeFirst();
-        dequeueSuccess = true;
-    }
-    else
-    {
-        ROS_DEBUG ( "Dequeueing agent from queue (%s), not in front of the queue",
-agentIn->toString().toStdString().c_str() );
-        int removedCount = queuedAgents.removeAll ( agentIn );
-        dequeueSuccess = ( removedCount >= 1 );
+  // const double waitingRadius = 0.7;
+  const double waitingRadius = 0.3;
 
-        if ( dequeueSuccess == false )
-        {
-            ROS_DEBUG ( "Agent isn't waiting in queue! (Agent: %s, Queue: %s)",
-agentIn->toString().toStdString().c_str(), this->toString().toStdString().c_str() );
-            return false;
-        }
-    }
-
-    // inform other agents
-    emit agentDequeued ( agentIn->getId() );
-
-    // update leading position
-    if ( dequeuedWasFirst )
-    {
-        // determine new first agent in line
-        const Agent* newFront = ( queuedAgents.isEmpty() ) ? nullptr : queuedAgents.first();
-
-        // reset time for next agent
-        resetDequeueTime();
-
-        // inform users about changed front position
-        int frontId = ( newFront != nullptr ) ? newFront->getId() : -1;
-        emit queueLeaderChanged ( frontId );
-    }
-
-    // update queue end
-    if ( dequeuedWasLast )
-    {
-        disconnect ( agentIn, SIGNAL ( positionChanged ( double,double ) ),
-                     this, SLOT ( onLastAgentPositionChanged ( double,double ) ) );
-
-        emit queueEndChanged();
-        informAboutEndPosition();
-    }
-
-    return dequeueSuccess;
+  // compute distance from where queue starts
+  const Agent* leadingAgent = queuedAgents.first();
+  Ped::Tvector diff = leadingAgent->getPosition() - position;
+  return (diff.length() < waitingRadius);
 }
 
-bool WaitingQueue::hasReachedWaitingPosition()
-{
-    if ( queuedAgents.isEmpty() )
-        return false;
+void WaitingQueue::resetDequeueTime() { dequeueTime = INFINITY; }
 
-    // const double waitingRadius = 0.7;
-    const double waitingRadius = 0.3;
+void WaitingQueue::startDequeueTime() {
+  // draw random waiting period
+  // exponential_distribution<> distribution ( waitDurationLambda );
 
-    // compute distance from where queue starts
-    const Agent* leadingAgent = queuedAgents.first();
-    Ped::Tvector diff = leadingAgent->getPosition() - position;
-    return ( diff.length() < waitingRadius );
+  // construct an Erlang distribution from a Gamma
+  const int alpha = 2;
+  const double beta = 0.5;
+  gamma_distribution<> distribution(alpha, beta);
+
+  double waitDuration = distribution(RNG());
+  dequeueTime = SCENE.getTime() + waitDuration;
 }
 
-void WaitingQueue::resetDequeueTime()
-{
-    dequeueTime = INFINITY;
+void WaitingQueue::informAboutEndPosition() {
+  // inform users
+  if (queuedAgents.isEmpty()) {
+    emit queueEndPositionChanged(position.x, position.y);
+  } else {
+    Agent* lastAgent = queuedAgents.last();
+    Ped::Tvector endPosition = lastAgent->getPosition();
+    emit queueEndPositionChanged(endPosition.x, endPosition.y);
+  }
 }
 
-void WaitingQueue::startDequeueTime()
-{
-    // draw random waiting period
-    // exponential_distribution<> distribution ( waitDurationLambda );
-
-    // construct an Erlang distribution from a Gamma
-    const int alpha = 2;
-    const double beta = 0.5;
-    gamma_distribution<> distribution ( alpha, beta );
-
-    double waitDuration = distribution ( RNG() );
-    dequeueTime = SCENE.getTime() + waitDuration;
+Ped::Tvector WaitingQueue::closestPoint(const Ped::Tvector& p,
+                                        bool* withinWaypoint) const {
+  return getQueueEndPosition();
 }
 
-void WaitingQueue::informAboutEndPosition()
-{
-    // inform users
-    if ( queuedAgents.isEmpty() )
-    {
-        emit queueEndPositionChanged ( position.x, position.y );
-    }
-    else
-    {
-        Agent* lastAgent = queuedAgents.last();
-        Ped::Tvector endPosition = lastAgent->getPosition();
-        emit queueEndPositionChanged ( endPosition.x, endPosition.y );
-    }
+QPointF WaitingQueue::getVisiblePosition() const {
+  return QPointF(position.x, position.y);
 }
 
-Ped::Tvector WaitingQueue::closestPoint ( const Ped::Tvector& p, bool* withinWaypoint ) const
-{
-    return getQueueEndPosition();
+void WaitingQueue::setVisiblePosition(const QPointF& positionIn) {
+  setPosition(positionIn.x(), positionIn.y());
 }
 
-QPointF WaitingQueue::getVisiblePosition() const
-{
-    return QPointF ( position.x, position.y );
-}
+QString WaitingQueue::toString() const {
+  QStringList waitingIDs;
+  foreach (const Agent* agent, queuedAgents)
+    waitingIDs.append(QString::number(agent->getId()));
+  QString waitingString = waitingIDs.join(",");
 
-void WaitingQueue::setVisiblePosition ( const QPointF& positionIn )
-{
-    setPosition ( positionIn.x(), positionIn.y() );
-}
-
-QString WaitingQueue::toString() const
-{
-    QStringList waitingIDs;
-    foreach ( const Agent* agent, queuedAgents )
-        waitingIDs.append ( QString::number ( agent->getId() ) );
-    QString waitingString = waitingIDs.join ( "," );
-
-    return tr ( "WaitingQueue '%1' (@%2,%3; queue: %4)" )
-           .arg ( name )
-           .arg ( position.x ).arg ( position.y )
-           .arg ( waitingString );
+  return tr("WaitingQueue '%1' (@%2,%3; queue: %4)")
+      .arg(name)
+      .arg(position.x)
+      .arg(position.y)
+      .arg(waitingString);
 }

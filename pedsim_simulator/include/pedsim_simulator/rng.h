@@ -38,24 +38,24 @@
 /// \details Random number generation for various distributions
 /// -----------------------------------------------------------------
 class RandomNumberGenerator {
-protected:
-    RandomNumberGenerator();
+ protected:
+  RandomNumberGenerator();
 
 // Singleton Design Pattern
 #define RNG RandomNumberGenerator::getInstance()
-protected:
-    static RandomNumberGenerator* instance;
+ protected:
+  static RandomNumberGenerator* instance;
 
-public:
-    static RandomNumberGenerator& getInstance();
+ public:
+  static RandomNumberGenerator& getInstance();
 
-    // Operators
-public:
-    std::default_random_engine& operator()();
+  // Operators
+ public:
+  std::default_random_engine& operator()();
 
-    // Attributes
-public:
-    std::default_random_engine randomEngine;
+  // Attributes
+ public:
+  std::default_random_engine randomEngine;
 };
 
 #endif

@@ -34,128 +34,116 @@
 // initialize static value
 Config* Config::Config::instance = nullptr;
 
-Config::Config(QObject* parent)
-{
-    updateRate = 25.0;
-    simulationFactor = 1.0;
+Config::Config(QObject* parent) {
+  updateRate = 25.0;
+  simulationFactor = 1.0;
 
-    forceObstacle = 10.0;
-    sigmaObstacle = 0.2;
-    forceSocial = 5.1;
+  forceObstacle = 10.0;
+  sigmaObstacle = 0.2;
+  forceSocial = 5.1;
 
-    forceGroupGaze = 3.0;
-    forceGroupCoherence = 2.0;
-    forceGroupRepulsion = 1.0;
-    forceRandom = 0.1;
-    forceAlongWall = 2.0;
+  forceGroupGaze = 3.0;
+  forceGroupCoherence = 2.0;
+  forceGroupRepulsion = 1.0;
+  forceRandom = 0.1;
+  forceAlongWall = 2.0;
 
-    cell_width = 1.0;
-    cell_height = 1.0;
+  cell_width = 1.0;
+  cell_height = 1.0;
 
-    robot_mode = RobotMode::TELEOPERATION;
-    robot_wait_time = 15;
-    max_robot_speed = 2.0;
+  robot_mode = RobotMode::TELEOPERATION;
+  robot_wait_time = 15;
+  max_robot_speed = 2.0;
 
-    groups_enabled = true;
-    group_size_lambda = 1.1;
-    wait_time_beta = 0.2;
+  groups_enabled = true;
+  group_size_lambda = 1.1;
+  wait_time_beta = 0.2;
 
-    visual_mode = VisualMode::MINIMAL;
+  visual_mode = VisualMode::MINIMAL;
 }
 
-Config& Config::getInstance()
-{
-    if (instance == nullptr)
-        instance = new Config();
+Config& Config::getInstance() {
+  if (instance == nullptr) instance = new Config();
 
-    return *instance;
+  return *instance;
 }
 
-void Config::setObstacleForce(double valueIn)
-{
-    forceObstacle = valueIn;
+void Config::setObstacleForce(double valueIn) {
+  forceObstacle = valueIn;
 
-    // inform users
-    emit forceFactorChanged("obstacle", valueIn);
-    emit forceFactorObstacleChanged(valueIn);
+  // inform users
+  emit forceFactorChanged("obstacle", valueIn);
+  emit forceFactorObstacleChanged(valueIn);
 }
 
-void Config::setObstacleSigma(double valueIn)
-{
-    sigmaObstacle = valueIn;
+void Config::setObstacleSigma(double valueIn) {
+  sigmaObstacle = valueIn;
 
-    // inform users
-    emit forceFactorChanged("obstacle_sigma", valueIn);
-    emit forceSigmaObstacleChanged(valueIn);
+  // inform users
+  emit forceFactorChanged("obstacle_sigma", valueIn);
+  emit forceSigmaObstacleChanged(valueIn);
 }
 
-void Config::setSocialForce(double valueIn)
-{
-    forceSocial = valueIn;
+void Config::setSocialForce(double valueIn) {
+  forceSocial = valueIn;
 
-    // inform users
-    emit forceFactorChanged("social", valueIn);
-    emit forceFactorSocialChanged(valueIn);
+  // inform users
+  emit forceFactorChanged("social", valueIn);
+  emit forceFactorSocialChanged(valueIn);
 }
 
-void Config::setGroupGazeForce(double valueIn)
-{
-    forceGroupGaze = valueIn;
+void Config::setGroupGazeForce(double valueIn) {
+  forceGroupGaze = valueIn;
 
-    // inform users
-    emit forceFactorChanged("group_gaze", valueIn);
-    emit forceFactorGroupGazeChanged(valueIn);
+  // inform users
+  emit forceFactorChanged("group_gaze", valueIn);
+  emit forceFactorGroupGazeChanged(valueIn);
 }
 
-void Config::setGroupCoherenceForce(double valueIn)
-{
-    forceGroupCoherence = valueIn;
+void Config::setGroupCoherenceForce(double valueIn) {
+  forceGroupCoherence = valueIn;
 
-    // inform users
-    emit forceFactorChanged("group_coherence", valueIn);
-    emit forceFactorGroupCoherenceChanged(valueIn);
+  // inform users
+  emit forceFactorChanged("group_coherence", valueIn);
+  emit forceFactorGroupCoherenceChanged(valueIn);
 }
 
-void Config::setGroupRepulsionForce(double valueIn)
-{
-    forceGroupRepulsion = valueIn;
+void Config::setGroupRepulsionForce(double valueIn) {
+  forceGroupRepulsion = valueIn;
 
-    // inform users
-    emit forceFactorChanged("group_repulsion", valueIn);
-    emit forceFactorGroupRepulsionChanged(valueIn);
+  // inform users
+  emit forceFactorChanged("group_repulsion", valueIn);
+  emit forceFactorGroupRepulsionChanged(valueIn);
 }
 
-void Config::setRandomForce(double valueIn)
-{
-    forceRandom = valueIn;
+void Config::setRandomForce(double valueIn) {
+  forceRandom = valueIn;
 
-    // inform users
-    emit forceFactorChanged("random", valueIn);
-    emit forceFactorRandomChanged(valueIn);
+  // inform users
+  emit forceFactorChanged("random", valueIn);
+  emit forceFactorRandomChanged(valueIn);
 }
 
-void Config::setAlongWallForce(double valueIn)
-{
-    forceAlongWall = valueIn;
+void Config::setAlongWallForce(double valueIn) {
+  forceAlongWall = valueIn;
 
-    // inform users
-    emit forceFactorChanged("alongwall", valueIn);
-    emit forceFactorAlongWallChanged(valueIn);
+  // inform users
+  emit forceFactorChanged("alongwall", valueIn);
+  emit forceFactorAlongWallChanged(valueIn);
 }
 
-QMap<QString, double> Config::getForceMap() const
-{
-    // create output map
-    QMap<QString, double> forceMap;
-    // → fill map
-    forceMap["obstacle"] = forceObstacle;
-    forceMap["obstacle_sigma"] = sigmaObstacle;
-    forceMap["social"] = forceSocial;
-    forceMap["group_gaze"] = forceGroupGaze;
-    forceMap["group_coherence"] = forceGroupCoherence;
-    forceMap["group_repulsion"] = forceGroupRepulsion;
-    forceMap["random"] = forceRandom;
-    forceMap["alongwall"] = forceAlongWall;
+QMap<QString, double> Config::getForceMap() const {
+  // create output map
+  QMap<QString, double> forceMap;
+  // → fill map
+  forceMap["obstacle"] = forceObstacle;
+  forceMap["obstacle_sigma"] = sigmaObstacle;
+  forceMap["social"] = forceSocial;
+  forceMap["group_gaze"] = forceGroupGaze;
+  forceMap["group_coherence"] = forceGroupCoherence;
+  forceMap["group_repulsion"] = forceGroupRepulsion;
+  forceMap["random"] = forceRandom;
+  forceMap["alongwall"] = forceAlongWall;
 
-    return forceMap;
+  return forceMap;
 }

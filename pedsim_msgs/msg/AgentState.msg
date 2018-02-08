@@ -1,14 +1,14 @@
 Header header
-int16 id
-int16 type
+uint64 id
+uint16 type
 string social_state
 geometry_msgs/Pose pose
 geometry_msgs/Twist twist
+pedsim_msgs/AgentForce forces
 
-
+# Use sensors package to control observability
 
 # Social State string constants
-string      TYPE_SHOPPING = "shopping"
 string      TYPE_STANDING = "standing"
 string      TYPE_INDIVIDUAL_MOVING = "individual_moving"
 string      TYPE_WAITING_IN_QUEUE = "waiting_in_queue"

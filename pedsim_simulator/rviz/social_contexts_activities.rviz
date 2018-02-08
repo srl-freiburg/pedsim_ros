@@ -5,10 +5,12 @@ Panels:
     Property Tree Widget:
       Expanded:
         - /Grid1/Offset1
-        - /Pedsim-Visuals1
         - /Tracking-Visuals1
-      Splitter Ratio: 0.712794
-    Tree Height: 952
+        - /Tracking-Visuals1/TrackedPersons1
+        - /Tracking-Visuals1/TrackedPersons1/History as line1
+        - /Tracking-Visuals1/TrackedGroups1/Render group IDs1
+      Splitter Ratio: 0.583333313
+    Tree Height: 1877
   - Class: rviz/Selection
     Name: Selection
   - Class: rviz/Tool Properties
@@ -17,7 +19,7 @@ Panels:
       - /2D Nav Goal1
       - /Publish Point1
     Name: Tool Properties
-    Splitter Ratio: 0.588679
+    Splitter Ratio: 0.588679016
   - Class: rviz/Views
     Expanded:
       - /Current View1
@@ -31,13 +33,13 @@ Panels:
 Visualization Manager:
   Class: ""
   Displays:
-    - Alpha: 0.15
+    - Alpha: 0.150000006
       Cell Size: 1
       Class: rviz/Grid
       Color: 52; 52; 52
       Enabled: true
       Line Style:
-        Line Width: 0.03
+        Line Width: 0.0299999993
         Value: Lines
       Name: Grid
       Normal Cell Count: 0
@@ -53,41 +55,18 @@ Visualization Manager:
       Enabled: true
       Length: 1
       Name: RobotFrame
-      Radius: 0.1
+      Radius: 0.100000001
       Reference Frame: base_footprint
       Value: true
     - Class: rviz/Group
       Displays:
-        - Class: rviz/MarkerArray
-          Enabled: false
-          Marker Topic: /pedsim/group_relations
-          Name: Group-Relations
-          Namespaces:
-            {}
-          Queue Size: 0
-          Value: false
-        - Class: rviz/MarkerArray
-          Enabled: false
-          Marker Topic: /pedsim/agent_directions
-          Name: Headings
-          Namespaces:
-            {}
-          Queue Size: 0
-          Value: false
         - Class: rviz/Marker
-          Enabled: false
-          Marker Topic: /pedsim/walls
+          Enabled: true
+          Marker Topic: /pedsim_visualizer/walls
           Name: Walls
           Namespaces:
-            {}
+            "": true
           Queue Size: 0
-          Value: false
-        - Alpha: 1
-          Class: rviz/GridCells
-          Color: 255; 170; 0
-          Enabled: true
-          Name: GridCells
-          Topic: /pedsim/static_obstacles
           Value: true
       Enabled: true
       Name: Pedsim-Visuals
@@ -105,19 +84,19 @@ Visualization Manager:
           Font color style: Same color
           Font scale: 2
           History as line:
-            Line width: 0.05
+            Line width: 0.0500000007
             Value: true
-          History size: 5
+          History size: 50
           Included person IDs: ""
-          Min. history point distance: 0.4
+          Min. history point distance: 0.400000006
           Missed alpha: 1
           Name: TrackedPersons
           Occlusion alpha: 1
           Render covariances:
-            Line width: 0.1
+            Line width: 0.100000001
             Value: false
           Render detection IDs: false
-          Render history: false
+          Render history: true
           Render person visual: true
           Render track IDs: true
           Render track state: false
@@ -127,10 +106,11 @@ Visualization Manager:
           Show MISSED tracks: true
           Show OCCLUDED tracks: true
           Style:
-            Line width: 0.05
+            Line width: 0.0500000007
             Scaling factor: 1
             Value: Person meshes
-          Topic: /pedsim/tracked_persons
+          Topic: /pedsim_visualizer/tracked_persons
+          Unreliable: false
           Value: true
           Z offset:
             Use Z position from message: false
@@ -155,15 +135,16 @@ Visualization Manager:
           Occlusion alpha: 1
           Render group IDs:
             Hide IDs of single-person groups: false
-            Value: false
+            Value: true
           Render history: false
           Single-person groups in constant color: false
           Style:
-            Line width: 0.05
+            Line width: 0.0500000007
             Scaling factor: 1
             Value: Simple
-          Topic: /pedsim/tracked_groups
-          Tracked persons topic: /pedsim/tracked_persons
+          Topic: /pedsim_visualizer/tracked_groups
+          Tracked persons topic: /pedsim_visualizer/tracked_persons
+          Unreliable: false
           Value: true
           Z offset:
             Use Z position from message: false
@@ -173,6 +154,7 @@ Visualization Manager:
   Enabled: true
   Global Options:
     Background Color: 244; 244; 244
+    Default Light: true
     Fixed Frame: odom
     Frame Rate: 30
   Name: root
@@ -194,30 +176,33 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/XYOrbit
-      Distance: 13.0809
+      Distance: 29.8783302
       Enable Stereo Rendering:
-        Stereo Eye Separation: 0.06
+        Stereo Eye Separation: 0.0599999987
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: 3.74754
-        Y: 4.3121
-        Z: -8.21775e-06
+        X: 7.38072014
+        Y: 3.22717667
+        Z: -5.35673144e-06
+      Focal Shape Fixed Size: true
+      Focal Shape Size: 0.0500000007
+      Invert Z Axis: false
       Name: Current View
-      Near Clip Distance: 0.01
-      Pitch: 0.555398
+      Near Clip Distance: 0.00999999978
+      Pitch: 0.779796898
       Target Frame: <Fixed Frame>
       Value: XYOrbit (rviz)
-      Yaw: 3.84357
+      Yaw: 4.1185708
     Saved: ~
 Window Geometry:
   Displays:
     collapsed: false
-  Height: 1176
+  Height: 2107
   Hide Left Dock: false
   Hide Right Dock: true
-  QMainWindow State: 000000ff00000000fd00000004000000000000018300000452fc0200000008fb0000001200530065006c0065006300740069006f006e00000001e10000009b0000006400fffffffb0000001e0054006f006f006c002000500072006f007000650072007400690065007302000001ed000001df000003800000016bfb000000120056006900650077007300200054006f006f02000001df000002110000018500000122fb000000200054006f006f006c002000500072006f0070006500720074006900650073003203000002880000011d000002210000017afb000000100044006900730070006c006100790073010000002800000452000000dd00fffffffb0000002000730065006c0065006300740069006f006e00200062007500660066006500720200000138000000aa0000023a00000294fb00000014005700690064006500530074006500720065006f02000000e6000000d2000003ee0000030bfb0000000c004b0069006e0065006300740200000186000001060000030c00000261000000010000011f000003b3fc0200000003fb0000001e0054006f006f006c002000500072006f00700065007200740069006500730100000041000000780000000000000000fb0000000a005600690065007700730000000032000003b3000000b000fffffffb0000001200530065006c0065006300740069006f006e010000025a000000b200000000000000000000000200000490000000a9fc0100000001fb0000000a00560069006500770073030000004e00000080000002e10000019700000003000007800000003efc0100000002fb0000000800540069006d0065000000000000000780000002f600fffffffb0000000800540069006d00650100000000000004500000000000000000000005b60000045200000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
+  QMainWindow State: 000000ff00000000fd0000000400000000000001e2000007f2fc0200000008fb0000001200530065006c0065006300740069006f006e00000001e10000009b0000006900fffffffb0000001e0054006f006f006c002000500072006f007000650072007400690065007302000001ed000001df000003800000016bfb000000120056006900650077007300200054006f006f02000001df000002110000018500000122fb000000200054006f006f006c002000500072006f0070006500720074006900650073003203000002880000011d000002210000017afb000000100044006900730070006c0061007900730100000028000007f2000000e600fffffffb0000002000730065006c0065006300740069006f006e00200062007500660066006500720200000138000000aa0000023a00000294fb00000014005700690064006500530074006500720065006f02000000e6000000d2000003ee0000030bfb0000000c004b0069006e0065006300740200000186000001060000030c00000261000000010000011f000003b3fc0200000003fb0000001e0054006f006f006c002000500072006f00700065007200740069006500730100000041000000780000000000000000fb0000000a005600690065007700730000000032000003b3000000b900fffffffb0000001200530065006c0065006300740069006f006e010000025a000000b200000000000000000000000200000490000000a9fc0100000001fb0000000a00560069006500770073030000004e00000080000002e10000019700000003000007800000003efc0100000002fb0000000800540069006d00650000000000000007800000028700fffffffb0000000800540069006d00650100000000000004500000000000000000000008ea000007f200000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
   Selection:
     collapsed: false
   Time:
@@ -226,6 +211,6 @@ Window Geometry:
     collapsed: false
   Views:
     collapsed: true
-  Width: 1855
-  X: 65
+  Width: 2770
+  X: 1031
   Y: 24

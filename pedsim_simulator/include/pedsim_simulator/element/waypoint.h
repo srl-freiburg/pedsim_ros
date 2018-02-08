@@ -32,37 +32,33 @@
 #ifndef _waypoint_h_
 #define _waypoint_h_
 
-
-#include <pedsim_simulator/element/scenarioelement.h>
 #include <pedsim/ped_waypoint.h>
+#include <pedsim_simulator/element/scenarioelement.h>
 
+class Waypoint : public ScenarioElement, public Ped::Twaypoint {
+  Q_OBJECT
 
-class Waypoint : public ScenarioElement, public Ped::Twaypoint
-{
-    Q_OBJECT
+ public:
+  Waypoint(const QString& nameIn);
+  Waypoint(const QString& nameIn, const Ped::Tvector& positionIn);
+  virtual ~Waypoint();
 
-public:
-    Waypoint ( const QString& nameIn );
-    Waypoint ( const QString& nameIn, const Ped::Tvector& positionIn );
-    virtual ~Waypoint();
+  // Signals
+ signals:
+  void positionChanged(double x, double y);
 
-    // Signals
-signals:
-    void positionChanged ( double x, double y );
+  // Methods
+ public:
+  QString getName() const;
+  // → Ped::Twaypoint Overrides
+  virtual void setPosition(double xIn, double yIn);
+  virtual void setPosition(const Ped::Tvector& posIn);
+  virtual void setx(double xIn);
+  virtual void sety(double yIn);
 
-    // Methods
-public:
-    QString getName() const;
-    // → Ped::Twaypoint Overrides
-    virtual void setPosition ( double xIn, double yIn );
-    virtual void setPosition ( const Ped::Tvector& posIn );
-    virtual void setx ( double xIn );
-    virtual void sety ( double yIn );
-
-
-    // Attributes
-protected:
-    const QString name;
+  // Attributes
+ protected:
+  const QString name;
 };
 
 #endif

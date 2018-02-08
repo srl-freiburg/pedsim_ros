@@ -34,39 +34,35 @@
 
 // Includes
 // → SGDiCoP
-#include <pedsim_simulator/force/force.h>
 #include <pedsim_simulator/element/agentgroup.h>
-
+#include <pedsim_simulator/force/force.h>
 
 class GroupRepulsionForce : public Force {
-	Q_OBJECT
+  Q_OBJECT
 
-	// Constructor and Destructor
-public:
-	GroupRepulsionForce(Agent* agentIn);
+  // Constructor and Destructor
+ public:
+  GroupRepulsionForce(Agent* agentIn);
 
+  // Slots
+ public slots:
+  void onForceFactorGroupRepulsionChanged(double valueIn);
 
-	// Slots
-public slots:
-	void onForceFactorGroupRepulsionChanged(double valueIn);
+  // Methods
+ public:
+  void setGroup(AgentGroup* groupIn);
+  const AgentGroup& getGroup() const;
 
+  // → Force Implementations
+ public:
+  virtual QString getName() const { return "GroupRepulsion"; };
+  virtual Ped::Tvector getForce(Ped::Tvector walkingDirection);
+  virtual QString toString() const;
 
-	// Methods
-public:
-	void setGroup(AgentGroup* groupIn);
-	const AgentGroup& getGroup() const;
-	
-	// → Force Implementations
-public:
-	virtual QString getName() const { return "GroupRepulsion"; };
-	virtual Ped::Tvector getForce(Ped::Tvector walkingDirection);
-	virtual QString toString() const;
-
-
-	// Attributes
-protected:
-	AgentGroup* group;
-	double overlapDistance;
+  // Attributes
+ protected:
+  AgentGroup* group;
+  double overlapDistance;
 };
 
 #endif

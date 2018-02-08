@@ -32,65 +32,58 @@
 #ifndef _shoppingplanner_h_
 #define _shoppingplanner_h_
 
-
-#include <pedsim_simulator/waypointplanner/waypointplanner.h>
 #include <pedsim/ped_vector.h>
-
+#include <pedsim_simulator/waypointplanner/waypointplanner.h>
 
 // Forward Declarations
 class Agent;
 class AttractionArea;
 
+class ShoppingPlanner : public WaypointPlanner {
+  Q_OBJECT
 
-class ShoppingPlanner : public WaypointPlanner
-{
-	Q_OBJECT
+  // Constructor and Destructor
+ public:
+  ShoppingPlanner();
 
-	// Constructor and Destructor
-public:
-	ShoppingPlanner();
+  // Signals
+ signals:
+  void lostAttraction();
 
+ public slots:
+  void loseAttraction();
 
-	// Signals
-signals:
-	void lostAttraction();
+  // Methods
+ public:
+  bool setAgent(Agent* agentIn);
 
+  // → Waypoints
+  AttractionArea* getAttraction() const;
+  bool setAttraction(AttractionArea* attractionIn);
 
-public slots:
-	void loseAttraction();
+ protected:
+  // → Helper Methods
+  QString createWaypointName() const;
+  Ped::Tvector getRandomAttractionPosition() const;
+  Ped::Tvector createRandomOffset() const;
 
+  // → WaypointPlanner Overrides
+ public:
+  static Type getPlannerType() { return WaypointPlanner::Individual; };
+  virtual Waypoint* getCurrentWaypoint();
+  virtual Waypoint* getNextWaypoint();
+  virtual bool hasCompletedWaypoint();
+  virtual bool hasCompletedDestination() const;
 
-	// Methods
-public:
-	bool setAgent(Agent* agentIn);
+  virtual QString name() const;
 
-	// → Waypoints
-	AttractionArea* getAttraction() const;
-	bool setAttraction(AttractionArea* attractionIn);
-
-protected:
-	// → Helper Methods
-	QString createWaypointName() const;
-	Ped::Tvector getRandomAttractionPosition() const;
-	Ped::Tvector createRandomOffset() const;
-
-	// → WaypointPlanner Overrides
-public:
-	static Type getPlannerType() { return WaypointPlanner::Individual; };
-	virtual Waypoint* getCurrentWaypoint();
-	virtual Waypoint* getNextWaypoint();
-	virtual bool hasCompletedWaypoint();
-	virtual bool hasCompletedDestination() const;
-
-	virtual QString name() const;
-
-	// Attributes
-protected:
-	Agent* agent;
-	AttractionArea* attraction;
-	// → Waypoints
-	Waypoint* currentWaypoint;
-	double timeReached;
+  // Attributes
+ protected:
+  Agent* agent;
+  AttractionArea* attraction;
+  // → Waypoints
+  Waypoint* currentWaypoint;
+  double timeReached;
 };
 
 #endif

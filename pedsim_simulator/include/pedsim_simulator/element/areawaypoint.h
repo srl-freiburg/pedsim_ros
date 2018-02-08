@@ -35,45 +35,43 @@
 #include <pedsim_simulator/element/waypoint.h>
 #include <QPointF>
 
-
-
 class AreaWaypoint : public Waypoint {
-	Q_OBJECT
+  Q_OBJECT
 
-	// Constructor and Destructor
-public:
-	AreaWaypoint(const QString& nameIn, const Ped::Tvector& positionIn, double rIn = 1);
-	AreaWaypoint(const QString& nameIn, double xIn = 0, double yIn = 0, double rIn = 1);
-	virtual ~AreaWaypoint();
+  // Constructor and Destructor
+ public:
+  AreaWaypoint(const QString& nameIn, const Ped::Tvector& positionIn,
+               double rIn = 1);
+  AreaWaypoint(const QString& nameIn, double xIn = 0, double yIn = 0,
+               double rIn = 1);
+  virtual ~AreaWaypoint();
 
+  // Signals
+ signals:
+  void radiusChanged(double radius);
 
-	// Signals
-signals:
-	void radiusChanged(double radius);
+  // Methods
+ public:
+  QString getName() const;
 
+  bool isWithinArea(const Ped::Tvector& posIn);
 
-	// Methods
-public:
-	QString getName() const;
+  virtual double getRadius() const;
+  virtual void setRadius(double rIn);
 
-	bool isWithinArea(const Ped::Tvector& posIn);
+  // → Ped::Twaypoint Overrides
+  virtual Ped::Tvector closestPoint(const Ped::Tvector& posIn,
+                                    bool* withinWaypoint = NULL) const;
 
-	virtual double getRadius() const;
-	virtual void setRadius(double rIn);
+  // → ScenarioElement Overrides/Overloads
+ public:
+  virtual QPointF getVisiblePosition() const;
+  virtual void setVisiblePosition(const QPointF& positionIn);
+  QString toString() const;
 
-	// → Ped::Twaypoint Overrides
-	virtual Ped::Tvector closestPoint(const Ped::Tvector& posIn, bool* withinWaypoint = NULL) const;
-
-	// → ScenarioElement Overrides/Overloads
-public:
-	virtual QPointF getVisiblePosition() const;
-	virtual void setVisiblePosition(const QPointF& positionIn);
-	QString toString() const;
-
-
-	// Attributes
-public:
-	double radius;
+  // Attributes
+ public:
+  double radius;
 };
 
 #endif

@@ -34,40 +34,36 @@
 
 // Includes
 // → SGDiCoP
-#include <pedsim_simulator/force/force.h>
 #include <pedsim_simulator/element/agentgroup.h>
-
+#include <pedsim_simulator/force/force.h>
 
 class GroupCoherenceForce : public Force {
-	Q_OBJECT
+  Q_OBJECT
 
-	// Constructor and Destructor
-public:
-	GroupCoherenceForce(Agent* agentIn);
+  // Constructor and Destructor
+ public:
+  GroupCoherenceForce(Agent* agentIn);
 
+  // Slots
+ public slots:
+  void onForceFactorGroupCoherenceChanged(double valueIn);
 
-	// Slots
-public slots:
-	void onForceFactorGroupCoherenceChanged(double valueIn);
+  // Methods
+ public:
+  void setGroup(AgentGroup* groupIn);
+  const AgentGroup& getGroup() const;
 
+  // → Force Implementations
+ public:
+  virtual QString getName() const { return "GroupCoherence"; };
+  virtual Ped::Tvector getForce(Ped::Tvector walkingDirection);
+  virtual QString toString() const;
 
-	// Methods
-public:
-	void setGroup(AgentGroup* groupIn);
-	const AgentGroup& getGroup() const;
-	
-	// → Force Implementations
-public:
-	virtual QString getName() const { return "GroupCoherence"; };
-	virtual Ped::Tvector getForce(Ped::Tvector walkingDirection);
-	virtual QString toString() const;
+  // Attributes
+ protected:
+  AgentGroup* group;
 
-
-	// Attributes
-protected:
-	AgentGroup* group;
-	
-	bool usePaperVersion;
+  bool usePaperVersion;
 };
 
 #endif

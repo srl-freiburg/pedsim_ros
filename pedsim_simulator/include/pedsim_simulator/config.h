@@ -32,94 +32,91 @@
 #ifndef _config_h_
 #define _config_h_
 
-#include <QObject>
 #include <QMap>
+#include <QObject>
 
 #include <pedsim_simulator/utilities.h>
 
 class Config : public QObject {
-    Q_OBJECT
+  Q_OBJECT
 
-protected:
-    Config(QObject* parent = 0);
+ protected:
+  Config(QObject* parent = 0);
 
 // Singleton Design Pattern
 #define CONFIG Config::getInstance()
-protected:
-    static Config* instance;
+ protected:
+  static Config* instance;
 
-public:
-    static Config& getInstance();
+ public:
+  static Config& getInstance();
 
-// Signals
-signals:
-    // → Forces
-    void forceFactorChanged(QString name, double value);
-    void forceFactorObstacleChanged(double value);
-    void forceSigmaObstacleChanged(double value);
-    void forceFactorSocialChanged(double value);
-    void forceFactorGroupGazeChanged(double value);
-    void forceFactorGroupCoherenceChanged(double value);
-    void forceFactorGroupRepulsionChanged(double value);
-    void forceFactorRandomChanged(double value);
-    void forceFactorAlongWallChanged(double value);
+  // Signals
+ signals:
+  // → Forces
+  void forceFactorChanged(QString name, double value);
+  void forceFactorObstacleChanged(double value);
+  void forceSigmaObstacleChanged(double value);
+  void forceFactorSocialChanged(double value);
+  void forceFactorGroupGazeChanged(double value);
+  void forceFactorGroupCoherenceChanged(double value);
+  void forceFactorGroupRepulsionChanged(double value);
+  void forceFactorRandomChanged(double value);
+  void forceFactorAlongWallChanged(double value);
 
-    // Slots
-public slots:
-    // → Forces
-    void setObstacleForce(double valueIn);
-    void setObstacleSigma(double valueIn);
-    void setSocialForce(double valueIn);
-    void setGroupGazeForce(double valueIn);
-    void setGroupCoherenceForce(double valueIn);
-    void setGroupRepulsionForce(double valueIn);
-    void setRandomForce(double valueIn);
-    void setAlongWallForce(double valueIn);
+  // Slots
+ public slots:
+  // → Forces
+  void setObstacleForce(double valueIn);
+  void setObstacleSigma(double valueIn);
+  void setSocialForce(double valueIn);
+  void setGroupGazeForce(double valueIn);
+  void setGroupCoherenceForce(double valueIn);
+  void setGroupRepulsionForce(double valueIn);
+  void setRandomForce(double valueIn);
+  void setAlongWallForce(double valueIn);
 
-    // Methods
-public:
-    // TODO - change to std::unordered_map
-    QMap<QString, double> getForceMap() const;
+  // Methods
+ public:
+  // TODO - change to std::unordered_map
+  QMap<QString, double> getForceMap() const;
 
-    double getTimeStepSize()
-    {
-        return simulationFactor / updateRate;
-    }
+  double getTimeStepSize() { return simulationFactor / updateRate; }
 
-    // Attributes
-public:
-    // Simulation
-    double updateRate;
-    double simulationFactor;
+  // Attributes
+ public:
+  // Simulation
+  double updateRate;
+  double simulationFactor;
 
-    // Forces
-    double forceObstacle;
-    double sigmaObstacle;
-    double forceSocial;
-    double forceGroupGaze;
-    double forceGroupCoherence;
-    double forceGroupRepulsion;
-    double forceRandom;
-    double forceAlongWall;
+  // Forces
+  double forceObstacle;
+  double sigmaObstacle;
+  double forceSocial;
+  double forceGroupGaze;
+  double forceGroupCoherence;
+  double forceGroupRepulsion;
+  double forceRandom;
+  double forceAlongWall;
 
-    // robot control
-    RobotMode robot_mode;
-    int robot_wait_time;
-    double max_robot_speed;
+  // robot control
+  RobotMode robot_mode;
+  int robot_wait_time;
+  double max_robot_speed;
 
-    // enable/disable groups behaviour
-    bool groups_enabled;
+  // enable/disable groups behaviour
+  bool groups_enabled;
 
-    // cells
-    double cell_width;
-    double cell_height;
+  // cells
+  double cell_width;
+  double cell_height;
 
-    // distribution parameters
-    double group_size_lambda;
-    double wait_time_beta;
+  // distribution parameters
+  double group_size_lambda;
+  double wait_time_beta;
 
-    // simulation visualization mode
-    VisualMode visual_mode;
+  // simulation visualization mode
+  VisualMode visual_mode;
 };
 
 #endif

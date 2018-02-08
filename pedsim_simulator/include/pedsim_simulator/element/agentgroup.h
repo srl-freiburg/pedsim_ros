@@ -32,91 +32,91 @@
 #ifndef _agentgroup_h_
 #define _agentgroup_h_
 
+#include <pedsim/ped_vector.h>
+#include <pedsim_simulator/element/scenarioelement.h>
 #include <QGraphicsEllipseItem>
 #include <QGraphicsItemGroup>
 #include <QGraphicsLineItem>
 #include <QTimer>
-#include <pedsim/ped_vector.h>
-#include <pedsim_simulator/element/scenarioelement.h>
 
 // Forward Declarations
 class Agent;
 
 class AgentGroup : public ScenarioElement {
-    Q_OBJECT
+  Q_OBJECT
 
-    // Constructor and Destructor
-public:
-    AgentGroup();
-    explicit AgentGroup(const QList<Agent*>& agentsIn);
-    explicit AgentGroup(std::initializer_list<Agent*>& agentsIn);
-    virtual ~AgentGroup();
+  // Constructor and Destructor
+ public:
+  AgentGroup();
+  explicit AgentGroup(const QList<Agent*>& agentsIn);
+  explicit AgentGroup(std::initializer_list<Agent*>& agentsIn);
+  virtual ~AgentGroup();
 
-// Signals
-signals:
-    void membersChanged();
-    void memberAdded(int id);
-    void memberRemoved(int id);
+  // Signals
+ signals:
+  void membersChanged();
+  void memberAdded(int id);
+  void memberRemoved(int id);
 
-    // Slots
-public slots:
-    void onPositionChanged(double x, double y);
+  // Slots
+ public slots:
+  void onPositionChanged(double x, double y);
 
-    // Static Methods
-public:
-    static QList<AgentGroup*> divideAgents(const QList<Agent*>& agentsIn);
-    // → Helper
-protected:
-    static void reportSizeDistribution(const QVector<int>& sizeDistributionIn);
+  // Static Methods
+ public:
+  static QList<AgentGroup*> divideAgents(const QList<Agent*>& agentsIn);
+  // → Helper
+ protected:
+  static void reportSizeDistribution(const QVector<int>& sizeDistributionIn);
 
-    // Methods
-    // → Group members
-public:
-    QList<Agent*>& getMembers();
-    const QList<Agent*>& getMembers() const;
-    bool addMember(Agent* agentIn);
-    bool removeMember(Agent* agentIn);
-    bool setMembers(const QList<Agent*>& agentsIn);
-    bool isEmpty() const;
-    int memberCount() const;
+  // Methods
+  // → Group members
+ public:
+  QList<Agent*>& getMembers();
+  const QList<Agent*>& getMembers() const;
+  bool addMember(Agent* agentIn);
+  bool removeMember(Agent* agentIn);
+  bool setMembers(const QList<Agent*>& agentsIn);
+  bool isEmpty() const;
+  int memberCount() const;
 
-    // → Center of Mass
-public:
-    // 	QPointF getCenterOfMass() const;
-    Ped::Tvector getCenterOfMass() const;
-protected slots:
-    Ped::Tvector updateCenterOfMass();
+  // → Center of Mass
+ public:
+  // 	QPointF getCenterOfMass() const;
+  Ped::Tvector getCenterOfMass() const;
+ protected slots:
+  Ped::Tvector updateCenterOfMass();
 
-    // → Recollection
-public:
-    void setRecollect(bool recollectIn);
-    bool isRecollecting() const;
-    double getMaxDistance();
-    int getId() { return id_; }
+  // → Recollection
+ public:
+  void setRecollect(bool recollectIn);
+  bool isRecollecting() const;
+  double getMaxDistance();
+  int getId() { return id_; }
 
-protected:
-    void updateMaxDistance();
+ protected:
+  void updateMaxDistance();
 
-    // → ScenarioElement Overrides
-public:
-    virtual QString toString() const;
+  // → ScenarioElement Overrides
+ public:
+  virtual QString toString() const;
 
-    // Attributes
-protected:
-    QList<Agent*> members;
+  // Attributes
+ protected:
+  QList<Agent*> members;
 
-    // → Center of Mass
-    bool dirty;
-    Ped::Tvector cacheCoM;
-    //   → delayed update
-    QTimer comUpdateTimer;
+  // → Center of Mass
+  bool dirty;
+  Ped::Tvector cacheCoM;
+  //   → delayed update
+  QTimer comUpdateTimer;
 
-    // → recollecting group
-    bool recollecting;
-    bool dirtyMaxDistance;
-    double cacheMaxDistance;
+  // → recollecting group
+  bool recollecting;
+  bool dirtyMaxDistance;
+  double cacheMaxDistance;
 
-    int id_;
+  int id_;
 };
 
 #endif

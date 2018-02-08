@@ -32,33 +32,28 @@
 #ifndef _scenarioreader_h_
 #define _scenarioreader_h_
 
-// Includes
-// → SGDiCoP
 #include <pedsim_simulator/scene.h>
-// → Qt
+
 #include <QPair>
 #include <QXmlStreamReader>
 
-
 class ScenarioReader {
-	// Constructor and Destructor
-public:
-	ScenarioReader(); 
+  // Constructor and Destructor
+ public:
+  ScenarioReader();
 
+  // Methods
+ public:
+  bool readFromFile(const QString& filename);
 
-	// Methods
-public:
-	bool readFromFile(const QString& filename);
+ protected:
+  void processData();
 
-protected:
-	void processData();
+  // Attributes
+ private:
+  QXmlStreamReader xmlReader;
 
-
-	// Attributes
-private:
-	QXmlStreamReader xmlReader;
-
-	AgentCluster* currentAgents;
+  AgentCluster* currentAgents;
 };
 
 #endif

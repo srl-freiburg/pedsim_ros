@@ -36,33 +36,29 @@
 // → SGDiCoP
 #include <pedsim_simulator/force/force.h>
 
-
 class AlongWallForce : public Force {
-	Q_OBJECT
+  Q_OBJECT
 
-	// Constructor and Destructor
-public:
-	AlongWallForce(Agent* agentIn);
+  // Constructor and Destructor
+ public:
+  AlongWallForce(Agent* agentIn);
 
+  // Slots
+ public slots:
+  void onForceFactorChanged(double valueIn);
 
-	// Slots
-public slots:
-	void onForceFactorChanged(double valueIn);
+  // Methods
+  // → Force Implementations
+ public:
+  virtual QString getName() const { return "AlongWall"; };
+  virtual Ped::Tvector getForce(Ped::Tvector walkingDirection);
+  virtual QString toString() const;
 
-
-	// Methods
-	// → Force Implementations
-public:
-	virtual QString getName() const { return "AlongWall"; };
-	virtual Ped::Tvector getForce(Ped::Tvector walkingDirection);
-	virtual QString toString() const;
-
-
-	// Attributes
-protected:
-	double speedThreshold;
-	double angleThresholdDegree;
-	double distanceThreshold;
+  // Attributes
+ protected:
+  double speedThreshold;
+  double angleThresholdDegree;
+  double distanceThreshold;
 };
 
 #endif

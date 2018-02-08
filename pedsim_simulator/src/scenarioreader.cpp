@@ -29,153 +29,144 @@
 * \author Sven Wehner <mail@svenwehner.de>
 */
 
-#include <pedsim_simulator/scenarioreader.h>
 #include <pedsim_simulator/element/agent.h>
 #include <pedsim_simulator/element/agentcluster.h>
-#include <pedsim_simulator/element/obstacle.h>
 #include <pedsim_simulator/element/areawaypoint.h>
-#include <pedsim_simulator/element/waitingqueue.h>
 #include <pedsim_simulator/element/attractionarea.h>
+#include <pedsim_simulator/element/obstacle.h>
+#include <pedsim_simulator/element/waitingqueue.h>
+#include <pedsim_simulator/scenarioreader.h>
 
 #include <QFile>
 #include <iostream>
 
 #include <ros/ros.h>
 
-ScenarioReader::ScenarioReader()
-{
-    // initialize values
-    currentAgents = nullptr;
+ScenarioReader::ScenarioReader() {
+  // initialize values
+  currentAgents = nullptr;
 }
 
-bool ScenarioReader::readFromFile(const QString& filename)
-{
-    ROS_DEBUG("Loading scenario file '%s'.", filename.toStdString().c_str());
+bool ScenarioReader::readFromFile(const QString& filename) {
+  ROS_DEBUG("Loading scenario file '%s'.", filename.toStdString().c_str());
 
-    // open file
-    QFile file(filename);
-    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        ROS_DEBUG("Couldn't open scenario file!");
-        return false;
-    }
+  // open file
+  QFile file(filename);
+  if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+    ROS_DEBUG("Couldn't open scenario file!");
+    return false;
+  }
 
-    // read input
-    xmlReader.setDevice(&file);
+  // read input
+  xmlReader.setDevice(&file);
 
-    while (!xmlReader.atEnd()) {
-        xmlReader.readNext();
-        processData();
-    }
+  while (!xmlReader.atEnd()) {
+    xmlReader.readNext();
+    processData();
+  }
 
-    // check for errors
-    if (xmlReader.hasError()) {
-        // TODO - fix qstring and std string issues here to show error lines
-        ROS_DEBUG("Error while reading scenario file");
-        return false;
-    }
+  // check for errors
+  if (xmlReader.hasError()) {
+    // TODO - fix qstring and std string issues here to show error lines
+    ROS_DEBUG("Error while reading scenario file");
+    return false;
+  }
 
-    // report success
-    return true;
+  // report success
+  return true;
 }
 
-void ScenarioReader::processData()
-{
-    if (xmlReader.isStartElement()) {
-        const QString elementName = xmlReader.name().toString();
-        const QXmlStreamAttributes elementAttributes = xmlReader.attributes();
+void ScenarioReader::processData() {
+  if (xmlReader.isStartElement()) {
+    const QString elementName = xmlReader.name().toString();
+    const QXmlStreamAttributes elementAttributes = xmlReader.attributes();
 
-        if ((elementName == "scenario") || (elementName == "welcome")) {
-            // nothing to do
-        }
-        else if (elementName == "obstacle") {
-            double x1 = elementAttributes.value("x1").toString().toDouble();
-            double y1 = elementAttributes.value("y1").toString().toDouble();
-            double x2 = elementAttributes.value("x2").toString().toDouble();
-            double y2 = elementAttributes.value("y2").toString().toDouble();
-            Obstacle* obs = new Obstacle(x1, y1, x2, y2);
-            SCENE.addObstacle(obs);
-            SCENE.drawObstacles(x1, y1, x2, y2);
-        }
-        else if (elementName == "waypoint") {
-            QString id = elementAttributes.value("id").toString();
-            double x = elementAttributes.value("x").toString().toDouble();
-            double y = elementAttributes.value("y").toString().toDouble();
-            double r = elementAttributes.value("r").toString().toDouble();
-            AreaWaypoint* w = new AreaWaypoint(id, x, y, r);
-            SCENE.addWaypoint(w);
-        }
-        else if (elementName == "queue") {
-            QString id = elementAttributes.value("id").toString();
-            double x = elementAttributes.value("x").toString().toDouble();
-            double y = elementAttributes.value("y").toString().toDouble();
-            double directionValue = elementAttributes.value("direction").toString().toDouble();
+    if ((elementName == "scenario") || (elementName == "welcome")) {
+      // nothing to do
+    } else if (elementName == "obstacle") {
+      const double x1 = elementAttributes.value("x1").toString().toDouble();
+      const double y1 = elementAttributes.value("y1").toString().toDouble();
+      const double x2 = elementAttributes.value("x2").toString().toDouble();
+      const double y2 = elementAttributes.value("y2").toString().toDouble();
+      Obstacle* obs = new Obstacle(x1, y1, x2, y2);
+      SCENE.addObstacle(obs);
+    } else if (elementName == "waypoint") {
+      const QString id = elementAttributes.value("id").toString();
+      const double x = elementAttributes.value("x").toString().toDouble();
+      const double y = elementAttributes.value("y").toString().toDouble();
+      const double r = elementAttributes.value("r").toString().toDouble();
+      AreaWaypoint* w = new AreaWaypoint(id, x, y, r);
+      SCENE.addWaypoint(w);
+    } else if (elementName == "queue") {
+      const QString id = elementAttributes.value("id").toString();
+      const double x = elementAttributes.value("x").toString().toDouble();
+      const double y = elementAttributes.value("y").toString().toDouble();
+      const double directionValue =
+          elementAttributes.value("direction").toString().toDouble();
 
-            Ped::Tvector position(x, y);
-            Ped::Tangle direction = Ped::Tangle::fromDegree(directionValue);
+      const Ped::Tvector position(x, y);
+      const Ped::Tangle direction = Ped::Tangle::fromDegree(directionValue);
 
-            WaitingQueue* queue = new WaitingQueue(id, position, direction);
-            SCENE.addWaitingQueue(queue);
-        }
-        else if (elementName == "attraction") {
-            QString id = elementAttributes.value("id").toString();
-            double x = elementAttributes.value("x").toString().toDouble();
-            double y = elementAttributes.value("y").toString().toDouble();
-            double width = elementAttributes.value("width").toString().toDouble();
-            double height = elementAttributes.value("height").toString().toDouble();
-            double strength = elementAttributes.value("strength").toString().toDouble();
+      WaitingQueue* queue = new WaitingQueue(id, position, direction);
+      SCENE.addWaitingQueue(queue);
+    } else if (elementName == "attraction") {
+      const QString id = elementAttributes.value("id").toString();
+      const double x = elementAttributes.value("x").toString().toDouble();
+      const double y = elementAttributes.value("y").toString().toDouble();
+      const double width =
+          elementAttributes.value("width").toString().toDouble();
+      const double height =
+          elementAttributes.value("height").toString().toDouble();
+      const double strength =
+          elementAttributes.value("strength").toString().toDouble();
 
-            AttractionArea* attraction = new AttractionArea(id);
-            attraction->setPosition(x, y);
-            attraction->setSize(width, height);
-            attraction->setStrength(strength);
-            SCENE.addAttraction(attraction);
-        }
-        else if (elementName == "agent") {
-            double x = elementAttributes.value("x").toString().toDouble();
-            double y = elementAttributes.value("y").toString().toDouble();
-            int n = elementAttributes.value("n").toString().toInt();
-            double dx = elementAttributes.value("dx").toString().toDouble();
-            double dy = elementAttributes.value("dy").toString().toDouble();
-            int type = elementAttributes.value("type").toString().toInt();
-            AgentCluster* agentCluster = new AgentCluster(x, y, n);
-            agentCluster->setDistribution(dx, dy);
+      AttractionArea* attraction = new AttractionArea(id);
+      attraction->setPosition(x, y);
+      attraction->setSize(width, height);
+      attraction->setStrength(strength);
+      SCENE.addAttraction(attraction);
+    } else if (elementName == "agent") {
+      const double x = elementAttributes.value("x").toString().toDouble();
+      const double y = elementAttributes.value("y").toString().toDouble();
+      const int n = elementAttributes.value("n").toString().toInt();
+      const double dx = elementAttributes.value("dx").toString().toDouble();
+      const double dy = elementAttributes.value("dy").toString().toDouble();
+      const int type = elementAttributes.value("type").toString().toInt();
+      AgentCluster* agentCluster = new AgentCluster(x, y, n);
+      agentCluster->setDistribution(dx, dy);
 
-            /// TODO - change agents Vmax distribution based on agent type
-            /// and other force parameters to realize different behaviours
-            agentCluster->setType(static_cast<Ped::Tagent::AgentType>(type));
-            SCENE.addAgentCluster(agentCluster);
-            currentAgents = agentCluster;
-        }
-        else if (elementName == "addwaypoint") {
-            if (currentAgents == nullptr) {
-                ROS_DEBUG("Invalid <addwaypoint> element outside of agent element!");
-                return;
-            }
+      /// TODO - change agents Vmax distribution based on agent type
+      /// and other force parameters to realize different behaviours
+      agentCluster->setType(static_cast<Ped::Tagent::AgentType>(type));
+      SCENE.addAgentCluster(agentCluster);
+      currentAgents = agentCluster;
+    } else if (elementName == "addwaypoint") {
+      if (currentAgents == nullptr) {
+        ROS_DEBUG("Invalid <addwaypoint> element outside of agent element!");
+        return;
+      }
 
-            // add waypoints to current <agent> element
-            QString id = elementAttributes.value("id").toString();
-            currentAgents->addWaypoint(SCENE.getWaypointByName(id));
-        }
-        else if (elementName == "addqueue") {
-            if (currentAgents == nullptr) {
-                ROS_DEBUG("Invalid <addqueue> element outside of agent element!");
-                return;
-            }
+      // add waypoints to current <agent> element
+      QString id = elementAttributes.value("id").toString();
+      currentAgents->addWaypoint(SCENE.getWaypointByName(id));
+    } else if (elementName == "addqueue") {
+      if (currentAgents == nullptr) {
+        ROS_DEBUG("Invalid <addqueue> element outside of agent element!");
+        return;
+      }
 
-            // add waiting queue to current <agent> element
-            QString id = elementAttributes.value("id").toString();
-            currentAgents->addWaitingQueue(SCENE.getWaitingQueueByName(id));
-        }
-        else {
-            // inform the user about invalid elements
-            ROS_DEBUG("Unknown element: <%s>", elementName.toStdString().c_str());
-        }
+      // add waiting queue to current <agent> element
+      QString id = elementAttributes.value("id").toString();
+      currentAgents->addWaitingQueue(SCENE.getWaitingQueueByName(id));
+    } else {
+      // inform the user about invalid elements
+      ROS_DEBUG("Unknown element: <%s>", elementName.toStdString().c_str());
     }
-    else if (xmlReader.isEndElement()) {
-        const QString elementName = xmlReader.name().toString();
+  } else if (xmlReader.isEndElement()) {
+    const QString elementName = xmlReader.name().toString();
 
-        if (elementName == "agent") {
-            currentAgents = nullptr;
-        }
+    if (elementName == "agent") {
+      currentAgents = nullptr;
     }
+  }
 }

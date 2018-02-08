@@ -31,58 +31,42 @@
 
 #include <pedsim_simulator/element/waypoint.h>
 
+Waypoint::Waypoint(const QString& nameIn) : name(nameIn) {}
 
+Waypoint::Waypoint(const QString& nameIn, const Ped::Tvector& positionIn)
+    : Ped::Twaypoint(positionIn), name(nameIn) {}
 
-Waypoint::Waypoint ( const QString& nameIn )
-    : name ( nameIn )
-{
+Waypoint::~Waypoint() {
+  // clean up
 }
 
-Waypoint::Waypoint ( const QString& nameIn, const Ped::Tvector& positionIn )
-    : Ped::Twaypoint ( positionIn ),
-      name ( nameIn )
-{
+QString Waypoint::getName() const { return name; }
+
+void Waypoint::setPosition(double xIn, double yIn) {
+  // update position
+  Ped::Twaypoint::setx(xIn);
+  Ped::Twaypoint::sety(yIn);
+
+  // inform users
+  emit positionChanged(getx(), gety());
 }
 
-Waypoint::~Waypoint()
-{
-    // clean up
+void Waypoint::setPosition(const Ped::Tvector& posIn) {
+  setPosition(posIn.x, posIn.y);
 }
 
-QString Waypoint::getName() const
-{
-    return name;
+void Waypoint::setx(double xIn) {
+  // update position
+  Ped::Twaypoint::setx(xIn);
+
+  // inform user
+  emit positionChanged(getx(), gety());
 }
 
-void Waypoint::setPosition ( double xIn, double yIn )
-{
-    // update position
-    Ped::Twaypoint::setx ( xIn );
-    Ped::Twaypoint::sety ( yIn );
+void Waypoint::sety(double yIn) {
+  // update position
+  Ped::Twaypoint::sety(yIn);
 
-    // inform users
-    emit positionChanged ( getx(), gety() );
-}
-
-void Waypoint::setPosition ( const Ped::Tvector& posIn )
-{
-    setPosition ( posIn.x, posIn.y );
-}
-
-void Waypoint::setx ( double xIn )
-{
-    // update position
-    Ped::Twaypoint::setx ( xIn );
-
-    // inform user
-    emit positionChanged ( getx(), gety() );
-}
-
-void Waypoint::sety ( double yIn )
-{
-    // update position
-    Ped::Twaypoint::sety ( yIn );
-
-    // inform user
-    emit positionChanged ( getx(), gety() );
+  // inform user
+  emit positionChanged(getx(), gety());
 }

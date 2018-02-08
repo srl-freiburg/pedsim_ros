@@ -28,31 +28,29 @@
 * \author Billy Okal <okal@cs.uni-freiburg.de>
 */
 
-#include <QApplication>
 #include <signal.h>
+#include <QApplication>
 
 #include <pedsim_simulator/simulator.h>
 
-int main(int argc, char** argv)
-{
-    QApplication app(argc, argv);
+int main(int argc, char** argv) {
+  QApplication app(argc, argv);
 
-    // initialize resources
-    ros::init(argc, argv, "simulator");
-    ros::NodeHandle node;
-    Simulator sm(node);
+  // initialize resources
+  ros::init(argc, argv, "pedsim_simulator");
+  ros::NodeHandle node("~");
+  Simulator sm(node);
 
-    // use default SIGINT handler so CTRL+C works
-    signal(SIGINT, SIG_DFL);
+  // use default SIGINT handler so CTRL+C works
+  signal(SIGINT, SIG_DFL);
 
-    if (sm.initializeSimulation()) {
-        ROS_INFO("node initialized, now running ");
+  if (sm.initializeSimulation()) {
+    ROS_INFO("node initialized, now running ");
+    sm.runSimulation();
+  } else {
+    ROS_WARN("Could not initialize simulation, aborting");
+    return EXIT_FAILURE;
+  }
 
-        sm.runSimulation();
-    } else {
-        ROS_WARN("Could not initialize simulation, aborting");
-        return EXIT_FAILURE;
-    }
-
-    return app.exec();
+  return app.exec();
 }

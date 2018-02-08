@@ -29,65 +29,50 @@
 * \author Sven Wehner <mail@svenwehner.de>
 */
 
-#include <pedsim_simulator/waypointplanner/groupwaypointplanner.h>
 #include <pedsim_simulator/element/agent.h>
 #include <pedsim_simulator/element/agentgroup.h>
 #include <pedsim_simulator/element/areawaypoint.h>
 #include <pedsim_simulator/element/waitingqueue.h>
+#include <pedsim_simulator/waypointplanner/groupwaypointplanner.h>
 
-
-GroupWaypointPlanner::GroupWaypointPlanner()
-{
-    // initialize values
-    group = nullptr;
-    destination = nullptr;
+GroupWaypointPlanner::GroupWaypointPlanner() {
+  // initialize values
+  group = nullptr;
+  destination = nullptr;
 }
 
-bool GroupWaypointPlanner::setGroup ( AgentGroup* groupIn )
-{
-    group = groupIn;
+bool GroupWaypointPlanner::setGroup(AgentGroup* groupIn) {
+  group = groupIn;
 
+  return true;
+}
+
+Waypoint* GroupWaypointPlanner::getDestination() const { return destination; }
+
+void GroupWaypointPlanner::setDestination(Waypoint* waypointIn) {
+  destination = waypointIn;
+}
+
+Waypoint* GroupWaypointPlanner::getCurrentWaypoint() { return destination; }
+
+bool GroupWaypointPlanner::hasCompletedDestination() const {
+  if (destination == nullptr) {
+    ROS_DEBUG("GroupWaypointPlanner: No destination set!");
     return true;
+  }
+
+  // check whether group has reached waypoint
+  Ped::Tvector com = group->getCenterOfMass();
+  AreaWaypoint* areaWaypoint = dynamic_cast<AreaWaypoint*>(destination);
+  if (areaWaypoint != nullptr) {
+    return areaWaypoint->isWithinArea(com);
+  } else {
+    ROS_DEBUG("Unknown Waypoint type: %s",
+              destination->toString().toStdString().c_str());
+    return true;
+  }
 }
 
-Waypoint* GroupWaypointPlanner::getDestination() const
-{
-    return destination;
-}
-
-void GroupWaypointPlanner::setDestination ( Waypoint* waypointIn )
-{
-    destination = waypointIn;
-}
-
-Waypoint* GroupWaypointPlanner::getCurrentWaypoint()
-{
-    return destination;
-}
-
-bool GroupWaypointPlanner::hasCompletedDestination() const
-{
-    if ( destination == nullptr )
-    {
-		ROS_DEBUG("GroupWaypointPlanner: No destination set!");
-        return true;
-    }
-
-    // check whether group has reached waypoint
-    Ped::Tvector com = group->getCenterOfMass();
-    AreaWaypoint* areaWaypoint = dynamic_cast<AreaWaypoint*> ( destination );
-    if ( areaWaypoint != nullptr )
-    {
-        return areaWaypoint->isWithinArea ( com );
-    }
-    else
-    {
-		ROS_DEBUG("Unknown Waypoint type: %s", destination->toString().toStdString().c_str());
-        return true;
-    }
-}
-
-QString GroupWaypointPlanner::name() const
-{
-    return tr ( "GroupWaypointPlanner" );
+QString GroupWaypointPlanner::name() const {
+  return tr("GroupWaypointPlanner");
 }

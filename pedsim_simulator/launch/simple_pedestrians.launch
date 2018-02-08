@@ -1,40 +1,23 @@
 <launch>
   <arg name="kbd_teleop" default="false"/>
   <arg name="rqt_teleop" default="true"/>
+  <arg name="visualize" default="true"/>
 
-  <!-- main simulator node -->
-  <node name="pedsim_simulator" pkg="pedsim_simulator" type="pedsim_simulator" output="screen">
-      <!-- 0 - headless, 1 - minimal, 2 - full -->
-      <param name="visual_mode" value="0" type="int"/>
-      <param name="scene_file" value="$(find pedsim_simulator)scenarios/social_contexts.xml" type="string"/>
-      <param name="default_queue_size" value="10"/>
-      <param name="max_robot_speed" value="1.5" type="double"/>
-      <param name="robot_mode" value="1" type="int"/>
-      <param name="enable_groups" value="true" type="bool"/>
-  </node>
+  <!-- Simulator -->
+  <include file="$(find pedsim_simulator)/launch/simulator.launch">
+    <arg name="kbd_teleop" value="$(arg kbd_teleop)"/>
+    <arg name="rqt_teleop" value="$(arg rqt_teleop)"/>
+    <arg name="scene_file" value="$(find pedsim_simulator)scenarios/social_contexts.xml"/>
+    <arg name="default_queue_size" value="10"/>
+    <arg name="max_robot_speed" value="1.5"/>
+    <arg name="robot_mode" value="1"/>
+    <arg name="enable_groups" value="true"/>
+  </include>
+
+  <!-- Visualizer -->
+  <include file="$(find pedsim_visualizer)/launch/visualizer.launch"/>
 
   <!-- Rviz -->
-  <node pkg="rviz" type="rviz" name="rviz" args="-d $(find pedsim_simulator)/rviz/social_contexts_activities.rviz"/>
+  <node pkg="rviz" type="rviz" name="rviz" args="-d $(find pedsim_simulator)/rviz/social_contexts_activities.rviz" if="$(arg visualize)"/>
 
-
-  <!-- Robot control -->
-  <group ns="/pedbot/control">
-    <!-- robot driving controller -->
-    <node name="driving_controller" type="simulate_diff_drive_robot" pkg="pedsim_simulator" output="screen">
-        <param name="pose_initial_x" value="4.0"/>
-        <param name="pose_initial_y" value="4.0"/>
-        <param name="pose_initial_theta" value="0.70"/>
-    </node>
-
-    <!-- Keyboard robot steering -->
-    <node pkg="pedsim_simulator" name="pedsim_keyboard_teleop" type="keyboard_teleop.py" output="screen" if="$(arg kbd_teleop)">
-        <remap from="/pedbot/control/pedsim_keyboard_teleop/cmd_vel" to="/pedbot/control/cmd_vel"/>
-    </node>
-
-    <!-- RQT robot steering -->
-    <node pkg="rqt_robot_steering" name="rqt_robot_steering" type="rqt_robot_steering" if="$(arg rqt_teleop)">
-        <remap from="/cmd_vel" to="/pedbot/control/cmd_vel"/>
-    </node>
-
-  </group>
 </launch>

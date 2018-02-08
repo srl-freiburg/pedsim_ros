@@ -34,21 +34,17 @@
 // Initialize Static Variables
 RandomNumberGenerator* RandomNumberGenerator::instance;
 
-RandomNumberGenerator::RandomNumberGenerator()
-{
-    std::random_device randomDevice;
-    uint seed = randomDevice();
-    randomEngine.seed(seed);
+RandomNumberGenerator::RandomNumberGenerator() {
+  std::random_device randomDevice;
+  uint seed = randomDevice();
+  randomEngine.seed(seed);
 }
 
-RandomNumberGenerator& RandomNumberGenerator::getInstance()
-{
-    if (instance == nullptr)
-        instance = new RandomNumberGenerator;
-    return *instance;
+RandomNumberGenerator& RandomNumberGenerator::getInstance() {
+  if (instance == nullptr) instance = new RandomNumberGenerator;
+  return *instance;
 }
 
-std::default_random_engine& RandomNumberGenerator::operator()()
-{
-    return randomEngine;
+std::default_random_engine& RandomNumberGenerator::operator()() {
+  return randomEngine;
 }

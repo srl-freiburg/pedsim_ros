@@ -29,74 +29,58 @@
 * \author Sven Wehner <mail@svenwehner.de>
 */
 
-
-#include <pedsim_simulator/force/grouprepulsionforce.h>
 #include <pedsim_simulator/config.h>
 #include <pedsim_simulator/element/agent.h>
+#include <pedsim_simulator/force/grouprepulsionforce.h>
 
 #include <ros/ros.h>
 
-GroupRepulsionForce::GroupRepulsionForce ( Agent* agentIn )
-    : Force ( agentIn )
-{
-    // initialize values
-    setFactor ( CONFIG.forceGroupRepulsion );
-    overlapDistance = 0.5;
+GroupRepulsionForce::GroupRepulsionForce(Agent* agentIn) : Force(agentIn) {
+  // initialize values
+  setFactor(CONFIG.forceGroupRepulsion);
+  overlapDistance = 0.5;
 
-    // connect signals
-    connect ( &CONFIG, SIGNAL ( forceFactorGroupRepulsionChanged ( double ) ),
-              this, SLOT ( onForceFactorGroupRepulsionChanged ( double ) ) );
+  // connect signals
+  connect(&CONFIG, SIGNAL(forceFactorGroupRepulsionChanged(double)), this,
+          SLOT(onForceFactorGroupRepulsionChanged(double)));
 }
 
-void GroupRepulsionForce::onForceFactorGroupRepulsionChanged ( double valueIn )
-{
-    setFactor ( valueIn );
+void GroupRepulsionForce::onForceFactorGroupRepulsionChanged(double valueIn) {
+  setFactor(valueIn);
 }
 
-void GroupRepulsionForce::setGroup ( AgentGroup* groupIn )
-{
-    group = groupIn;
+void GroupRepulsionForce::setGroup(AgentGroup* groupIn) { group = groupIn; }
+
+const AgentGroup& GroupRepulsionForce::getGroup() const { return *group; }
+
+Ped::Tvector GroupRepulsionForce::getForce(Ped::Tvector walkingDirection) {
+  // sanity checks
+  if (group->isEmpty()) {
+    ROS_DEBUG("Computing GroupRepulsionForce for empty group!");
+    return Ped::Tvector();
+  }
+
+  // compute group repulsion force
+  Ped::Tvector force;
+  // → iterate over all group members
+  foreach (Agent* currentAgent, group->getMembers()) {
+    // → we don't need to take the our agent into account
+    if (agent == currentAgent) continue;
+
+    // → compute relative distance vector
+    Ped::Tvector diff = agent->getPosition() - currentAgent->getPosition();
+    double distance = diff.length();
+
+    // → check whether other agent is overlapping
+    if (distance < overlapDistance) force += diff;
+  }
+
+  // there is no factor for myForce, hence we have to do it
+  force *= factor;
+
+  return force;
 }
 
-const AgentGroup& GroupRepulsionForce::getGroup() const
-{
-    return *group;
-}
-
-Ped::Tvector GroupRepulsionForce::getForce ( Ped::Tvector walkingDirection )
-{
-    // sanity checks
-    if ( group->isEmpty() )
-    {
-		ROS_DEBUG("Computing GroupRepulsionForce for empty group!");
-        return Ped::Tvector();
-    }
-
-    // compute group repulsion force
-    Ped::Tvector force;
-    // → iterate over all group members
-    foreach ( Agent* currentAgent, group->getMembers() )
-    {
-        // → we don't need to take the our agent into account
-        if ( agent == currentAgent )
-            continue;
-
-        // → compute relative distance vector
-        Ped::Tvector diff = agent->getPosition() - currentAgent->getPosition();
-        double distance = diff.length();
-
-        // → check whether other agent is overlapping
-        if ( distance < overlapDistance )
-            force += diff;
-    }
-
-    // there is no factor for myForce, hence we have to do it
-    force *= factor;
-
-    return force;
-}
-
-QString GroupRepulsionForce::toString() const
-{
-    return tr ( "GroupRepulsionForce (factor: %1)" ).arg ( factor );
+QString GroupRepulsionForce::toString() const {
+  return tr("GroupRepulsionForce (factor: %1)").arg(factor);
 }

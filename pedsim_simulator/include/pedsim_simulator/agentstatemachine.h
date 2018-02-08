@@ -42,62 +42,61 @@ class QueueingWaypointPlanner;
 class GroupWaypointPlanner;
 class ShoppingPlanner;
 
+class AgentStateMachine : public QObject {
+  Q_OBJECT
 
-class AgentStateMachine : public QObject 
-{
-	Q_OBJECT
+  // Enums
+  // TODO - switch to enum classes
+ public:
+  typedef enum {
+    StateNone = 0,
+    StateWaiting = 1,
+    StateQueueing = 2,
+    StateWalking = 3,
+    StateGroupWalking = 4,
+    StateShopping = 5
+  } AgentState;
 
-	// Enums
-	// TODO - switch to enum classes
-public:
-	typedef enum {
-		StateNone = 0,
-		StateWaiting = 1,
-		StateQueueing = 2,
-		StateWalking = 3,
-		StateGroupWalking = 4,
-		StateShopping = 5
-	} AgentState;
+  // Constructor and Destructor
+ public:
+  AgentStateMachine(Agent* agentIn);
+  virtual ~AgentStateMachine();
 
-	// Constructor and Destructor
-public:
-	AgentStateMachine(Agent* agentIn);
-	virtual ~AgentStateMachine();
+  // Signals
+ signals:
+  void stateChanged(AgentState newState);
 
-	// Signals
-signals:
-	void stateChanged(AgentState newState);
+ public slots:
+  void loseAttraction();
 
-public slots:
-	void loseAttraction();
+  // Methods
+ public:
+  void doStateTransition();
+  AgentState getCurrentState();
 
-	// Methods
-public:
-	void doStateTransition();
-	AgentState getCurrentState();
-protected:
-	void activateState(AgentState stateIn);
-	void deactivateState(AgentState stateIn);
-	bool checkGroupForAttractions(AttractionArea** attractionOut = nullptr) const;
-	QString stateToName(AgentState stateIn) const;
+ protected:
+  void activateState(AgentState stateIn);
+  void deactivateState(AgentState stateIn);
+  bool checkGroupForAttractions(AttractionArea** attractionOut = nullptr) const;
+  QString stateToName(AgentState stateIn) const;
 
-	// Attributes
-protected:
-	Agent* agent;
+  // Attributes
+ protected:
+  Agent* agent;
 
-	// → State Machine
-	AgentState state;
-	AgentState normalState;
+  // → State Machine
+  AgentState state;
+  AgentState normalState;
 
-	// → Waypoint Planner
-	IndividualWaypointPlanner* individualPlanner;
-	QueueingWaypointPlanner* queueingPlanner;
-	GroupWaypointPlanner* groupWaypointPlanner;
-	ShoppingPlanner* shoppingPlanner;
+  // → Waypoint Planner
+  IndividualWaypointPlanner* individualPlanner;
+  QueueingWaypointPlanner* queueingPlanner;
+  GroupWaypointPlanner* groupWaypointPlanner;
+  ShoppingPlanner* shoppingPlanner;
 
-	// → Attraction
-	AttractionArea* groupAttraction;
-	bool shallLoseAttraction;
+  // → Attraction
+  AttractionArea* groupAttraction;
+  bool shallLoseAttraction;
 };
 
 #endif

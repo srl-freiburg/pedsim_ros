@@ -55,5 +55,3 @@ roslaunch pedsim_simulator simple_pedestrians.launch
 * Sven Wehner
 
 The package is a **work in progress** used in research prototyping. Pull requests and/or issues are highly encouraged.
-
-

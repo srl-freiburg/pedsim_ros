@@ -32,40 +32,36 @@
 #ifndef _obstacle_h_
 #define _obstacle_h_
 
-
-#include <pedsim_simulator/element/scenarioelement.h>
 #include <pedsim/ped_obstacle.h>
+#include <pedsim_simulator/element/scenarioelement.h>
 #include <QGraphicsLineItem>
 
-
 class Obstacle : public ScenarioElement, public Ped::Tobstacle {
-	Q_OBJECT
+  Q_OBJECT
 
-	// Constructor and Destructor
-public:
-	Obstacle(double ax = 0, double ay = 0, double bx = 1, double by = 1);
-	virtual ~Obstacle();
+  // Constructor and Destructor
+ public:
+  Obstacle(double ax = 0, double ay = 0, double bx = 1, double by = 1);
+  virtual ~Obstacle();
 
+  // Signals
+ signals:
+  void positionChanged();
 
-	// Signals
-signals:
-	void positionChanged();
+  // Methods
+ public:
+  void setPosition(double ax, double ay, double bx, double by);
+  void setPosition(const QPointF& startIn, const QPointF& endIn);
+  void setX1(double xIn);
+  void setY1(double yIn);
+  void setX2(double xIn);
+  void setY2(double yIn);
 
-
-	// Methods
-public:
-	void setPosition(double ax, double ay, double bx, double by);
-	void setPosition(const QPointF& startIn, const QPointF& endIn);
-	void setX1(double xIn);
-	void setY1(double yIn);
-	void setX2(double xIn);
-	void setY2(double yIn);
-
-	// → ScenarioElement Overrides/Overloads
-public:
-	virtual QPointF getVisiblePosition() const;
-	virtual void setVisiblePosition(const QPointF& positionIn);
-	QString toString() const;
+  // → ScenarioElement Overrides/Overloads
+ public:
+  virtual QPointF getVisiblePosition() const;
+  virtual void setVisiblePosition(const QPointF& positionIn);
+  QString toString() const;
 };
 
 #endif

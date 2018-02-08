@@ -29,21 +29,11 @@
 * \author Sven Wehner <mail@svenwehner.de>
 */
 
-#include <pedsim_simulator/force/force.h>
 #include <pedsim_simulator/element/agent.h>
+#include <pedsim_simulator/force/force.h>
 
+Force::Force(Agent* agentIn) : agent(agentIn), factor(1) {}
 
-Force::Force ( Agent* agentIn )
-    : agent ( agentIn ), factor ( 1 )
-{
-}
+void Force::setFactor(double factorIn) { factor = factorIn; }
 
-void Force::setFactor ( double factorIn )
-{
-    factor = factorIn;
-}
-
-double Force::getFactor() const
-{
-    return factor;
-}
+double Force::getFactor() const { return factor; }

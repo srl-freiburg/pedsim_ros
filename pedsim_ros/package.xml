@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>pedsim_ros</name>
+  <version>0.2.0</version>
+  <description>
+    ROS based pedestrian simulator using social forces model
+  </description>
+
+  <maintainer email="okal@cs.uni-freiburg.de">Billy Okal</maintainer>
+
+  <license>BSD</license>
+
+  <author email="okal@cs.uni-freiburg.de">Billy Okal</author>
+  <author email="linder@cs.uni-freiburg.de">Timm Linder</author>
+  <author email="palmieri@cs.uni-freiburg.de">Luigi Palmieri</author>
+  <author email="omar@email.todo">Omar Islas</author>
+  <author email="mail@svenwehner.de">Sven Wehner</author>
+
+  <url type="website">https://github.com/srl-freiburg/pedsim_ros</url>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <exec_depend>pedsim</exec_depend>
+  <exec_depend>pedsim_msgs</exec_depend>
+  <exec_depend>pedsim_simulator</exec_depend>
+  <exec_depend>pedsim_srvs</exec_depend>
+  <exec_depend>pedsim_utils</exec_depend>
+  <exec_depend>pedsim_sensors</exec_depend>
+  <exec_depend>pedsim_visualizer</exec_depend>
+
+  <export>
+    <metapackage/>
+  </export>
+</package>

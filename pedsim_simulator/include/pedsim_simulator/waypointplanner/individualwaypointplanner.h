@@ -32,45 +32,40 @@
 #ifndef _individualwaypointplanner_h_
 #define _individualwaypointplanner_h_
 
-
 #include <pedsim_simulator/waypointplanner/waypointplanner.h>
 
 // Forward Declarations
 class AgentGroup;
 
+class IndividualWaypointPlanner : public WaypointPlanner {
+  Q_OBJECT
 
-class IndividualWaypointPlanner : public WaypointPlanner
-{
-	Q_OBJECT
+  // Constructor and Destructor
+ public:
+  IndividualWaypointPlanner();
 
-	// Constructor and Destructor
-public:
-	IndividualWaypointPlanner();
+  // Methods
+ public:
+  bool setAgent(Agent* agentIn);
 
+  // → Waypoints
+  Waypoint* getDestination() const;
+  void setDestination(Waypoint* waypointIn);
 
-	// Methods
-public:
-	bool setAgent(Agent* agentIn);
+  // → WaypointPlanner Overrides
+ public:
+  static Type getPlannerType() { return WaypointPlanner::Individual; };
+  virtual Waypoint* getCurrentWaypoint();
+  virtual bool hasCompletedDestination() const;
 
-	// → Waypoints
-	Waypoint* getDestination() const;
-	void setDestination(Waypoint* waypointIn);
+  virtual QString name() const;
 
-	// → WaypointPlanner Overrides
-public:
-	static Type getPlannerType() { return WaypointPlanner::Individual; };
-	virtual Waypoint* getCurrentWaypoint();
-	virtual bool hasCompletedDestination() const;
+  // Attributes
+ protected:
+  Agent* agent;
 
-	virtual QString name() const;
-
-
-	// Attributes
-protected:
-	Agent* agent;
-
-	// → Waypoints
-	Waypoint* destination;
+  // → Waypoints
+  Waypoint* destination;
 };
 
 #endif

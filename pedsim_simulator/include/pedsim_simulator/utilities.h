@@ -35,40 +35,27 @@
 /// \enum RobotMode
 /// \brief Robot control mode
 /// --------------------------------------
-enum class RobotMode {
-    CONTROLLED = 0,
-    TELEOPERATION = 1,
-    SOCIAL_DRIVE = 2
-};
+enum class RobotMode { CONTROLLED = 0, TELEOPERATION = 1, SOCIAL_DRIVE = 2 };
 
 /// \brief Modes for running the simulator
-enum class VisualMode {
-    HEADLESS = 0,
-    MINIMAL = 1,
-    FULL = 2
-};
+enum class VisualMode { HEADLESS = 0, MINIMAL = 1, FULL = 2 };
 
 /// --------------------------------------
 /// \struct Location
 /// \brief 2D location/cell
 /// --------------------------------------
 struct Location {
-    float x;
-    float y;
+  float x;
+  float y;
 
-    Location(float xx, float yy)
-        : x(xx)
-        , y(yy)
-    {
-    }
+  Location(float xx, float yy) : x(xx), y(yy) {}
 
-    bool operator==(Location a)
-    {
-        if (x == a.x && y == a.y)
-            return true;
-        else
-            return false;
-    }
+  bool operator==(Location a) {
+    if (x == a.x && y == a.y)
+      return true;
+    else
+      return false;
+  }
 };
 
 #endif

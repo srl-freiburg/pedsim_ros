@@ -41,28 +41,26 @@
 // Forward Declarations
 class Agent;
 
-
 class Force : public QObject {
-	Q_OBJECT
+  Q_OBJECT
 
-	// Constructor and Destructor
-public:
-	Force(Agent* agentIn);
+  // Constructor and Destructor
+ public:
+  Force(Agent* agentIn);
 
+  // Methods
+  void setFactor(double factorIn);
+  double getFactor() const;
 
-	// Methods
-	void setFactor(double factorIn);
-	double getFactor() const;
-public:
-	virtual QString getName() const = 0;
-	virtual Ped::Tvector getForce(Ped::Tvector walkingDirection) = 0;
-	virtual QString toString() const = 0;
+ public:
+  virtual QString getName() const = 0;
+  virtual Ped::Tvector getForce(Ped::Tvector walkingDirection) = 0;
+  virtual QString toString() const = 0;
 
-
-	// Attributes
-protected:
-	Agent* const agent;
-	double factor;
+  // Attributes
+ protected:
+  Agent* const agent;
+  double factor;
 };
 
 #endif

@@ -31,6 +31,4 @@
 
 #include <pedsim_simulator/waypointplanner/waypointplanner.h>
 
-
-WaypointPlanner::WaypointPlanner() {
-}
+WaypointPlanner::WaypointPlanner() {}

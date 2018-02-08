@@ -1,0 +1,22 @@
+<launch>
+  <arg name="kbd_teleop" default="false"/>
+  <arg name="rqt_teleop" default="true"/>
+  <arg name="scene_file" default="$(find pedsim_simulator)scenarios/social_contexts.xml"/>
+  <arg name="default_queue_size" default="10"/>
+  <arg name="max_robot_speed" default="1.5"/>
+  <arg name="robot_mode" default="1"/>
+  <arg name="enable_groups" default="true"/>
+  <arg name="with_robot" default="false"/>
+
+  <!-- main simulator node -->
+  <node name="pedsim_simulator" pkg="pedsim_simulator" type="pedsim_simulator" output="screen">
+    <param name="scene_file" value="$(arg scene_file)"/>
+    <param name="default_queue_size" value="$(arg default_queue_size)"/>
+    <param name="max_robot_speed" value="$(arg max_robot_speed)" type="double"/>
+    <param name="robot_mode" value="$(arg robot_mode)" type="int"/>
+    <param name="enable_groups" value="$(arg enable_groups)" type="bool"/>
+  </node>
+
+  <include file="$(find pedsim_simulator)/launch/robot_controller.launch" if="$(arg with_robot)"/>
+
+</launch>
