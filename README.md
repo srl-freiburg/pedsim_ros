@@ -1,8 +1,8 @@
 # Pedestrian Simulator
 <img src=https://github.com/srl-freiburg/pedsim_ros/blob/master/pedsim_simulator/images/crowd1.png width=400/> | <img src=https://github.com/srl-freiburg/pedsim_ros/blob/master/pedsim_simulator/images/costmap.png width=400/>
 
-A ROS meta package for a pedestrian simulator based on social force
-model of [Helbing et. al](http://arxiv.org/pdf/cond-mat/9805244.pdf). The implementation is based on a modified version of Christian Gloor's [libpedsim](http://pedsim.silmaril.org/) library which has been extended to include additional behaviors and activities. All visualization is done via [Rviz](http://wiki.ros.org/rviz). The package is useful for robot navigation experiments with crowded scenes which are hard to acquire in practice.
+ROS packages for a 2D pedestrian simulator based on social force
+model of [Helbing et. al](http://arxiv.org/pdf/cond-mat/9805244.pdf). The implementation is based on a modified version of Christian Gloor's [libpedsim](http://pedsim.silmaril.org/) library which has been extended to include additional behaviors and activities. This packages is useful for robot navigation experiments with crowded scenes which are hard to acquire in practice.
 
 ### Features
 - Individual walking using social force model for very large crowds in real time
@@ -14,24 +14,18 @@ model of [Helbing et. al](http://arxiv.org/pdf/cond-mat/9805244.pdf). The implem
 - Option to connect with gazebo for physics reasoning
 
 ### Requirements
-- ROS with the visualization stack (currently tested on `hydro`, `indigo` )
+- ROS with the visualization stack (currently tested on `hydro`, `indigo`, `kinetic` )
 - C++11 compiler
-- Qt4
-- Eigen3
-
-### Dependencies
-* (**Optional**) Our rviz fork with  additional costmap visualization colors (jet, hot, etc). Installable from [https://github.com/srl-freiburg/rviz](https://github.com/srl-freiburg/rviz).
-
 
 ### Installation
 
 ```
 cd [workspace]/src
-git clone https://github.com/srl-freiburg/pedsim_ros.git
-# remaining clones are optional
-git clone https://github.com/srl-freiburg/rviz.git
-cd ..
-catkin build -c
+git clone https://github.com/srl-freiburg/pedsim_ros.git  
+cd pedsim_ros 
+git submodule update --init --recursive
+cd ../..
+catkin build -c  # or catkin_make
 ```
 
 ### Sample usage
@@ -39,19 +33,19 @@ catkin build -c
 roslaunch pedsim_simulator simple_pedestrians.launch
 ```
 
-#### TODO
-- [ ] Add additional crowd behaviours
-- [ ] Scenario build tool (GUI)
-
-
 ### Developers
 * Billy Okal
-* Omar Islas
 * Timm Linder
 
 
 ### Contributors
 * Dizan Vasquez
 * Sven Wehner
+* Omar Islas
+* Luigi Palmieri
 
-The package is a **work in progress** used in research prototyping. Pull requests and/or issues are highly encouraged.
+The package is a **work in progress** mainly used in research prototyping. Pull requests and/or issues are highly encouraged.
+
+### Acknowledgements
+These packages have been developed in part during the EU FP7 project [SPENCER](spencer.eu)
+
