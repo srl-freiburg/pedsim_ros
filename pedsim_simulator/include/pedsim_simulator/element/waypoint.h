@@ -39,8 +39,9 @@ class Waypoint : public ScenarioElement, public Ped::Twaypoint {
   Q_OBJECT
 
  public:
-  Waypoint(const QString& nameIn);
+  explicit Waypoint(const QString& nameIn);
   Waypoint(const QString& nameIn, const Ped::Tvector& positionIn);
+
   virtual ~Waypoint();
 
   // Signals

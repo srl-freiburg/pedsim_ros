@@ -50,6 +50,17 @@ class AgentCluster;
 class AgentGroup;
 class WaitingQueue;
 
+struct SpawnArea {
+  double x, y;
+  int n;
+  int dx, dy;
+  std::vector<QString> waypoints;
+
+  SpawnArea(const double xx, const double yy, const int nn, const int dxi,
+            const int dyi)
+      : x{xx}, y{yy}, n{nn}, dx{dxi}, dy{dyi} {}
+};
+
 class Scene : public QObject, protected Ped::Tscene {
   Q_OBJECT
 
@@ -113,6 +124,8 @@ class Scene : public QObject, protected Ped::Tscene {
   AttractionArea* getAttractionByName(const QString& nameIn) const;
   AttractionArea* getClosestAttraction(const Ped::Tvector& positionIn,
                                        double* distanceOut = nullptr) const;
+  std::vector<SpawnArea*> getSpawnAreas() const { return spawn_areas; }
+  void addSpawnArea(SpawnArea* sa) { spawn_areas.emplace_back(sa); }
 
   // → simulation time
   double getTime() const;
@@ -149,6 +162,8 @@ class Scene : public QObject, protected Ped::Tscene {
   QMap<QString, AttractionArea*> attractions;
   QList<AgentCluster*> agentClusters;
   QList<AgentGroup*> agentGroups;
+
+  std::vector<SpawnArea*> spawn_areas;
 
   // → simulated time
   double sceneTime;

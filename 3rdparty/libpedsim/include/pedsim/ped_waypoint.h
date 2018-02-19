@@ -26,6 +26,7 @@ class Tagent;
 class LIBEXPORT Twaypoint {
  public:
   enum WaypointType { AreaWaypoint = 0, PointWaypoint = 1 };
+  enum Behavior { SIMPLE = 0, SOURCE = 1, SINK = 2 };
 
  public:
   Twaypoint(double xIn = 0, double yIn = 0);
@@ -34,6 +35,7 @@ class LIBEXPORT Twaypoint {
 
   int getId() const { return id; };
   int getType() const { return type; };
+  int getBehavior() const { return behavior; };
   Ped::Tvector getPosition() const { return position; };
   double getx() const { return position.x; };
   double gety() const { return position.y; };
@@ -48,6 +50,7 @@ class LIBEXPORT Twaypoint {
   virtual void setx(double xIn) { position.x = xIn; };
   virtual void sety(double yIn) { position.y = yIn; };
   void setType(WaypointType t) { type = t; };
+  void setBehavior(Behavior b) { behavior = b; };
 
   virtual Tvector getForce(const Tagent& agent,
                            Ped::Tvector* desiredDirectionOut = NULL,
@@ -56,10 +59,11 @@ class LIBEXPORT Twaypoint {
                                bool* withinWaypoint = NULL) const;
 
  protected:
-  static int staticid;  ///< last waypoint number
-  int id;               ///< waypoint number
-  Tvector position;     ///< position of the waypoint
-  WaypointType type;    ///< type of the waypoint
+  static int staticid;                   ///< last waypoint number
+  int id;                                ///< waypoint number
+  Tvector position;                      ///< position of the waypoint
+  WaypointType type;                     ///< type of the waypoint
+  Behavior behavior = Behavior::SIMPLE;  ///< behavior of the waypoint
 };
 }
 

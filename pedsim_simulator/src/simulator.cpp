@@ -118,6 +118,9 @@ bool Simulator::initializeSimulation() {
 
   paused_ = false;
 
+  spawn_timer_ =
+      nh_.createTimer(ros::Duration(5.0), &Simulator::spawnCallback, this);
+
   return true;
 }
 
@@ -184,6 +187,22 @@ bool Simulator::onUnpauseSimulation(std_srvs::Empty::Request& request,
                                     std_srvs::Empty::Response& response) {
   paused_ = false;
   return true;
+}
+
+void Simulator::spawnCallback(const ros::TimerEvent& event) {
+  ROS_DEBUG_STREAM("Spawning new agents.");
+
+  for (const auto& sa : SCENE.getSpawnAreas()) {
+    AgentCluster* agentCluster = new AgentCluster(sa->x, sa->y, sa->n);
+    agentCluster->setDistribution(sa->dx, sa->dy);
+    agentCluster->setType(static_cast<Ped::Tagent::AgentType>(0));
+
+    for (const auto& wp_name : sa->waypoints) {
+      agentCluster->addWaypoint(SCENE.getWaypointByName(wp_name));
+    }
+
+    SCENE.addAgentCluster(agentCluster);
+  }
 }
 
 void Simulator::updateRobotPositionFromTF() {

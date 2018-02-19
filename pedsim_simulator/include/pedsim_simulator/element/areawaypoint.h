@@ -44,6 +44,7 @@ class AreaWaypoint : public Waypoint {
                double rIn = 1);
   AreaWaypoint(const QString& nameIn, double xIn = 0, double yIn = 0,
                double rIn = 1);
+
   virtual ~AreaWaypoint();
 
   // Signals
