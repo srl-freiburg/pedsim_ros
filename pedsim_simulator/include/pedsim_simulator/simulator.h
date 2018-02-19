@@ -86,6 +86,8 @@ class Simulator {
   bool onUnpauseSimulation(std_srvs::Empty::Request& request,
                            std_srvs::Empty::Response& response);
 
+  void spawnCallback(const ros::TimerEvent& event);
+
  protected:
   void reconfigureCB(SimConfig& config, uint32_t level);
   dynamic_reconfigure::Server<SimConfig> server_;
@@ -100,6 +102,7 @@ class Simulator {
  private:
   ros::NodeHandle nh_;
   bool paused_;
+  ros::Timer spawn_timer_;
 
   // publishers
   ros::Publisher pub_obstacles_;

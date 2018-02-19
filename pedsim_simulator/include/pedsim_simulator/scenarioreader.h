@@ -54,6 +54,7 @@ class ScenarioReader {
   QXmlStreamReader xmlReader;
 
   AgentCluster* currentAgents;
+  SpawnArea* currentSpawnArea;
 };
 
 #endif

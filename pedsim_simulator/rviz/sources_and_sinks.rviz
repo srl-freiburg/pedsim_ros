@@ -4,11 +4,12 @@ Panels:
     Name: Displays
     Property Tree Widget:
       Expanded:
+        - /Grid1
         - /Grid1/Offset1
+        - /Pedsim-Visuals1
         - /Tracking-Visuals1
         - /Tracking-Visuals1/TrackedPersons1
         - /Tracking-Visuals1/TrackedPersons1/History as line1
-        - /Tracking-Visuals1/TrackedGroups1
         - /Tracking-Visuals1/TrackedGroups1/Render group IDs1
       Splitter Ratio: 0.583333313
     Tree Height: 1877
@@ -116,7 +117,7 @@ Visualization Manager:
           Z offset:
             Use Z position from message: false
             Value: 0
-        - Alpha: 0.699999988
+        - Alpha: 1
           Class: spencer_tracking_rviz_plugin/TrackedGroups
           Color: 130; 130; 130
           Color map offset: 0
@@ -177,25 +178,25 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/XYOrbit
-      Distance: 23.1377792
+      Distance: 32.506916
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.0599999987
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: 5.18117809
-        Y: 0.234020472
-        Z: -1.48934741e-05
+        X: 5.943542
+        Y: 1.10712242
+        Z: 2.27266355e-06
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.0500000007
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.00999999978
-      Pitch: 0.859796882
+      Pitch: 0.864797056
       Target Frame: <Fixed Frame>
       Value: XYOrbit (rviz)
-      Yaw: 3.87356949
+      Yaw: 3.90356541
     Saved: ~
 Window Geometry:
   Displays:

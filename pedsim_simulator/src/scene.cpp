@@ -537,6 +537,28 @@ void Scene::moveAllAgents() {
   // move the agents
   Ped::Tscene::moveAgents(CONFIG.getTimeStepSize());
 
+  auto Dist = [](const double ax, const double ay, const double bx,
+                 const double by) -> double {
+    return std::hypot(ax - bx, ay - by);
+  };
+
+  // For every agents, if next WP is sink and 'close', call removeAgent.
+  for (auto agent : getAgents()) {
+    const auto agent_next_wp = agent->getCurrentWaypoint();
+    if (agent_next_wp->getBehavior() != Ped::Twaypoint::Behavior::SINK) {
+      continue;
+    }
+
+    const double d = Dist(agent_next_wp->getx(), agent_next_wp->gety(),
+                          agent->getx(), agent->gety());
+    //(d - agent_next_wp->getRadius())
+    if (d < 2.5) {
+      // At sink waypoint.
+      ROS_DEBUG_STREAM("Killing agent: " << agent->getId());
+      removeAgent(agent);
+    }
+  }
+
   // inform users
   emit movedAgents();
 }

@@ -45,6 +45,7 @@
 ScenarioReader::ScenarioReader() {
   // initialize values
   currentAgents = nullptr;
+  currentSpawnArea = nullptr;
 }
 
 bool ScenarioReader::readFromFile(const QString& filename) {
@@ -95,7 +96,9 @@ void ScenarioReader::processData() {
       const double x = elementAttributes.value("x").toString().toDouble();
       const double y = elementAttributes.value("y").toString().toDouble();
       const double r = elementAttributes.value("r").toString().toDouble();
+      const int b = elementAttributes.value("b").toString().toInt();
       AreaWaypoint* w = new AreaWaypoint(id, x, y, r);
+      w->setBehavior(static_cast<Ped::Twaypoint::Behavior>(b));
       SCENE.addWaypoint(w);
     } else if (elementName == "queue") {
       const QString id = elementAttributes.value("id").toString();
@@ -140,6 +143,22 @@ void ScenarioReader::processData() {
       agentCluster->setType(static_cast<Ped::Tagent::AgentType>(type));
       SCENE.addAgentCluster(agentCluster);
       currentAgents = agentCluster;
+    } else if (elementName == "source") {
+      const double x = elementAttributes.value("x").toString().toDouble();
+      const double y = elementAttributes.value("y").toString().toDouble();
+      const int n = elementAttributes.value("n").toString().toInt();
+      const double dx = elementAttributes.value("dx").toString().toDouble();
+      const double dy = elementAttributes.value("dy").toString().toDouble();
+      const int type = elementAttributes.value("type").toString().toInt();
+      AgentCluster* agentCluster = new AgentCluster(x, y, n);
+      agentCluster->setDistribution(dx, dy);
+      agentCluster->setType(static_cast<Ped::Tagent::AgentType>(type));
+      SCENE.addAgentCluster(agentCluster);
+      currentAgents = agentCluster;
+
+      SpawnArea* spawn_area = new SpawnArea(x, y, n, dx, dy);
+      SCENE.addSpawnArea(spawn_area);
+      currentSpawnArea = spawn_area;
     } else if (elementName == "addwaypoint") {
       if (currentAgents == nullptr) {
         ROS_DEBUG("Invalid <addwaypoint> element outside of agent element!");
@@ -149,6 +168,10 @@ void ScenarioReader::processData() {
       // add waypoints to current <agent> element
       QString id = elementAttributes.value("id").toString();
       currentAgents->addWaypoint(SCENE.getWaypointByName(id));
+
+      if (currentSpawnArea != nullptr) {
+        currentSpawnArea->waypoints.emplace_back(id);
+      }
     } else if (elementName == "addqueue") {
       if (currentAgents == nullptr) {
         ROS_DEBUG("Invalid <addqueue> element outside of agent element!");
