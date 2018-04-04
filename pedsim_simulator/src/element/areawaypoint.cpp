@@ -72,11 +72,15 @@ Ped::Tvector AreaWaypoint::closestPoint(const Ped::Tvector& posIn,
   }
 }
 
-double AreaWaypoint::getRadius() const { return radius; }
+double AreaWaypoint::getRadius() const { 
+  return getRadius();
+  // return radius; 
+}
 
 void AreaWaypoint::setRadius(double rIn) {
   // update radius
-  radius = rIn;
+  // radius = rIn;
+  setRadius(rIn);
 
   // inform user
   emit radiusChanged(radius);

@@ -39,6 +39,7 @@ class LIBEXPORT Twaypoint {
   Ped::Tvector getPosition() const { return position; };
   double getx() const { return position.x; };
   double gety() const { return position.y; };
+  double getRadius() const { return radius; };
 
   virtual void setPosition(double xIn, double yIn) {
     position.x = xIn;
@@ -49,6 +50,7 @@ class LIBEXPORT Twaypoint {
   };
   virtual void setx(double xIn) { position.x = xIn; };
   virtual void sety(double yIn) { position.y = yIn; };
+  virtual void setRadius(double rIn) { radius = rIn; };
   void setType(WaypointType t) { type = t; };
   void setBehavior(Behavior b) { behavior = b; };
 
@@ -64,6 +66,7 @@ class LIBEXPORT Twaypoint {
   Tvector position;                      ///< position of the waypoint
   WaypointType type;                     ///< type of the waypoint
   Behavior behavior = Behavior::SIMPLE;  ///< behavior of the waypoint
+  double radius;                          ///< radius of the waypoint
 };
 }
 

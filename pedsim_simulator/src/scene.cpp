@@ -551,8 +551,7 @@ void Scene::moveAllAgents() {
 
     const double d = Dist(agent_next_wp->getx(), agent_next_wp->gety(),
                           agent->getx(), agent->gety());
-    //(d - agent_next_wp->getRadius())
-    if (d < 2.5) {
+    if (d < agent_next_wp->getRadius()) {
       // At sink waypoint.
       ROS_DEBUG_STREAM("Killing agent: " << agent->getId());
       removeAgent(agent);

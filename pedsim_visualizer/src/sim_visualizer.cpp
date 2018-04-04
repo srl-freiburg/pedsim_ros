@@ -168,8 +168,8 @@ void SimVisualizer::publishObstacleVisuals() {
     for (const auto& cell : LineObstacleToCells(line.start.x, line.start.y,
                                                 line.end.x, line.end.y)) {
       geometry_msgs::Point p;
-      p.x = cell.first + 0.5;
-      p.y = cell.second + 0.5;
+      p.x = cell.first;
+      p.y = cell.second;
       p.z = 0.0;
       walls_marker.points.push_back(p);
     }

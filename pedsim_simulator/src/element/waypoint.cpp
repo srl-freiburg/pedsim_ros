@@ -70,3 +70,8 @@ void Waypoint::sety(double yIn) {
   // inform user
   emit positionChanged(getx(), gety());
 }
+
+void Waypoint::setRadius(double rIn) {
+  // update position
+  Ped::Twaypoint::setRadius(rIn);
+}
