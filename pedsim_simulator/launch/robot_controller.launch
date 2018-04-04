@@ -1,14 +1,17 @@
 <launch>
   <arg name="kbd_teleop" default="false"/>
   <arg name="rqt_teleop" default="true"/>
+  <arg name="pose_initial_x" default="5.0"/>
+  <arg name="pose_initial_y" default="5.0"/>
+  <arg name="pose_initial_theta" default="0.0"/>
   
   <!-- Robot control -->
-  <group ns="/pedbot/control">
+  <!-- <group ns="pedbot"> -->
     <!-- robot driving controller -->
     <node name="driving_controller" type="simulate_diff_drive_robot" pkg="pedsim_simulator" output="screen">
-      <param name="pose_initial_x" value="4.0"/>
-      <param name="pose_initial_y" value="4.0"/>
-      <param name="pose_initial_theta" value="0.70"/>
+      <param name="pose_initial_x" value="$(arg pose_initial_x"/>
+      <param name="pose_initial_y" value="$(arg pose_initial_y"/>
+      <param name="pose_initial_theta" value="$(arg pose_initial_theta"/>
     </node>
 
     <!-- Keyboard robot steering -->
@@ -21,6 +24,6 @@
       <remap from="/cmd_vel" to="/pedbot/control/cmd_vel"/>
     </node>
 
-  </group>
+  <!-- </group> -->
 
 </launch>
