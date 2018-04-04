@@ -56,6 +56,7 @@ class Waypoint : public ScenarioElement, public Ped::Twaypoint {
   virtual void setPosition(const Ped::Tvector& posIn);
   virtual void setx(double xIn);
   virtual void sety(double yIn);
+  virtual void setRadius(double rIn);
 
   // Attributes
  protected:

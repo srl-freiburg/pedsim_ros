@@ -72,7 +72,7 @@ class AreaWaypoint : public Waypoint {
 
   // Attributes
  public:
-  double radius;
+  // double radius;
 };
 
 #endif
