@@ -96,6 +96,8 @@ void ScenarioReader::processData() {
       const double x = elementAttributes.value("x").toString().toDouble();
       const double y = elementAttributes.value("y").toString().toDouble();
       const double r = elementAttributes.value("r").toString().toDouble();
+      // TODO - make the setting of waypoint behavior optional, 
+      // and default to SIMPLE.
       const int b = elementAttributes.value("b").toString().toInt();
       AreaWaypoint* w = new AreaWaypoint(id, x, y, r);
       w->setBehavior(static_cast<Ped::Twaypoint::Behavior>(b));
