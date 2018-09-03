@@ -169,7 +169,8 @@ int main(int argc, char** argv) {
   node.param<double>("rate", sensor_rate, 25.0);
 
   pedsim_ros::PeoplePointCloud pcd_sensor(node, sensor_rate, circle_fov);
-  ROS_INFO_STREAM("Initialized People PointCloud sensor");
+  ROS_INFO_STREAM("Initialized people PCD sensor with center: (" 
+    << init_x << ", " << init_y << ") and range: " << fov_range);
 
   pcd_sensor.run();
   return 0;
