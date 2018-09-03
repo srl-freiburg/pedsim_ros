@@ -63,7 +63,7 @@ void ObstaclePointCloud::broadcast() {
     std::copy(cells.begin(), cells.end(), std::back_inserter(all_cells));
   }
 
-  constexpr int point_density = 50;
+  constexpr int point_density = 80;
   const int num_points = all_cells.size() * point_density;
 
   std::default_random_engine generator;
@@ -177,7 +177,9 @@ int main(int argc, char** argv) {
   node.param<double>("rate", sensor_rate, 25.0);
 
   pedsim_ros::ObstaclePointCloud pcd_sensor(node, sensor_rate, circle_fov);
-  ROS_INFO_STREAM("Initialized People PointCloud sensor");
+  ROS_INFO_STREAM("Initialized obstacle PCD sensor with center: (" 
+    << init_x << ", " << init_y << ") and range: " << fov_range);
+
   pcd_sensor.run();
   return 0;
 }
