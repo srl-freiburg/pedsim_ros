@@ -52,7 +52,7 @@ void PeoplePointCloud::broadcast() {
     return;
   }
 
-  constexpr int point_density = 75;
+  constexpr int point_density = 100;
   const auto people_signal = q_agents_.front();
   const int num_points = people_signal->agent_states.size() * point_density;
 
@@ -61,7 +61,7 @@ void PeoplePointCloud::broadcast() {
   // \todo - Read params from config file.
   std::uniform_int_distribution<int> color_distribution(1, 255);
   std::uniform_real_distribution<float> height_distribution(0, 1.8);
-  std::uniform_real_distribution<float> width_distribution(0, 0.36);
+  std::uniform_real_distribution<float> width_distribution(-0.18, 0.18);
 
   sensor_msgs::PointCloud pcd_global;
   pcd_global.header.stamp = ros::Time::now();
