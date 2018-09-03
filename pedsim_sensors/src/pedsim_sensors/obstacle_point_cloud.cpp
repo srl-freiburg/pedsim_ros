@@ -63,7 +63,7 @@ void ObstaclePointCloud::broadcast() {
     std::copy(cells.begin(), cells.end(), std::back_inserter(all_cells));
   }
 
-  constexpr int point_density = 80;
+  constexpr int point_density = 100;
   const int num_points = all_cells.size() * point_density;
 
   std::default_random_engine generator;
@@ -71,7 +71,7 @@ void ObstaclePointCloud::broadcast() {
   // \todo - Read params from config file.
   std::uniform_int_distribution<int> color_distribution(1, 255);
   std::uniform_real_distribution<float> height_distribution(0, 1);
-  std::uniform_real_distribution<float> width_distribution(0, 1);
+  std::uniform_real_distribution<float> width_distribution(-0.5, 0.5);
 
   sensor_msgs::PointCloud pcd_global;
   pcd_global.header.stamp = ros::Time::now();
