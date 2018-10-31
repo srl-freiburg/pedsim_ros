@@ -70,9 +70,9 @@ int main(int argc, char** argv) {
   privateHandle.param<std::string>("robot_frame", g_robotFrame,
                                    "base_footprint");
 
-  privateHandle.param<double>("simulation_factor", g_simulationFactor,
+  privateHandle.param<double>("/pedsim_simulator/simulation_factor", g_simulationFactor,
                               1.0);  // set to e.g. 2.0 for 2x speed
-  privateHandle.param<double>("update_rate", g_updateRate, 25.0);  // in Hz
+  privateHandle.param<double>("/pedsim_simulator/update_rate", g_updateRate, 25.0);  // in Hz
 
   double initialX = 0.0, initialY = 0.0, initialTheta = 0.0;
   privateHandle.param<double>("pose_initial_x", initialX, 0.0);
