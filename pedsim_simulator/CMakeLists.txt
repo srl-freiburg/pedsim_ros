@@ -1,7 +1,6 @@
 cmake_minimum_required(VERSION 2.8)
 project(pedsim_simulator)
 add_definitions(-Wall -Wunused -std=c++11 -pipe -Wunused -Wextra)
-# add_definitions(-Wall -Wunused -std=c++11 -pipe -Wshadow -Wunused -Wextra)
 set(PEDSIM_SIMULATOR_DEPENDENCIES
   roscpp
   rospy
@@ -18,10 +17,14 @@ set(PEDSIM_SIMULATOR_DEPENDENCIES
   dynamic_reconfigure
 )
 
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTORCC ON)
+set(CMAKE_AUTOUIC ON)
+
 ## Find catkin macros and libraries
 find_package(catkin REQUIRED COMPONENTS ${PEDSIM_SIMULATOR_DEPENDENCIES})
 find_package(Boost REQUIRED)
-find_package(Qt4 REQUIRED)
+find_package(Qt5Widgets REQUIRED)
 
 # dynamic reconfigure parameters
 generate_dynamic_reconfigure_options(config/PedsimSimulator.cfg)
@@ -34,15 +37,16 @@ catkin_package(
 include_directories(include)
 include_directories(${Eigen_INCLUDE_DIRS})
 include_directories(${catkin_INCLUDE_DIRS})
-include(${QT_USE_FILE})
+include_directories(${Qt5Widgets_INCLUDES})
+add_definitions(${Qt5Widgets_DEFINITIONS})
 
 set(SOURCES
-  src/simulator_node.cpp
+  	src/simulator_node.cpp
 	src/simulator.cpp
-  src/scene.cpp
-  src/config.cpp
-  src/agentstatemachine.cpp
-  src/scenarioreader.cpp
+  	src/scene.cpp
+  	src/config.cpp
+  	src/agentstatemachine.cpp
+  	src/scenarioreader.cpp
 	src/rng.cpp
 
 	# elements
@@ -103,14 +107,14 @@ set(MOC_FILES
 	include/pedsim_simulator/waypointplanner/shoppingplanner.h
 	include/pedsim_simulator/waypointplanner/queueingplanner.h
 )
-QT4_WRAP_CPP(MOC_SRCS_UI ${MOC_FILES})
+qt5_wrap_cpp(MOC_SRCS_UI ${MOC_FILES})
 
 set(EXECUTABLE_NAME ${PROJECT_NAME})
 add_executable(${EXECUTABLE_NAME} ${SOURCES} ${MOC_SRCS_UI})
 add_dependencies(${EXECUTABLE_NAME} ${catkin_EXPORTED_TARGETS})
 add_dependencies(${EXECUTABLE_NAME} ${PROJECT_NAME}_gencfg)
 target_link_libraries(${EXECUTABLE_NAME}
-  ${QT_LIBRARIES} ${BOOST_LIBRARIES} ${catkin_LIBRARIES}
+  ${Qt5Widgets_LIBRARIES} ${BOOST_LIBRARIES} ${catkin_LIBRARIES}
 )
 
 add_executable(simulate_diff_drive_robot src/simulate_diff_drive_robot.cpp)
