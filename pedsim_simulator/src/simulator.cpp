@@ -128,8 +128,9 @@ bool Simulator::initializeSimulation() {
 
 void Simulator::runSimulation() {
   ros::Rate r(CONFIG.updateRate);
+
   while (ros::ok()) {
-    if (SCENE.getTime() < 0.1) {
+    if (!robot_) {
       // setup the robot
       for (Agent* agent : SCENE.getAgents()) {
         if (agent->getType() == Ped::Tagent::ROBOT) {
