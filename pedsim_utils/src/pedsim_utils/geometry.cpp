@@ -43,7 +43,7 @@ geometry_msgs::Quaternion poseFrom2DVelocity(const double vx, const double vy) {
   return rpyToQuaternion(M_PI / 2.0, theta + (M_PI / 2.0), 0.0);
 }
 
-std::vector<std::pair<float, float>> LineObstacleToCells(const float x1,
+std::vector<std::complex<float>> LineObstacleToCells(const float x1,
                                                          const float y1,
                                                          const float x2,
                                                          const float y2) {
@@ -76,8 +76,8 @@ std::vector<std::pair<float, float>> LineObstacleToCells(const float x1,
   ddy = 2 * dy;  // work with double values for full precision
   ddx = 2 * dx;
 
-  std::vector<std::pair<float, float>> obstacle_cells;  // TODO - reserve.
-  obstacle_cells.emplace_back(std::make_pair(x, y));
+  std::vector<std::complex<float>> obstacle_cells;  // TODO - reserve.
+  obstacle_cells.emplace_back(std::complex<float>(x, y));
 
   if (ddx >= ddy) {
     // first octant (0 <= slope <= 1)
@@ -95,17 +95,17 @@ std::vector<std::pair<float, float>> LineObstacleToCells(const float x1,
         // below):
         if (error + errorprev < ddx) {
           // bottom square also
-          obstacle_cells.emplace_back(std::make_pair(x, y - ystep));
+          obstacle_cells.emplace_back(std::complex<float>(x, y - ystep));
         } else if (error + errorprev > ddx) {
           // left square also
-          obstacle_cells.emplace_back(std::make_pair(x - xstep, y));
+          obstacle_cells.emplace_back(std::complex<float>(x - xstep, y));
         } else {
           // corner: bottom and left squares also
-          obstacle_cells.emplace_back(std::make_pair(x, y - ystep));
-          obstacle_cells.emplace_back(std::make_pair(x - xstep, y));
+          obstacle_cells.emplace_back(std::complex<float>(x, y - ystep));
+          obstacle_cells.emplace_back(std::complex<float>(x - xstep, y));
         }
       }
-      obstacle_cells.emplace_back(std::make_pair(x, y));
+      obstacle_cells.emplace_back(std::complex<float>(x, y));
       errorprev = error;
     }
   } else {
@@ -118,15 +118,15 @@ std::vector<std::pair<float, float>> LineObstacleToCells(const float x1,
         x += xstep;
         error -= ddy;
         if (error + errorprev < ddy) {
-          obstacle_cells.emplace_back(std::make_pair(x - xstep, y));
+          obstacle_cells.emplace_back(std::complex<float>(x - xstep, y));
         } else if (error + errorprev > ddy) {
-          obstacle_cells.emplace_back(std::make_pair(x, y - ystep));
+          obstacle_cells.emplace_back(std::complex<float>(x, y - ystep));
         } else {
-          obstacle_cells.emplace_back(std::make_pair(x, y - ystep));
-          obstacle_cells.emplace_back(std::make_pair(x - xstep, y));
+          obstacle_cells.emplace_back(std::complex<float>(x, y - ystep));
+          obstacle_cells.emplace_back(std::complex<float>(x - xstep, y));
         }
       }
-      obstacle_cells.emplace_back(std::make_pair(x, y));
+      obstacle_cells.emplace_back(std::complex<float>(x, y));
       errorprev = error;
     }
   }

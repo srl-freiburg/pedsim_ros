@@ -16,7 +16,7 @@ geometry_msgs::Quaternion toQuaternionMsg(const Eigen::Quaternionf& quaternion);
 
 geometry_msgs::Quaternion poseFrom2DVelocity(const double vx, const double vy);
 
-std::vector<std::pair<float, float>> LineObstacleToCells(const float x1,
+std::vector<std::complex<float>> LineObstacleToCells(const float x1,
                                                          const float y1,
                                                          const float x2,
                                                          const float y2);

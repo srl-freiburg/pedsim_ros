@@ -55,7 +55,7 @@ void ObstaclePointCloud::broadcast() {
 
   const auto sim_obstacles = q_obstacles_.front();
 
-  using Cell = std::pair<float, float>;
+  using Cell = std::complex<float>;
   std::vector<Cell> all_cells;
   for (const auto& line : sim_obstacles->obstacles) {
     const auto cells = pedsim::LineObstacleToCells(line.start.x, line.start.y,
@@ -108,9 +108,9 @@ void ObstaclePointCloud::broadcast() {
     const int cell_color = color_distribution(generator);
 
     for (size_t j = 0; j < point_density; ++j) {
-      if (fov_->inside(cell.first, cell.second)) {
-        const tf::Vector3 point(cell.first + width_distribution(generator),
-                                cell.second + width_distribution(generator),
+      if (fov_->inside(cell.real(), cell.imag())) {
+        const tf::Vector3 point(cell.real() + width_distribution(generator),
+                                cell.imag() + width_distribution(generator),
                                 0.);
         const auto transformed_point = transformPoint(robot_transform, point);
 
@@ -120,9 +120,9 @@ void ObstaclePointCloud::broadcast() {
         pcd_local.channels[0].values[index] = cell_color;
 
         // Global observations.
-        pcd_global.points[index].x = cell.first + width_distribution(generator);
+        pcd_global.points[index].x = cell.real() + width_distribution(generator);
         pcd_global.points[index].y =
-            cell.second + width_distribution(generator);
+            cell.imag() + width_distribution(generator);
         pcd_global.points[index].z = height_distribution(generator);
         pcd_global.channels[0].values[index] = cell_color;
       }
