@@ -14,7 +14,7 @@ model of [Helbing et. al](http://arxiv.org/pdf/cond-mat/9805244.pdf). The implem
 - Option to connect with gazebo for physics reasoning
 
 ### Requirements
-- ROS with the visualization stack (currently tested on `hydro`, `indigo`, `kinetic` )
+- ROS with the visualization stack (currently tested on `hydro`, `indigo`, `kinetic` ). For melodic, see the branch `melodic-dev`
 - C++11 compiler
 
 ### Installation
