@@ -47,9 +47,9 @@ PointCloud::PointCloud(const ros::NodeHandle& node_handle,
     : PedsimSensor(node_handle, rate, fov) {
   resol_ = resol;
   pub_signals_local_ =
-      nh_.advertise<sensor_msgs::PointCloud2>("point_cloud_local", 1);
+      nh_.advertise<sensor_msgs::PointCloud>("point_cloud_local", 1);
   pub_signals_global_ =
-      nh_.advertise<sensor_msgs::PointCloud2>("point_cloud_global", 1);
+      nh_.advertise<sensor_msgs::PointCloud>("point_cloud_global", 1);
 
   sub_simulated_obstacles_ =
       nh_.subscribe("/pedsim_simulator/simulated_walls", 1,
@@ -108,14 +108,16 @@ void PointCloud::broadcast() {
   }
 
   // fill by cells
-  std::vector<Cell> all_cells;
+  std::vector<std::pair<float, float>> all_cells;
   const auto sim_obstacles = q_obstacles_.front();
   for (const auto& line : sim_obstacles->obstacles) {
     const auto cells = pedsim::LineObstacleToCells(line.start.x, line.start.y,
                                                    line.end.x, line.end.y);
     std::copy(cells.begin(), cells.end(), std::back_inserter(all_cells));
   }
-  for (const auto& cell : all_cells) {
+  for (const auto& pair_cell : all_cells) {
+    // convert pair to complex
+    auto cell = Cell(pair_cell.first, pair_cell.second);
     fillDetectedObss(detected_obss, cell, obs_width);
   }
 
@@ -137,7 +139,6 @@ void PointCloud::broadcast() {
   std::uniform_real_distribution<float> width_distribution(-0.05, 0.05);
 
   sensor_msgs::PointCloud pcd_global;
-  sensor_msgs::PointCloud2 pcd_global2;
   pcd_global.header.stamp = ros::Time::now();
   pcd_global.header.frame_id = sim_obstacles->header.frame_id;
   pcd_global.points.resize(num_points);
@@ -146,7 +147,6 @@ void PointCloud::broadcast() {
   pcd_global.channels[0].values.resize(num_points);
 
   sensor_msgs::PointCloud pcd_local;
-  sensor_msgs::PointCloud2 pcd_local2;
   pcd_local.header.stamp = ros::Time::now();
   pcd_local.header.frame_id = robot_odom_.header.frame_id;
   pcd_local.points.resize(num_points);
@@ -198,12 +198,10 @@ void PointCloud::broadcast() {
   }
 
   if (pcd_local.channels[0].values.size() > 1) {
-    sensor_msgs::convertPointCloudToPointCloud2(pcd_local, pcd_local2);
-    pub_signals_local_.publish(pcd_local2);
+    pub_signals_local_.publish(pcd_local);
   }
   if (pcd_global.channels[0].values.size() > 1) {
-    sensor_msgs::convertPointCloudToPointCloud2(pcd_global, pcd_global2);
-    pub_signals_global_.publish(pcd_global2);
+    pub_signals_global_.publish(pcd_global);
   }
 
   q_obstacles_.pop();
