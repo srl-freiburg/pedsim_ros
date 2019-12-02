@@ -39,7 +39,15 @@ add_executable(${OBSTACLE_PCD_EXEC_NAME} src/pedsim_sensors/obstacle_point_cloud
 add_dependencies(${OBSTACLE_PCD_EXEC_NAME} ${catkin_EXPORTED_TARGETS})
 target_link_libraries(${OBSTACLE_PCD_EXEC_NAME} ${catkin_LIBRARIES})
 
+<<<<<<< HEAD
 
+=======
+# Point cloud sensor.
+set(PCD_EXEC_NAME pedsim_occlusion_sensor)
+add_executable(${PCD_EXEC_NAME} src/pedsim_sensors/occlusion_point_cloud.cpp)
+add_dependencies(${PCD_EXEC_NAME} ${catkin_EXPORTED_TARGETS})
+target_link_libraries(${PCD_EXEC_NAME} ${catkin_LIBRARIES})
+>>>>>>> f853e34... Fix occlusion_pcd_sensor
 
 #############
 ## Install ##
