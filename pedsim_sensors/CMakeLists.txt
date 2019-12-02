@@ -40,10 +40,10 @@ add_dependencies(${OBSTACLE_PCD_EXEC_NAME} ${catkin_EXPORTED_TARGETS})
 target_link_libraries(${OBSTACLE_PCD_EXEC_NAME} ${catkin_LIBRARIES})
 
 # Point cloud sensor.
-set(PCD_EXEC_NAME pedsim_occlusion_sensor)
-add_executable(${PCD_EXEC_NAME} src/pedsim_sensors/occlusion_point_cloud.cpp)
-add_dependencies(${PCD_EXEC_NAME} ${catkin_EXPORTED_TARGETS})
-target_link_libraries(${PCD_EXEC_NAME} ${catkin_LIBRARIES})
+set(OCCLUSION_PCD_EXEC_NAME pedsim_occlusion_sensor)
+add_executable(${OCCLUSION_PCD_EXEC_NAME} src/pedsim_sensors/occlusion_point_cloud.cpp)
+add_dependencies(${OCCLUSION_PCD_EXEC_NAME} ${catkin_EXPORTED_TARGETS})
+target_link_libraries(${OCCLUSION_PCD_EXEC_NAME} ${catkin_LIBRARIES})
 
 #############
 ## Install ##
@@ -53,6 +53,7 @@ install(
   TARGETS
     ${PEOPLE_PCD_EXEC_NAME}
     ${OBSTACLE_PCD_EXEC_NAME}
+    ${OCCLUSION_PCD_EXEC_NAME}
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
