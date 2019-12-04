@@ -4,8 +4,8 @@ This package integrates the Pedestrian Simulator pedsim_simulator into Gazebo.
 
 ### Features
 - it converts pedsim scenarios to gazebo worlds 
-- it spawns pedsim agent into gazebo  
-- it continously updates poses of the spawned agents
+- it spawns pedsim agents into gazebo  
+- it continously updates the poses of the spawned agents
 
 ### Sample usage
 #### Step 1. Generate gazebo world + launch file for the corresponding pedsim_scenario  
