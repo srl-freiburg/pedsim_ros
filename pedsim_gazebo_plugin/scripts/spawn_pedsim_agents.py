@@ -11,7 +11,7 @@ from geometry_msgs.msg import *
 from rospkg import RosPack
 from pedsim_msgs.msg  import AgentStates
 
-# xml file containing a gazebo model to represent agent, currently is cubic but can be changed  
+# xml file containing a gazebo model to represent agent, currently is represented by a cubic but can be changed
 global xml_file
 
 def actor_poses_callback(actors):

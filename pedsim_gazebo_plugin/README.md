@@ -8,7 +8,7 @@ This package integrates the Pedestrian Simulator pedsim_simulator into Gazebo.
 - it continously updates the poses of the spawned agents
 
 ### Sample usage
-#### Step 1. Generate gazebo world + launch file for the corresponding pedsim_scenario  
+#### Step 1. Generate gazebo world + launch file for the corresponding pedsim_scenario (scenario_file should be in `pedsim_simulator/scenarios/` directory)
 ```
 $ rosrun pedsim_gazebo_plugin spawn_pedsim_agents.py
 ```
