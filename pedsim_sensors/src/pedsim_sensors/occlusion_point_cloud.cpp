@@ -234,7 +234,7 @@ void PointCloud::agentStatesCallBack(
 // --------------------------------------------------------------
 
 int main(int argc, char** argv) {
-  ros::init(argc, argv, "pedsim_obstacle_sensor");
+  ros::init(argc, argv, "pedsim_occlusion_sensor");
   ros::NodeHandle node("~");
 
   double init_x = 0.0, init_y = 0.0, fov_range = 0.0;
@@ -251,7 +251,7 @@ int main(int argc, char** argv) {
   node.param<int>("resol", sensor_resol, 360);
 
   pedsim_ros::PointCloud pcd_sensor(node, sensor_rate, sensor_resol, circle_fov);
-  ROS_INFO_STREAM("Initialized obstacle PCD sensor with center: ("
+  ROS_INFO_STREAM("Initialized occlusion PCD sensor with center: ("
                   << init_x << ", " << init_y << ") , range: " << fov_range << ", resolution: " << sensor_resol);
 
   pcd_sensor.run();
