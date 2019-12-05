@@ -1,0 +1,54 @@
+<?xml version="1.0" ?>
+<sdf version="1.5">
+
+
+<model name="actor_model">
+  <pose>0 0 0 0 0 0</pose>
+  <link name="link">
+    <collision name="collision">
+      <geometry>
+        <box>
+          <size>.5 .5 1.5</size>
+        </box>
+      </geometry>
+    </collision>
+
+    <visual name="visual">
+      <geometry>
+        <box>
+          <size>.5 .5 1.5</size>
+        </box>
+      </geometry>
+    </visual>
+
+  </link>
+</model>
+
+
+<!--<model name="actor_model">
+  <link name="link">
+    <collision name="collision">
+      <pose>0 0 0 1.5708 0 0</pose>
+      <geometry>
+      <box>
+        <size>.5 .5 1.5</size>
+      </box>
+      </geometry>
+    </collision>
+    <visual name="visual">
+      <pose>0 0 0 1.5708 0 0</pose>
+      <geometry>
+        <mesh>
+          <scale>0.01 0.01 0.01</scale>
+          <uri>model://pedsim_gazebo_plugin/meshes/actor_model.obj</uri>
+        </mesh>
+      </geometry>
+    </visual>
+  </link>
+</model>-->
+
+
+
+
+
+</sdf>
