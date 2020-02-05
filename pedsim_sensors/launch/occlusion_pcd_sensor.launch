@@ -1,0 +1,16 @@
+<launch>
+  <arg name="range" default="10.0"/>
+  <arg name="resol" default="360"/>
+  <arg name="origin_x" default="0.0"/>
+  <arg name="origin_y" default="0.0"/>
+
+  <!-- main simulator node -->
+  <node name="pedsim_sensor" pkg="pedsim_sensors" type="pedsim_occlusion_sensor" output="screen">
+    <param name="pose_initial_x" value="$(arg origin_x)"/>
+    <param name="pose_initial_y" value="$(arg origin_y)"/>
+    <param name="fov_range" value="$(arg range)" type="double"/>
+    <param name="rate" value="25.0" type="double"/>
+    <param name="resol" value="$(arg resol)" type="int"/>
+  </node>
+
+</launch>

@@ -9,8 +9,9 @@ This package integrates the Pedestrian Simulator pedsim_simulator into Gazebo.
 
 ### Sample usage
 #### Step 1. Generate gazebo world + launch file for the corresponding pedsim_scenario (scenario_file should be stored in `pedsim_simulator/scenarios/` directory)
+====
 ```
-$ rosrun pedsim_gazebo_plugin pedsim_to_gazbo_world.py
+$ rosrun pedsim_gazebo_plugin spawn_pedsim_agents.py
 ```
 #### Step 2. After running the pedsim simulator, use the launch file generated from step 1   
 ```
