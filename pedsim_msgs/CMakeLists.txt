@@ -1,43 +1,40 @@
-cmake_minimum_required(VERSION 2.8.3)
+cmake_minimum_required(VERSION 3.5)
 project(pedsim_msgs)
 
-# message and service dependencies
-set(MESSAGE_DEPENDENCIES
-  std_msgs
-  geometry_msgs
-  sensor_msgs
-  nav_msgs
+# Default to C++14
+if(NOT CMAKE_CXX_STANDARD)
+  set(CMAKE_CXX_STANDARD 14)
+endif()
+
+if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+  add_compile_options(-Wall -Wextra -Wpedantic)
+endif()
+
+find_package(ament_cmake REQUIRED)
+find_package(builtin_interfaces REQUIRED)
+find_package(geometry_msgs REQUIRED)
+find_package(std_msgs REQUIRED)
+find_package(rosidl_default_generators REQUIRED)
+
+rosidl_generate_interfaces(${PROJECT_NAME}
+  "msg/AgentState.msg"
+  "msg/AgentStates.msg"
+  "msg/AgentGroup.msg"
+  "msg/AgentGroups.msg"
+  "msg/AgentForce.msg"
+  "msg/LineObstacle.msg"
+  "msg/LineObstacles.msg"
+  "msg/TrackedPerson.msg"
+  "msg/TrackedPersons.msg"
+  "msg/TrackedGroup.msg"
+  "msg/TrackedGroups.msg"
+  "msg/SocialRelation.msg"
+  "msg/SocialRelations.msg"
+  "msg/SocialActivity.msg"
+  "msg/SocialActivities.msg"
+  DEPENDENCIES builtin_interfaces geometry_msgs std_msgs
 )
 
-find_package(catkin REQUIRED COMPONENTS message_generation ${MESSAGE_DEPENDENCIES})
+ament_export_dependencies(rosidl_default_runtime)
 
-include_directories(${catkin_INCLUDE_DIRS})
-
-## Generate messages in the 'msg' folder
-add_message_files( DIRECTORY msg
-  FILES
-  AgentState.msg
-  AgentStates.msg
-  AgentGroup.msg
-  AgentGroups.msg
-  AgentForce.msg
-  LineObstacle.msg
-  LineObstacles.msg
-  TrackedPerson.msg
-  TrackedPersons.msg
-  TrackedGroup.msg
-  TrackedGroups.msg
-  SocialRelation.msg
-  SocialRelations.msg
-  SocialActivity.msg
-  SocialActivities.msg
-)
-
-# generate the messages
-generate_messages(DEPENDENCIES ${MESSAGE_DEPENDENCIES})
-
-
-#Declare package run-time dependencies
-catkin_package(
-    CATKIN_DEPENDS roscpp rospy message_runtime ${MESSAGE_DEPENDENCIES}
-)
+ament_package()

@@ -1,4 +1,4 @@
-Header header
+std_msgs/Header header
 uint64 id
 uint16 type
 string social_state
