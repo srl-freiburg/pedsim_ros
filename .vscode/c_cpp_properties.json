@@ -1,0 +1,26 @@
+{
+    "configurations": [
+        {
+            "browse": {
+                "databaseFilename": "",
+                "limitSymbolsToIncludedHeaders": true
+            },
+            "includePath": [
+                "/home/jgines/ros_ws/pedsim_ws/devel/include/**",
+                "/opt/ros/melodic/include/**",
+                "/home/jgines/ros_ws/pedsim_ws/src/pedsim_ros/3rdparty/libpedsim/include/**",
+                "/home/jgines/ros_ws/pedsim_ws/src/pedsim_ros/pedsim_sensors/include/**",
+                "/home/jgines/ros_ws/pedsim_ws/src/pedsim_ros/pedsim_simulator/include/**",
+                "/home/jgines/ros_ws/pedsim_ws/src/pedsim_ros/pedsim_utils/include/**",
+                "/home/jgines/ros_ws/pedsim_ws/src/pedsim_ros/pedsim_visualizer/include/**",
+                "/usr/include/**"
+            ],
+            "name": "ROS",
+            "intelliSenseMode": "gcc-x64",
+            "compilerPath": "/usr/bin/gcc",
+            "cStandard": "c11",
+            "cppStandard": "c++17"
+        }
+    ],
+    "version": 4
+}

@@ -40,7 +40,7 @@ if __name__ == '__main__':
     
     rospack1 = RosPack()
     pkg_path = rospack1.get_path('pedsim_gazebo_plugin')
-    file_xml = open(pkg_path + "/models/actor_model.sdf")
+    file_xml = open(pkg_path + "/models/person_standing/model.sdf")
     xml_string = file_xml.read()
 
     print("Waiting for gazebo services...")
