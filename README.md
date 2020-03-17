@@ -19,6 +19,8 @@ model of [Helbing et. al](http://arxiv.org/pdf/cond-mat/9805244.pdf). The implem
 
 ### Installation
 
+The default version is now `melodic`. For kinetic please check out the branch `kinetic` which still depends on Qt4.
+
 ```
 cd [workspace]/src
 git clone https://github.com/srl-freiburg/pedsim_ros.git  
