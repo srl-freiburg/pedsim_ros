@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Agent queueing and the robot has to decide whether to cut the queue or go around it -->
+<scenario>
+    <!--Obstacles-->
+    <obstacle x1="0" y1="0" x2="30" y2="0"/>
+    <obstacle x1="0" y1="0" x2="0" y2="30"/>
+    <obstacle x1="0" y1="30" x2="30" y2="30"/>
+    <obstacle x1="30" y1="30" x2="30" y2="0"/>
+    <!--Waypoints (incl. WaitingQueues)-->
+    <waypoint id="enter_bookshop" x="5" y="25" r="5"/>
+    <waypoint id="enter_starbucksky" x="5" y="20" r="5"/>
+    <queue id="info_desk" x="20" y="15" direction="0"/>
+
+    <queue id="leave_bookshop" x="25" y="26" direction="90"/>
+
+    <waypoint id="leave_starbucksky" x="5" y="10" r="5"/>
+    <waypoint id="robot_goal" x="22" y="5" r="5"/>
+    <waypoint id="robot_pause" x="15" y="20" r="5"/>
+    <waypoint id="robot_start" x="5" y="5" r="2"/>
+
+
+    <!--robot-->
+    <agent x="5" y="5" n="1" dx="0" dy="0" type="2">
+        <addwaypoint id="robot_start"/>
+        <addwaypoint id="robot_pause"/>
+        <addwaypoint id="robot_goal"/>
+        <addwaypoint id="robot_pause"/>
+    </agent>
+
+
+    <!--AgentClusters-->
+    <agent x="7" y="10" n="30" dx="3" dy="3" type="1">
+        <addqueue id="info_desk"/>
+        <addqueue id="leave_bookshop"/>
+        <!-- <addwaypoint id="leave_bookshop"/> -->
+        <!-- <addwaypoint id="robot_goal"/> -->
+        <addwaypoint id="enter_bookshop"/>
+    </agent>
+
+</scenario>

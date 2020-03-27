@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scenario>
+    <!--Obstacles-->
+    <obstacle x1="0" y1="0" x2="30" y2="0"/>
+    <obstacle x1="0" y1="0" x2="0" y2="30"/>
+    <obstacle x1="0" y1="30" x2="30" y2="30"/>
+    <obstacle x1="30" y1="30" x2="30" y2="0"/>
+
+    <waypoint id="start" x="14" y="5" r="2"/>
+    <waypoint id="goal" x="25" y="27" r="2"/>
+
+    <!--robot-->
+    <agent x="14" y="6" n="1" dx="0" dy="0" type="2">
+        <addwaypoint id="goal"/>
+        <addwaypoint id="start"/>
+    </agent>
+</scenario>

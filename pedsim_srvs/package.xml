@@ -1,28 +1,25 @@
 <?xml version="1.0"?>
-<package>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
   <name>pedsim_srvs</name>
   <version>0.0.1</version>
+  
   <description>The pedsim_srvs package</description>
+  <maintainer email="jonatan.gines@urjc.es">jginesclavero</maintainer>
+  <license>Apache License, Version 2.0</license>
 
-  <maintainer email="okal@cs.uni-freiburg.de">batman</maintainer>
+  <buildtool_depend>ament_cmake</buildtool_depend>
 
-  <license>BSD</license>
+  <depend>rclcpp</depend>
+  <depend>rclpy</depend>
+  <depend>std_msgs</depend>
+  <depend>pedsim_msgs</depend>
+  <depend>builtin_interfaces</depend>
+  <depend>rosidl_default_generators</depend>
 
-
-  <buildtool_depend>catkin</buildtool_depend>
-
-  <build_depend>pedsim_msgs</build_depend>
-  <build_depend>roscpp</build_depend>
-  <build_depend>rospy</build_depend>
-  <build_depend>std_msgs</build_depend>
-  <build_depend>message_generation</build_depend>
-
-  <run_depend>message_runtime</run_depend>
-  <run_depend>pedsim_msgs</run_depend>
-  <run_depend>roscpp</run_depend>
-  <run_depend>rospy</run_depend>
-  <run_depend>std_msgs</run_depend>
-
-
- 
+  <member_of_group>rosidl_interface_packages</member_of_group>
+   
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
 </package>

@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>pedsim_simulator</name>
+  <version>0.1.1</version>
+  <description>
+    Pedestrian Simulator: a social force model based simulation of pedestrians and their activities including, walking, grouping, etc
+  </description>
+
+  <author email="okal@cs.uni-freiburg.de">Billy Okal</author>
+  <author email="omar@email.todo">Omar Islas</author>
+
+  <maintainer email="okal@cs.uni-freiburg.de">Billy Okal</maintainer>
+  <maintainer email="omar@email.todo">Omar Islas</maintainer>
+
+  <license>BSD</license>
+
+  <url type="website">https://github.com/srl-freiburg/pedsim_ros</url>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+
+  <depend>rclcpp</depend>
+  <depend>rclpy</depend>
+  <depend>pedsim</depend>
+  <depend>pedsim_msgs</depend>
+  <depend>pedsim_srvs</depend>
+  <depend>pedsim_utils</depend>
+  <depend>std_msgs</depend>
+  <depend>std_srvs</depend>
+  <depend>geometry_msgs</depend>
+  <depend>nav_msgs</depend>
+  <depend>tf</depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+
+</package>

@@ -1,98 +1,118 @@
+// Copyright 2019 Open Source Robotics Foundation, Inc.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 /*
-Created on Mon Dec  2
-
-@author: mahmoud
-*/
-
+ * \brief  Change actor position based on pedsim output
+ *
+ * \author  mahmoud
+ * \mantainer jginesclavero
+ *
+ * \date  6 March 2020
+ */
+#include <gazebo/common/Events.hh>
+#include <gazebo/physics/Model.hh>
+#include <gazebo/physics/World.hh>
 #include <gazebo/common/Plugin.hh>
-#include <gazebo-9/gazebo/physics/physics.hh>
-#include <gazebo-9/gazebo/util/system.hh>
+#include <gazebo_ros/conversions/builtin_interfaces.hpp>
+#include <gazebo_ros/conversions/geometry_msgs.hpp>
+#include <gazebo_ros/node.hpp>
+#include <geometry_msgs/msg/twist.hpp>
+#include <rclcpp/rclcpp.hpp>
+#include <pedsim_msgs/msg/tracked_person.hpp>
+#include <pedsim_msgs/msg/agent_states.hpp>
 
-#include <ros/ros.h>
-#include "ros/callback_queue.h"
-#include "ros/subscribe_options.h"
-#include <thread>
+#include <tf2_geometry_msgs/tf2_geometry_msgs.h>
 
-#include<pedsim_msgs/TrackedPersons.h>
-#include<pedsim_msgs/AgentStates.h>
+#include <memory>
+#include <string>
 
-
-
-namespace gazebo
+namespace gazebo_plugins
 {
-    class ActorPosesPlugin : public WorldPlugin{
-        public:
-            ActorPosesPlugin() : WorldPlugin(){}
+class ActorPosesPlugin : public gazebo::ModelPlugin
+{
+  public:
+    ActorPosesPlugin(){}
 
-        void Load(physics::WorldPtr _world, sdf::ElementPtr _sdf){
-            this->world_ = _world;
-            if (!ros::isInitialized()){
-                ROS_ERROR("ROS not initialized");
-                return;
+    void Load(gazebo::physics::ModelPtr _model, sdf::ElementPtr _sdf)
+    {
+      model_ = _model;
+      world_ = _model->GetWorld();
+      // Initialize ROS node
+      ros_node_ = gazebo_ros::Node::Get(_sdf);
+    
+      pedsim_sub_ = ros_node_->create_subscription<pedsim_msgs::msg::AgentStates>(
+      "pedsim_simulator/simulated_agents", rclcpp::SensorDataQoS(),
+      std::bind(&ActorPosesPlugin::OnAgentStates, this, std::placeholders::_1));
+    }
+
+    // call back function when receive rosmsg
+    void OnAgentStates(const pedsim_msgs::msg::AgentStates::SharedPtr msg)
+    {
+      std::string model_name;
+      for(unsigned int mdl = 0; mdl < world_->ModelCount(); mdl++)
+      {
+        gazebo::physics::ModelPtr tmp_model = world_->ModelByIndex(mdl);
+        std::string frame_id = tmp_model->GetName();
+        for (uint actor = 0; actor < msg->agent_states.size(); actor++)
+        {
+          if (frame_id == std::to_string(msg->agent_states[actor].id))
+          {
+            const double theta = std::atan2(
+              msg->agent_states[actor].twist.linear.y,
+              msg->agent_states[actor].twist.linear.x);
+                        
+            RCLCPP_DEBUG(ros_node_->get_logger(), 
+              "actor_id: %s",
+              std::to_string(msg->agent_states[actor].id).c_str());
+            
+            ignition::math::Pose3d gzb_pose;
+            tf2::Quaternion qt;
+            qt.setRPY(0.0, 0.0, theta + (M_PI / 2));
+            qt.normalize();
+            
+            gzb_pose.Pos().Set( msg->agent_states[actor].pose.position.x,
+                                msg->agent_states[actor].pose.position.y,
+                                msg->agent_states[actor].pose.position.z);
+            gzb_pose.Rot().Set( qt.w(), qt.x(), qt.y(), qt.z());
+            try
+            {
+              tmp_model->SetWorldPose(gzb_pose);
             }
-            rosNode.reset(new ros::NodeHandle("gazebo_client"));
-            ros::SubscribeOptions so = ros::SubscribeOptions::create<pedsim_msgs::AgentStates>("/pedsim_simulator/simulated_agents", 1,boost::bind(&ActorPosesPlugin::OnRosMsg, this, _1), ros::VoidPtr(),&rosQueue);
-            rosSub = rosNode->subscribe(so);
-            rosQueueThread =std::thread(std::bind(&ActorPosesPlugin::QueueThread, this));
-            // in case you need to change/modify model on update
-            // this->updateConnection_ = event::Events::ConnectWorldUpdateBegin(std::bind(&ActorPosesPlugin::OnUpdate, this));
-        }
-
-
-        public:
-            // call back function when receive rosmsg
-            void OnRosMsg( const pedsim_msgs::AgentStatesConstPtr msg) {
-//              ROS_INFO ("OnRosMsg ... ");
-                std::string model_name;
-                for(unsigned int mdl = 0; mdl < world_->ModelCount(); mdl++) {
-                    physics::ModelPtr  tmp_model;
-                    tmp_model = world_->ModelByIndex(mdl);
-                    std::string frame_id;
-                    frame_id = tmp_model->GetName();
-
-                    for (uint actor =0; actor< msg->agent_states.size() ; actor++) {
-                        if(frame_id == std::to_string( msg->agent_states[actor].id)  ){
-//                            ROS_INFO_STREAM("actor_id: "<< std::to_string( msg->tracks[actor].track_id) );
-                            ignition::math::Pose3d gzb_pose;
-                            gzb_pose.Pos().Set( msg->agent_states[actor].pose.position.x,
-                                                msg->agent_states[actor].pose.position.y,
-                                                msg->agent_states[actor].pose.position.z);
-                            gzb_pose.Rot().Set(msg->agent_states[actor].pose.orientation.w,
-                                               msg->agent_states[actor].pose.orientation.x,
-                                               msg->agent_states[actor].pose.orientation.y,
-                                               msg->agent_states[actor].pose.orientation.z);
-                            try{
-                                tmp_model->SetWorldPose(gzb_pose);
-                            }
-                            catch(gazebo::common::Exception gz_ex){
-                                ROS_ERROR("Error setting pose %s - %s", frame_id.c_str(), gz_ex.GetErrorStr().c_str());
-                            }
-
-                        }
-                    }
-               }
-
+            catch(gazebo::common::Exception gz_ex)
+            {
+              RCLCPP_ERROR(ros_node_->get_logger(),
+                "Error setting pose %s - %s", 
+                frame_id.c_str(),
+                gz_ex.GetErrorStr().c_str());
+            }
           }
-
-
-        // ROS helper function that processes messages
-        private: void QueueThread() {
-            static const double timeout = 0.1;
-            while (rosNode->ok()) {
-                rosQueue.callAvailable(ros::WallDuration(timeout));
-            }
         }
+      }
+    }
 
-    private:
-        std::unique_ptr<ros::NodeHandle> rosNode;
-        ros::Subscriber rosSub;
-        ros::CallbackQueue rosQueue;
-        std::thread rosQueueThread;
-        physics::WorldPtr world_;
-        event::ConnectionPtr updateConnection_;
+  private: 
+    /// Pointer to world.
+    gazebo::physics::WorldPtr world_;
+    /// Pointer to model.
+    gazebo::physics::ModelPtr model_;
+    /// A pointer to the GazeboROS node.
+    gazebo_ros::Node::SharedPtr ros_node_;
+    /// Subscriber to pedsim output
+    rclcpp::Subscription<pedsim_msgs::msg::AgentStates>::SharedPtr pedsim_sub_;
 
-    };
-    GZ_REGISTER_WORLD_PLUGIN(ActorPosesPlugin)
+};
+  GZ_REGISTER_MODEL_PLUGIN(ActorPosesPlugin)
 }
 
 

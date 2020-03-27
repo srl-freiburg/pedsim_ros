@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<package format ="3">
+  <name>pedsim</name>
+  <version>0.2.0</version>
+  <description>The pedsim package</description>
+  <maintainer email="okal@cs.uni-freiburg.de">Billy Okal</maintainer>
+  <maintainer email="palmieri@cs.uni-freiburg.de">Luigi Palmieri</maintainer>
+  <license>BSD</license>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+  <depend>rclcpp</depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>

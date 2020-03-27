@@ -1,0 +1,33 @@
+<launch>
+  <arg name="kbd_teleop" default="false"/>
+  <arg name="rqt_teleop" default="false"/>
+  <arg name="visualize" default="true"/>
+  <arg name="with_robot" default="true"/>
+
+  <arg name="simulation_factor" default="1.0"/> <!-- Speed up -->
+  <arg name="update_rate" default="25.0"/> <!-- Hz -->
+
+  <!-- Simulator -->
+  <include file="$(find pedsim_simulator)/launch/simulator.launch">
+    <arg name="kbd_teleop" value="$(arg kbd_teleop)"/>
+    <arg name="rqt_teleop" value="$(arg rqt_teleop)"/>
+    <arg name="scene_file" value="$(find pedsim_simulator)scenarios/corridor.xml"/>
+    <arg name="with_robot" value="$(arg with_robot)"/>
+    <arg name="simulation_factor" value="$(arg simulation_factor)"/>
+    <arg name="update_rate" value="$(arg update_rate)"/>
+    <arg name="default_queue_size" value="10"/>
+    <arg name="max_robot_speed" value="1.5"/>
+    <arg name="robot_mode" value="1"/>
+    <arg name="enable_groups" value="true"/>
+    <arg name="pose_initial_x" value="5.0"/>
+    <arg name="pose_initial_y" value="5.0"/>
+    <arg name="pose_initial_theta" value="0.7"/>
+  </include>
+
+  <!-- Visualizer -->
+  <include file="$(find pedsim_visualizer)/launch/visualizer.launch"/>
+
+  <!-- Rviz -->
+  <node pkg="rviz" type="rviz" name="rviz" args="-d $(find pedsim_simulator)/rviz/social_contexts_activities.rviz" if="$(arg visualize)"/>
+
+</launch>

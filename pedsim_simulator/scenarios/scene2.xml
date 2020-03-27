@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--This scenario file was created by SGDiCoP on 2014-01-22T15:09:02-->
+<scenario>
+    <!--Obstacles-->
+    <obstacle x1="5" y1="0" x2="115" y2="0"/>
+    <obstacle x1="5" y1="30" x2="115" y2="30"/>
+    <obstacle x1="0" y1="5" x2="5" y2="0"/>
+    <obstacle x1="0" y1="25" x2="5" y2="30"/>
+    <obstacle x1="0" y1="25" x2="0" y2="5"/>
+    <obstacle x1="115" y1="30" x2="120" y2="25"/>
+    <obstacle x1="120" y1="5" x2="115" y2="0"/>
+    <obstacle x1="120" y1="25" x2="120" y2="5"/>
+    <!--Waypoints (incl. WaitingQueues)-->
+    <waypoint id="a" x="10" y="25" r="10"/>
+    <waypoint id="b" x="40" y="25" r="10"/>
+    <waypoint id="c" x="80" y="25" r="10"/>
+    <waypoint id="d" x="110" y="25" r="10"/>
+    <waypoint id="e" x="10" y="5" r="10"/>
+    <waypoint id="f" x="40" y="5" r="10"/>
+    <waypoint id="g" x="80" y="5" r="10"/>
+    <waypoint id="h" x="110" y="5" r="10"/>
+    <waypoint id="robot_goal" x="115" y="15" r="5"/>
+    <waypoint id="robot_start" x="5" y="15" r="5"/>
+    <!--Attractions-->
+    <!--Agents-->
+    <agent x="60" y="25" n="1" dx="0" dy="0" type="0">
+        <addwaypoint id="b"/>
+        <addwaypoint id="a"/>
+        <addwaypoint id="e"/>
+        <addwaypoint id="f"/>
+        <addwaypoint id="c"/>
+        <addwaypoint id="d"/>
+        <addwaypoint id="h"/>
+        <addwaypoint id="g"/>
+    </agent>
+    <agent x="5" y="15" n="1" dx="1" dy="1" type="2">
+        <addwaypoint id="robot_start"/>
+        <addwaypoint id="robot_goal"/>
+    </agent>
+    <!--AgentClusters-->
+    <agent x="70" y="25" n="80" dx="30" dy="5" type="0">
+        <addwaypoint id="b"/>
+        <addwaypoint id="a"/>
+        <addwaypoint id="e"/>
+        <addwaypoint id="f"/>
+        <addwaypoint id="c"/>
+        <addwaypoint id="d"/>
+        <addwaypoint id="h"/>
+        <addwaypoint id="g"/>
+    </agent>
+    <agent x="50" y="5" n="80" dx="30" dy="5" type="1">
+        <addwaypoint id="c"/>
+        <addwaypoint id="d"/>
+        <addwaypoint id="h"/>
+        <addwaypoint id="g"/>
+        <addwaypoint id="b"/>
+        <addwaypoint id="a"/>
+        <addwaypoint id="e"/>
+        <addwaypoint id="f"/>
+    </agent>
+</scenario>
