@@ -29,6 +29,9 @@ def generate_launch_description():
     default_queue_size = LaunchConfiguration('default_queue_size')
     max_robot_speed = LaunchConfiguration('max_robot_speed')
     robot_mode = LaunchConfiguration('robot_mode')
+    robot_radius = LaunchConfiguration('robot_radius')
+    agent_radius = LaunchConfiguration('agent_radius')
+    force_factor_social = LaunchConfiguration('force_factor_social')
     enable_groups = LaunchConfiguration('enable_groups')
     simulation_factor = LaunchConfiguration('simulation_factor')
     update_rate = LaunchConfiguration('update_rate')
@@ -51,7 +54,16 @@ def generate_launch_description():
             description=''),
 
         DeclareLaunchArgument(
-            'robot_mode', default_value='1',
+            'robot_mode', default_value='0',
+            description=''),
+        DeclareLaunchArgument(
+            'robot_radius', default_value='0.35',
+            description=''),
+        DeclareLaunchArgument(
+            'agent_radius', default_value='0.4',
+            description=''),
+        DeclareLaunchArgument(
+            'force_factor_social', default_value='12.0',
             description=''),
 
         DeclareLaunchArgument(
@@ -75,6 +87,9 @@ def generate_launch_description():
                         {'default_queue_size': default_queue_size},
                         {'max_robot_speed': max_robot_speed},
                         {'robot_mode': robot_mode},
+                        {'robot_radius': robot_radius},
+                        {'agent_radius': agent_radius},
+                        {'force_factor_social': force_factor_social},
                         {'enable_groups': enable_groups},
                         {'simulation_factor': simulation_factor},
                         {'update_rate': update_rate}]),

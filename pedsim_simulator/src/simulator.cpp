@@ -100,9 +100,15 @@ bool Simulator::initializeSimulation() {
   declare_parameter("robot_mode", rclcpp::ParameterValue(1));
   get_parameter("robot_mode", op_mode);
   declare_parameter("default_queue_size", rclcpp::ParameterValue(1));
-  get_parameter("default_queue_size", queue_size); 
-  CONFIG.robot_mode = static_cast<RobotMode>(op_mode);
+  get_parameter("default_queue_size", queue_size);
+  declare_parameter("robot_radius", rclcpp::ParameterValue(0.35));
+  get_parameter("robot_radius", robot_radius_);
+  declare_parameter("agent_radius", rclcpp::ParameterValue(0.35));
+  get_parameter("agent_radius", agent_radius_);
+  declare_parameter("force_factor_social", rclcpp::ParameterValue(10.0));
+  get_parameter("force_factor_social", force_factor_social_);
 
+  CONFIG.robot_mode = static_cast<RobotMode>(op_mode);
   RCLCPP_INFO_STREAM(get_logger(), 
   "Using default queue size of "
                   << queue_size << " for publisher queues... "
@@ -116,7 +122,7 @@ bool Simulator::initializeSimulation() {
   pub_agent_groups_ = create_publisher<AgentGroups>("pedsim_simulator/simulated_groups", queue_size);
   pub_robot_position_ = create_publisher<nav_msgs::msg::Odometry>(
     "pedsim_simulator/robot_position", queue_size);
-
+  
   // services
   srv_pause_simulation_ = create_service<std_srvs::srv::Empty>(
     "pedsim_simulator/pause_simulation", std::bind(&Simulator::onPauseSimulation, this, _1, _2));
@@ -131,28 +137,36 @@ bool Simulator::initializeSimulation() {
   tf_listener_ = std::make_shared<tf2_ros::TransformListener>(*tf_buffer_);
 
   spawn_timer_ = create_wall_timer(
-    5000ms, std::bind(&Simulator::spawnCallback, this));
+    1000ms, std::bind(&Simulator::spawnCallback, this));
   return true;
 }
 
-void Simulator::runSimulation() {
+void Simulator::runSimulation() 
+{
   rclcpp::Rate r(CONFIG.updateRate);
   while (rclcpp::ok())
   {
-    if (!robot_) {
+    if (!robot_) 
+    {
       // setup the robot
-      for (Agent* agent : SCENE.getAgents()) {
-        if (agent->getType() == Ped::Tagent::ROBOT) {
+      for (Agent* agent : SCENE.getAgents()) 
+      {
+        agent->setForceFactorSocial(force_factor_social_);
+        if (agent->getType() == Ped::Tagent::ROBOT)
+        {
           robot_ = agent;
+          agent->SetRadius(robot_radius_);
           last_robot_orientation_ =
               poseFrom2DVelocity(robot_->getvx(), robot_->getvy());
         }
+        else
+          agent->SetRadius(agent_radius_);
       }
     }
-    if (!paused_) {
+    if (!paused_) 
+    {
       updateRobotPositionFromTF();
       SCENE.moveAllAgents();
-
       publishAgents();
       publishGroups();
       publishRobotPosition();
