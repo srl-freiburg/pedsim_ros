@@ -2,30 +2,30 @@
 <sdf version="1.5">
 
 
-<model name="actor_model">
-  <pose>0 0 0 0 0 0</pose>
-  <link name="link">
-    <collision name="collision">
-      <geometry>
-        <box>
-          <size>.5 .5 1.5</size>
-        </box>
-      </geometry>
-    </collision>
+  <model name="actor_model">
+    <pose>0 0 0 0 0 0</pose>
+    <link name="link">
+      <collision name="collision">
+        <geometry>
+          <box>
+            <size>.5 .5 1.5</size>
+          </box>
+        </geometry>
+      </collision>
 
-    <visual name="visual">
-      <geometry>
-        <box>
-          <size>.5 .5 1.5</size>
-        </box>
-      </geometry>
-    </visual>
+      <visual name="visual">
+        <geometry>
+          <box>
+            <size>.5 .5 1.5</size>
+          </box>
+        </geometry>
+      </visual>
 
-  </link>
-</model>
+    </link>
+  </model>
 
 
-<!--<model name="actor_model">
+  <!--<model name="actor_model">
   <link name="link">
     <collision name="collision">
       <pose>0 0 0 1.5708 0 0</pose>
@@ -46,9 +46,6 @@
     </visual>
   </link>
 </model>-->
-
-
-
 
 
 </sdf>

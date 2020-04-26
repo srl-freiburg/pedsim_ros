@@ -44,6 +44,7 @@ namespace gazebo
             void OnRosMsg( const pedsim_msgs::AgentStatesConstPtr msg) {
 //              ROS_INFO ("OnRosMsg ... ");
                 std::string model_name;
+                const float MODEL_OFFSET = 0.75; 
                 for(unsigned int mdl = 0; mdl < world_->ModelCount(); mdl++) {
                     physics::ModelPtr  tmp_model;
                     tmp_model = world_->ModelByIndex(mdl);
@@ -56,7 +57,7 @@ namespace gazebo
                             ignition::math::Pose3d gzb_pose;
                             gzb_pose.Pos().Set( msg->agent_states[actor].pose.position.x,
                                                 msg->agent_states[actor].pose.position.y,
-                                                msg->agent_states[actor].pose.position.z);
+                                                msg->agent_states[actor].pose.position.z + MODEL_OFFSET);
                             gzb_pose.Rot().Set(msg->agent_states[actor].pose.orientation.w,
                                                msg->agent_states[actor].pose.orientation.x,
                                                msg->agent_states[actor].pose.orientation.y,
