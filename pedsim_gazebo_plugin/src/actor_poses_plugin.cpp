@@ -15,7 +15,7 @@ Created on Mon Dec  2
 
 #include<pedsim_msgs/TrackedPersons.h>
 #include<pedsim_msgs/AgentStates.h>
-
+ #include <pedsim_utils/geometry.h>
 
 
 namespace gazebo
@@ -61,6 +61,11 @@ namespace gazebo
                                                msg->agent_states[actor].pose.orientation.x,
                                                msg->agent_states[actor].pose.orientation.y,
                                                msg->agent_states[actor].pose.orientation.z);
+                                                        auto theta =
+                            std::atan2(agent_state.twist.linear.y, agent_state.twist.linear.x);
+                            auto quaternion = pedsim::angleToQuaternion(theta);
+                            gzb_pose.Rot().Set(
+                              quaternion.w, quaternion.x, quaternion.y, quaternion.z);
                             try{
                                 tmp_model->SetWorldPose(gzb_pose);
                             }
