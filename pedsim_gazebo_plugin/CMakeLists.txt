@@ -14,7 +14,6 @@ find_package(catkin REQUIRED COMPONENTS
   rospy
   gazebo_msgs
   pedsim_msgs
-  pedsim_utils
 )
 
 ## System dependencies are found with CMake's conventions
@@ -41,7 +40,7 @@ find_package(catkin REQUIRED COMPONENTS
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES gzb_vel_plugin
-  CATKIN_DEPENDS gazebo_ros roscpp  geometry_msgs pedsim_msgs pedsim_utils
+  CATKIN_DEPENDS gazebo_ros roscpp  geometry_msgs pedsim_msgs 
 #  DEPENDS system_lib
 )
 
