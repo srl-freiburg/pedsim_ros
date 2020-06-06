@@ -4,7 +4,7 @@
   <arg name="visualize" default="true"/>
   <arg name="with_robot" default="true"/>
 
-  <arg name="simulation_factor" default="3.0"/> <!-- Speed up -->
+  <arg name="simulation_factor" default="1.0"/> <!-- Speed up -->
   <arg name="update_rate" default="25.0"/> <!-- Hz -->
 
   <!-- Simulator -->
