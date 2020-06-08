@@ -17,7 +17,6 @@ Created on Mon Dec  2
 #include<pedsim_msgs/AgentStates.h>
 
 
-
 namespace gazebo
 {
     class ActorPosesPlugin : public WorldPlugin{
@@ -61,6 +60,7 @@ namespace gazebo
                                                msg->agent_states[actor].pose.orientation.x,
                                                msg->agent_states[actor].pose.orientation.y,
                                                msg->agent_states[actor].pose.orientation.z);
+
                             try{
                                 tmp_model->SetWorldPose(gzb_pose);
                             }
