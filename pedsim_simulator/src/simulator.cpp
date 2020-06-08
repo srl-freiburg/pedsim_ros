@@ -214,7 +214,7 @@ void Simulator::updateRobotPositionFromTF() {
   if (CONFIG.robot_mode == RobotMode::TELEOPERATION ||
       CONFIG.robot_mode == RobotMode::CONTROLLED) {
     robot_->setTeleop(true);
-    robot_->setVmax(CONFIG.max_robot_speed);
+    robot_->setVmax(2 * CONFIG.max_robot_speed);
 
     // Get robot position via TF
     tf::StampedTransform tfTransform;
@@ -239,10 +239,15 @@ void Simulator::updateRobotPositionFromTF() {
     if (!std::isfinite(vx)) vx = 0;
     if (!std::isfinite(vy)) vy = 0;
 
+    ROS_DEBUG_STREAM("rx, ry: " << robot_->getx() << ", " << robot_->gety() << " vs: " << x << ", " << y);
+
     robot_->setX(x);
     robot_->setY(y);
     robot_->setvx(vx);
     robot_->setvy(vy);
+
+
+    ROS_DEBUG_STREAM("Robot speed: " << std::hypot(vx, vy) << " dt: " << dt);
 
     last_robot_pose_ = tfTransform;
   }

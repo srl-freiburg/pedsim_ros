@@ -51,8 +51,8 @@ std::vector<std::pair<float, float>> LineObstacleToCells(const float x1,
   int ystep, xstep;  // the step on y and x axis
   int error;         // the error accumulated during the increment
   int errorprev;     // *vision the previous value of the error variable
-  // int y = y1 - 0.5, x = x1 - 0.5;  // the line points
-  int y = y1, x = x1;  // the line points
+  int y = y1 - 0.5, x = x1 - 0.5;  // the line points
+  // int y = y1, x = x1;  // the line points
   int ddy, ddx;        // compulsory variables: the double values of dy and dx
   int dx = x2 - x1;
   int dy = y2 - y1;
