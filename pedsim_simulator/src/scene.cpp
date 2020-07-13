@@ -545,6 +545,11 @@ void Scene::moveAllAgents() {
   // For every agents, if next WP is sink and 'close', call removeAgent.
   for (auto agent : getAgents()) {
     const auto agent_next_wp = agent->getCurrentWaypoint();
+    // skip agents without any waypoint
+    if (!agent_next_wp) {
+      continue;
+    }
+
     if (agent_next_wp->getBehavior() != Ped::Twaypoint::Behavior::SINK) {
       continue;
     }
