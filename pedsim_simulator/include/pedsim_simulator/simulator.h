@@ -114,6 +114,10 @@ class Simulator {
   ros::ServiceServer srv_pause_simulation_;
   ros::ServiceServer srv_unpause_simulation_;
 
+  // frame ids
+  std::string frame_id_;
+  std::string robot_base_frame_id_;
+
   // pointers and additional data
   std::unique_ptr<tf::TransformListener> transform_listener_;
   Agent* robot_;

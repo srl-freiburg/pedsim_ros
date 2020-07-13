@@ -151,8 +151,7 @@ void SimVisualizer::publishObstacleVisuals() {
   const auto current_obstacles = q_obstacles_.front();
 
   visualization_msgs::Marker walls_marker;
-  walls_marker.header.frame_id = "odom";
-  walls_marker.header.stamp = ros::Time();
+  walls_marker.header = current_obstacles->header;
   walls_marker.id = 10000;
   walls_marker.color.a = 1.0;
   walls_marker.color.r = 0.647059;

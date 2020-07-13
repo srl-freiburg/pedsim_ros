@@ -118,6 +118,10 @@ bool Simulator::initializeSimulation() {
   nh_.param<int>("robot_mode", op_mode, 1);
   CONFIG.robot_mode = static_cast<RobotMode>(op_mode);
 
+  nh_.param<std::string>("frame_id", frame_id_, "odom");
+  nh_.param<std::string>("robot_base_frame_id", robot_base_frame_id_,
+      "base_footprint");
+
   paused_ = false;
 
   spawn_timer_ =
@@ -219,12 +223,13 @@ void Simulator::updateRobotPositionFromTF() {
     // Get robot position via TF
     tf::StampedTransform tfTransform;
     try {
-      transform_listener_->lookupTransform("odom", "base_footprint",
+      transform_listener_->lookupTransform(frame_id_, robot_base_frame_id_,
                                            ros::Time(0), tfTransform);
     } catch (tf::TransformException& e) {
       ROS_WARN_STREAM_THROTTLE(
           5.0,
-          "TF lookup from base_footprint to odom failed. Reason: " << e.what());
+          "TF lookup from " << robot_base_frame_id_ << " to " << frame_id_
+          << " failed. Reason: " << e.what());
       return;
     }
 
@@ -258,7 +263,7 @@ void Simulator::publishRobotPosition() {
 
   nav_msgs::Odometry robot_location;
   robot_location.header = createMsgHeader();
-  robot_location.child_frame_id = "odom";
+  robot_location.child_frame_id = robot_base_frame_id_;
 
   robot_location.pose.pose.position.x = robot_->getx();
   robot_location.pose.pose.position.y = robot_->gety();
@@ -411,6 +416,6 @@ std::string Simulator::agentStateToActivity(
 std_msgs::Header Simulator::createMsgHeader() const {
   std_msgs::Header msg_header;
   msg_header.stamp = ros::Time::now();
-  msg_header.frame_id = "odom";
+  msg_header.frame_id = frame_id_;
   return msg_header;
 }
