@@ -37,10 +37,13 @@ def actor_poses_callback(actors):
 if __name__ == '__main__':
 
     rospy.init_node("spawn_pedsim_agents")
-    
+
     rospack1 = RosPack()
     pkg_path = rospack1.get_path('pedsim_gazebo_plugin')
-    file_xml = open(pkg_path + "/models/actor_model.sdf")
+    default_actor_model_file = pkg_path + "/models/actor_model.sdf"
+
+    actor_model_file = rospy.get_param('~actor_model_file', default_actor_model_file)
+    file_xml = open(actor_model_file)
     xml_string = file_xml.read()
 
     print("Waiting for gazebo services...")
