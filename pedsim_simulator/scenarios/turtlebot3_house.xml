@@ -18,11 +18,21 @@
 
 
   <!--Waypoints (incl. WaitingQueues)-->
-  <waypoint id="wp1" x="-6" y="3" r="0.25"/>
+  <!--<waypoint id="wp1" x="-6" y="3" r="0.25"/>
   <waypoint id="wp2" x="-4" y="2" r="0.25"/>
   <waypoint id="wp3" x="-2" y="1" r="0.25"/>
   <waypoint id="wp4" x="1.0" y="0.0" r="0.25"/>
-  <waypoint id="wp5" x="1.0" y="-3" r="0.25"/>
+  <waypoint id="wp5" x="1.0" y="-3" r="0.25"/>-->
+
+  <waypoint id="wp0" x="-2"  y="-3" r="0.25"/> 
+  <waypoint id="wp1" x="1"  y="-1" r="0.25"/>
+  <waypoint id="wp2" x="1"  y="0"  r="0.25"/>
+  <waypoint id="wp3" x="-2" y="1"  r="0.25"/>
+  <waypoint id="wp4" x="-4" y="2"  r="0.25"/>
+  <waypoint id="wp5" x="-6" y="3"  r="0.25"/>
+  <waypoint id="wp6" x="-3" y="4"  r="0.25"/>
+  <waypoint id="wp7" x="-2" y="4"  r="0.25"/>
+  <waypoint id="wp8" x="-1" y="2"  r="0.25"/>
 
 
   <waypoint id="coffee_entry" x="5" y="25" r="5"/>
@@ -40,7 +50,7 @@
         <addwaypoint id="robot_goal"/>
     </agent>
     <!--AgentClusters-->
-    <agent x="-6" y="-2" n="1" dx="0" dy="0" type="0">
+    <!--<agent x="-6" y="-2" n="1" dx="0" dy="0" type="0">
         <addwaypoint id="wp1"/>
         <addwaypoint id="wp2"/>
         <addwaypoint id="wp3"/>
@@ -49,9 +59,25 @@
         <addwaypoint id="wp4"/>
         <addwaypoint id="wp3"/>
         <addwaypoint id="wp2"/>
+    </agent> -->
+
+    <agent x="-1" y="-2" n="1" dx="0" dy="0" type="0">
+        <addwaypoint id="wp1"/>
+        <addwaypoint id="wp2"/>
+        <addwaypoint id="wp3"/>
+        <addwaypoint id="wp4"/>
+        <addwaypoint id="wp5"/>
+        <addwaypoint id="wp6"/>
+        <addwaypoint id="wp7"/>
+        <addwaypoint id="wp8"/>
+        <addwaypoint id="wp2"/>
+        <addwaypoint id="wp1"/>
+        <addwaypoint id="wp0"/>
+
     </agent>
 
     <agent x="1" y="3" n="1" dx="0" dy="0" type="0">
       <addwaypoint id="wp1"/>
     </agent>
+  
 </scenario>

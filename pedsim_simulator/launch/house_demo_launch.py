@@ -40,7 +40,7 @@ def generate_launch_description():
         description='')
 
     declare_simulation_factor_cmd = DeclareLaunchArgument(
-        'simulation_factor', default_value='0.1',
+        'simulation_factor', default_value='0.05',
         description='Top-level namespace')
     
     pedsim_simulator_cmd = IncludeLaunchDescription(
