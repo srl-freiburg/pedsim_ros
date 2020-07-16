@@ -43,7 +43,9 @@ private:
 
   rclcpp::Subscription<pedsim_msgs::msg::AgentStates>::SharedPtr sub_;
   pedsim_msgs::msg::AgentStates::SharedPtr states_;
-  std::shared_ptr<tf2_ros::TransformBroadcaster> tf_broadcaster_;  
+  std::shared_ptr<tf2_ros::TransformBroadcaster> tf_broadcaster_;
+  double rand_angle;
+  bool angle_generated;
 };
 };  // namespace pedsim
 

@@ -16,6 +16,8 @@
 /* Mantainer: jginesclavero jonatan.gines@urjc.es */
 #include "rclcpp/rclcpp.hpp"
 #include "pedsim_tf2/pedsim_tf2_node.hpp"
+#include <algorithm>
+#include <math.h>
 
 using std::placeholders::_1;
 using namespace std::chrono_literals;
