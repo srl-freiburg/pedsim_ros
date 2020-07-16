@@ -1,9 +1,3 @@
-
-
-
-
-
-
 cmake_minimum_required(VERSION 3.5)
 project(pedsim_gazebo_plugin)
 
@@ -83,6 +77,7 @@ install(
   PROGRAMS
     scripts/pedsim_to_gazebo_world.py
     scripts/spawn_pedsim_agents.py
+    scripts/spawn_single_agent.py
     DESTINATION lib/${PROJECT_NAME}/
 )
 
