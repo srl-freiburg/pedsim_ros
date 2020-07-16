@@ -34,7 +34,6 @@ class AgentSpawner(Node):
         self.get_logger().info("service: spawn_sdf_model is available ....")
 
     def actor_poses_callback(self, actors):
-        self.get_logger().info("actor_poses_callback")
         req = SpawnEntity.Request()
         for actor in actors.agent_states:
             actor_id = str(actor.id)
