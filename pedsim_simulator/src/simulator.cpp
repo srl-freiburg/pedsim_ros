@@ -118,6 +118,8 @@ bool Simulator::initializeSimulation() {
   nh_.param<int>("robot_mode", op_mode, 1);
   CONFIG.robot_mode = static_cast<RobotMode>(op_mode);
 
+  double spawn_period;
+  nh_.param<double>("spawn_period", spawn_period, 5.0);
   nh_.param<std::string>("frame_id", frame_id_, "odom");
   nh_.param<std::string>("robot_base_frame_id", robot_base_frame_id_,
       "base_footprint");
@@ -125,7 +127,7 @@ bool Simulator::initializeSimulation() {
   paused_ = false;
 
   spawn_timer_ =
-      nh_.createTimer(ros::Duration(5.0), &Simulator::spawnCallback, this);
+      nh_.createTimer(ros::Duration(spawn_period), &Simulator::spawnCallback, this);
 
   return true;
 }
