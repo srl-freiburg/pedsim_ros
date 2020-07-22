@@ -40,7 +40,7 @@ geometry_msgs::Quaternion toQuaternionMsg(
 
 geometry_msgs::Quaternion poseFrom2DVelocity(const double vx, const double vy) {
   const double theta = std::atan2(vy, vx);
-  return rpyToQuaternion(M_PI / 2.0, theta + (M_PI / 2.0), 0.0);
+  return angleToQuaternion(theta);
 }
 
 // Based on https://en.wikipedia.org/wiki/Digital_differential_analyzer_(graphics_algorithm)
