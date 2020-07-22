@@ -23,7 +23,7 @@ set(CMAKE_AUTOUIC ON)
 
 ## Find catkin macros and libraries
 find_package(catkin REQUIRED COMPONENTS ${PEDSIM_SIMULATOR_DEPENDENCIES})
-find_package(Boost REQUIRED)
+find_package(Boost REQUIRED program_options)
 find_package(Qt5Widgets REQUIRED)
 
 # dynamic reconfigure parameters
@@ -120,6 +120,9 @@ target_link_libraries(${EXECUTABLE_NAME}
 add_executable(simulate_diff_drive_robot src/simulate_diff_drive_robot.cpp)
 add_dependencies(simulate_diff_drive_robot ${catkin_EXPORTED_TARGETS})
 target_link_libraries(simulate_diff_drive_robot ${BOOST_LIBRARIES} ${catkin_LIBRARIES})
+
+add_executable(pedsim_xml_to_occ_map src/pedsim_xml_to_occ_map.cpp)
+target_link_libraries(pedsim_xml_to_occ_map ${catkin_LIBRARIES} ${QT_LIBRARIES} ${Boost_LIBRARIES})
 
 install(
   TARGETS
