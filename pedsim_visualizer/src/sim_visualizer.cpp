@@ -175,6 +175,7 @@ void SimVisualizer::publishObstacleVisuals() {
   }
 
   pub_obstacles_visuals_.publish(walls_marker);
+  q_obstacles_.pop();
 }
 
 void SimVisualizer::setupPublishersAndSubscribers() {
