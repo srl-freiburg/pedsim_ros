@@ -78,6 +78,8 @@ bool Simulator::initializeSimulation() {
       nh_.advertise<pedsim_msgs::AgentGroups>("simulated_groups", queue_size);
   pub_robot_position_ =
       nh_.advertise<nav_msgs::Odometry>("robot_position", queue_size);
+  pub_waypoints_ =
+    nh_.advertise<pedsim_msgs::Waypoints>("simulated_waypoints", queue_size);
 
   // services
   srv_pause_simulation_ = nh_.advertiseService(
@@ -154,7 +156,8 @@ void Simulator::runSimulation() {
       publishAgents();
       publishGroups();
       publishRobotPosition();
-      publishObstacles();  // TODO - no need to do this all the time.
+      publishObstacles();
+      publishWaypoints();
     }
     ros::spinOnce();
     r.sleep();
@@ -390,6 +393,21 @@ void Simulator::publishObstacles() {
     sim_obstacles.obstacles.push_back(line_obstacle);
   }
   pub_obstacles_.publish(sim_obstacles);
+}
+
+void Simulator::publishWaypoints() {
+  pedsim_msgs::Waypoints sim_waypoints;
+  sim_waypoints.header = createMsgHeader();
+  for (const auto& waypoint : SCENE.getWaypoints()) {
+    pedsim_msgs::Waypoint wp;
+    wp.name = waypoint->getName().toStdString();
+    wp.behavior = waypoint->getBehavior();
+    wp.radius = waypoint->getRadius();
+    wp.position.x = waypoint->getPosition().x;
+    wp.position.y = waypoint->getPosition().y;
+    sim_waypoints.waypoints.push_back(wp);
+  }
+  pub_waypoints_.publish(sim_waypoints);
 }
 
 std::string Simulator::agentStateToActivity(
