@@ -139,6 +139,11 @@ Ped::Tvector Ped::Tagent::socialForce() const {
   // (set according to Moussaid-Helbing 2009)
   const double n_prime = 3;
 
+  // define how much the position difference between a pedestrian
+  // and a robot is scaled: the bigger the number is, the smaller
+  // the position based force contribution will be.
+  const double robot_diff_scaling_factor = 5;
+
   Tvector force;
   for (const Ped::Tagent* other : neighbors) {
     // don't compute social force to yourself
@@ -146,8 +151,8 @@ Ped::Tvector Ped::Tagent::socialForce() const {
 
     // compute difference between both agents' positions
     Tvector diff = other->p - p;
-    // NOTE - disabled robot check!
-    // if(other->getType() == ROBOT) diff /= 5;
+
+    if(other->getType() == ROBOT) diff /= robot_diff_scaling_factor;
 
     Tvector diffDirection = diff.normalized();
 
