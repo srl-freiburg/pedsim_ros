@@ -52,6 +52,7 @@ Simulator::~Simulator() {
   pub_agent_states_.shutdown();
   pub_agent_groups_.shutdown();
   pub_robot_position_.shutdown();
+  pub_waypoints_.shutdown();
 
   srv_pause_simulation_.shutdown();
   srv_unpause_simulation_.shutdown();
