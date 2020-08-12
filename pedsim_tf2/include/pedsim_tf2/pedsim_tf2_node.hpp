@@ -39,7 +39,7 @@ public:
 private:
 
   void agentsCallback(const pedsim_msgs::msg::AgentStates::SharedPtr msg);
-  TransformStamped getTFfromAgent(pedsim_msgs::msg::AgentState actor);
+  bool getTFfromAgent(pedsim_msgs::msg::AgentState actor, TransformStamped & tf);
 
   rclcpp::Subscription<pedsim_msgs::msg::AgentStates>::SharedPtr sub_;
   pedsim_msgs::msg::AgentStates::SharedPtr states_;

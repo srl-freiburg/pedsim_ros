@@ -68,6 +68,13 @@ class ActorPosesPlugin : public gazebo::ModelPlugin
         {
           if (frame_id == std::to_string(msg->agent_states[actor].id))
           {
+            if (std::isnan(msg->agent_states[actor].twist.linear.x) || 
+                std::isnan(msg->agent_states[actor].twist.linear.y) ||
+                std::isnan(msg->agent_states[actor].pose.position.x) ||
+                std::isnan(msg->agent_states[actor].pose.position.y) ||
+                std::isnan(msg->agent_states[actor].pose.position.z)) {
+              continue;      
+            }
             const double theta = std::atan2(
               msg->agent_states[actor].twist.linear.y,
               msg->agent_states[actor].twist.linear.x);

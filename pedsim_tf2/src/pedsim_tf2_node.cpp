@@ -38,9 +38,8 @@ void PedsimTF2::agentsCallback(const pedsim_msgs::msg::AgentStates::SharedPtr ms
   states_ = msg;
 }
 
-TransformStamped PedsimTF2::getTFfromAgent(pedsim_msgs::msg::AgentState actor)
+bool PedsimTF2::getTFfromAgent(pedsim_msgs::msg::AgentState actor, TransformStamped & tf)
 {
-  TransformStamped tf;
   double theta = std::atan2(actor.twist.linear.y, actor.twist.linear.x);             
   tf2::Quaternion qt;
   qt.setRPY(0.0, 0.0, theta);
@@ -49,7 +48,13 @@ TransformStamped PedsimTF2::getTFfromAgent(pedsim_msgs::msg::AgentState actor)
   tf.transform.translation.y = actor.pose.position.y;
   tf.transform.translation.z = actor.pose.position.z;
   tf.transform.rotation = tf2::toMsg(qt);
-  return tf;
+  if (std::isnan(theta) || 
+      std::isnan(tf.transform.translation.x) ||
+      std::isnan(tf.transform.translation.y) ||
+      std::isnan(tf.transform.translation.z)) {
+    return false;      
+  }
+  return true;
 }
 
 void PedsimTF2::step()
@@ -61,11 +66,13 @@ void PedsimTF2::step()
     {
       for (auto actor : states_->agent_states)
       {
-        TransformStamped agent_tf = getTFfromAgent(actor);
-        agent_tf.header.frame_id = "map";
-        agent_tf.header.stamp = now();
-        agent_tf.child_frame_id = "agent_" + std::to_string(actor.id);
-        tf_broadcaster_->sendTransform(agent_tf);
+        TransformStamped agent_tf;
+        if (getTFfromAgent(actor, agent_tf)) {
+          agent_tf.header.frame_id = "map";
+          agent_tf.header.stamp = now();
+          agent_tf.child_frame_id = "agent_" + std::to_string(actor.id);
+          tf_broadcaster_->sendTransform(agent_tf);
+        }
       }
     }
     rclcpp::spin_some(shared_from_this());
