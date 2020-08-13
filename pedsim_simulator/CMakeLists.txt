@@ -1,6 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
 project(pedsim_simulator)
-#add_definitions(-Wall -Wunused -std=c++17 -pipe -Wunused -Wextra)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_BUILD_TYPE DEBUG)
