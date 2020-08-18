@@ -29,9 +29,13 @@ def generate_launch_description():
     # Set env var to print messages to stdout immediately
     SetEnvironmentVariable('RCUTILS_CONSOLE_STDOUT_LINE_BUFFERED', '1')
     frame_id = LaunchConfiguration('frame_id')
-    
+    walls_resolution = LaunchConfiguration('walls_resolution')
+
     frame_id_cmd = DeclareLaunchArgument(
-        'frame_id', default_value='odom', description='Reference frame')
+        'frame_id', default_value = 'odom', description='Reference frame')
+    
+    walls_resolution_cmd = DeclareLaunchArgument(
+        'walls_resolution', default_value = '0.2', description='Obstacles walls resolution')
 
     visualizer_cmd = Node(
         package='pedsim_visualizer',
@@ -39,7 +43,8 @@ def generate_launch_description():
         node_name='pedsim_visualizer_node',
         output='screen',
         parameters=[{
-            "frame_id": frame_id
+            "frame_id": frame_id,
+            "walls_resolution": walls_resolution
         }]
     )
 
@@ -47,6 +52,7 @@ def generate_launch_description():
     ld = LaunchDescription()
 
     ld.add_action(frame_id_cmd)
+    ld.add_action(walls_resolution_cmd)
 
     # Declare the launch options
     ld.add_action(visualizer_cmd)

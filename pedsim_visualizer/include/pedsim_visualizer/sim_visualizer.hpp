@@ -108,6 +108,8 @@ class SimVisualizer : public rclcpp::Node
   std::queue<pedsim_msgs::msg::LineObstacles::SharedPtr> q_obstacles_;
 
   std::string frame_id_;
+  bool walls_published_;
+  float walls_resolution_;
 };
 }  // namespace pedsim
 

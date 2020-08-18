@@ -48,19 +48,20 @@ Quaternion poseFrom2DVelocity(const double vx, const double vy) {
 std::vector<std::pair<float, float>> LineObstacleToCells(const float x1,
                                                          const float y1,
                                                          const float x2,
-                                                         const float y2) {
-  int i;             // loop counter
-  int ystep, xstep;  // the step on y and x axis
-  int error;         // the error accumulated during the increment
-  int errorprev;     // *vision the previous value of the error variable
+                                                         const float y2,
+                                                         const float resolution) {
+  float i;             // loop counter
+  float ystep, xstep;  // the step on y and x axis
+  float error;         // the error accumulated during the increment
+  float errorprev;     // *vision the previous value of the error variable
   // int y = y1 - 0.5, x = x1 - 0.5;  // the line points
-  int y = y1, x = x1;  // the line points
-  int ddy, ddx;        // compulsory variables: the double values of dy and dx
-  int dx = x2 - x1;
-  int dy = y2 - y1;
-  double unit_x, unit_y;
-  unit_x = 1;
-  unit_y = 1;
+  float y = y1, x = x1;  // the line points
+  float ddy, ddx;        // compulsory variables: the double values of dy and dx
+  float dx = x2 - x1;
+  float dy = y2 - y1;
+  float unit_x, unit_y;
+  unit_x = resolution;
+  unit_y = resolution;
 
   if (dy < 0) {
     ystep = -unit_y;
@@ -85,7 +86,7 @@ std::vector<std::pair<float, float>> LineObstacleToCells(const float x1,
     // first octant (0 <= slope <= 1)
     // compulsory initialization (even for errorprev, needed when dx==dy)
     errorprev = error = dx;  // start in the middle of the square
-    for (i = 0; i < dx; i++) {
+    for (i = 0; i < dx; i = i + resolution) {
       // do not use the first point (already done)
       x += xstep;
       error += ddy;
@@ -113,7 +114,7 @@ std::vector<std::pair<float, float>> LineObstacleToCells(const float x1,
   } else {
     // the same as above
     errorprev = error = dy;
-    for (i = 0; i < dy; i++) {
+    for (i = 0; i < dy; i = i + resolution) {
       y += ystep;
       error += ddx;
       if (error > ddy) {

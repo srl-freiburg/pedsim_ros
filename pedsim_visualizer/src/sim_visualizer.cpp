@@ -37,7 +37,9 @@ namespace pedsim {
 SimVisualizer::SimVisualizer(const std::string & name) : Node(name)  {
   declare_parameter("frame_id", rclcpp::ParameterValue("odom"));
   frame_id_ = get_parameter("frame_id").get_value<std::string>();
-
+  declare_parameter("walls_resolution", rclcpp::ParameterValue(1.0));
+  get_parameter("walls_resolution", walls_resolution_);
+  walls_published_ = false;
   setupPublishersAndSubscribers();
 }
 
@@ -45,10 +47,10 @@ void SimVisualizer::run() {
   rclcpp::Rate loop_rate(40ms);
 
   while (rclcpp::ok()){
+    if (!walls_published_)
+      publishObstacleVisuals();
     publishAgentVisuals();
     publishGroupVisuals();
-    publishObstacleVisuals();
-
     rclcpp::spin_some(shared_from_this());
     loop_rate.sleep();
   }
@@ -148,7 +150,6 @@ void SimVisualizer::publishObstacleVisuals() {
   }
 
   const auto current_obstacles = q_obstacles_.front();
-
   visualization_msgs::msg::Marker walls_marker;
   walls_marker.header.frame_id = frame_id_;
   walls_marker.header.stamp = now();
@@ -157,15 +158,16 @@ void SimVisualizer::publishObstacleVisuals() {
   walls_marker.color.r = 0.647059;
   walls_marker.color.g = 0.164706;
   walls_marker.color.b = 0.164706;
-  walls_marker.scale.x = 1.0;
-  walls_marker.scale.y = 1.0;
+  walls_marker.scale.x = walls_resolution_;
+  walls_marker.scale.y = walls_resolution_;
   walls_marker.scale.z = 2.0;
   walls_marker.pose.position.z = walls_marker.scale.z / 2.0;
   walls_marker.type = visualization_msgs::msg::Marker::CUBE_LIST;
 
   for (const auto& line : current_obstacles->obstacles) {
     for (const auto& cell : LineObstacleToCells(line.start.x, line.start.y,
-                                                line.end.x, line.end.y)) {
+                                                line.end.x, line.end.y,
+                                                walls_resolution_)) {
       geometry_msgs::msg::Point p;
       p.x = cell.first;
       p.y = cell.second;
@@ -173,8 +175,8 @@ void SimVisualizer::publishObstacleVisuals() {
       walls_marker.points.push_back(p);
     }
   }
-
   pub_obstacles_visuals_->publish(walls_marker);
+  walls_published_ = true;
 }
 
 void SimVisualizer::setupPublishersAndSubscribers() {
