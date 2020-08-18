@@ -31,10 +31,11 @@
 #ifndef SIM_VISUALIZER_H
 #define SIM_VISUALIZER_H
 
-#include "rclcpp/rclcpp.hpp"
 #include <functional>
 #include <memory>
 #include <queue>
+
+#include "rclcpp/rclcpp.hpp"
 
 #include <pedsim_msgs/msg/agent_force.hpp>
 #include <pedsim_msgs/msg/agent_group.hpp>
@@ -43,25 +44,21 @@
 #include <pedsim_msgs/msg/agent_states.hpp>
 #include <pedsim_msgs/msg/line_obstacle.hpp>
 #include <pedsim_msgs/msg/line_obstacles.hpp>
-
 #include <pedsim_msgs/msg/social_activities.hpp>
 #include <pedsim_msgs/msg/social_activity.hpp>
 #include <pedsim_msgs/msg/social_relation.hpp>
 #include <pedsim_msgs/msg/social_relations.hpp>
-#include <pedsim_msgs/msg/tracked_group.hpp>
-#include <pedsim_msgs/msg/tracked_groups.hpp>
-#include <pedsim_msgs/msg/tracked_person.hpp>
-#include <pedsim_msgs/msg/tracked_persons.hpp>
+
+#include <spencer_tracking_msgs/msg/tracked_person.hpp>
+#include <spencer_tracking_msgs/msg/tracked_persons.hpp>
+#include <spencer_tracking_msgs/msg/tracked_group.hpp>
+#include <spencer_tracking_msgs/msg/tracked_groups.hpp>
 
 #include <geometry_msgs/msg/point.hpp>
 #include <geometry_msgs/msg/pose_stamped.hpp>
 #include <geometry_msgs/msg/pose_with_covariance.hpp>
 #include <geometry_msgs/msg/twist_with_covariance.hpp>
-//#include <nav_msgs/GridCells.h>
-//#include <nav_msgs/Odometry.h>
-//#include <std_msgs/ColorRGBA.h>
-//#include <std_msgs/Header.h>
-//#include <std_srvs/Empty.h>
+
 #include <visualization_msgs/msg/marker.hpp>
 #include <visualization_msgs/msg/marker_array.hpp>
 
@@ -98,8 +95,8 @@ class SimVisualizer : public rclcpp::Node
 
   /// publishers
   rclcpp::Publisher<visualization_msgs::msg::Marker>::SharedPtr pub_obstacles_visuals_;
-  rclcpp::Publisher<pedsim_msgs::msg::TrackedPersons>::SharedPtr pub_person_visuals_;
-  rclcpp::Publisher<pedsim_msgs::msg::TrackedGroups>::SharedPtr pub_group_visuals_;
+  rclcpp::Publisher<spencer_tracking_msgs::msg::TrackedPersons>::SharedPtr pub_person_visuals_;
+  rclcpp::Publisher<spencer_tracking_msgs::msg::TrackedGroups>::SharedPtr pub_group_visuals_;
 
   /// Subscribers.
   rclcpp::Subscription<pedsim_msgs::msg::AgentStates>::SharedPtr sub_states_;
