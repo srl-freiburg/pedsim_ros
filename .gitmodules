@@ -1,3 +1,6 @@
 [submodule "2dparty/spencer_messages"]
 	path = 2dparty/spencer_messages
 	url = https://github.com/jginesclavero/spencer_messages/tree/eloquent-dev
+[submodule "2dparty/spencer_tracking_rviz_plugin"]
+	path = 2dparty/spencer_tracking_rviz_plugin
+	url = https://github.com/jginesclavero/spencer_tracking_rviz_plugin/tree/eloquent-dev
