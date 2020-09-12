@@ -41,6 +41,7 @@ Ped::Tagent::Tagent() {
 
   agentRadius = 0.35;
   relaxationTime = 0.5;
+  robotPosDiffScalingFactor = 5;
 }
 
 /// Destructor
@@ -65,6 +66,16 @@ void Ped::Tagent::removeAgentFromNeighbors(const Ped::Tagent* agentIn) {
 /// \param   pvmax The maximum velocity. In scene units per timestep, multiplied
 /// by the simulation's precision h.
 void Ped::Tagent::setVmax(double pvmax) { vmax = pvmax; }
+
+/// Defines how much the position difference between this agent
+/// and a robot is scaled: the bigger the number is, the smaller
+/// the position based force contribution will be.
+/// \param   scalingFactor should be positive.
+void Ped::Tagent::setRobotPosDiffScalingFactor(double scalingFactor) {
+  if (scalingFactor > 0) {
+    robotPosDiffScalingFactor = scalingFactor;
+  }
+}
 
 /// Sets the agent's position. This, and other getters returning coordinates,
 /// will eventually changed to returning a
@@ -139,11 +150,6 @@ Ped::Tvector Ped::Tagent::socialForce() const {
   // (set according to Moussaid-Helbing 2009)
   const double n_prime = 3;
 
-  // define how much the position difference between a pedestrian
-  // and a robot is scaled: the bigger the number is, the smaller
-  // the position based force contribution will be.
-  const double robot_diff_scaling_factor = 5;
-
   Tvector force;
   for (const Ped::Tagent* other : neighbors) {
     // don't compute social force to yourself
@@ -152,7 +158,7 @@ Ped::Tvector Ped::Tagent::socialForce() const {
     // compute difference between both agents' positions
     Tvector diff = other->p - p;
 
-    if(other->getType() == ROBOT) diff /= robot_diff_scaling_factor;
+    if(other->getType() == ROBOT) diff /= robotPosDiffScalingFactor;
 
     Tvector diffDirection = diff.normalized();
 
