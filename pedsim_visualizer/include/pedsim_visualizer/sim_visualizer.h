@@ -104,6 +104,7 @@ class SimVisualizer {
   void setupPublishersAndSubscribers();
 
   ros::NodeHandle nh_;
+  double hz_;
 
   /// publishers
   ros::Publisher pub_obstacles_visuals_;

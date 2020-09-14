@@ -34,8 +34,14 @@
 
 namespace pedsim {
 
+const static double DEFAULT_VIZ_HZ = 25.0;
+
 SimVisualizer::SimVisualizer(const ros::NodeHandle& node_in) : nh_{node_in} {
   setupPublishersAndSubscribers();
+  nh_.param<double>("hz", hz_, DEFAULT_VIZ_HZ);
+  if (hz_ < 0) {
+    hz_ = DEFAULT_VIZ_HZ;
+  }
 }
 SimVisualizer::~SimVisualizer() {
   pub_obstacles_visuals_.shutdown();
@@ -50,7 +56,7 @@ SimVisualizer::~SimVisualizer() {
 }
 
 void SimVisualizer::run() {
-  ros::Rate r(25.);
+  ros::Rate r(hz_);
 
   while (ros::ok()) {
     publishAgentVisuals();
@@ -96,6 +102,7 @@ void SimVisualizer::publishAgentVisuals() {
   force_marker.header = current_states->header;
   force_marker.type = visualization_msgs::Marker::ARROW;
   force_marker.action = visualization_msgs::Marker::ADD;
+  force_marker.lifetime = ros::Duration(1.0 / hz_);
   force_marker.scale.x = 0.05; // shaft diameter
   force_marker.scale.y = 0.1; // head diameter
   force_marker.scale.z = 0.3; // head length
