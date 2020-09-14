@@ -5,8 +5,8 @@ Created on Mon Dec  2
 */
 
 #include <gazebo/common/Plugin.hh>
-#include <gazebo-9/gazebo/physics/physics.hh>
-#include <gazebo-9/gazebo/util/system.hh>
+#include <gazebo/physics/physics.hh>
+#include <gazebo/util/system.hh>
 
 #include <ros/ros.h>
 #include "ros/callback_queue.h"
@@ -43,9 +43,17 @@ namespace gazebo
             void OnRosMsg( const pedsim_msgs::AgentStatesConstPtr msg) {
 //              ROS_INFO ("OnRosMsg ... ");
                 std::string model_name;
+#if GAZEBO_MAJOR_VERSION < 9
+                for(unsigned int mdl = 0; mdl < world_->GetModelCount(); mdl++) {
+#else
                 for(unsigned int mdl = 0; mdl < world_->ModelCount(); mdl++) {
+#endif
                     physics::ModelPtr  tmp_model;
+#if GAZEBO_MAJOR_VERSION < 9
+                    tmp_model = world_->GetModel(mdl);
+#else
                     tmp_model = world_->ModelByIndex(mdl);
+#endif
                     std::string frame_id;
                     frame_id = tmp_model->GetName();
 
@@ -90,7 +98,7 @@ namespace gazebo
         std::thread rosQueueThread;
         physics::WorldPtr world_;
         event::ConnectionPtr updateConnection_;
-        const float MODEL_OFFSET = 0.75; 
+        const float MODEL_OFFSET = 0.75;
 
     };
     GZ_REGISTER_WORLD_PLUGIN(ActorPosesPlugin)

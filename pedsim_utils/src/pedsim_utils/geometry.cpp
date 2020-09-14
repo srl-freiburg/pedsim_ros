@@ -40,96 +40,32 @@ geometry_msgs::Quaternion toQuaternionMsg(
 
 geometry_msgs::Quaternion poseFrom2DVelocity(const double vx, const double vy) {
   const double theta = std::atan2(vy, vx);
-  return rpyToQuaternion(M_PI / 2.0, theta + (M_PI / 2.0), 0.0);
+  return angleToQuaternion(theta);
 }
 
+// Based on https://en.wikipedia.org/wiki/Digital_differential_analyzer_(graphics_algorithm)
 std::vector<std::pair<float, float>> LineObstacleToCells(const float x1,
                                                          const float y1,
                                                          const float x2,
                                                          const float y2) {
-  int i;             // loop counter
-  int ystep, xstep;  // the step on y and x axis
-  int error;         // the error accumulated during the increment
-  int errorprev;     // *vision the previous value of the error variable
-  int y = y1 - 0.5, x = x1 - 0.5;  // the line points
-  // int y = y1, x = x1;  // the line points
-  int ddy, ddx;        // compulsory variables: the double values of dy and dx
-  int dx = x2 - x1;
-  int dy = y2 - y1;
-  double unit_x, unit_y;
-  unit_x = 1;
-  unit_y = 1;
-
-  if (dy < 0) {
-    ystep = -unit_y;
-    dy = -dy;
-  } else {
-    ystep = unit_y;
-  }
-  if (dx < 0) {
-    xstep = -unit_x;
-    dx = -dx;
-  } else {
-    xstep = unit_x;
-  }
-
-  ddy = 2 * dy;  // work with double values for full precision
-  ddx = 2 * dx;
-
-  std::vector<std::pair<float, float>> obstacle_cells;  // TODO - reserve.
-  obstacle_cells.emplace_back(std::make_pair(x, y));
-
-  if (ddx >= ddy) {
-    // first octant (0 <= slope <= 1)
-    // compulsory initialization (even for errorprev, needed when dx==dy)
-    errorprev = error = dx;  // start in the middle of the square
-    for (i = 0; i < dx; i++) {
-      // do not use the first point (already done)
-      x += xstep;
-      error += ddy;
-      if (error > ddx) {
-        // increment y if AFTER the middle ( > )
-        y += ystep;
-        error -= ddx;
-        // three cases (octant == right->right-top for directions
-        // below):
-        if (error + errorprev < ddx) {
-          // bottom square also
-          obstacle_cells.emplace_back(std::make_pair(x, y - ystep));
-        } else if (error + errorprev > ddx) {
-          // left square also
-          obstacle_cells.emplace_back(std::make_pair(x - xstep, y));
-        } else {
-          // corner: bottom and left squares also
-          obstacle_cells.emplace_back(std::make_pair(x, y - ystep));
-          obstacle_cells.emplace_back(std::make_pair(x - xstep, y));
-        }
-      }
-      obstacle_cells.emplace_back(std::make_pair(x, y));
-      errorprev = error;
-    }
-  } else {
-    // the same as above
-    errorprev = error = dy;
-    for (i = 0; i < dy; i++) {
-      y += ystep;
-      error += ddx;
-      if (error > ddy) {
-        x += xstep;
-        error -= ddy;
-        if (error + errorprev < ddy) {
-          obstacle_cells.emplace_back(std::make_pair(x - xstep, y));
-        } else if (error + errorprev > ddy) {
-          obstacle_cells.emplace_back(std::make_pair(x, y - ystep));
-        } else {
-          obstacle_cells.emplace_back(std::make_pair(x, y - ystep));
-          obstacle_cells.emplace_back(std::make_pair(x - xstep, y));
-        }
-      }
-      obstacle_cells.emplace_back(std::make_pair(x, y));
-      errorprev = error;
+  std::vector<std::pair<float, float>> obstacle_cells;
+  float dx = x2 - x1;
+  float dy = y2 - y1;
+  float step = std::fabs(dx) >= std::fabs(dy) ? std::fabs(dx) : std::fabs(dy);
+  float x = x1;
+  float y = y1;
+  if (step > 0) {
+    dx /= step;
+    dy /= step;
+    int i = 1;
+    while (i <= step) {
+      obstacle_cells.emplace_back(x, y);
+      x = x + dx;
+      y = y + dy;
+      i = i + 1;
     }
   }
+  obstacle_cells.emplace_back(x, y);
   return obstacle_cells;
 }
 

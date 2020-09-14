@@ -46,6 +46,7 @@ SimVisualizer::~SimVisualizer() {
   sub_states_.shutdown();
   sub_groups_.shutdown();
   sub_obstacles_.shutdown();
+  sub_waypoints_.shutdown();
 }
 
 void SimVisualizer::run() {
@@ -55,6 +56,7 @@ void SimVisualizer::run() {
     publishAgentVisuals();
     publishGroupVisuals();
     publishObstacleVisuals();
+    publishWaypointVisuals();
 
     ros::spinOnce();
     r.sleep();
@@ -76,6 +78,11 @@ void SimVisualizer::obstaclesCallBack(
   q_obstacles_.emplace(obstacles);
 }
 
+void SimVisualizer::waypointsCallBack(
+    const pedsim_msgs::WaypointsConstPtr& waypoints) {
+  q_waypoints_.emplace(waypoints);
+}
+
 /// publishers
 void SimVisualizer::publishAgentVisuals() {
   if (q_people_.size() < 1) {
@@ -84,11 +91,65 @@ void SimVisualizer::publishAgentVisuals() {
 
   const auto current_states = q_people_.front();
 
+  visualization_msgs::MarkerArray forces_markers;
+  visualization_msgs::Marker force_marker;
+  force_marker.header = current_states->header;
+  force_marker.type = visualization_msgs::Marker::ARROW;
+  force_marker.action = visualization_msgs::Marker::ADD;
+  force_marker.scale.x = 0.05; // shaft diameter
+  force_marker.scale.y = 0.1; // head diameter
+  force_marker.scale.z = 0.3; // head length
+  force_marker.color.a = 1.0;
+  force_marker.pose.orientation.w = 1.0;
+  geometry_msgs::Point p1;
+  geometry_msgs::Point p2;
+
+
   pedsim_msgs::TrackedPersons tracked_people;
   tracked_people.header = current_states->header;
 
   for (const auto& agent_state : current_states->agent_states) {
+
     if (agent_state.type == 2) continue;
+
+    force_marker.ns = "agent_state_" + std::to_string(agent_state.id);
+    force_marker.points.clear();
+    force_marker.color.r = 0.0;
+    force_marker.color.g = 0.0;
+    force_marker.color.b = 0.0;
+
+    p1.x = agent_state.pose.position.x;
+    p1.y = agent_state.pose.position.y;
+    p1.z = agent_state.pose.position.z;
+    force_marker.points.push_back(p1);
+
+    // desired_force
+    force_marker.id = 0;
+    p2.x = p1.x + agent_state.forces.desired_force.x;
+    p2.y = p1.y + agent_state.forces.desired_force.y;
+    p2.z = p1.z + agent_state.forces.desired_force.z;
+    force_marker.color.r = 1.0;
+    force_marker.points.push_back(p2);
+    forces_markers.markers.push_back(force_marker);
+
+    // obstacle_force
+    force_marker.id = 1;
+    force_marker.points[1].x = p1.x + agent_state.forces.obstacle_force.x;
+    force_marker.points[1].y = p1.y + agent_state.forces.obstacle_force.y;
+    force_marker.points[1].z = p1.z + agent_state.forces.obstacle_force.z;
+    force_marker.color.r = 0.0;
+    force_marker.color.g = 1.0;
+    forces_markers.markers.push_back(force_marker);
+
+    // social_force
+    force_marker.id = 2;
+    force_marker.points[1].x = p1.x + agent_state.forces.social_force.x;
+    force_marker.points[1].y = p1.y + agent_state.forces.social_force.y;
+    force_marker.points[1].z = p1.z + agent_state.forces.social_force.z;
+    force_marker.color.r = 0.0;
+    force_marker.color.g = 0.0;
+    force_marker.color.b = 1.0;
+    forces_markers.markers.push_back(force_marker);
 
     pedsim_msgs::TrackedPerson person;
     person.track_id = agent_state.id;
@@ -113,6 +174,7 @@ void SimVisualizer::publishAgentVisuals() {
   }
 
   pub_person_visuals_.publish(tracked_people);
+  pub_forces_.publish(forces_markers);
   q_people_.pop();
 }
 
@@ -151,8 +213,7 @@ void SimVisualizer::publishObstacleVisuals() {
   const auto current_obstacles = q_obstacles_.front();
 
   visualization_msgs::Marker walls_marker;
-  walls_marker.header.frame_id = "odom";
-  walls_marker.header.stamp = ros::Time();
+  walls_marker.header = current_obstacles->header;
   walls_marker.id = 10000;
   walls_marker.color.a = 1.0;
   walls_marker.color.r = 0.647059;
@@ -162,6 +223,7 @@ void SimVisualizer::publishObstacleVisuals() {
   walls_marker.scale.y = 1.0;
   walls_marker.scale.z = 2.0;
   walls_marker.pose.position.z = walls_marker.scale.z / 2.0;
+  walls_marker.pose.orientation.w = 1.0;
   walls_marker.type = visualization_msgs::Marker::CUBE_LIST;
 
   for (const auto& line : current_obstacles->obstacles) {
@@ -176,6 +238,81 @@ void SimVisualizer::publishObstacleVisuals() {
   }
 
   pub_obstacles_visuals_.publish(walls_marker);
+  q_obstacles_.pop();
+}
+
+void SimVisualizer::publishWaypointVisuals() {
+  if (q_waypoints_.size() < 1) {
+    return;
+  }
+
+  const auto current_waypoints = q_waypoints_.front();
+  visualization_msgs::Marker wp_marker;
+  wp_marker.header = current_waypoints->header;
+  wp_marker.action = visualization_msgs::Marker::ADD;
+  wp_marker.pose.orientation.w = 1.0;
+  wp_marker.color.a = 1.0;
+  std::string text;
+
+  visualization_msgs::MarkerArray waypoint_markers;
+  for (const auto& waypoint : current_waypoints->waypoints) {
+    text = waypoint.name;
+
+    wp_marker.ns = text;
+
+    switch (waypoint.behavior) {
+      case pedsim_msgs::Waypoint::BHV_SIMPLE: {
+        wp_marker.color.r = 1.0;
+        wp_marker.color.g = 0.95;
+        wp_marker.color.b = 0.7;
+        break;
+      }
+      case pedsim_msgs::Waypoint::BHV_SOURCE: {
+        wp_marker.color.r = 0.0;
+        wp_marker.color.g = 1.0;
+        wp_marker.color.b = 1.0;
+        text += "(source)";
+        break;
+      }
+      case pedsim_msgs::Waypoint::BHV_SINK: {
+        wp_marker.color.r = 1.0;
+        wp_marker.color.g = 0.37;
+        wp_marker.color.b = 0.07;
+        text += "(sink)";
+        break;
+      }
+    }
+
+    wp_marker.id = 0;
+    wp_marker.type = visualization_msgs::Marker::CUBE;
+    wp_marker.scale.x = 0.2;
+    wp_marker.scale.y = 0.2;
+    wp_marker.scale.z = 0.2;
+    wp_marker.pose.position.x = waypoint.position.x;
+    wp_marker.pose.position.y = waypoint.position.y;
+    wp_marker.pose.position.z = 0.1;
+    waypoint_markers.markers.push_back(wp_marker);
+
+    wp_marker.id = 1;
+    wp_marker.type = visualization_msgs::Marker::TEXT_VIEW_FACING;
+    wp_marker.scale.x = 0.0;
+    wp_marker.scale.y = 0.0;
+    wp_marker.text = text;
+    wp_marker.pose.position.z = 0.35;
+    waypoint_markers.markers.push_back(wp_marker);
+
+    wp_marker.id = 2;
+    wp_marker.text = "";
+    wp_marker.type = visualization_msgs::Marker::CYLINDER;
+    wp_marker.scale.x = waypoint.radius;
+    wp_marker.scale.y = waypoint.radius;
+    wp_marker.scale.z = 0.01;
+    wp_marker.pose.position.z = 0.005;
+    waypoint_markers.markers.push_back(wp_marker);
+  }
+  pub_waypoints_.publish(waypoint_markers);
+
+  q_waypoints_.pop();
 }
 
 void SimVisualizer::setupPublishersAndSubscribers() {
@@ -185,6 +322,10 @@ void SimVisualizer::setupPublishersAndSubscribers() {
       nh_.advertise<pedsim_msgs::TrackedPersons>("tracked_persons", 1);
   pub_group_visuals_ =
       nh_.advertise<pedsim_msgs::TrackedGroups>("tracked_groups", 1);
+  pub_forces_ =
+    nh_.advertise<visualization_msgs::MarkerArray>("forces", 1);
+  pub_waypoints_ =
+    nh_.advertise<visualization_msgs::MarkerArray>("waypoints", 1);
 
   // TODO - get simulator node name by param.
   sub_states_ = nh_.subscribe("/pedsim_simulator/simulated_agents", 1,
@@ -193,6 +334,8 @@ void SimVisualizer::setupPublishersAndSubscribers() {
                                  &SimVisualizer::obstaclesCallBack, this);
   sub_groups_ = nh_.subscribe("/pedsim_simulator/simulated_groups", 1,
                               &SimVisualizer::agentGroupsCallBack, this);
+  sub_waypoints_ = nh_.subscribe("/pedsim_simulator/simulated_waypoints", 1,
+                              &SimVisualizer::waypointsCallBack, this);
 }
 
 }  // namespace pedsim

@@ -52,6 +52,7 @@ Simulator::~Simulator() {
   pub_agent_states_.shutdown();
   pub_agent_groups_.shutdown();
   pub_robot_position_.shutdown();
+  pub_waypoints_.shutdown();
 
   srv_pause_simulation_.shutdown();
   srv_unpause_simulation_.shutdown();
@@ -78,6 +79,8 @@ bool Simulator::initializeSimulation() {
       nh_.advertise<pedsim_msgs::AgentGroups>("simulated_groups", queue_size);
   pub_robot_position_ =
       nh_.advertise<nav_msgs::Odometry>("robot_position", queue_size);
+  pub_waypoints_ =
+    nh_.advertise<pedsim_msgs::Waypoints>("simulated_waypoints", queue_size);
 
   // services
   srv_pause_simulation_ = nh_.advertiseService(
@@ -118,10 +121,16 @@ bool Simulator::initializeSimulation() {
   nh_.param<int>("robot_mode", op_mode, 1);
   CONFIG.robot_mode = static_cast<RobotMode>(op_mode);
 
+  double spawn_period;
+  nh_.param<double>("spawn_period", spawn_period, 5.0);
+  nh_.param<std::string>("frame_id", frame_id_, "odom");
+  nh_.param<std::string>("robot_base_frame_id", robot_base_frame_id_,
+      "base_footprint");
+
   paused_ = false;
 
   spawn_timer_ =
-      nh_.createTimer(ros::Duration(5.0), &Simulator::spawnCallback, this);
+      nh_.createTimer(ros::Duration(spawn_period), &Simulator::spawnCallback, this);
 
   return true;
 }
@@ -148,7 +157,8 @@ void Simulator::runSimulation() {
       publishAgents();
       publishGroups();
       publishRobotPosition();
-      publishObstacles();  // TODO - no need to do this all the time.
+      publishObstacles();
+      publishWaypoints();
     }
     ros::spinOnce();
     r.sleep();
@@ -219,12 +229,13 @@ void Simulator::updateRobotPositionFromTF() {
     // Get robot position via TF
     tf::StampedTransform tfTransform;
     try {
-      transform_listener_->lookupTransform("odom", "base_footprint",
+      transform_listener_->lookupTransform(frame_id_, robot_base_frame_id_,
                                            ros::Time(0), tfTransform);
     } catch (tf::TransformException& e) {
       ROS_WARN_STREAM_THROTTLE(
           5.0,
-          "TF lookup from base_footprint to odom failed. Reason: " << e.what());
+          "TF lookup from " << robot_base_frame_id_ << " to " << frame_id_
+          << " failed. Reason: " << e.what());
       return;
     }
 
@@ -258,7 +269,7 @@ void Simulator::publishRobotPosition() {
 
   nav_msgs::Odometry robot_location;
   robot_location.header = createMsgHeader();
-  robot_location.child_frame_id = "odom";
+  robot_location.child_frame_id = robot_base_frame_id_;
 
   robot_location.pose.pose.position.x = robot_->getx();
   robot_location.pose.pose.position.y = robot_->gety();
@@ -385,6 +396,21 @@ void Simulator::publishObstacles() {
   pub_obstacles_.publish(sim_obstacles);
 }
 
+void Simulator::publishWaypoints() {
+  pedsim_msgs::Waypoints sim_waypoints;
+  sim_waypoints.header = createMsgHeader();
+  for (const auto& waypoint : SCENE.getWaypoints()) {
+    pedsim_msgs::Waypoint wp;
+    wp.name = waypoint->getName().toStdString();
+    wp.behavior = waypoint->getBehavior();
+    wp.radius = waypoint->getRadius();
+    wp.position.x = waypoint->getPosition().x;
+    wp.position.y = waypoint->getPosition().y;
+    sim_waypoints.waypoints.push_back(wp);
+  }
+  pub_waypoints_.publish(sim_waypoints);
+}
+
 std::string Simulator::agentStateToActivity(
     const AgentStateMachine::AgentState& state) const {
   std::string activity = "Unknown";
@@ -411,6 +437,6 @@ std::string Simulator::agentStateToActivity(
 std_msgs::Header Simulator::createMsgHeader() const {
   std_msgs::Header msg_header;
   msg_header.stamp = ros::Time::now();
-  msg_header.frame_id = "odom";
+  msg_header.frame_id = frame_id_;
   return msg_header;
 }

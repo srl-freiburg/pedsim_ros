@@ -45,6 +45,8 @@
 #include <pedsim_msgs/AgentStates.h>
 #include <pedsim_msgs/LineObstacle.h>
 #include <pedsim_msgs/LineObstacles.h>
+#include <pedsim_msgs/Waypoint.h>
+#include <pedsim_msgs/Waypoints.h>
 
 #include <geometry_msgs/Point.h>
 #include <geometry_msgs/PoseStamped.h>
@@ -98,6 +100,7 @@ class Simulator {
   void publishGroups();
   void publishObstacles();
   void publishRobotPosition();
+  void publishWaypoints();
 
  private:
   ros::NodeHandle nh_;
@@ -109,10 +112,15 @@ class Simulator {
   ros::Publisher pub_agent_states_;
   ros::Publisher pub_agent_groups_;
   ros::Publisher pub_robot_position_;
+  ros::Publisher pub_waypoints_;
 
   // provided services
   ros::ServiceServer srv_pause_simulation_;
   ros::ServiceServer srv_unpause_simulation_;
+
+  // frame ids
+  std::string frame_id_;
+  std::string robot_base_frame_id_;
 
   // pointers and additional data
   std::unique_ptr<tf::TransformListener> transform_listener_;
