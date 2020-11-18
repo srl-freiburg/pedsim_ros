@@ -89,9 +89,5 @@
         <addwaypoint id="wp_agent3_1"/>
         <addwaypoint id="wp_agent3_0"/>
     </agent>
-
-    <agent x="1" y="3" n="1" dx="0" dy="0" type="0">
-      <addwaypoint id="wp_agent1_1"/>
-    </agent>
   
 </scenario>
