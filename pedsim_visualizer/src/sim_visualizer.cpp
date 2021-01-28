@@ -35,12 +35,18 @@
 namespace pedsim {
 
 const static double DEFAULT_VIZ_HZ = 25.0;
+const static double DEFAULT_WALL_MARKER_SCALE = 1.0;
 
 SimVisualizer::SimVisualizer(const ros::NodeHandle& node_in) : nh_{node_in} {
   setupPublishersAndSubscribers();
   nh_.param<double>("hz", hz_, DEFAULT_VIZ_HZ);
+  nh_.param<double>("walls_marker_scale", walls_marker_scale_,
+                    DEFAULT_WALL_MARKER_SCALE);
   if (hz_ < 0) {
     hz_ = DEFAULT_VIZ_HZ;
+  }
+  if (walls_marker_scale_ < 0) {
+    walls_marker_scale_ = DEFAULT_WALL_MARKER_SCALE;
   }
 }
 SimVisualizer::~SimVisualizer() {
@@ -226,8 +232,8 @@ void SimVisualizer::publishObstacleVisuals() {
   walls_marker.color.r = 0.647059;
   walls_marker.color.g = 0.164706;
   walls_marker.color.b = 0.164706;
-  walls_marker.scale.x = 1.0;
-  walls_marker.scale.y = 1.0;
+  walls_marker.scale.x = walls_marker_scale_;
+  walls_marker.scale.y = walls_marker_scale_;
   walls_marker.scale.z = 2.0;
   walls_marker.pose.position.z = walls_marker.scale.z / 2.0;
   walls_marker.pose.orientation.w = 1.0;
