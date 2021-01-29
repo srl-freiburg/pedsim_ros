@@ -34,6 +34,11 @@ catkin build -c  # or catkin_make
 ```
 roslaunch pedsim_simulator simple_pedestrians.launch
 ```
+
+### How to use with ROS maps
+In order to converts maps in ROS format (as defined by `map_server`) to Pedsim scenarios, check out the `3rdparty/ros_maps_to_pedsim` package and the included [README](https://github.com/fverdoja/ros_maps_to_pedsim/blob/main/README.md) for more details.
+
+
 ### Licence
 The core `libpedsim` is licensed under LGPL. The ROS integration and extensions are licensed under BSD.
 
@@ -47,6 +52,7 @@ The core `libpedsim` is licensed under LGPL. The ROS integration and extensions 
 * Sven Wehner
 * Omar Islas
 * Luigi Palmieri
+* Francesco Verdoja
 
 The package is a **work in progress** mainly used in research prototyping. Pull requests and/or issues are highly encouraged.
 

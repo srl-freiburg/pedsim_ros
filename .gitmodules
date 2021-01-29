@@ -4,3 +4,6 @@
 [submodule "2ndparty/spencer_tracking_rviz_plugin"]
 	path = 2ndparty/spencer_tracking_rviz_plugin
 	url = https://github.com/srl-freiburg/spencer_tracking_rviz_plugin.git
+[submodule "3rdparty/ros_maps_to_pedsim"]
+	path = 3rdparty/ros_maps_to_pedsim
+	url = https://github.com/fverdoja/ros_maps_to_pedsim.git

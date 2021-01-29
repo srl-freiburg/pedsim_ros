@@ -105,6 +105,7 @@ class SimVisualizer {
 
   ros::NodeHandle nh_;
   double hz_;
+  double walls_marker_scale_;
 
   /// publishers
   ros::Publisher pub_obstacles_visuals_;
