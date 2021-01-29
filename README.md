@@ -36,7 +36,7 @@ roslaunch pedsim_simulator simple_pedestrians.launch
 ```
 
 ### How to use with ROS maps
-In order to converts maps in ROS format (as defined by `map_server`) to Pedsim scenarios, check out the `3rdparty/ros_maps_to_pedsim` package and the included [README](3rdparty/ros_maps_to_pedsim/README.md) for more details.
+In order to converts maps in ROS format (as defined by `map_server`) to Pedsim scenarios, check out the `3rdparty/ros_maps_to_pedsim` package and the included [README](https://github.com/fverdoja/ros_maps_to_pedsim/blob/main/README.md) for more details.
 
 
 ### Licence
