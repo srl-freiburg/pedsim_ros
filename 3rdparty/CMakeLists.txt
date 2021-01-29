@@ -1,1 +1,2 @@
 add_subdirectory(libpedsim)
+add_subdirectory(ros_maps_to_pedsim)
