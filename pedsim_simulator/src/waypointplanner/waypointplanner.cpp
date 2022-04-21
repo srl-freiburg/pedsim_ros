@@ -29,6 +29,6 @@
 * \author Sven Wehner <mail@svenwehner.de>
 */
 
-#include <pedsim_simulator/waypointplanner/waypointplanner.h>
+#include <pedsim_simulator/waypointplanner/waypointplanner.hpp>
 
 WaypointPlanner::WaypointPlanner() {}

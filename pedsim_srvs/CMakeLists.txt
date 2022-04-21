@@ -1,33 +1,25 @@
-cmake_minimum_required(VERSION 2.8.3)
+cmake_minimum_required(VERSION 3.5)
 project(pedsim_srvs)
 
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_BUILD_TYPE DEBUG)
 
-set( MESSAGE_DEPENDENCIES
-    pedsim_msgs
-    std_msgs
+find_package(ament_cmake REQUIRED)
+find_package(builtin_interfaces REQUIRED)
+find_package(rosidl_default_generators REQUIRED)
+find_package(rclcpp REQUIRED)
+find_package(rclpy REQUIRED)
+find_package(std_msgs REQUIRED)
+find_package(pedsim_msgs REQUIRED)
+
+rosidl_generate_interfaces(${PROJECT_NAME}
+  "srv/GetAgentState.srv"
+  "srv/GetAllAgentsState.srv"
+  "srv/SetAgentState.srv"
+  "srv/SetAllAgentsState.srv"
+  DEPENDENCIES builtin_interfaces std_msgs pedsim_msgs
 )
 
-find_package(catkin REQUIRED 
-  COMPONENTS
-  message_generation
-  ${MESSAGE_DEPENDENCIES}
-)
+ament_export_dependencies(rosidl_default_runtime)
 
-include_directories(${catkin_INCLUDE_DIRS})
-link_directories(${catkin_LIBRARY_DIRS})
-
-
-# the services
-add_service_files( DIRECTORY srv
-  FILES
-  SetAgentState.srv
-  GetAgentState.srv
-  SetAllAgentsState.srv
-  GetAllAgentsState.srv
-)
-
-generate_messages(DEPENDENCIES ${MESSAGE_DEPENDENCIES})
-
-#add_dependencies(some_target ${PROJECT_NAME}_gencpp)
-
-catkin_package( CATKIN_DEPENDS message_runtime ${MESSAGE_DEPENDENCIES})
+ament_package()

@@ -29,7 +29,7 @@
 * \author Sven Wehner <mail@svenwehner.de>
 */
 
-#include <pedsim_simulator/element/waypoint.h>
+#include <pedsim_simulator/element/waypoint.hpp>
 
 Waypoint::Waypoint(const QString& nameIn) : name(nameIn) {}
 

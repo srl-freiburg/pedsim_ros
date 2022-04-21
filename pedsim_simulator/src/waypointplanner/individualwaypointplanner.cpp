@@ -29,10 +29,10 @@
 * \author Sven Wehner <mail@svenwehner.de>
 */
 
-#include <pedsim_simulator/element/agent.h>
-#include <pedsim_simulator/element/areawaypoint.h>
-#include <pedsim_simulator/element/waitingqueue.h>
-#include <pedsim_simulator/waypointplanner/individualwaypointplanner.h>
+#include <pedsim_simulator/element/agent.hpp>
+#include <pedsim_simulator/element/areawaypoint.hpp>
+#include <pedsim_simulator/element/waitingqueue.hpp>
+#include <pedsim_simulator/waypointplanner/individualwaypointplanner.hpp>
 
 IndividualWaypointPlanner::IndividualWaypointPlanner() {
   // initialize values
@@ -59,7 +59,9 @@ Waypoint* IndividualWaypointPlanner::getCurrentWaypoint() {
 
 bool IndividualWaypointPlanner::hasCompletedDestination() const {
   if (destination == nullptr) {
-    ROS_DEBUG("IndividualWaypointPlanner: No destination set!");
+    RCLCPP_DEBUG(
+      rclcpp::get_logger(""),
+      "IndividualWaypointPlanner: No destination set!");
     return true;
   }
 
@@ -68,8 +70,10 @@ bool IndividualWaypointPlanner::hasCompletedDestination() const {
   if (areaWaypoint != nullptr) {
     return areaWaypoint->isWithinArea(agent->getPosition());
   } else {
-    ROS_DEBUG("Unknown Waypoint type: %s",
-              destination->toString().toStdString().c_str());
+    RCLCPP_DEBUG(
+      rclcpp::get_logger(""),
+      "Unknown Waypoint type: %s",
+      destination->toString().toStdString().c_str());
     return true;
   }
 }

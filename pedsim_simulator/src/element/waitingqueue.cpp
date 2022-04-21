@@ -29,11 +29,11 @@
 * \author Sven Wehner <mail@svenwehner.de>
 */
 
-#include <pedsim_simulator/config.h>
-#include <pedsim_simulator/element/agent.h>
-#include <pedsim_simulator/element/waitingqueue.h>
-#include <pedsim_simulator/rng.h>
-#include <pedsim_simulator/scene.h>
+#include <pedsim_simulator/config.hpp>
+#include <pedsim_simulator/element/agent.hpp>
+#include <pedsim_simulator/element/waitingqueue.hpp>
+#include <pedsim_simulator/rng.hpp>
+#include <pedsim_simulator/scene.hpp>
 
 WaitingQueue::WaitingQueue(const QString& nameIn, Ped::Tvector positionIn,
                            Ped::Tangle directionIn)
@@ -139,7 +139,9 @@ const Agent* WaitingQueue::enqueueAgent(Agent* agentIn) {
 bool WaitingQueue::dequeueAgent(Agent* agentIn) {
   // sanity checks
   if (queuedAgents.isEmpty()) {
-    ROS_DEBUG("Cannot dequeue agent from empty waiting queue!");
+    RCLCPP_DEBUG(
+      rclcpp::get_logger(""),
+      "Cannot dequeue agent from empty waiting queue!");
     return false;
   }
 
@@ -150,16 +152,21 @@ bool WaitingQueue::dequeueAgent(Agent* agentIn) {
   if (dequeuedWasFirst) {
     queuedAgents.removeFirst();
     dequeueSuccess = true;
-  } else {
-    ROS_DEBUG("Dequeueing agent from queue (%s), not in front of the queue",
-              agentIn->toString().toStdString().c_str());
+  } else {              
+    RCLCPP_DEBUG(
+      rclcpp::get_logger(""),
+      "Dequeueing agent from queue (%s), not in front of the queue",
+      agentIn->toString().toStdString().c_str());
+
     int removedCount = queuedAgents.removeAll(agentIn);
     dequeueSuccess = (removedCount >= 1);
 
     if (dequeueSuccess == false) {
-      ROS_DEBUG("Agent isn't waiting in queue! (Agent: %s, Queue: %s)",
-                agentIn->toString().toStdString().c_str(),
-                this->toString().toStdString().c_str());
+      RCLCPP_DEBUG(
+        rclcpp::get_logger(""),
+        "Agent isn't waiting in queue! (Agent: %s, Queue: %s)",
+        agentIn->toString().toStdString().c_str(),
+        this->toString().toStdString().c_str());
       return false;
     }
   }

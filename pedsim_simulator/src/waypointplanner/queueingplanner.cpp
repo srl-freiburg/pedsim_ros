@@ -29,11 +29,11 @@
 * \author Sven Wehner <mail@svenwehner.de>
 */
 
-#include <pedsim_simulator/element/agent.h>
-#include <pedsim_simulator/element/queueingwaypoint.h>
-#include <pedsim_simulator/element/waitingqueue.h>
-#include <pedsim_simulator/utilities.h>
-#include <pedsim_simulator/waypointplanner/queueingplanner.h>
+#include <pedsim_simulator/element/agent.hpp>
+#include <pedsim_simulator/element/queueingwaypoint.hpp>
+#include <pedsim_simulator/element/waitingqueue.hpp>
+#include <pedsim_simulator/utilities.hpp>
+#include <pedsim_simulator/waypointplanner/queueingplanner.hpp>
 
 QueueingWaypointPlanner::QueueingWaypointPlanner() {
   // initialize values
@@ -48,9 +48,10 @@ void QueueingWaypointPlanner::onFollowedAgentPositionChanged(double xIn,
                                                              double yIn) {
   // sanity checks
   if (currentWaypoint == nullptr) {
-    ROS_DEBUG(
-        "Queued agent cannot update queueing position, because there's no "
-        "waypoint set!");
+    RCLCPP_DEBUG(
+      rclcpp::get_logger(""),
+      "Queued agent cannot update queueing position, because there's no "
+      "waypoint set!");
     return;
   }
 
@@ -148,11 +149,11 @@ void QueueingWaypointPlanner::setDestination(Waypoint* waypointIn) {
 
   // sanity checks
   if (queue == nullptr) {
-    ROS_ERROR(
-        "Waypoint provided to QueueingWaypointPlanner isn't a waiting queue! "
-        "(%s)",
-        (waypointIn == nullptr) ? "null"
-                                : waypointIn->toString().toStdString().c_str());
+    RCLCPP_ERROR(
+      rclcpp::get_logger(""),
+      "Waypoint provided to QueueingWaypointPlanner isn't a waiting queue! (%s)",
+      (waypointIn == nullptr) ? "null" : 
+                                    waypointIn->toString().toStdString().c_str());
     return;
   }
 
@@ -275,11 +276,15 @@ Waypoint* QueueingWaypointPlanner::getCurrentWaypoint() {
 Waypoint* QueueingWaypointPlanner::getNextWaypoint() {
   // sanity checks
   if (agent == nullptr) {
-    ROS_DEBUG("Cannot determine queueing waypoint without agent!");
+    RCLCPP_DEBUG(
+      rclcpp::get_logger(""),
+      "Cannot determine queueing waypoint without agent!");
     return nullptr;
   }
   if (waitingQueue == nullptr) {
-    ROS_DEBUG("Cannot determine queueing waypoint without waiting queues!");
+    RCLCPP_DEBUG(
+      rclcpp::get_logger(""),
+      "Cannot determine queueing waypoint without waiting queues!");
     return nullptr;
   }
 
@@ -308,7 +313,9 @@ bool QueueingWaypointPlanner::hasCompletedWaypoint() const {
 
 bool QueueingWaypointPlanner::hasCompletedDestination() const {
   if (waitingQueue == nullptr) {
-    ROS_DEBUG("QueueingWaypointPlanner: No waiting queue set!");
+    RCLCPP_DEBUG(
+      rclcpp::get_logger(""),
+      "QueueingWaypointPlanner: No waiting queue set!");
     return true;
   }
 

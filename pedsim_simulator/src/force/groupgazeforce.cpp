@@ -29,11 +29,11 @@
 * \author Sven Wehner <mail@svenwehner.de>
 */
 
-#include <pedsim_simulator/config.h>
-#include <pedsim_simulator/element/agent.h>
-#include <pedsim_simulator/force/groupgazeforce.h>
+#include <pedsim_simulator/config.hpp>
+#include <pedsim_simulator/element/agent.hpp>
+#include <pedsim_simulator/force/groupgazeforce.hpp>
 
-#include <ros/ros.h>
+#include "rclcpp/rclcpp.hpp"
 
 GroupGazeForce::GroupGazeForce(Agent* agentIn) : Force(agentIn) {
   // initialize values
@@ -56,7 +56,9 @@ const AgentGroup& GroupGazeForce::getGroup() const { return *group; }
 Ped::Tvector GroupGazeForce::getForce(Ped::Tvector walkingDirection) {
   // sanity checks
   if (group->isEmpty()) {
-    ROS_DEBUG("Computing GroupGazeForce for empty group!");
+    RCLCPP_DEBUG(
+      rclcpp::get_logger(""),
+      "Computing GroupGazeForce for empty group!");
     return Ped::Tvector();
   }
 

@@ -29,7 +29,7 @@
 * \author Sven Wehner <mail@svenwehner.de>
 */
 
-#include <pedsim_simulator/config.h>
+#include <pedsim_simulator/config.hpp>
 
 // initialize static value
 Config* Config::Config::instance = nullptr;

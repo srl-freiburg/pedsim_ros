@@ -29,13 +29,13 @@
 * \author Sven Wehner <mail@svenwehner.de>
 */
 
-#include <pedsim_simulator/config.h>
-#include <pedsim_simulator/element/agent.h>
-#include <pedsim_simulator/element/obstacle.h>
-#include <pedsim_simulator/force/alongwallforce.h>
-#include <pedsim_simulator/scene.h>
+#include <pedsim_simulator/config.hpp>
+#include <pedsim_simulator/element/agent.hpp>
+#include <pedsim_simulator/element/obstacle.hpp>
+#include <pedsim_simulator/force/alongwallforce.hpp>
+#include <pedsim_simulator/scene.hpp>
 
-#include <ros/ros.h>
+#include "rclcpp/rclcpp.hpp"
 
 AlongWallForce::AlongWallForce(Agent* agentIn) : Force(agentIn) {
   // initialize values
@@ -56,7 +56,9 @@ void AlongWallForce::onForceFactorChanged(double valueIn) {
 
 Ped::Tvector AlongWallForce::getForce(Ped::Tvector walkingDirection) {
   if (agent == nullptr) {
-    ROS_DEBUG("Cannot compute AlongWallForce for null agent!");
+    RCLCPP_DEBUG(
+      rclcpp::get_logger(""),
+      "Cannot compute AlongWallForce for null agent!");
     return Ped::Tvector();
   }
 
@@ -92,8 +94,10 @@ Ped::Tvector AlongWallForce::getForce(Ped::Tvector walkingDirection) {
   Ped::Tangle angle = walkingDirection.angleTo(minDiff);
   if (angle > angleThreshold) return Ped::Tvector();
 
-  ROS_DEBUG("Found Agent %d to be stuck!", agent->getId());
-
+  RCLCPP_DEBUG(
+    rclcpp::get_logger(""),
+    "Found Agent %d to be stuck!",
+    agent->getId());
   // set force
   // → project to find walking direction
   Ped::Tvector obstacleDirection =

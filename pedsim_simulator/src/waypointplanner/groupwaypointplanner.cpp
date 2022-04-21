@@ -29,11 +29,11 @@
 * \author Sven Wehner <mail@svenwehner.de>
 */
 
-#include <pedsim_simulator/element/agent.h>
-#include <pedsim_simulator/element/agentgroup.h>
-#include <pedsim_simulator/element/areawaypoint.h>
-#include <pedsim_simulator/element/waitingqueue.h>
-#include <pedsim_simulator/waypointplanner/groupwaypointplanner.h>
+#include <pedsim_simulator/element/agent.hpp>
+#include <pedsim_simulator/element/agentgroup.hpp>
+#include <pedsim_simulator/element/areawaypoint.hpp>
+#include <pedsim_simulator/element/waitingqueue.hpp>
+#include <pedsim_simulator/waypointplanner/groupwaypointplanner.hpp>
 
 GroupWaypointPlanner::GroupWaypointPlanner() {
   // initialize values
@@ -57,7 +57,9 @@ Waypoint* GroupWaypointPlanner::getCurrentWaypoint() { return destination; }
 
 bool GroupWaypointPlanner::hasCompletedDestination() const {
   if (destination == nullptr) {
-    ROS_DEBUG("GroupWaypointPlanner: No destination set!");
+    RCLCPP_DEBUG(
+      rclcpp::get_logger(""),
+      "GroupWaypointPlanner: No destination set!");
     return true;
   }
 
@@ -67,8 +69,10 @@ bool GroupWaypointPlanner::hasCompletedDestination() const {
   if (areaWaypoint != nullptr) {
     return areaWaypoint->isWithinArea(com);
   } else {
-    ROS_DEBUG("Unknown Waypoint type: %s",
-              destination->toString().toStdString().c_str());
+    RCLCPP_DEBUG(
+      rclcpp::get_logger(""),
+      "Unknown Waypoint type: %s",
+      destination->toString().toStdString().c_str());
     return true;
   }
 }

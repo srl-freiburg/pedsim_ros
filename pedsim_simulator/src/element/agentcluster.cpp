@@ -29,10 +29,10 @@
 * \author Sven Wehner <mail@svenwehner.de>
 */
 
-#include <pedsim_simulator/element/agentcluster.h>
-#include <pedsim_simulator/element/waitingqueue.h>
-#include <pedsim_simulator/rng.h>
-#include <pedsim_simulator/scene.h>
+#include <pedsim_simulator/element/agentcluster.hpp>
+#include <pedsim_simulator/element/waitingqueue.hpp>
+#include <pedsim_simulator/rng.hpp>
+#include <pedsim_simulator/scene.hpp>
 
 AgentCluster::AgentCluster(double xIn, double yIn, int countIn) {
   static int lastID = 0;

@@ -29,11 +29,11 @@
 * \author Sven Wehner <mail@svenwehner.de>
 */
 
-#include <pedsim_simulator/config.h>
-#include <pedsim_simulator/element/agent.h>
-#include <pedsim_simulator/force/groupcoherenceforce.h>
+#include <pedsim_simulator/config.hpp>
+#include <pedsim_simulator/element/agent.hpp>
+#include <pedsim_simulator/force/groupcoherenceforce.hpp>
 
-#include <ros/ros.h>
+#include "rclcpp/rclcpp.hpp"
 
 GroupCoherenceForce::GroupCoherenceForce(Agent* agentIn) : Force(agentIn) {
   // initialize values
@@ -56,7 +56,9 @@ const AgentGroup& GroupCoherenceForce::getGroup() const { return *group; }
 Ped::Tvector GroupCoherenceForce::getForce(Ped::Tvector walkingDirection) {
   // sanity checks
   if (group->isEmpty()) {
-    ROS_DEBUG("Computing GroupCoherenceForce for empty group!");
+    RCLCPP_DEBUG(
+      rclcpp::get_logger(""),
+      "Computing GroupCoherenceForce for empty group!");
     return Ped::Tvector();
   }
 
@@ -98,9 +100,10 @@ Ped::Tvector GroupCoherenceForce::getForce(Ped::Tvector walkingDirection) {
     double softenedFactor = factor * (tanh(distance - maxDistance) + 1) / 2;
     force *= softenedFactor;
 
-    ROS_DEBUG("softenedFactor = %f = %f * (tanh(%f - %f)+1) / 2",
-              softenedFactor, factor, distance, maxDistance);
-
+    RCLCPP_DEBUG(
+      rclcpp::get_logger(""),
+      "softenedFactor = %f = %f * (tanh(%f - %f)+1) / 2",
+      softenedFactor, factor, distance, maxDistance);
     return force;
   }
 }

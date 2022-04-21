@@ -30,6 +30,6 @@
 */
 
 // Includes
-#include <pedsim_simulator/element/scenarioelement.h>
+#include <pedsim_simulator/element/scenarioelement.hpp>
 
 ScenarioElement::ScenarioElement(QObject* parent) : QObject(parent) {}

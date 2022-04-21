@@ -1,12 +1,13 @@
 <?xml version="1.0"?>
-<package format="2">
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
   <name>pedsim_ros</name>
   <version>0.2.0</version>
   <description>
     ROS based pedestrian simulator using social forces model
   </description>
-
   <maintainer email="okal@cs.uni-freiburg.de">Billy Okal</maintainer>
+  <maintainer email="jonatan.gines@urjc.es">Jonatan Gines</maintainer>
 
   <license>BSD</license>
 
@@ -16,9 +17,7 @@
   <author email="omar@email.todo">Omar Islas</author>
   <author email="mail@svenwehner.de">Sven Wehner</author>
 
-  <url type="website">https://github.com/srl-freiburg/pedsim_ros</url>
-
-  <buildtool_depend>catkin</buildtool_depend>
+  <buildtool_depend>ament_cmake</buildtool_depend>
 
   <exec_depend>pedsim</exec_depend>
   <exec_depend>pedsim_msgs</exec_depend>
@@ -29,6 +28,7 @@
   <exec_depend>pedsim_visualizer</exec_depend>
 
   <export>
-    <metapackage/>
+    <build_type>ament_cmake</build_type>
   </export>
+
 </package>

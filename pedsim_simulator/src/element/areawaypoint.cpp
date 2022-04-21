@@ -29,7 +29,7 @@
 * \author Sven Wehner <mail@svenwehner.de>
 */
 
-#include <pedsim_simulator/element/areawaypoint.h>
+#include <pedsim_simulator/element/areawaypoint.hpp>
 
 AreaWaypoint::AreaWaypoint(const QString& nameIn,
                            const Ped::Tvector& positionIn, double rIn)

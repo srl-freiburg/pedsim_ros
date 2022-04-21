@@ -29,18 +29,18 @@
 * \author Sven Wehner <mail@svenwehner.de>
 */
 
-#include <pedsim_simulator/element/agent.h>
-#include <pedsim_simulator/element/agentcluster.h>
-#include <pedsim_simulator/element/areawaypoint.h>
-#include <pedsim_simulator/element/attractionarea.h>
-#include <pedsim_simulator/element/obstacle.h>
-#include <pedsim_simulator/element/waitingqueue.h>
-#include <pedsim_simulator/scenarioreader.h>
+#include <pedsim_simulator/element/agent.hpp>
+#include <pedsim_simulator/element/agentcluster.hpp>
+#include <pedsim_simulator/element/areawaypoint.hpp>
+#include <pedsim_simulator/element/attractionarea.hpp>
+#include <pedsim_simulator/element/obstacle.hpp>
+#include <pedsim_simulator/element/waitingqueue.hpp>
+#include <pedsim_simulator/scenarioreader.hpp>
 
 #include <QFile>
 #include <iostream>
 
-#include <ros/ros.h>
+#include "rclcpp/rclcpp.hpp"
 
 ScenarioReader::ScenarioReader() {
   // initialize values
@@ -49,12 +49,15 @@ ScenarioReader::ScenarioReader() {
 }
 
 bool ScenarioReader::readFromFile(const QString& filename) {
-  ROS_DEBUG("Loading scenario file '%s'.", filename.toStdString().c_str());
+  RCLCPP_DEBUG(
+    rclcpp::get_logger(""),
+    "Loading scenario file '%s'.",
+    filename.toStdString().c_str());
 
   // open file
   QFile file(filename);
   if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-    ROS_DEBUG("Couldn't open scenario file!");
+    RCLCPP_DEBUG(rclcpp::get_logger(""), "Couldn't open scenario file!");
     return false;
   }
 
@@ -69,7 +72,7 @@ bool ScenarioReader::readFromFile(const QString& filename) {
   // check for errors
   if (xmlReader.hasError()) {
     // TODO - fix qstring and std string issues here to show error lines
-    ROS_DEBUG("Error while reading scenario file");
+    RCLCPP_DEBUG(rclcpp::get_logger(""), "Error while reading scenario file");
     return false;
   }
 
@@ -163,7 +166,8 @@ void ScenarioReader::processData() {
       currentSpawnArea = spawn_area;
     } else if (elementName == "addwaypoint") {
       if (currentAgents == nullptr) {
-        ROS_DEBUG("Invalid <addwaypoint> element outside of agent element!");
+        RCLCPP_DEBUG(rclcpp::get_logger(""),
+          "Invalid <addwaypoint> element outside of agent element!");
         return;
       }
 
@@ -176,7 +180,8 @@ void ScenarioReader::processData() {
       }
     } else if (elementName == "addqueue") {
       if (currentAgents == nullptr) {
-        ROS_DEBUG("Invalid <addqueue> element outside of agent element!");
+        RCLCPP_DEBUG(rclcpp::get_logger(""),
+          "Invalid <addqueue> element outside of agent element!");
         return;
       }
 
@@ -185,7 +190,9 @@ void ScenarioReader::processData() {
       currentAgents->addWaitingQueue(SCENE.getWaitingQueueByName(id));
     } else {
       // inform the user about invalid elements
-      ROS_DEBUG("Unknown element: <%s>", elementName.toStdString().c_str());
+      RCLCPP_DEBUG(rclcpp::get_logger(""),
+        "Unknown element: <%s>",
+        elementName.toStdString().c_str());
     }
   } else if (xmlReader.isEndElement()) {
     const QString elementName = xmlReader.name().toString();

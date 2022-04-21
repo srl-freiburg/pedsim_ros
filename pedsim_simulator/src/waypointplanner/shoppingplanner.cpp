@@ -29,13 +29,13 @@
 * \author Sven Wehner <mail@svenwehner.de>
 */
 
-#include <pedsim_simulator/rng.h>
-#include <pedsim_simulator/scene.h>
-#include <pedsim_simulator/waypointplanner/shoppingplanner.h>
+#include <pedsim_simulator/rng.hpp>
+#include <pedsim_simulator/scene.hpp>
+#include <pedsim_simulator/waypointplanner/shoppingplanner.hpp>
 
-#include <pedsim_simulator/element/agent.h>
-#include <pedsim_simulator/element/areawaypoint.h>
-#include <pedsim_simulator/element/attractionarea.h>
+#include <pedsim_simulator/element/agent.hpp>
+#include <pedsim_simulator/element/areawaypoint.hpp>
+#include <pedsim_simulator/element/attractionarea.hpp>
 
 ShoppingPlanner::ShoppingPlanner() {
   // initialize values

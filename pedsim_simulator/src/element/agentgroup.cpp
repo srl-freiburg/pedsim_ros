@@ -29,10 +29,10 @@
 * \author Sven Wehner <mail@svenwehner.de>
 */
 
-#include <pedsim_simulator/config.h>
-#include <pedsim_simulator/element/agent.h>
-#include <pedsim_simulator/element/agentgroup.h>
-#include <pedsim_simulator/rng.h>
+#include <pedsim_simulator/config.hpp>
+#include <pedsim_simulator/element/agent.hpp>
+#include <pedsim_simulator/element/agentgroup.hpp>
+#include <pedsim_simulator/rng.hpp>
 
 AgentGroup::AgentGroup() {
   static int staticid = 2000;
@@ -196,7 +196,9 @@ const QList<Agent*>& AgentGroup::getMembers() const { return members; }
 
 bool AgentGroup::addMember(Agent* agentIn) {
   if (members.contains(agentIn)) {
-    ROS_DEBUG("AgentGroup: Couldn't add Agent twice!");
+    RCLCPP_DEBUG(
+      rclcpp::get_logger(""),
+      "AgentGroup: Couldn't add Agent twice!");
     return false;
   }
 
@@ -296,16 +298,18 @@ void AgentGroup::setRecollect(bool recollectIn) {
   if (recollectIn) {
     // check whether recollecting mode has already been activated
     if (recollecting) return;
-
-    ROS_DEBUG("AgentGroup needs to recollect! (%s)",
-              toString().toStdString().c_str());
+    RCLCPP_DEBUG(
+      rclcpp::get_logger(""),
+      "AgentGroup needs to recollect! (%s)",
+      toString().toStdString().c_str());          
     recollecting = true;
   } else {
     // check whether recollecting mode hasn't been activated
     if (!recollecting) return;
-
-    ROS_DEBUG("AgentGroup finished recollecting! (%s)",
-              toString().toStdString().c_str());
+    RCLCPP_DEBUG(
+      rclcpp::get_logger(""),
+      "AgentGroup finished recollecting! (%s)",
+      toString().toStdString().c_str());
     recollecting = false;
   }
 }
@@ -337,8 +341,12 @@ void AgentGroup::reportSizeDistribution(
     sizeDistributionString += tr(" %1: %2;").arg(groupSize).arg(count);
     groupSize++;
   }
-  ROS_DEBUG("Group Size Distribution: %s",
-            sizeDistributionString.toStdString().c_str());
+
+  RCLCPP_DEBUG(
+    rclcpp::get_logger(""),
+    "Group Size Distribution: %s",
+    sizeDistributionString.toStdString().c_str());
+
 }
 
 QString AgentGroup::toString() const {

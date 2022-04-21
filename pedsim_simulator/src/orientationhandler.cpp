@@ -29,7 +29,7 @@
 * \author Luigi Palmieri <palmieri@cs.uni-freiburg.de>
 */
 
-#include <pedsim_simulator/orientationhandler.h>
+#include <pedsim_simulator/orientationhandler.hpp>
 
 OrientationHandler::OrientationHandler(double theta) {
   // Below is setup stuff

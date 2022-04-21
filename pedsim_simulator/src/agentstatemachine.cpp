@@ -29,20 +29,18 @@
 * \author Sven Wehner <mail@svenwehner.de>
 */
 
-#include <pedsim_simulator/agentstatemachine.h>
-#include <pedsim_simulator/config.h>
-#include <pedsim_simulator/element/agent.h>
-#include <pedsim_simulator/element/agentgroup.h>
-#include <pedsim_simulator/element/attractionarea.h>
-#include <pedsim_simulator/element/waitingqueue.h>
-#include <pedsim_simulator/rng.h>
-#include <pedsim_simulator/scene.h>
-#include <pedsim_simulator/waypointplanner/groupwaypointplanner.h>
-#include <pedsim_simulator/waypointplanner/individualwaypointplanner.h>
-#include <pedsim_simulator/waypointplanner/queueingplanner.h>
-#include <pedsim_simulator/waypointplanner/shoppingplanner.h>
-
-#include <ros/ros.h>
+#include <pedsim_simulator/agentstatemachine.hpp>
+#include <pedsim_simulator/config.hpp>
+#include <pedsim_simulator/element/agent.hpp>
+#include <pedsim_simulator/element/agentgroup.hpp>
+#include <pedsim_simulator/element/attractionarea.hpp>
+#include <pedsim_simulator/element/waitingqueue.hpp>
+#include <pedsim_simulator/rng.hpp>
+#include <pedsim_simulator/scene.hpp>
+#include <pedsim_simulator/waypointplanner/groupwaypointplanner.hpp>
+#include <pedsim_simulator/waypointplanner/individualwaypointplanner.hpp>
+#include <pedsim_simulator/waypointplanner/queueingplanner.hpp>
+#include <pedsim_simulator/waypointplanner/shoppingplanner.hpp>
 
 AgentStateMachine::AgentStateMachine(Agent* agentIn) {
   // initialize values
@@ -151,9 +149,11 @@ void AgentStateMachine::doStateTransition() {
 }
 
 void AgentStateMachine::activateState(AgentState stateIn) {
-  ROS_DEBUG("Agent %d activating state '%s' (time: %f)", agent->getId(),
-            stateToName(stateIn).toStdString().c_str(), SCENE.getTime());
-
+  RCLCPP_DEBUG(
+      rclcpp::get_logger(""),
+      "Agent %d activating state '%s' (time: %f)",
+      agent->getId(),
+      stateToName(stateIn).toStdString().c_str(), SCENE.getTime());
   // de-activate old state
   deactivateState(state);
 

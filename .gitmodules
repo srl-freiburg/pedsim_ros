@@ -1,6 +1,8 @@
-[submodule "2ndparty/spencer_messages"]
-	path = 2ndparty/spencer_messages
-	url = https://github.com/spencer-project/spencer_messages.git
-[submodule "2ndparty/spencer_tracking_rviz_plugin"]
-	path = 2ndparty/spencer_tracking_rviz_plugin
-	url = https://github.com/srl-freiburg/spencer_tracking_rviz_plugin.git
+[submodule "2dparty/spencer_messages"]
+	path = 2dparty/spencer_messages
+	url = https://github.com/jginesclavero/spencer_messages.git
+        branch = eloquent-dev
+[submodule "2dparty/spencer_tracking_rviz_plugin"]
+	path = 2dparty/spencer_tracking_rviz_plugin
+	url = https://github.com/jginesclavero/spencer_tracking_rviz_plugin.git
+        branch = eloquent-dev

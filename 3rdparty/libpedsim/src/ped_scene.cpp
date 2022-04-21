@@ -3,11 +3,11 @@
 // Copyright (c) 2003 - 2012 by Christian Gloor
 //
 
-#include "ped_scene.h"
-#include "ped_agent.h"
-#include "ped_obstacle.h"
-#include "ped_tree.h"
-#include "ped_waypoint.h"
+#include "pedsim/ped_scene.h"
+#include "pedsim/ped_agent.h"
+#include "pedsim/ped_obstacle.h"
+#include "pedsim/ped_tree.h"
+#include "pedsim/ped_waypoint.h"
 
 #include <algorithm>
 #include <cstddef>

@@ -31,24 +31,24 @@
 #include <signal.h>
 #include <QApplication>
 
-#include <pedsim_simulator/simulator.h>
+#include <pedsim_simulator/simulator.hpp>
 
-int main(int argc, char** argv) {
+int main(int argc, char * argv[])
+{
   QApplication app(argc, argv);
+  rclcpp::init(argc, argv);
 
   // initialize resources
-  ros::init(argc, argv, "pedsim_simulator");
-  ros::NodeHandle node("~");
-  Simulator sm(node);
+  auto sm = std::make_shared<Simulator>("pedsim_simulator");
 
   // use default SIGINT handler so CTRL+C works
   signal(SIGINT, SIG_DFL);
 
-  if (sm.initializeSimulation()) {
-    ROS_INFO("node initialized, now running ");
-    sm.runSimulation();
+  if (sm->initializeSimulation()) {
+    RCLCPP_INFO(sm->get_logger(), "node initialized, now running");
+    sm->runSimulation();
   } else {
-    ROS_WARN("Could not initialize simulation, aborting");
+    RCLCPP_WARN(sm->get_logger(), "Could not initialize simulation, aborting");
     return EXIT_FAILURE;
   }
 

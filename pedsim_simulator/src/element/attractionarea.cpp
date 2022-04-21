@@ -29,7 +29,7 @@
 * \author Sven Wehner <mail@svenwehner.de>
 */
 
-#include <pedsim_simulator/element/attractionarea.h>
+#include <pedsim_simulator/element/attractionarea.hpp>
 
 AttractionArea::AttractionArea(const QString& nameIn) : name(nameIn) {
   static int staticid = 1000;

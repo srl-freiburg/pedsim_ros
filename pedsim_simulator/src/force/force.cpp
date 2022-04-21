@@ -29,8 +29,8 @@
 * \author Sven Wehner <mail@svenwehner.de>
 */
 
-#include <pedsim_simulator/element/agent.h>
-#include <pedsim_simulator/force/force.h>
+#include <pedsim_simulator/element/agent.hpp>
+#include <pedsim_simulator/force/force.hpp>
 
 Force::Force(Agent* agentIn) : agent(agentIn), factor(1) {}
 

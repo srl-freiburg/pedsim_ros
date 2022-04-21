@@ -29,12 +29,12 @@
 * \author Sven Wehner <mail@svenwehner.de>
 */
 
-#include <pedsim_simulator/config.h>
-#include <pedsim_simulator/force/randomforce.h>
-#include <pedsim_simulator/rng.h>
-#include <pedsim_simulator/scene.h>
+#include <pedsim_simulator/config.hpp>
+#include <pedsim_simulator/force/randomforce.hpp>
+#include <pedsim_simulator/rng.hpp>
+#include <pedsim_simulator/scene.hpp>
 
-#include <ros/ros.h>
+#include "rclcpp/rclcpp.hpp"
 
 RandomForce::RandomForce(Agent* agentIn) : Force(agentIn) {
   // initialize values
@@ -52,7 +52,10 @@ void RandomForce::onForceFactorChanged(double valueIn) { setFactor(valueIn); }
 void RandomForce::setFadingTime(double durationIn) {
   // sanity checks
   if (durationIn < 0) {
-    ROS_DEBUG("Cannot set fading time to invalid value: %f", durationIn);
+    RCLCPP_DEBUG(
+      rclcpp::get_logger(""),
+      "Cannot set fading time to invalid value: %f",
+      durationIn);
     return;
   }
 

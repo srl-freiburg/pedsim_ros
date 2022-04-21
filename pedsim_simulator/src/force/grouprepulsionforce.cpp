@@ -29,11 +29,11 @@
 * \author Sven Wehner <mail@svenwehner.de>
 */
 
-#include <pedsim_simulator/config.h>
-#include <pedsim_simulator/element/agent.h>
-#include <pedsim_simulator/force/grouprepulsionforce.h>
+#include <pedsim_simulator/config.hpp>
+#include <pedsim_simulator/element/agent.hpp>
+#include <pedsim_simulator/force/grouprepulsionforce.hpp>
 
-#include <ros/ros.h>
+#include "rclcpp/rclcpp.hpp"
 
 GroupRepulsionForce::GroupRepulsionForce(Agent* agentIn) : Force(agentIn) {
   // initialize values
@@ -56,7 +56,9 @@ const AgentGroup& GroupRepulsionForce::getGroup() const { return *group; }
 Ped::Tvector GroupRepulsionForce::getForce(Ped::Tvector walkingDirection) {
   // sanity checks
   if (group->isEmpty()) {
-    ROS_DEBUG("Computing GroupRepulsionForce for empty group!");
+    RCLCPP_DEBUG(
+      rclcpp::get_logger(""),
+      "Computing GroupRepulsionForce for empty group!");
     return Ped::Tvector();
   }
 

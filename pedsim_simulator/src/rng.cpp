@@ -29,7 +29,7 @@
 * \author Sven Wehner <mail@svenwehner.de>
 */
 
-#include <pedsim_simulator/rng.h>
+#include <pedsim_simulator/rng.hpp>
 
 // Initialize Static Variables
 RandomNumberGenerator* RandomNumberGenerator::instance;

@@ -29,24 +29,24 @@
 * \author Sven Wehner <mail@svenwehner.de>
 */
 
-#include <pedsim_simulator/config.h>
-#include <pedsim_simulator/scene.h>
+#include <pedsim_simulator/config.hpp>
+#include <pedsim_simulator/scene.hpp>
 
 #include <pedsim/ped_tree.h>
-#include <pedsim_simulator/element/agent.h>
-#include <pedsim_simulator/element/agentcluster.h>
-#include <pedsim_simulator/element/areawaypoint.h>
-#include <pedsim_simulator/element/attractionarea.h>
-#include <pedsim_simulator/element/obstacle.h>
-#include <pedsim_simulator/element/waitingqueue.h>
-#include <pedsim_simulator/force/alongwallforce.h>
-#include <pedsim_simulator/force/groupcoherenceforce.h>
-#include <pedsim_simulator/force/groupgazeforce.h>
-#include <pedsim_simulator/force/grouprepulsionforce.h>
-#include <pedsim_simulator/force/randomforce.h>
+#include <pedsim_simulator/element/agent.hpp>
+#include <pedsim_simulator/element/agentcluster.hpp>
+#include <pedsim_simulator/element/areawaypoint.hpp>
+#include <pedsim_simulator/element/attractionarea.hpp>
+#include <pedsim_simulator/element/obstacle.hpp>
+#include <pedsim_simulator/element/waitingqueue.hpp>
+#include <pedsim_simulator/force/alongwallforce.hpp>
+#include <pedsim_simulator/force/groupcoherenceforce.hpp>
+#include <pedsim_simulator/force/groupgazeforce.hpp>
+#include <pedsim_simulator/force/grouprepulsionforce.hpp>
+#include <pedsim_simulator/force/randomforce.hpp>
 #include <QGraphicsScene>
 
-#include <ros/ros.h>
+#include "rclcpp/rclcpp.hpp"
 
 // initialize static value
 Scene* Scene::Scene::instance = nullptr;
@@ -348,7 +348,9 @@ void Scene::addAgentCluster(AgentCluster* clusterIn) {
 void Scene::addWaitingQueue(WaitingQueue* queueIn) {
   // sanity checks
   if (queueIn == nullptr) {
-    ROS_DEBUG("Cannot add null to the list of waiting queues!");
+    RCLCPP_DEBUG(
+      rclcpp::get_logger(""),
+      "Cannot add null to the list of waiting queues!");
     return;
   }
 
@@ -362,7 +364,9 @@ void Scene::addWaitingQueue(WaitingQueue* queueIn) {
 void Scene::addAttraction(AttractionArea* attractionIn) {
   // sanity checks
   if (attractionIn == nullptr) {
-    ROS_DEBUG("Cannot add null to the list of attractions!");
+    RCLCPP_DEBUG(
+      rclcpp::get_logger(""),
+      "Cannot add null to the list of attractions!");
     return;
   }
 
@@ -448,7 +452,9 @@ bool Scene::removeAgentCluster(AgentCluster* clusterIn) {
 bool Scene::removeWaitingQueue(WaitingQueue* queueIn) {
   // sanity checks
   if (queueIn == nullptr) {
-    ROS_DEBUG("Cannot remove null from the list of waiting queues!");
+    RCLCPP_DEBUG(
+      rclcpp::get_logger(""),
+      "Cannot remove null from the list of waiting queues!");
     return false;
   }
 
@@ -471,7 +477,9 @@ bool Scene::removeWaitingQueue(WaitingQueue* queueIn) {
 bool Scene::removeAttraction(AttractionArea* attractionInIn) {
   // sanity checks
   if (attractionInIn == nullptr) {
-    ROS_DEBUG("Cannot remove null from the list of attractions!");
+    RCLCPP_DEBUG(
+      rclcpp::get_logger(""),
+      "Cannot remove null from the list of attractions!");
     return false;
   }
 
@@ -553,7 +561,9 @@ void Scene::moveAllAgents() {
                           agent->getx(), agent->gety());
     if (d < agent_next_wp->getRadius()) {
       // At sink waypoint.
-      ROS_DEBUG_STREAM("Killing agent: " << agent->getId());
+      RCLCPP_DEBUG_STREAM(
+        rclcpp::get_logger(""),
+        "Killing agent: " << agent->getId());
       removeAgent(agent);
     }
   }

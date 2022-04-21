@@ -28,14 +28,13 @@
 * \author Billy Okal <okal@cs.uni-freiburg.de>
 */
 
-#include <pedsim_visualizer/sim_visualizer.h>
+#include <pedsim_visualizer/sim_visualizer.hpp>
 
-int main(int argc, char** argv) {
-  ros::init(argc, argv, "pedsim_visualizer");
-  ros::NodeHandle node("~");
-
-  pedsim::SimVisualizer viz(node);
-  viz.run();
-
+int main(int argc, char * argv[]) {
+  rclcpp::init(argc, argv);
+  auto viz = std::make_shared<pedsim::SimVisualizer>("pedsim_visualizer_node");
+  viz->run();
   return 0;
 }
+
+

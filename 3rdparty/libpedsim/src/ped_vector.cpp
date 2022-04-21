@@ -3,7 +3,7 @@
 // Copyright (c) 2003 - 2012 by Christian Gloor
 //
 
-#include "ped_vector.h"
+#include "pedsim/ped_vector.h"
 
 /// Default constructor, which makes sure that all the values are set to 0.
 Ped::Tvector::Tvector() : x(0), y(0), z(0) {}

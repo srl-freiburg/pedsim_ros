@@ -1,7 +1,9 @@
-#include <geometry_msgs/Twist.h>
-#include <ros/ros.h>
+#include "rclcpp/rclcpp.hpp"
 
-#include <tf/transform_broadcaster.h>
+#include <geometry_msgs/msgs/twist.hpp>
+#include <tf2_geometry_msgs/tf2_geometry_msgs.h>
+#include "tf2_ros/transform_broadcaster.h"
+#include "tf2_ros/transform_listener.h"
 
 #include <boost/thread.hpp>
 #include <boost/thread/mutex.hpp>
@@ -10,7 +12,7 @@ double g_updateRate, g_simulationFactor;
 std::string g_worldFrame, g_robotFrame;
 geometry_msgs::Twist g_currentTwist;
 tf::Transform g_currentPose;
-boost::shared_ptr<tf::TransformBroadcaster> g_transformBroadcaster;
+std::shared_ptr<tf2_ros::TransformBroadcaster> g_transformBroadcaster;  
 boost::mutex mutex;
 
 /// Simulates robot motion of a differential-drive robot with translational and
@@ -61,9 +63,7 @@ void onTwistReceived(const geometry_msgs::Twist::ConstPtr& twist) {
 }
 
 int main(int argc, char** argv) {
-  ros::init(argc, argv, "simulate_diff_drive_robot");
-  ros::NodeHandle nodeHandle("");
-  ros::NodeHandle privateHandle("~");
+  auto private_node_ = rclcpp::Node::make_shared("simulate_diff_drive_robot");
 
   // Process parameters
   privateHandle.param<std::string>("world_frame", g_worldFrame, "odom");
@@ -84,7 +84,7 @@ int main(int argc, char** argv) {
   g_currentPose.setRotation(tf::createQuaternionFromRPY(0, 0, initialTheta));
 
   // Create ROS subscriber and TF broadcaster
-  g_transformBroadcaster.reset(new tf::TransformBroadcaster());
+  g_transformBroadcaster = std::make_shared<tf2_ros::TransformBroadcaster>(this);
   ros::Subscriber twistSubscriber =
       nodeHandle.subscribe<geometry_msgs::Twist>("cmd_vel", 3, onTwistReceived);
 
