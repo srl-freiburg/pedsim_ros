@@ -80,8 +80,8 @@ def generate_launch_description():
 
         Node(
             package='pedsim_simulator',
-            node_executable='pedsim_simulator',
-            node_name='pedsim_simulator',
+            executable='pedsim_simulator',
+            name='pedsim_simulator',
             output='screen',
             parameters=[{'scene_file': scene_file},
                         {'default_queue_size': default_queue_size},
@@ -92,12 +92,12 @@ def generate_launch_description():
                         {'force_factor_social': force_factor_social},
                         {'enable_groups': enable_groups},
                         {'simulation_factor': simulation_factor},
-                        {'update_rate': update_rate}]),
-        
+                        {'update_rate': update_rate}],
+            prefix=['xterm -e gdb -ex run --args']),        
         Node(
             package='pedsim_tf2',
-            node_executable='pedsim_tf2_node',
-            node_name='pedsim_tf2_node',
+            executable='pedsim_tf2_node',
+            name='pedsim_tf2_node',
             output='screen'),
         
 

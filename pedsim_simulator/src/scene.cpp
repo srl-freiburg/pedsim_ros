@@ -93,17 +93,17 @@ void Scene::clear() {
   obstacles.clear();
 
   // remove all agents groups
-  foreach (AttractionArea* attraction, attractions)
+  for (AttractionArea* attraction : attractions)
     delete attraction;
   attractions.clear();
 
   // remove all agents clusters
-  foreach (AgentCluster* agentCluster, agentClusters)
+  for (AgentCluster* agentCluster : agentClusters)
     delete agentCluster;
   agentClusters.clear();
 
   // remove all agents groups
-  foreach (AgentGroup* group, agentGroups)
+  for (AgentGroup* group : agentGroups)
     delete group;
   agentGroups.clear();
 
@@ -119,7 +119,7 @@ QRectF Scene::itemsBoundingRect() const {
 
   // iterate over all elements
   // → agents
-  foreach (Agent* agent, agents) {
+  for (Agent* agent : agents) {
     if (!boundingRect.contains(agent->getVisiblePosition())) {
       // resize rectangle to include point
       boundingRect |=
@@ -127,7 +127,7 @@ QRectF Scene::itemsBoundingRect() const {
     }
   }
   // → obstacles
-  foreach (Obstacle* obstacle, obstacles) {
+  for (Obstacle* obstacle : obstacles) {
     QPointF startPoint = obstacle->getVisiblePosition();
     QPointF endPoint(obstacle->getbx(), obstacle->getby());
 
@@ -138,7 +138,7 @@ QRectF Scene::itemsBoundingRect() const {
     }
   }
   // → waypoints
-  foreach (Waypoint* waypoint, waypoints) {
+  for (Waypoint* waypoint : waypoints) {
     AreaWaypoint* areaWaypoint = dynamic_cast<AreaWaypoint*>(waypoint);
     WaitingQueue* waitingQueue = dynamic_cast<WaitingQueue*>(waypoint);
 
@@ -162,7 +162,7 @@ QRectF Scene::itemsBoundingRect() const {
     }
   }
   // → agent clusters
-  foreach (AgentCluster* agentCluster, agentClusters) {
+  for (AgentCluster* agentCluster : agentClusters) {
     if (!boundingRect.contains(agentCluster->getVisiblePosition())) {
       // resize rectangle to include point
       boundingRect |= QRectF(
@@ -180,7 +180,7 @@ QList<AgentGroup*> Scene::getGroups() { return agentGroups; }
 QMap<QString, AttractionArea*> Scene::getAttractions() { return attractions; }
 
 Agent* Scene::getAgentById(int idIn) const {
-  foreach (Agent* currentAgent, agents) {
+  for (Agent* currentAgent : agents) {
     if (idIn == currentAgent->getId()) return currentAgent;
   }
 
@@ -198,7 +198,7 @@ const QMap<QString, AttractionArea*>& Scene::getAttractions() const {
 }
 
 Waypoint* Scene::getWaypointById(int idIn) const {
-  foreach (Waypoint* currentWaypoint, waypoints) {
+  for (Waypoint* currentWaypoint : waypoints) {
     if (idIn == currentWaypoint->getId()) return currentWaypoint;
   }
 
@@ -228,7 +228,7 @@ AttractionArea* Scene::getClosestAttraction(const Ped::Tvector& positionIn,
   AttractionArea* minArg = nullptr;
 
   // find the attraction with minimal distance
-  foreach (AttractionArea* attraction, attractions) {
+  for (AttractionArea* attraction : attractions) {
     double distance = (attraction->getPosition() - positionIn).length();
     if (distance < minDistance) {
       minDistance = distance;
@@ -247,24 +247,25 @@ double Scene::getTime() const { return sceneTime; }
 bool Scene::hasStarted() const { return (sceneTime == 0); }
 
 void Scene::dissolveClusters() {
-  foreach (AgentCluster* cluster, agentClusters) {
+  for (AgentCluster* cluster : agentClusters) {
     QList<Agent*> newAgents = cluster->dissolve();
 
     // divide agents into groups
     QList<AgentGroup*> newGroups = AgentGroup::divideAgents(newAgents);
 
     // apply group forces
-    foreach (AgentGroup* currentGroup, newGroups) {
+    for (AgentGroup* currentGroup : newGroups) {
       if (currentGroup->memberCount() == 1) {
         // we don't need one agent groups
         delete currentGroup;
+        continue;
       } else if (currentGroup->memberCount() > 1) {
         // keep track of groups
         agentGroups.append(currentGroup);
       }
 
       // add group's agents to the scene
-      foreach (Agent* currentAgent, currentGroup->getMembers()) {
+      for (Agent* currentAgent : currentGroup->getMembers()) {
         currentAgent->setWaypoints(cluster->getWaypoints());
 
         if (currentGroup->memberCount() > 1) {
@@ -383,7 +384,7 @@ bool Scene::removeAgent(Agent* agent) {
 
   // remove agent from all groups
   QList<AgentGroup*> groupsToRemove;
-  foreach (AgentGroup* currentGroup, agentGroups) {
+  for (AgentGroup* currentGroup : agentGroups) {
     currentGroup->removeMember(agent);
 
     // check whether the group is empty and can be removed
@@ -393,7 +394,7 @@ bool Scene::removeAgent(Agent* agent) {
   // remove unnecessary groups
   // note: use QObject::deleteLater() to keep the group valid till after the
   // agent's destructor
-  foreach (AgentGroup* currentGroup, groupsToRemove) {
+  for (AgentGroup* currentGroup : groupsToRemove) {
     agentGroups.removeAll(currentGroup);
     currentGroup->deleteLater();
   }
@@ -422,7 +423,7 @@ bool Scene::removeWaypoint(Waypoint* waypoint) {
 
   // remove waypoint from all agent clusters
   // (it is also removed from all agents in Ped::Tscene::removeWaypoint())
-  foreach (AgentCluster* cluster, agentClusters)
+  for (AgentCluster* cluster : agentClusters)
     cluster->removeWaypoint(waypoint);
 
   // inform users

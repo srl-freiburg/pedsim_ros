@@ -29,7 +29,7 @@
   <depend>std_srvs</depend>
   <depend>geometry_msgs</depend>
   <depend>nav_msgs</depend>
-  <depend>tf</depend>
+  <depend>tf2</depend>
 
   <export>
     <build_type>ament_cmake</build_type>

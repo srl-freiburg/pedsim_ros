@@ -36,7 +36,7 @@ def generate_launch_description():
 
     declare_scene_file_cmd = DeclareLaunchArgument(
         'scene_file', 
-        default_value=os.path.join(simulator_dir, 'scenarios', 'turtlebot3_house.xml'),
+        default_value=os.path.join(simulator_dir, 'scenarios', 'scene1.xml'),
         description='')
 
     declare_simulation_factor_cmd = DeclareLaunchArgument(

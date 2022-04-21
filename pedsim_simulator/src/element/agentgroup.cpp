@@ -68,7 +68,7 @@ AgentGroup::AgentGroup(const QList<Agent*>& agentsIn) {
   updateCenterOfMass();
 
   // connect signals
-  foreach (Agent* agent, members)
+  for (Agent* agent : members)
     connect(agent, SIGNAL(positionChanged(double, double)), this,
             SLOT(onPositionChanged(double, double)));
 }
@@ -157,7 +157,7 @@ QList<AgentGroup*> AgentGroup::divideAgents(const QList<Agent*>& agentsIn) {
 
         // add other agents to group
         QList<QPair<Agent*, double> > distanceList;
-        foreach (Agent* potentialMember, unassignedAgents) {
+        for (Agent* potentialMember : unassignedAgents) {
           Ped::Tvector position = potentialMember->getPosition();
           double distance = (leaderPosition - position).length();
 
@@ -177,7 +177,7 @@ QList<AgentGroup*> AgentGroup::divideAgents(const QList<Agent*>& agentsIn) {
         }
 
         // add neighbors to the group
-        foreach (const auto& member, distanceList) {
+        for (const auto& member : distanceList) {
           newGroup->addMember(member.first);
 
           // don't consider the group member as part of another group
@@ -249,7 +249,7 @@ bool AgentGroup::setMembers(const QList<Agent*>& agentsIn) {
   comUpdateTimer.start();
 
   // connect signals
-  foreach (Agent* agent, members)
+  for (Agent* agent : members)
     connect(agent, SIGNAL(positionChanged(double, double)), this,
             SLOT(onPositionChanged(double, double)));
 
@@ -280,7 +280,7 @@ Ped::Tvector AgentGroup::updateCenterOfMass() {
 
   // compute center of mass
   Ped::Tvector com;
-  foreach (const Agent* member, members) { com += member->getPosition(); }
+  for (const Agent* member : members) { com += member->getPosition(); }
 
   int groupSize = members.size();
   com /= groupSize;
@@ -325,7 +325,7 @@ double AgentGroup::getMaxDistance() {
 void AgentGroup::updateMaxDistance() {
   Ped::Tvector com = getCenterOfMass();
   double maxDistance = 0;
-  foreach (Agent* agent, members) {
+  for (Agent* agent : members) {
     double distance = (com - agent->getPosition()).length();
     if (distance > maxDistance) maxDistance = distance;
   }
@@ -335,24 +335,24 @@ void AgentGroup::updateMaxDistance() {
 
 void AgentGroup::reportSizeDistribution(
     const QVector<int>& sizeDistributionIn) {
-  QString sizeDistributionString;
-  int groupSize = 1;
-  foreach (int count, sizeDistributionIn) {
-    sizeDistributionString += tr(" %1: %2;").arg(groupSize).arg(count);
-    groupSize++;
-  }
+  // QString sizeDistributionString;
+  // int groupSize = 1;
+  // for (int count : sizeDistributionIn) {
+  //   RCLCPP_DEBUG(rclcpp::get_logger(""), "count: %ld", count);
+  //   sizeDistributionString += tr(" %1: %2;").arg(groupSize, count);
+  //   groupSize++;
+  // }
 
-  RCLCPP_DEBUG(
-    rclcpp::get_logger(""),
-    "Group Size Distribution: %s",
-    sizeDistributionString.toStdString().c_str());
-
+  // RCLCPP_DEBUG(
+  //   rclcpp::get_logger(""),
+  //   "Group Size Distribution: %s",
+  //   sizeDistributionString.toStdString().c_str());
 }
 
 QString AgentGroup::toString() const {
   QString agentString;
   bool firstMember = true;
-  foreach (Agent* agent, members) {
+  for (Agent* agent : members) {
     if (!firstMember) agentString += ", ";
     agentString += agent->toString();
     firstMember = false;

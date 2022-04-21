@@ -268,8 +268,6 @@ void Simulator::updateRobotPositionFromTF()
     if (!std::isfinite(vx)) vx = 0;
     if (!std::isfinite(vy)) vy = 0;
 
-    ROS_DEBUG_STREAM("rx, ry: " << robot_->getx() << ", " << robot_->gety() << " vs: " << x << ", " << y);
-
     robot_->setX(x);
     robot_->setY(y);
     robot_->setvx(vx);

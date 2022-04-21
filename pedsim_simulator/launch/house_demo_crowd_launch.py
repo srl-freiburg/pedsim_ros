@@ -52,11 +52,11 @@ def generate_launch_description():
                           'simulation_factor': simulation_factor}.items()
     )    
 
-    pedsim_visualizer_cmd = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            os.path.join(get_package_share_directory('pedsim_visualizer'), 'launch', 'visualizer_launch.py')),
-        launch_arguments={'frame_id': frame_id}.items()
-    )  
+    #pedsim_visualizer_cmd = IncludeLaunchDescription(
+    #    PythonLaunchDescriptionSource(
+    #        os.path.join(get_package_share_directory('pedsim_visualizer'), 'launch', 'visualizer_launch.py')),
+    #    launch_arguments={'frame_id': frame_id}.items()
+    #)  
     # Create the launch description and populate
     ld = LaunchDescription()
 
@@ -66,7 +66,7 @@ def generate_launch_description():
     ld.add_action(frame_id_cmd)
 
     # Add any conditioned actions
-    ld.add_action(pedsim_visualizer_cmd)
+    # ld.add_action(pedsim_visualizer_cmd)
     ld.add_action(pedsim_simulator_cmd)
 
     return ld
