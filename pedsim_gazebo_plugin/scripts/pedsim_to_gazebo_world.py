@@ -5,8 +5,8 @@ Created on Mon Dec  2 17:03:34 2019
 @author: mahmoud
 """
 import math
+import xml.etree.ElementTree as ET
 from rospkg import RosPack
-import xml.etree.ElementTree as ET 
 
 global gzb_world
 def generate_pose(x1, y1, x2, y2):

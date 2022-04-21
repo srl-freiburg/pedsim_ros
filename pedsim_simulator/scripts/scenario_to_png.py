@@ -1,5 +1,7 @@
 #!/usr/bin/env python
-import png, rospkg, numpy
+import numpy
+import png
+import rospkg
 import xml.etree.ElementTree as xml
 
 filename = "social_contexts.xml"

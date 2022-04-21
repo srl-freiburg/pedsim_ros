@@ -6,12 +6,14 @@
 """
 
 import rclpy
+from ament_index_python.packages import get_package_share_directory
+from gazebo_msgs.srv import SpawnEntity
+from geometry_msgs.msg import Pose
+from pedsim_msgs.msg import AgentStates
 from rclpy.node import Node
 from rclpy.qos import qos_profile_sensor_data
-from gazebo_msgs.srv import SpawnEntity
-from ament_index_python.packages import get_package_share_directory
-from pedsim_msgs.msg  import AgentStates
-from geometry_msgs.msg import Pose, Point, Quaternion
+
+
 class AgentSpawner(Node):
 
     def __init__(self):
