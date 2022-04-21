@@ -1,4 +1,3 @@
-
 # Copyright (c) 2020 Intelligent Robotics Lab
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,22 +20,22 @@ from launch_ros.actions import Node
 
 def generate_launch_description():
     # Get the launch directory    
-    
+
     # Set env var to print messages to stdout immediately
     SetEnvironmentVariable('RCUTILS_CONSOLE_STDOUT_LINE_BUFFERED', '1')
     frame_id = LaunchConfiguration('frame_id')
     walls_resolution = LaunchConfiguration('walls_resolution')
 
     frame_id_cmd = DeclareLaunchArgument(
-        'frame_id', default_value = 'odom', description='Reference frame')
-    
+        'frame_id', default_value='map', description='Reference frame')
+
     walls_resolution_cmd = DeclareLaunchArgument(
-        'walls_resolution', default_value = '0.2', description='Obstacles walls resolution')
+        'walls_resolution', default_value='0.2', description='Obstacles walls resolution')
 
     visualizer_cmd = Node(
         package='pedsim_visualizer',
-        node_executable='pedsim_visualizer_node',
-        node_name='pedsim_visualizer_node',
+        executable='pedsim_visualizer_node',
+        name='pedsim_visualizer_node',
         output='screen',
         parameters=[{
             "frame_id": frame_id,

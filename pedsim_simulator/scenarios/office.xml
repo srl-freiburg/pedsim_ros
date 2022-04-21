@@ -1,0 +1,175 @@
+<welcome>
+
+  <!-- waypoints - define before the agents! -->
+  <waypoint id="E1" x="-5" y="27.5" r="2" />
+  <waypoint id="E2" x="40" y="27.5" r="2" />
+  <waypoint id="E3" x="30" y="-5" r="2" />
+
+  <waypoint id="F1" x="11" y="22" r="2" />
+  <waypoint id="F2" x="15" y="20" r="2" />
+
+  <waypoint id="T1" x="5" y="5" r="2" />
+  <waypoint id="T2" x="5" y="20" r="2" />
+
+  <waypoint id="C10" x="5" y="27.5" r="2" />
+  <waypoint id="C11" x="15" y="27.5" r="2" />
+  <waypoint id="C12" x="25" y="27.5" r="2" />
+  <waypoint id="C13" x="30" y="27.5" r="2" />
+
+  <waypoint id="C2" x="15" y="12.5" r="2" />
+  <waypoint id="C3" x="5" y="12.5" r="2" />
+
+  <waypoint id="SC1" x="30" y="12.5" r="2" />
+  <waypoint id="SC2" x="22.5" y="20" r="2" />
+  <waypoint id="SC3" x="30" y="20" r="2" />
+
+  <waypoint id="A1" x="5" y="35" r="2" />
+  <waypoint id="A2" x="25" y="35" r="2" />
+
+  <waypoint id="O1" x="40" y="-5" r="2" />
+  <waypoint id="O2" x="-5" y="-5" r="2" />
+  <waypoint id="O3" x="-5" y="35" r="2" />
+  <waypoint id="O4" x="-5" y="5" r="2" />
+  <waypoint id="O5" x="-5" y="20" r="2" />
+
+
+  <!-- agents -->
+  <!-- Teacher/researcher role -->
+  <!-- Enters building, goes to office via fika room. Then goes to lecture hall. -->
+  <agent x="-5" y="27.5" n="1" dx="1.5" dy="1.0">
+	 <addwaypoint id="E1" />
+	 <addwaypoint id="C10" />
+ 	 <addwaypoint id="C11" />
+   <addwaypoint id="F2" />
+
+   <addwaypoint id="C2" />
+   <addwaypoint id="C3" />
+   <addwaypoint id="T2" />
+   <addwaypoint id="O5" />
+
+   <addwaypoint id="T2" />
+   <addwaypoint id="C3" />
+   <addwaypoint id="C2" />
+   <addwaypoint id="SC1" />
+   <addwaypoint id="SC3" />
+   <addwaypoint id="C13" />
+
+   <addwaypoint id="E2" />
+   <addwaypoint id="C13" />
+   <addwaypoint id="C10" />
+  </agent>
+
+  <!-- Admin role -->
+  <!-- Enters building, goes to office via fika room. Then goes to lecture hall. -->
+  <agent x="-5" y="27.5" n="3" dx="1.5" dy="1.0">
+	 <addwaypoint id="E1" />
+	 <addwaypoint id="C10" />
+ 	 <addwaypoint id="A1" />
+   <addwaypoint id="A2" />
+
+   <addwaypoint id="C12" />
+   <addwaypoint id="C13" />
+   <addwaypoint id="SC3" />
+   <addwaypoint id="SC1" />
+
+   <addwaypoint id="E3" />
+   <addwaypoint id="SC1" />
+   <addwaypoint id="C2" />
+   <addwaypoint id="F2" />
+   <addwaypoint id="C11" />
+   <addwaypoint id="C12" />
+
+   <addwaypoint id="A2" />
+   <addwaypoint id="A1" />
+   <addwaypoint id="O3" />
+  </agent>
+
+  <agent x="30" y="-5" n="4" dx="1.0" dy="1.0">
+    <addwaypoint id="E3" />
+    <addwaypoint id="SC1" />
+    <addwaypoint id="SC3" />
+    <addwaypoint id="C13" />
+    <addwaypoint id="E2" />
+    <addwaypoint id="O1" />
+    <addwaypoint id="O2" />
+    <addwaypoint id="O5" />
+    <addwaypoint id="T2" />
+    <addwaypoint id="C3" />
+    <addwaypoint id="C2" />
+    <addwaypoint id="SC1" />
+  </agent>
+
+  <agent x="30" y="-5" n="3" dx="1.0" dy="1.0">
+    <addwaypoint id="E3" />
+    <addwaypoint id="SC1" />
+    <addwaypoint id="C2" />
+    <addwaypoint id="C3" />
+    <addwaypoint id="T2" />
+    <addwaypoint id="O5" />
+    <addwaypoint id="O2" />
+    <addwaypoint id="O1" />
+    <addwaypoint id="E2" />
+    <addwaypoint id="C13" />
+    <addwaypoint id="SC3" />
+    <addwaypoint id="SC1" />
+  </agent>
+
+  <agent x="30" y="-5" n="2" dx="1.0" dy="1.0">
+    <addwaypoint id="E3" />
+    <addwaypoint id="SC1" />
+    <addwaypoint id="SC3" />
+    <addwaypoint id="C13" />
+    <addwaypoint id="C10" />
+    <addwaypoint id="A1" />
+    <addwaypoint id="C10" />
+    <addwaypoint id="C13" />
+    <addwaypoint id="E2" />
+    <addwaypoint id="C13" />
+    <addwaypoint id="SC3" />
+    <addwaypoint id="SC1" />
+    <addwaypoint id="C2" />
+    <addwaypoint id="C3" />
+    <addwaypoint id="T1" />
+    <addwaypoint id="O4" />
+    <addwaypoint id="O2" />
+  </agent>
+
+
+  <!-- walls -->
+  <obstacle x1="0" y1="10" x2="3" y2="10"/>
+  <obstacle x1="0" y1="15" x2="3" y2="15"/>
+                                            
+  <obstacle x1="7" y1="10" x2="25" y2="10"/>
+  <obstacle x1="25" y1="0" x2="25" y2="10"/>
+  <obstacle x1="7" y1="15" x2="10" y2="15"/>
+  <obstacle x1="20" y1="15" x2="25" y2="15"/>
+                                            
+  <obstacle x1="10" y1="15" x2="10" y2="25"/>
+  <obstacle x1="20" y1="15" x2="20" y2="25"/>
+  <obstacle x1="10" y1="15" x2="12" y2="15"/>
+  <obstacle x1="18" y1="15" x2="20" y2="15"/>
+  <obstacle x1="18" y1="25" x2="27" y2="25"/>
+  <obstacle x1="33" y1="25" x2="35" y2="25"/>
+                                            
+  <obstacle x1="0" y1="25" x2="12" y2="25"/>
+  <obstacle x1="0" y1="30" x2="3" y2="30"/>
+  <obstacle x1="7" y1="30" x2="23" y2="30"/>
+  <obstacle x1="27" y1="30" x2="35" y2="30"/>
+
+  <obstacle x1="25" y1="0" x2="27" y2="0"/>
+  <obstacle x1="33" y1="0" x2="35" y2="0"/>
+  <obstacle x1="35" y1="0" x2="35" y2="25"/>
+
+  <!-- Outside walls -->
+  <obstacle x1="0" y1="0" x2="25" y2="0"/>
+  <obstacle x1="0" y1="0" x2="0" y2="3"/>
+  <obstacle x1="0" y1="7" x2="0" y2="18"/>
+  <obstacle x1="0" y1="22" x2="0" y2="25"/>
+
+  <!-- Big wall -->
+  <obstacle x1="-10" y1="-10" x2="-10" y2="40"/>
+  <obstacle x1="-10" y1="-10" x2="45" y2="-10"/>
+  <obstacle x1="-10" y1="40" x2="45" y2="40"/>
+  <obstacle x1="45" y1="-10" x2="45" y2="40"/>
+
+</welcome>

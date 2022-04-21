@@ -92,8 +92,7 @@ def generate_launch_description():
                         {'force_factor_social': force_factor_social},
                         {'enable_groups': enable_groups},
                         {'simulation_factor': simulation_factor},
-                        {'update_rate': update_rate}],
-            prefix=['xterm -e gdb -ex run --args']),        
+                        {'update_rate': update_rate}]),
         Node(
             package='pedsim_tf2',
             executable='pedsim_tf2_node',

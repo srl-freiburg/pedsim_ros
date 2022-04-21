@@ -243,7 +243,8 @@ void Simulator::updateRobotPositionFromTF() {
       tf_msg = tf_buffer_->lookupTransform("odom", "base_footprint",
                                            tf2::TimePointZero);
     } catch (tf2::TransformException &e) {
-      RCLCPP_WARN(get_logger(), "%s", e.what());
+      auto &clk = *this->get_clock();
+      RCLCPP_WARN_THROTTLE(get_logger(), clk, 5000, "%s", e.what());
       return;
     }
     tf2::Transform tfTransform;

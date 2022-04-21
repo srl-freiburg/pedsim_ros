@@ -35,7 +35,7 @@ using namespace std::chrono_literals;
 namespace pedsim {
 
 SimVisualizer::SimVisualizer(const std::string &name) : Node(name) {
-  declare_parameter("frame_id", rclcpp::ParameterValue("odom"));
+  declare_parameter("frame_id", rclcpp::ParameterValue("map"));
   frame_id_ = get_parameter("frame_id").get_value<std::string>();
   declare_parameter("walls_resolution", rclcpp::ParameterValue(1.0));
   get_parameter("walls_resolution", walls_resolution_);

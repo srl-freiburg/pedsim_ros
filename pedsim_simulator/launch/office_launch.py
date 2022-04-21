@@ -34,11 +34,11 @@ def generate_launch_description():
 
     declare_scene_file_cmd = DeclareLaunchArgument(
         'scene_file', 
-        default_value=os.path.join(simulator_dir, 'scenarios', 'tb3_house_demo_crowd.xml'),
+        default_value=os.path.join(simulator_dir, 'scenarios', 'office.xml'),
         description='')
 
     declare_simulation_factor_cmd = DeclareLaunchArgument(
-        'simulation_factor', default_value='0.07',
+        'simulation_factor', default_value='1.0',
         description='Top-level namespace')
 
     frame_id_cmd = DeclareLaunchArgument(
