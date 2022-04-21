@@ -12,16 +12,14 @@ namespace pedsim {
 Quaternion angleToQuaternion(const double theta);
 
 Quaternion rpyToQuaternion(const double roll, const double pitch,
-                                          const double yaw);
+                           const double yaw);
 
-Quaternion toQuaternionMsg(const Eigen::Quaternionf& quaternion);
+Quaternion toQuaternionMsg(const Eigen::Quaternionf &quaternion);
 
 Quaternion poseFrom2DVelocity(const double vx, const double vy);
 
-std::vector<std::pair<float, float>> LineObstacleToCells(const float x1,
-                                                         const float y1,
-                                                         const float x2,
-                                                         const float y2,
-                                                         const float resolution);
+std::vector<std::pair<float, float>>
+LineObstacleToCells(const float x1, const float y1, const float x2,
+                    const float y2, const float resolution);
 
-}  // namespace pedsim
+} // namespace pedsim

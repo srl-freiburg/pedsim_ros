@@ -1,33 +1,33 @@
 /**
-* Copyright 2014 Social Robotics Lab, University of Freiburg
-*
-* Redistribution and use in source and binary forms, with or without
-* modification, are permitted provided that the following conditions are met:
-*
-*    # Redistributions of source code must retain the above copyright
-*       notice, this list of conditions and the following disclaimer.
-*    # Redistributions in binary form must reproduce the above copyright
-*       notice, this list of conditions and the following disclaimer in the
-*       documentation and/or other materials provided with the distribution.
-*    # Neither the name of the University of Freiburg nor the names of its
-*       contributors may be used to endorse or promote products derived from
-*       this software without specific prior written permission.
-*
-* THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-* AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-* IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-* ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
-* LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-* CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-* SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-* INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-* CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-* ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-* POSSIBILITY OF SUCH DAMAGE.
-*
-* \author Billy Okal <okal@cs.uni-freiburg.de>
-* \author Sven Wehner <mail@svenwehner.de>
-*/
+ * Copyright 2014 Social Robotics Lab, University of Freiburg
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ *    # Redistributions of source code must retain the above copyright
+ *       notice, this list of conditions and the following disclaimer.
+ *    # Redistributions in binary form must reproduce the above copyright
+ *       notice, this list of conditions and the following disclaimer in the
+ *       documentation and/or other materials provided with the distribution.
+ *    # Neither the name of the University of Freiburg nor the names of its
+ *       contributors may be used to endorse or promote products derived from
+ *       this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ *
+ * \author Billy Okal <okal@cs.uni-freiburg.de>
+ * \author Sven Wehner <mail@svenwehner.de>
+ */
 
 #include <pedsim_simulator/agentstatemachine.hpp>
 #include <pedsim_simulator/config.hpp>
@@ -42,7 +42,7 @@
 #include <pedsim_simulator/waypointplanner/queueingplanner.hpp>
 #include <pedsim_simulator/waypointplanner/shoppingplanner.hpp>
 
-AgentStateMachine::AgentStateMachine(Agent* agentIn) {
+AgentStateMachine::AgentStateMachine(Agent *agentIn) {
   // initialize values
   agent = agentIn;
   individualPlanner = nullptr;
@@ -74,7 +74,7 @@ void AgentStateMachine::doStateTransition() {
   // → randomly get attracted by attractions
   if ((state != StateShopping) && (state != StateQueueing)) {
     double distance = INFINITY;
-    AttractionArea* attraction = nullptr;
+    AttractionArea *attraction = nullptr;
     bool hasGroupAttraction = checkGroupForAttractions(&attraction);
     if (hasGroupAttraction) {
       // inherit groups' attraction
@@ -130,10 +130,10 @@ void AgentStateMachine::doStateTransition() {
 
   // → operate on waypoints/destinations
   if ((state == StateNone) || agent->needNewDestination()) {
-    Ped::Twaypoint* destination = agent->updateDestination();
-    Waypoint* waypoint = dynamic_cast<Waypoint*>(destination);
+    Ped::Twaypoint *destination = agent->updateDestination();
+    Waypoint *waypoint = dynamic_cast<Waypoint *>(destination);
     // TODO: move this to the agent
-    WaitingQueue* waitingQueue = dynamic_cast<WaitingQueue*>(waypoint);
+    WaitingQueue *waitingQueue = dynamic_cast<WaitingQueue *>(waypoint);
 
     if (destination == nullptr)
       activateState(StateWaiting);
@@ -149,11 +149,9 @@ void AgentStateMachine::doStateTransition() {
 }
 
 void AgentStateMachine::activateState(AgentState stateIn) {
-  RCLCPP_DEBUG(
-      rclcpp::get_logger(""),
-      "Agent %d activating state '%s' (time: %f)",
-      agent->getId(),
-      stateToName(stateIn).toStdString().c_str(), SCENE.getTime());
+  RCLCPP_DEBUG(rclcpp::get_logger(""),
+               "Agent %d activating state '%s' (time: %f)", agent->getId(),
+               stateToName(stateIn).toStdString().c_str(), SCENE.getTime());
   // de-activate old state
   deactivateState(state);
 
@@ -163,61 +161,63 @@ void AgentStateMachine::activateState(AgentState stateIn) {
   // set state
   state = stateIn;
 
-  Waypoint* destination =
-      dynamic_cast<Waypoint*>(agent->getCurrentDestination());
+  Waypoint *destination =
+      dynamic_cast<Waypoint *>(agent->getCurrentDestination());
 
   switch (state) {
-    case StateNone:
-      agent->setWaypointPlanner(nullptr);
-      break;
-    case StateWaiting:
-      agent->setWaypointPlanner(nullptr);
-      break;
-    case StateWalking:
-      if (individualPlanner == nullptr)
-        individualPlanner = new IndividualWaypointPlanner();
-      individualPlanner->setAgent(agent);
-      individualPlanner->setDestination(destination);
-      agent->setWaypointPlanner(individualPlanner);
-      break;
-    case StateQueueing:
-      if (queueingPlanner == nullptr)
-        queueingPlanner = new QueueingWaypointPlanner();
-      queueingPlanner->setAgent(agent);
-      queueingPlanner->setDestination(destination);
-      agent->setWaypointPlanner(queueingPlanner);
-      break;
-    case StateGroupWalking:
-      if (groupWaypointPlanner == nullptr)
-        groupWaypointPlanner = new GroupWaypointPlanner();
-      groupWaypointPlanner->setDestination(destination);
-      groupWaypointPlanner->setGroup(agent->getGroup());
-      agent->setWaypointPlanner(groupWaypointPlanner);
-      break;
-    case StateShopping:
-      shallLoseAttraction = false;
-      if (shoppingPlanner == nullptr) shoppingPlanner = new ShoppingPlanner();
-      AttractionArea* attraction =
-          SCENE.getClosestAttraction(agent->getPosition());
-      shoppingPlanner->setAgent(agent);
-      shoppingPlanner->setAttraction(attraction);
-      agent->setWaypointPlanner(shoppingPlanner);
-      agent->disableForce("GroupCoherence");
-      agent->disableForce("GroupGaze");
+  case StateNone:
+    agent->setWaypointPlanner(nullptr);
+    break;
+  case StateWaiting:
+    agent->setWaypointPlanner(nullptr);
+    break;
+  case StateWalking:
+    if (individualPlanner == nullptr)
+      individualPlanner = new IndividualWaypointPlanner();
+    individualPlanner->setAgent(agent);
+    individualPlanner->setDestination(destination);
+    agent->setWaypointPlanner(individualPlanner);
+    break;
+  case StateQueueing:
+    if (queueingPlanner == nullptr)
+      queueingPlanner = new QueueingWaypointPlanner();
+    queueingPlanner->setAgent(agent);
+    queueingPlanner->setDestination(destination);
+    agent->setWaypointPlanner(queueingPlanner);
+    break;
+  case StateGroupWalking:
+    if (groupWaypointPlanner == nullptr)
+      groupWaypointPlanner = new GroupWaypointPlanner();
+    groupWaypointPlanner->setDestination(destination);
+    groupWaypointPlanner->setGroup(agent->getGroup());
+    agent->setWaypointPlanner(groupWaypointPlanner);
+    break;
+  case StateShopping:
+    shallLoseAttraction = false;
+    if (shoppingPlanner == nullptr)
+      shoppingPlanner = new ShoppingPlanner();
+    AttractionArea *attraction =
+        SCENE.getClosestAttraction(agent->getPosition());
+    shoppingPlanner->setAgent(agent);
+    shoppingPlanner->setAttraction(attraction);
+    agent->setWaypointPlanner(shoppingPlanner);
+    agent->disableForce("GroupCoherence");
+    agent->disableForce("GroupGaze");
 
-      // keep other agents informed about the attraction
-      AgentGroup* group = agent->getGroup();
-      if (group != nullptr) {
-        foreach (Agent* member, group->getMembers()) {
-          if (member == agent) continue;
+    // keep other agents informed about the attraction
+    AgentGroup *group = agent->getGroup();
+    if (group != nullptr) {
+      foreach (Agent *member, group->getMembers()) {
+        if (member == agent)
+          continue;
 
-          AgentStateMachine* memberStateMachine = member->getStateMachine();
-          connect(shoppingPlanner, SIGNAL(lostAttraction()), memberStateMachine,
-                  SLOT(loseAttraction()));
-        }
+        AgentStateMachine *memberStateMachine = member->getStateMachine();
+        connect(shoppingPlanner, SIGNAL(lostAttraction()), memberStateMachine,
+                SLOT(loseAttraction()));
       }
+    }
 
-      break;
+    break;
   }
 
   // inform users
@@ -226,61 +226,64 @@ void AgentStateMachine::activateState(AgentState stateIn) {
 
 void AgentStateMachine::deactivateState(AgentState state) {
   switch (state) {
-    case StateNone:
-      // nothing to do
-      break;
-    case StateWaiting:
-      // nothing to do
-      break;
-    case StateWalking:
-      // nothing to do
-      break;
-    case StateQueueing:
-      // nothing to do
-      break;
-    case StateGroupWalking:
-      // nothing to do
-      break;
-    case StateShopping:
-      // inform other group members
-      shoppingPlanner->loseAttraction();
+  case StateNone:
+    // nothing to do
+    break;
+  case StateWaiting:
+    // nothing to do
+    break;
+  case StateWalking:
+    // nothing to do
+    break;
+  case StateQueueing:
+    // nothing to do
+    break;
+  case StateGroupWalking:
+    // nothing to do
+    break;
+  case StateShopping:
+    // inform other group members
+    shoppingPlanner->loseAttraction();
 
-      // don't worry about other group members
-      AgentGroup* group = agent->getGroup();
-      if (group != nullptr) {
-        foreach (Agent* member, group->getMembers()) {
-          if (member == agent) continue;
+    // don't worry about other group members
+    AgentGroup *group = agent->getGroup();
+    if (group != nullptr) {
+      foreach (Agent *member, group->getMembers()) {
+        if (member == agent)
+          continue;
 
-          AgentStateMachine* memberStateMachine = member->getStateMachine();
-          disconnect(shoppingPlanner, SIGNAL(lostAttraction()),
-                     memberStateMachine, SLOT(loseAttraction()));
-        }
+        AgentStateMachine *memberStateMachine = member->getStateMachine();
+        disconnect(shoppingPlanner, SIGNAL(lostAttraction()),
+                   memberStateMachine, SLOT(loseAttraction()));
       }
+    }
 
-      break;
+    break;
   }
 }
 
 bool AgentStateMachine::checkGroupForAttractions(
-    AttractionArea** attractionOut) const {
-  AgentGroup* group = agent->getGroup();
+    AttractionArea **attractionOut) const {
+  AgentGroup *group = agent->getGroup();
 
   // check whether the agent is even in a group
   if (group == nullptr) {
-    if (attractionOut != nullptr) *attractionOut = nullptr;
+    if (attractionOut != nullptr)
+      *attractionOut = nullptr;
     return false;
   }
 
   // check all group members
-  foreach (Agent* member, group->getMembers()) {
+  foreach (Agent *member, group->getMembers()) {
     // ignore agent himself
-    if (member == agent) continue;
+    if (member == agent)
+      continue;
 
     // check whether the group member uses ShoppingPlanner
-    WaypointPlanner* planner = member->getWaypointPlanner();
-    ShoppingPlanner* typedPlanner = dynamic_cast<ShoppingPlanner*>(planner);
+    WaypointPlanner *planner = member->getWaypointPlanner();
+    ShoppingPlanner *typedPlanner = dynamic_cast<ShoppingPlanner *>(planner);
     if (typedPlanner != nullptr) {
-      AttractionArea* attraction = typedPlanner->getAttraction();
+      AttractionArea *attraction = typedPlanner->getAttraction();
 
       if (attraction != nullptr) {
         attractionOut = &attraction;
@@ -290,26 +293,27 @@ bool AgentStateMachine::checkGroupForAttractions(
   }
 
   // no group member is attracted to something
-  if (attractionOut != nullptr) *attractionOut = nullptr;
+  if (attractionOut != nullptr)
+    *attractionOut = nullptr;
   return false;
 }
 
 QString AgentStateMachine::stateToName(AgentState stateIn) const {
   switch (stateIn) {
-    case StateNone:
-      return "StateNone";
-    case StateWaiting:
-      return "StateWaiting";
-    case StateWalking:
-      return "StateWalking";
-    case StateQueueing:
-      return "StateQueueing";
-    case StateGroupWalking:
-      return "StateGroupWalking";
-    case StateShopping:
-      return "StateShopping";
-    default:
-      return "UnknownState";
+  case StateNone:
+    return "StateNone";
+  case StateWaiting:
+    return "StateWaiting";
+  case StateWalking:
+    return "StateWalking";
+  case StateQueueing:
+    return "StateQueueing";
+  case StateGroupWalking:
+    return "StateGroupWalking";
+  case StateShopping:
+    return "StateShopping";
+  default:
+    return "UnknownState";
   }
 }
 

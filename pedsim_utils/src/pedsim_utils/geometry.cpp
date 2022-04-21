@@ -22,7 +22,7 @@ Quaternion angleToQuaternion(const double theta) {
 }
 
 Quaternion rpyToQuaternion(const double roll, const double pitch,
-                                          const double yaw) {
+                           const double yaw) {
   Eigen::Quaternionf r_m = Eigen::AngleAxisf(roll, Eigen::Vector3f::UnitX()) *
                            Eigen::AngleAxisf(pitch, Eigen::Vector3f::UnitY()) *
                            Eigen::AngleAxisf(yaw, Eigen::Vector3f::UnitZ());
@@ -30,8 +30,7 @@ Quaternion rpyToQuaternion(const double roll, const double pitch,
   return toQuaternionMsg(r_m.normalized());
 }
 
-Quaternion toQuaternionMsg(
-    const Eigen::Quaternionf& quaternion) {
+Quaternion toQuaternionMsg(const Eigen::Quaternionf &quaternion) {
   Quaternion gq;
   gq.x = quaternion.x();
   gq.y = quaternion.y();
@@ -45,18 +44,16 @@ Quaternion poseFrom2DVelocity(const double vx, const double vy) {
   return rpyToQuaternion(M_PI / 2.0, theta + (M_PI / 2.0), 0.0);
 }
 
-std::vector<std::pair<float, float>> LineObstacleToCells(const float x1,
-                                                         const float y1,
-                                                         const float x2,
-                                                         const float y2,
-                                                         const float resolution) {
-  float i;             // loop counter
-  float ystep, xstep;  // the step on y and x axis
-  float error;         // the error accumulated during the increment
-  float errorprev;     // *vision the previous value of the error variable
+std::vector<std::pair<float, float>>
+LineObstacleToCells(const float x1, const float y1, const float x2,
+                    const float y2, const float resolution) {
+  float i;            // loop counter
+  float ystep, xstep; // the step on y and x axis
+  float error;        // the error accumulated during the increment
+  float errorprev;    // *vision the previous value of the error variable
   // int y = y1 - 0.5, x = x1 - 0.5;  // the line points
-  float y = y1, x = x1;  // the line points
-  float ddy, ddx;        // compulsory variables: the double values of dy and dx
+  float y = y1, x = x1; // the line points
+  float ddy, ddx;       // compulsory variables: the double values of dy and dx
   float dx = x2 - x1;
   float dy = y2 - y1;
   float unit_x, unit_y;
@@ -76,16 +73,16 @@ std::vector<std::pair<float, float>> LineObstacleToCells(const float x1,
     xstep = unit_x;
   }
 
-  ddy = 2 * dy;  // work with double values for full precision
+  ddy = 2 * dy; // work with double values for full precision
   ddx = 2 * dx;
 
-  std::vector<std::pair<float, float>> obstacle_cells;  // TODO - reserve.
+  std::vector<std::pair<float, float>> obstacle_cells; // TODO - reserve.
   obstacle_cells.emplace_back(std::make_pair(x, y));
 
   if (ddx >= ddy) {
     // first octant (0 <= slope <= 1)
     // compulsory initialization (even for errorprev, needed when dx==dy)
-    errorprev = error = dx;  // start in the middle of the square
+    errorprev = error = dx; // start in the middle of the square
     for (i = 0; i < dx; i = i + resolution) {
       // do not use the first point (already done)
       x += xstep;
@@ -136,4 +133,4 @@ std::vector<std::pair<float, float>> LineObstacleToCells(const float x1,
   return obstacle_cells;
 }
 
-}  // namespace pedsim
+} // namespace pedsim

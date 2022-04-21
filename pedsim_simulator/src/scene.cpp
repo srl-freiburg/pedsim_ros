@@ -1,37 +1,38 @@
 /**
-* Copyright 2014 Social Robotics Lab, University of Freiburg
-*
-* Redistribution and use in source and binary forms, with or without
-* modification, are permitted provided that the following conditions are met:
-*
-*    # Redistributions of source code must retain the above copyright
-*       notice, this list of conditions and the following disclaimer.
-*    # Redistributions in binary form must reproduce the above copyright
-*       notice, this list of conditions and the following disclaimer in the
-*       documentation and/or other materials provided with the distribution.
-*    # Neither the name of the University of Freiburg nor the names of its
-*       contributors may be used to endorse or promote products derived from
-*       this software without specific prior written permission.
-*
-* THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-* AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-* IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-* ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
-* LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-* CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-* SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-* INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-* CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-* ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-* POSSIBILITY OF SUCH DAMAGE.
-*
-* \author Billy Okal <okal@cs.uni-freiburg.de>
-* \author Sven Wehner <mail@svenwehner.de>
-*/
+ * Copyright 2014 Social Robotics Lab, University of Freiburg
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ *    # Redistributions of source code must retain the above copyright
+ *       notice, this list of conditions and the following disclaimer.
+ *    # Redistributions in binary form must reproduce the above copyright
+ *       notice, this list of conditions and the following disclaimer in the
+ *       documentation and/or other materials provided with the distribution.
+ *    # Neither the name of the University of Freiburg nor the names of its
+ *       contributors may be used to endorse or promote products derived from
+ *       this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ *
+ * \author Billy Okal <okal@cs.uni-freiburg.de>
+ * \author Sven Wehner <mail@svenwehner.de>
+ */
 
 #include <pedsim_simulator/config.hpp>
 #include <pedsim_simulator/scene.hpp>
 
+#include <QGraphicsScene>
 #include <pedsim/ped_tree.h>
 #include <pedsim_simulator/element/agent.hpp>
 #include <pedsim_simulator/element/agentcluster.hpp>
@@ -44,14 +45,13 @@
 #include <pedsim_simulator/force/groupgazeforce.hpp>
 #include <pedsim_simulator/force/grouprepulsionforce.hpp>
 #include <pedsim_simulator/force/randomforce.hpp>
-#include <QGraphicsScene>
 
 #include "rclcpp/rclcpp.hpp"
 
 // initialize static value
-Scene* Scene::Scene::instance = nullptr;
+Scene *Scene::Scene::instance = nullptr;
 
-Scene::Scene(QObject* parent) {
+Scene::Scene(QObject *parent) {
   // initialize values
   sceneTime = 0;
 
@@ -70,9 +70,10 @@ Scene::~Scene() {
   clear();
 }
 
-Scene& Scene::getInstance() {
+Scene &Scene::getInstance() {
   // create an instance if there hasn't been one yet
-  if (instance == nullptr) instance = new Scene();
+  if (instance == nullptr)
+    instance = new Scene();
   return *instance;
 }
 
@@ -93,17 +94,17 @@ void Scene::clear() {
   obstacles.clear();
 
   // remove all agents groups
-  for (AttractionArea* attraction : attractions)
+  for (AttractionArea *attraction : attractions)
     delete attraction;
   attractions.clear();
 
   // remove all agents clusters
-  for (AgentCluster* agentCluster : agentClusters)
+  for (AgentCluster *agentCluster : agentClusters)
     delete agentCluster;
   agentClusters.clear();
 
   // remove all agents groups
-  for (AgentGroup* group : agentGroups)
+  for (AgentGroup *group : agentGroups)
     delete group;
   agentGroups.clear();
 
@@ -119,7 +120,7 @@ QRectF Scene::itemsBoundingRect() const {
 
   // iterate over all elements
   // → agents
-  for (Agent* agent : agents) {
+  for (Agent *agent : agents) {
     if (!boundingRect.contains(agent->getVisiblePosition())) {
       // resize rectangle to include point
       boundingRect |=
@@ -127,7 +128,7 @@ QRectF Scene::itemsBoundingRect() const {
     }
   }
   // → obstacles
-  for (Obstacle* obstacle : obstacles) {
+  for (Obstacle *obstacle : obstacles) {
     QPointF startPoint = obstacle->getVisiblePosition();
     QPointF endPoint(obstacle->getbx(), obstacle->getby());
 
@@ -138,9 +139,9 @@ QRectF Scene::itemsBoundingRect() const {
     }
   }
   // → waypoints
-  for (Waypoint* waypoint : waypoints) {
-    AreaWaypoint* areaWaypoint = dynamic_cast<AreaWaypoint*>(waypoint);
-    WaitingQueue* waitingQueue = dynamic_cast<WaitingQueue*>(waypoint);
+  for (Waypoint *waypoint : waypoints) {
+    AreaWaypoint *areaWaypoint = dynamic_cast<AreaWaypoint *>(waypoint);
+    WaitingQueue *waitingQueue = dynamic_cast<WaitingQueue *>(waypoint);
 
     // → area waypoints
     if (areaWaypoint != nullptr) {
@@ -162,7 +163,7 @@ QRectF Scene::itemsBoundingRect() const {
     }
   }
   // → agent clusters
-  for (AgentCluster* agentCluster : agentClusters) {
+  for (AgentCluster *agentCluster : agentClusters) {
     if (!boundingRect.contains(agentCluster->getVisiblePosition())) {
       // resize rectangle to include point
       boundingRect |= QRectF(
@@ -173,62 +174,64 @@ QRectF Scene::itemsBoundingRect() const {
   return boundingRect;
 }
 
-const QList<Agent*>& Scene::getAgents() const { return agents; }
+const QList<Agent *> &Scene::getAgents() const { return agents; }
 
-QList<AgentGroup*> Scene::getGroups() { return agentGroups; }
+QList<AgentGroup *> Scene::getGroups() { return agentGroups; }
 
-QMap<QString, AttractionArea*> Scene::getAttractions() { return attractions; }
+QMap<QString, AttractionArea *> Scene::getAttractions() { return attractions; }
 
-Agent* Scene::getAgentById(int idIn) const {
-  for (Agent* currentAgent : agents) {
-    if (idIn == currentAgent->getId()) return currentAgent;
+Agent *Scene::getAgentById(int idIn) const {
+  for (Agent *currentAgent : agents) {
+    if (idIn == currentAgent->getId())
+      return currentAgent;
   }
 
   return nullptr;
 }
 
-const QList<Obstacle*>& Scene::getObstacles() const { return obstacles; }
+const QList<Obstacle *> &Scene::getObstacles() const { return obstacles; }
 
-const QMap<QString, Waypoint*>& Scene::getWaypoints() const {
+const QMap<QString, Waypoint *> &Scene::getWaypoints() const {
   return waypoints;
 }
 
-const QMap<QString, AttractionArea*>& Scene::getAttractions() const {
+const QMap<QString, AttractionArea *> &Scene::getAttractions() const {
   return attractions;
 }
 
-Waypoint* Scene::getWaypointById(int idIn) const {
-  for (Waypoint* currentWaypoint : waypoints) {
-    if (idIn == currentWaypoint->getId()) return currentWaypoint;
+Waypoint *Scene::getWaypointById(int idIn) const {
+  for (Waypoint *currentWaypoint : waypoints) {
+    if (idIn == currentWaypoint->getId())
+      return currentWaypoint;
   }
 
   return nullptr;
 }
 
-Waypoint* Scene::getWaypointByName(const QString& nameIn) const {
+Waypoint *Scene::getWaypointByName(const QString &nameIn) const {
   return waypoints.value(nameIn);
 }
 
-WaitingQueue* Scene::getWaitingQueueByName(const QString& nameIn) const {
-  Waypoint* waypoint = waypoints.value(nameIn);
-  return dynamic_cast<WaitingQueue*>(waypoint);
+WaitingQueue *Scene::getWaitingQueueByName(const QString &nameIn) const {
+  Waypoint *waypoint = waypoints.value(nameIn);
+  return dynamic_cast<WaitingQueue *>(waypoint);
 }
 
-const QList<AgentCluster*>& Scene::getAgentClusters() const {
+const QList<AgentCluster *> &Scene::getAgentClusters() const {
   return agentClusters;
 }
 
-AttractionArea* Scene::getAttractionByName(const QString& nameIn) const {
+AttractionArea *Scene::getAttractionByName(const QString &nameIn) const {
   return attractions.value(nameIn);
 }
 
-AttractionArea* Scene::getClosestAttraction(const Ped::Tvector& positionIn,
-                                            double* distanceOut) const {
+AttractionArea *Scene::getClosestAttraction(const Ped::Tvector &positionIn,
+                                            double *distanceOut) const {
   double minDistance = INFINITY;
-  AttractionArea* minArg = nullptr;
+  AttractionArea *minArg = nullptr;
 
   // find the attraction with minimal distance
-  for (AttractionArea* attraction : attractions) {
+  for (AttractionArea *attraction : attractions) {
     double distance = (attraction->getPosition() - positionIn).length();
     if (distance < minDistance) {
       minDistance = distance;
@@ -237,7 +240,8 @@ AttractionArea* Scene::getClosestAttraction(const Ped::Tvector& positionIn,
   }
 
   // additionally return distance
-  if (distanceOut != nullptr) *distanceOut = minDistance;
+  if (distanceOut != nullptr)
+    *distanceOut = minDistance;
 
   return minArg;
 }
@@ -247,14 +251,14 @@ double Scene::getTime() const { return sceneTime; }
 bool Scene::hasStarted() const { return (sceneTime == 0); }
 
 void Scene::dissolveClusters() {
-  for (AgentCluster* cluster : agentClusters) {
-    QList<Agent*> newAgents = cluster->dissolve();
+  for (AgentCluster *cluster : agentClusters) {
+    QList<Agent *> newAgents = cluster->dissolve();
 
     // divide agents into groups
-    QList<AgentGroup*> newGroups = AgentGroup::divideAgents(newAgents);
+    QList<AgentGroup *> newGroups = AgentGroup::divideAgents(newAgents);
 
     // apply group forces
-    for (AgentGroup* currentGroup : newGroups) {
+    for (AgentGroup *currentGroup : newGroups) {
       if (currentGroup->memberCount() == 1) {
         // we don't need one agent groups
         delete currentGroup;
@@ -265,24 +269,24 @@ void Scene::dissolveClusters() {
       }
 
       // add group's agents to the scene
-      for (Agent* currentAgent : currentGroup->getMembers()) {
+      for (Agent *currentAgent : currentGroup->getMembers()) {
         currentAgent->setWaypoints(cluster->getWaypoints());
 
         if (currentGroup->memberCount() > 1) {
           currentAgent->setGroup(currentGroup);
           // → Gaze Force
-          GroupGazeForce* gazeForce = new GroupGazeForce(currentAgent);
+          GroupGazeForce *gazeForce = new GroupGazeForce(currentAgent);
           gazeForce->setGroup(currentGroup);
           currentAgent->addForce(gazeForce);
 
           // → Coherence Force
-          GroupCoherenceForce* coherenceForce =
+          GroupCoherenceForce *coherenceForce =
               new GroupCoherenceForce(currentAgent);
           coherenceForce->setGroup(currentGroup);
           currentAgent->addForce(coherenceForce);
 
           // → Repulsion Force
-          GroupRepulsionForce* repulsionForce =
+          GroupRepulsionForce *repulsionForce =
               new GroupRepulsionForce(currentAgent);
           repulsionForce->setGroup(currentGroup);
           currentAgent->addForce(repulsionForce);
@@ -297,7 +301,7 @@ void Scene::dissolveClusters() {
   agentClusters.clear();
 }
 
-void Scene::addAgent(Agent* agent) {
+void Scene::addAgent(Agent *agent) {
   // keep track of the agent
   agents.append(agent);
 
@@ -306,17 +310,17 @@ void Scene::addAgent(Agent* agent) {
 
   // add additional forces
   // → Random Force
-  RandomForce* randomForce = new RandomForce(agent);
+  RandomForce *randomForce = new RandomForce(agent);
   agent->addForce(randomForce);
   // → Along Wall Force
-  AlongWallForce* alongWallForce = new AlongWallForce(agent);
+  AlongWallForce *alongWallForce = new AlongWallForce(agent);
   agent->addForce(alongWallForce);
 
   // inform users
   emit agentAdded(agent->getId());
 }
 
-void Scene::addObstacle(Obstacle* obstacle) {
+void Scene::addObstacle(Obstacle *obstacle) {
   // keep track of the obstacle
   obstacles.append(obstacle);
 
@@ -327,7 +331,7 @@ void Scene::addObstacle(Obstacle* obstacle) {
   emit obstacleAdded(obstacle->getid());
 }
 
-void Scene::addWaypoint(Waypoint* waypoint) {
+void Scene::addWaypoint(Waypoint *waypoint) {
   // keep track of the waypoints
   waypoints.insert(waypoint->getName(), waypoint);
 
@@ -338,7 +342,7 @@ void Scene::addWaypoint(Waypoint* waypoint) {
   emit waypointAdded(waypoint->getId());
 }
 
-void Scene::addAgentCluster(AgentCluster* clusterIn) {
+void Scene::addAgentCluster(AgentCluster *clusterIn) {
   // keep track of agent clusters
   agentClusters.append(clusterIn);
 
@@ -346,28 +350,26 @@ void Scene::addAgentCluster(AgentCluster* clusterIn) {
   emit agentClusterAdded(clusterIn->getId());
 }
 
-void Scene::addWaitingQueue(WaitingQueue* queueIn) {
+void Scene::addWaitingQueue(WaitingQueue *queueIn) {
   // sanity checks
   if (queueIn == nullptr) {
-    RCLCPP_DEBUG(
-      rclcpp::get_logger(""),
-      "Cannot add null to the list of waiting queues!");
+    RCLCPP_DEBUG(rclcpp::get_logger(""),
+                 "Cannot add null to the list of waiting queues!");
     return;
   }
 
   // add waiting queue as waypoint to the scene
-  addWaypoint(dynamic_cast<Waypoint*>(queueIn));
+  addWaypoint(dynamic_cast<Waypoint *>(queueIn));
 
   // inform users
   emit waitingQueueAdded(queueIn->getName());
 }
 
-void Scene::addAttraction(AttractionArea* attractionIn) {
+void Scene::addAttraction(AttractionArea *attractionIn) {
   // sanity checks
   if (attractionIn == nullptr) {
-    RCLCPP_DEBUG(
-      rclcpp::get_logger(""),
-      "Cannot add null to the list of attractions!");
+    RCLCPP_DEBUG(rclcpp::get_logger(""),
+                 "Cannot add null to the list of attractions!");
     return;
   }
 
@@ -378,23 +380,24 @@ void Scene::addAttraction(AttractionArea* attractionIn) {
   emit attractionAdded(attractionIn->getName());
 }
 
-bool Scene::removeAgent(Agent* agent) {
+bool Scene::removeAgent(Agent *agent) {
   // don't keep track of agent anymore
   agents.removeAll(agent);
 
   // remove agent from all groups
-  QList<AgentGroup*> groupsToRemove;
-  for (AgentGroup* currentGroup : agentGroups) {
+  QList<AgentGroup *> groupsToRemove;
+  for (AgentGroup *currentGroup : agentGroups) {
     currentGroup->removeMember(agent);
 
     // check whether the group is empty and can be removed
-    if (currentGroup->isEmpty()) groupsToRemove.append(currentGroup);
+    if (currentGroup->isEmpty())
+      groupsToRemove.append(currentGroup);
   }
 
   // remove unnecessary groups
   // note: use QObject::deleteLater() to keep the group valid till after the
   // agent's destructor
-  for (AgentGroup* currentGroup : groupsToRemove) {
+  for (AgentGroup *currentGroup : groupsToRemove) {
     agentGroups.removeAll(currentGroup);
     currentGroup->deleteLater();
   }
@@ -406,7 +409,7 @@ bool Scene::removeAgent(Agent* agent) {
   return Ped::Tscene::removeAgent(agent);
 }
 
-bool Scene::removeObstacle(Obstacle* obstacle) {
+bool Scene::removeObstacle(Obstacle *obstacle) {
   // don't keep track of obstacle anymore
   obstacles.removeAll(obstacle);
 
@@ -417,13 +420,13 @@ bool Scene::removeObstacle(Obstacle* obstacle) {
   return Ped::Tscene::removeObstacle(obstacle);
 }
 
-bool Scene::removeWaypoint(Waypoint* waypoint) {
+bool Scene::removeWaypoint(Waypoint *waypoint) {
   // don't keep track of waypoint anymore
   waypoints.remove(waypoint->getName());
 
   // remove waypoint from all agent clusters
   // (it is also removed from all agents in Ped::Tscene::removeWaypoint())
-  for (AgentCluster* cluster : agentClusters)
+  for (AgentCluster *cluster : agentClusters)
     cluster->removeWaypoint(waypoint);
 
   // inform users
@@ -433,12 +436,13 @@ bool Scene::removeWaypoint(Waypoint* waypoint) {
   return Ped::Tscene::removeWaypoint(waypoint);
 }
 
-bool Scene::removeAgentCluster(AgentCluster* clusterIn) {
+bool Scene::removeAgentCluster(AgentCluster *clusterIn) {
   // don't keep track of agent cluster anymore
   int removedClusters = agentClusters.removeAll(clusterIn);
 
   // report when the cluster wasn't part of the scene
-  if (removedClusters == 0) return false;
+  if (removedClusters == 0)
+    return false;
 
   // inform users
   emit agentClusterRemoved(clusterIn->getId());
@@ -450,12 +454,11 @@ bool Scene::removeAgentCluster(AgentCluster* clusterIn) {
   return true;
 }
 
-bool Scene::removeWaitingQueue(WaitingQueue* queueIn) {
+bool Scene::removeWaitingQueue(WaitingQueue *queueIn) {
   // sanity checks
   if (queueIn == nullptr) {
-    RCLCPP_DEBUG(
-      rclcpp::get_logger(""),
-      "Cannot remove null from the list of waiting queues!");
+    RCLCPP_DEBUG(rclcpp::get_logger(""),
+                 "Cannot remove null from the list of waiting queues!");
     return false;
   }
 
@@ -463,7 +466,8 @@ bool Scene::removeWaitingQueue(WaitingQueue* queueIn) {
   int removedCount = waypoints.remove(queueIn->getName());
 
   // check whether the queue was removed
-  if (removedCount == 0) return false;
+  if (removedCount == 0)
+    return false;
 
   // inform users
   emit waitingQueueRemoved(queueIn->getName());
@@ -475,12 +479,11 @@ bool Scene::removeWaitingQueue(WaitingQueue* queueIn) {
   return true;
 }
 
-bool Scene::removeAttraction(AttractionArea* attractionInIn) {
+bool Scene::removeAttraction(AttractionArea *attractionInIn) {
   // sanity checks
   if (attractionInIn == nullptr) {
-    RCLCPP_DEBUG(
-      rclcpp::get_logger(""),
-      "Cannot remove null from the list of attractions!");
+    RCLCPP_DEBUG(rclcpp::get_logger(""),
+                 "Cannot remove null from the list of attractions!");
     return false;
   }
 
@@ -488,7 +491,8 @@ bool Scene::removeAttraction(AttractionArea* attractionInIn) {
   int removedCount = attractions.remove(attractionInIn->getName());
 
   // check whether the queue was removed
-  if (removedCount == 0) return false;
+  if (removedCount == 0)
+    return false;
 
   // inform users
   emit attractionRemoved(attractionInIn->getName());
@@ -500,16 +504,16 @@ bool Scene::removeAttraction(AttractionArea* attractionInIn) {
   return true;
 }
 
-std::set<const Ped::Tagent*> Scene::getNeighbors(double x, double y,
-                                                 double maxDist) {
-  std::set<const Ped::Tagent*> potentialNeighbours =
+std::set<const Ped::Tagent *> Scene::getNeighbors(double x, double y,
+                                                  double maxDist) {
+  std::set<const Ped::Tagent *> potentialNeighbours =
       Ped::Tscene::getNeighbors(x, y, maxDist);
   Ped::Tvector position(x, y);
 
   // filter according to euclidean distance
   auto agentIter = potentialNeighbours.begin();
   while (agentIter != potentialNeighbours.end()) {
-    const Ped::Tagent& candidate = **agentIter;
+    const Ped::Tagent &candidate = **agentIter;
     Ped::Tvector candidatePos = candidate.getPosition();
     double distance = (candidatePos - position).length();
 
@@ -526,7 +530,8 @@ std::set<const Ped::Tagent*> Scene::getNeighbors(double x, double y,
 
 void Scene::moveAllAgents() {
   // inform users when there is going to be the first update
-  if (sceneTime == 0) emit aboutToStart();
+  if (sceneTime == 0)
+    emit aboutToStart();
 
   // clean up scene if necessary
   double cleanupInterval = 2.0;
@@ -537,7 +542,8 @@ void Scene::moveAllAgents() {
   emit aboutToMoveAgents();
 
   // dissolve agent clusters
-  if (!agentClusters.isEmpty()) dissolveClusters();
+  if (!agentClusters.isEmpty())
+    dissolveClusters();
 
   // update scene time
   sceneTime += CONFIG.getTimeStepSize();
@@ -562,9 +568,8 @@ void Scene::moveAllAgents() {
                           agent->getx(), agent->gety());
     if (d < agent_next_wp->getRadius()) {
       // At sink waypoint.
-      RCLCPP_DEBUG_STREAM(
-        rclcpp::get_logger(""),
-        "Killing agent: " << agent->getId());
+      RCLCPP_DEBUG_STREAM(rclcpp::get_logger(""),
+                          "Killing agent: " << agent->getId());
       removeAgent(agent);
     }
   }

@@ -42,7 +42,7 @@ Ped::Tobstacle::Tobstacle(double pax, double pay, double pbx, double pby) {
 /// \date    2013-08-02
 /// \param startIn The first corner of the obstacle.
 /// \param endIn The second corner of the obstacle.
-Ped::Tobstacle::Tobstacle(const Tvector& startIn, const Tvector& endIn) {
+Ped::Tobstacle::Tobstacle(const Tvector &startIn, const Tvector &endIn) {
   id = staticid++;
   ax = startIn.x;
   ay = startIn.y;
@@ -75,21 +75,21 @@ void Ped::Tobstacle::setPosition(double pax, double pay, double pbx,
   by = pby;
 }
 
-void Ped::Tobstacle::setPosition(const Tvector& startIn, const Tvector& endIn) {
+void Ped::Tobstacle::setPosition(const Tvector &startIn, const Tvector &endIn) {
   setPosition(startIn.x, startIn.y, endIn.x, endIn.y);
 }
 
-void Ped::Tobstacle::setStartPoint(const Tvector& startIn) {
+void Ped::Tobstacle::setStartPoint(const Tvector &startIn) {
   ax = startIn.x;
   ay = startIn.y;
 }
 
-void Ped::Tobstacle::setEndPoint(const Tvector& endIn) {
+void Ped::Tobstacle::setEndPoint(const Tvector &endIn) {
   bx = endIn.x;
   by = endIn.y;
 }
 
-Ped::Tvector Ped::Tobstacle::closestPoint(const Tvector& pointIn) const {
+Ped::Tvector Ped::Tobstacle::closestPoint(const Tvector &pointIn) const {
   Tvector startPoint(ax, ay);
   Tvector endPoint(bx, by);
   Tvector relativeEndPoint = endPoint - startPoint;
@@ -124,8 +124,8 @@ Ped::Tvector Ped::Tobstacle::closestPoint(double p1, double p2) const {
 /// \param   rotationCenterIn The point the obstacle will be rotated around.
 /// \param   angleIn The angle the obstacle will be rotated, where phi is given
 /// in radians
-void Ped::Tobstacle::rotate(const Ped::Tvector& rotationCenterIn,
-                            const Ped::Tangle& angleIn) {
+void Ped::Tobstacle::rotate(const Ped::Tvector &rotationCenterIn,
+                            const Ped::Tangle &angleIn) {
   double angleValue = angleIn.toRadian();
   double sinPhi = sin(angleValue);
   double cosPhi = cos(angleValue);

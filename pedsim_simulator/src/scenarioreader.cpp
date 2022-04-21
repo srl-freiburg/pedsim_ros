@@ -1,33 +1,33 @@
 /**
-* Copyright 2014 Social Robotics Lab, University of Freiburg
-*
-* Redistribution and use in source and binary forms, with or without
-* modification, are permitted provided that the following conditions are met:
-*
-*    # Redistributions of source code must retain the above copyright
-*       notice, this list of conditions and the following disclaimer.
-*    # Redistributions in binary form must reproduce the above copyright
-*       notice, this list of conditions and the following disclaimer in the
-*       documentation and/or other materials provided with the distribution.
-*    # Neither the name of the University of Freiburg nor the names of its
-*       contributors may be used to endorse or promote products derived from
-*       this software without specific prior written permission.
-*
-* THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-* AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-* IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-* ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
-* LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-* CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-* SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-* INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-* CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-* ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-* POSSIBILITY OF SUCH DAMAGE.
-*
-* \author Billy Okal <okal@cs.uni-freiburg.de>
-* \author Sven Wehner <mail@svenwehner.de>
-*/
+ * Copyright 2014 Social Robotics Lab, University of Freiburg
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ *    # Redistributions of source code must retain the above copyright
+ *       notice, this list of conditions and the following disclaimer.
+ *    # Redistributions in binary form must reproduce the above copyright
+ *       notice, this list of conditions and the following disclaimer in the
+ *       documentation and/or other materials provided with the distribution.
+ *    # Neither the name of the University of Freiburg nor the names of its
+ *       contributors may be used to endorse or promote products derived from
+ *       this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ *
+ * \author Billy Okal <okal@cs.uni-freiburg.de>
+ * \author Sven Wehner <mail@svenwehner.de>
+ */
 
 #include <pedsim_simulator/element/agent.hpp>
 #include <pedsim_simulator/element/agentcluster.hpp>
@@ -48,11 +48,9 @@ ScenarioReader::ScenarioReader() {
   currentSpawnArea = nullptr;
 }
 
-bool ScenarioReader::readFromFile(const QString& filename) {
-  RCLCPP_DEBUG(
-    rclcpp::get_logger(""),
-    "Loading scenario file '%s'.",
-    filename.toStdString().c_str());
+bool ScenarioReader::readFromFile(const QString &filename) {
+  RCLCPP_DEBUG(rclcpp::get_logger(""), "Loading scenario file '%s'.",
+               filename.toStdString().c_str());
 
   // open file
   QFile file(filename);
@@ -92,17 +90,17 @@ void ScenarioReader::processData() {
       const double y1 = elementAttributes.value("y1").toString().toDouble();
       const double x2 = elementAttributes.value("x2").toString().toDouble();
       const double y2 = elementAttributes.value("y2").toString().toDouble();
-      Obstacle* obs = new Obstacle(x1, y1, x2, y2);
+      Obstacle *obs = new Obstacle(x1, y1, x2, y2);
       SCENE.addObstacle(obs);
     } else if (elementName == "waypoint") {
       const QString id = elementAttributes.value("id").toString();
       const double x = elementAttributes.value("x").toString().toDouble();
       const double y = elementAttributes.value("y").toString().toDouble();
       const double r = elementAttributes.value("r").toString().toDouble();
-      // TODO - make the setting of waypoint behavior optional, 
+      // TODO - make the setting of waypoint behavior optional,
       // and default to SIMPLE.
       const int b = elementAttributes.value("b").toString().toInt();
-      AreaWaypoint* w = new AreaWaypoint(id, x, y, r);
+      AreaWaypoint *w = new AreaWaypoint(id, x, y, r);
       w->setBehavior(static_cast<Ped::Twaypoint::Behavior>(b));
       SCENE.addWaypoint(w);
     } else if (elementName == "queue") {
@@ -115,7 +113,7 @@ void ScenarioReader::processData() {
       const Ped::Tvector position(x, y);
       const Ped::Tangle direction = Ped::Tangle::fromDegree(directionValue);
 
-      WaitingQueue* queue = new WaitingQueue(id, position, direction);
+      WaitingQueue *queue = new WaitingQueue(id, position, direction);
       SCENE.addWaitingQueue(queue);
     } else if (elementName == "attraction") {
       const QString id = elementAttributes.value("id").toString();
@@ -128,7 +126,7 @@ void ScenarioReader::processData() {
       const double strength =
           elementAttributes.value("strength").toString().toDouble();
 
-      AttractionArea* attraction = new AttractionArea(id);
+      AttractionArea *attraction = new AttractionArea(id);
       attraction->setPosition(x, y);
       attraction->setSize(width, height);
       attraction->setStrength(strength);
@@ -140,7 +138,7 @@ void ScenarioReader::processData() {
       const double dx = elementAttributes.value("dx").toString().toDouble();
       const double dy = elementAttributes.value("dy").toString().toDouble();
       const int type = elementAttributes.value("type").toString().toInt();
-      AgentCluster* agentCluster = new AgentCluster(x, y, n);
+      AgentCluster *agentCluster = new AgentCluster(x, y, n);
       agentCluster->setDistribution(dx, dy);
 
       /// TODO - change agents Vmax distribution based on agent type
@@ -155,19 +153,19 @@ void ScenarioReader::processData() {
       const double dx = elementAttributes.value("dx").toString().toDouble();
       const double dy = elementAttributes.value("dy").toString().toDouble();
       const int type = elementAttributes.value("type").toString().toInt();
-      AgentCluster* agentCluster = new AgentCluster(x, y, n);
+      AgentCluster *agentCluster = new AgentCluster(x, y, n);
       agentCluster->setDistribution(dx, dy);
       agentCluster->setType(static_cast<Ped::Tagent::AgentType>(type));
       SCENE.addAgentCluster(agentCluster);
       currentAgents = agentCluster;
 
-      SpawnArea* spawn_area = new SpawnArea(x, y, n, dx, dy);
+      SpawnArea *spawn_area = new SpawnArea(x, y, n, dx, dy);
       SCENE.addSpawnArea(spawn_area);
       currentSpawnArea = spawn_area;
     } else if (elementName == "addwaypoint") {
       if (currentAgents == nullptr) {
         RCLCPP_DEBUG(rclcpp::get_logger(""),
-          "Invalid <addwaypoint> element outside of agent element!");
+                     "Invalid <addwaypoint> element outside of agent element!");
         return;
       }
 
@@ -181,7 +179,7 @@ void ScenarioReader::processData() {
     } else if (elementName == "addqueue") {
       if (currentAgents == nullptr) {
         RCLCPP_DEBUG(rclcpp::get_logger(""),
-          "Invalid <addqueue> element outside of agent element!");
+                     "Invalid <addqueue> element outside of agent element!");
         return;
       }
 
@@ -190,9 +188,8 @@ void ScenarioReader::processData() {
       currentAgents->addWaitingQueue(SCENE.getWaitingQueueByName(id));
     } else {
       // inform the user about invalid elements
-      RCLCPP_DEBUG(rclcpp::get_logger(""),
-        "Unknown element: <%s>",
-        elementName.toStdString().c_str());
+      RCLCPP_DEBUG(rclcpp::get_logger(""), "Unknown element: <%s>",
+                   elementName.toStdString().c_str());
     }
   } else if (xmlReader.isEndElement()) {
     const QString elementName = xmlReader.name().toString();

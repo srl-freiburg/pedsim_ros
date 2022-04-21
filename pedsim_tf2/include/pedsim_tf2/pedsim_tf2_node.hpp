@@ -20,26 +20,22 @@
 #define PEDSIMTF2NODE__H
 
 #include "rclcpp/rclcpp.hpp"
-#include <pedsim_msgs/msg/tracked_person.hpp>
-#include <pedsim_msgs/msg/agent_states.hpp>
-#include <tf2_geometry_msgs/tf2_geometry_msgs.h>
 #include "tf2_ros/transform_broadcaster.h"
 #include "tf2_ros/transform_listener.h"
+#include <pedsim_msgs/msg/agent_states.hpp>
+#include <pedsim_msgs/msg/tracked_person.hpp>
+#include <tf2_geometry_msgs/tf2_geometry_msgs.h>
 using namespace geometry_msgs::msg;
 
-namespace pedsim
-{
-class PedsimTF2 : public rclcpp::Node
-{
+namespace pedsim {
+class PedsimTF2 : public rclcpp::Node {
 public:
-
-  PedsimTF2(const std::string & name);
+  PedsimTF2(const std::string &name);
   void step();
 
 private:
-
   void agentsCallback(const pedsim_msgs::msg::AgentStates::SharedPtr msg);
-  bool getTFfromAgent(pedsim_msgs::msg::AgentState actor, TransformStamped & tf);
+  bool getTFfromAgent(pedsim_msgs::msg::AgentState actor, TransformStamped &tf);
 
   rclcpp::Subscription<pedsim_msgs::msg::AgentStates>::SharedPtr sub_;
   pedsim_msgs::msg::AgentStates::SharedPtr states_;
@@ -47,6 +43,6 @@ private:
   double rand_angle;
   bool angle_generated;
 };
-};  // namespace pedsim
+}; // namespace pedsim
 
 #endif

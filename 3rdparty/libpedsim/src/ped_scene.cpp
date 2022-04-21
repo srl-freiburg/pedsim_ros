@@ -48,15 +48,18 @@ void Ped::Tscene::clear() {
   tree->clear();
 
   // remove all agents
-  for (Ped::Tagent* currentAgent : agents) delete currentAgent;
+  for (Ped::Tagent *currentAgent : agents)
+    delete currentAgent;
   agents.clear();
 
   // remove all obstacles
-  for (Ped::Tobstacle* currentObstacle : obstacles) delete currentObstacle;
+  for (Ped::Tobstacle *currentObstacle : obstacles)
+    delete currentObstacle;
   obstacles.clear();
 
   // remove all waypoints
-  for (Ped::Twaypoint* currentWaypoint : waypoints) delete currentWaypoint;
+  for (Ped::Twaypoint *currentWaypoint : waypoints)
+    delete currentWaypoint;
   waypoints.clear();
 }
 
@@ -64,12 +67,13 @@ void Ped::Tscene::clear() {
 /// \warning addAgent() does call Tagent::assignScene() to assign itself to the
 /// agent.
 /// \param   *a A pointer to the Tagent to add.
-void Ped::Tscene::addAgent(Ped::Tagent* a) {
+void Ped::Tscene::addAgent(Ped::Tagent *a) {
   // add agent to scene
   // (take responsibility for object deletion)
   agents.push_back(a);
   a->assignScene(this);
-  if (tree != NULL) tree->addAgent(a);
+  if (tree != NULL)
+    tree->addAgent(a);
 }
 
 /// Used to add a Tobstacle to the Tscene.
@@ -77,30 +81,33 @@ void Ped::Tscene::addAgent(Ped::Tagent* a) {
 /// \note    Obstacles added to the Scene are not deleted if the Scene is
 /// destroyed. The reason for this is because they could be member of another
 /// Scene theoretically.
-void Ped::Tscene::addObstacle(Ped::Tobstacle* o) {
+void Ped::Tscene::addObstacle(Ped::Tobstacle *o) {
   // add obstacle to scene
   // (take responsibility for object deletion)
   obstacles.push_back(o);
 }
 
-void Ped::Tscene::addWaypoint(Ped::Twaypoint* w) {
+void Ped::Tscene::addWaypoint(Ped::Twaypoint *w) {
   // add waypoint to scene
   // (take responsibility for object deletion)
   waypoints.push_back(w);
 }
 
-bool Ped::Tscene::removeAgent(Ped::Tagent* a) {
+bool Ped::Tscene::removeAgent(Ped::Tagent *a) {
   // find position of agent in agent vector
-  vector<Tagent*>::iterator agentIter = find(agents.begin(), agents.end(), a);
+  vector<Tagent *>::iterator agentIter = find(agents.begin(), agents.end(), a);
 
   // check whether the agent was found
-  if (agentIter == agents.end()) return false;
+  if (agentIter == agents.end())
+    return false;
 
   // remove agent as potential neighbor
-  for (Tagent* currentAgent : agents) currentAgent->removeAgentFromNeighbors(a);
+  for (Tagent *currentAgent : agents)
+    currentAgent->removeAgentFromNeighbors(a);
 
   // remove agent from the tree
-  if (tree != NULL) tree->removeAgent(a);
+  if (tree != NULL)
+    tree->removeAgent(a);
 
   // remove agent from the scene and delete it, report succesful removal
   agents.erase(agentIter);
@@ -108,13 +115,14 @@ bool Ped::Tscene::removeAgent(Ped::Tagent* a) {
   return true;
 }
 
-bool Ped::Tscene::removeObstacle(Ped::Tobstacle* o) {
+bool Ped::Tscene::removeObstacle(Ped::Tobstacle *o) {
   // find position of obstacle in obstacle vector
-  vector<Tobstacle*>::iterator obstacleIter =
+  vector<Tobstacle *>::iterator obstacleIter =
       find(obstacles.begin(), obstacles.end(), o);
 
   // check whether the obstacle was found
-  if (obstacleIter == obstacles.end()) return false;
+  if (obstacleIter == obstacles.end())
+    return false;
 
   // remove obstacle from the scene and delete it, report succesful removal
   obstacles.erase(obstacleIter);
@@ -122,13 +130,14 @@ bool Ped::Tscene::removeObstacle(Ped::Tobstacle* o) {
   return true;
 }
 
-bool Ped::Tscene::removeWaypoint(Ped::Twaypoint* w) {
+bool Ped::Tscene::removeWaypoint(Ped::Twaypoint *w) {
   // find position of waypoint in waypoint vector
-  vector<Twaypoint*>::iterator waypointIter =
+  vector<Twaypoint *>::iterator waypointIter =
       find(waypoints.begin(), waypoints.end(), w);
 
   // check whether the waypoint was found
-  if (waypointIter == waypoints.end()) return false;
+  if (waypointIter == waypoints.end())
+    return false;
 
   // remove waypoint from the scene and delete it, report succesful removal
   waypoints.erase(waypointIter);
@@ -143,18 +152,22 @@ bool Ped::Tscene::removeWaypoint(Ped::Twaypoint* w) {
 /// \see     Ped::Tagent::move(double h)
 void Ped::Tscene::moveAgents(double h) {
   // first update states
-  for (Tagent* agent : agents) agent->updateState();
+  for (Tagent *agent : agents)
+    agent->updateState();
 
   // then update forces
-  for (Tagent* agent : agents) agent->computeForces();
+  for (Tagent *agent : agents)
+    agent->computeForces();
 
   // finally move agents according to their forces
-  for (Tagent* agent : agents) agent->move(h);
+  for (Tagent *agent : agents)
+    agent->move(h);
 }
 
 /// Internally used to update the quadtree.
-void Ped::Tscene::placeAgent(const Ped::Tagent* agentIn) {
-  if (tree != NULL) tree->addAgent(agentIn);
+void Ped::Tscene::placeAgent(const Ped::Tagent *agentIn) {
+  if (tree != NULL)
+    tree->addAgent(agentIn);
 }
 
 /// Moves a Tagent within the tree structure. The new position is taken from the
@@ -163,8 +176,9 @@ void Ped::Tscene::placeAgent(const Ped::Tagent* agentIn) {
 /// Ped::Tagent::move(double h) calls
 /// this method automatically.
 /// \param   *agentIn the agent to move.
-void Ped::Tscene::moveAgent(const Ped::Tagent* agentIn) {
-  if (tree != NULL) treehash[agentIn]->moveAgent(agentIn);
+void Ped::Tscene::moveAgent(const Ped::Tagent *agentIn) {
+  if (tree != NULL)
+    treehash[agentIn]->moveAgent(agentIn);
 }
 
 /// This triggers a cleanup of the tree structure. Unused leaf nodes are
@@ -173,7 +187,8 @@ void Ped::Tscene::moveAgent(const Ped::Tagent* agentIn) {
 /// timestep.
 /// \date    2012-01-28
 void Ped::Tscene::cleanup() {
-  if (tree != NULL) tree->cut();
+  if (tree != NULL)
+    tree->cut();
 }
 
 /// Returns the list of neighbors within dist of the point x/y. This
@@ -184,35 +199,39 @@ void Ped::Tscene::cleanup() {
 /// \param   y the y coordinate
 /// \param   dist the distance around x/y that will be searched for agents
 /// (search field is a square in the current implementation)
-set<const Ped::Tagent*> Ped::Tscene::getNeighbors(double x, double y,
-                                                  double dist) const {
+set<const Ped::Tagent *> Ped::Tscene::getNeighbors(double x, double y,
+                                                   double dist) const {
   // if there is no tree, return all agents
   if (tree == NULL)
-    return set<const Ped::Tagent*>(agents.begin(), agents.end());
+    return set<const Ped::Tagent *>(agents.begin(), agents.end());
 
   // create the output list
-  vector<const Ped::Tagent*> neighborList;
+  vector<const Ped::Tagent *> neighborList;
   getNeighbors(neighborList, x, y, dist);
 
   // copy the neighbors to a set
-  return set<const Ped::Tagent*>(neighborList.begin(), neighborList.end());
+  return set<const Ped::Tagent *>(neighborList.begin(), neighborList.end());
 }
 
-void Ped::Tscene::getNeighbors(vector<const Ped::Tagent*>& neighborList,
+void Ped::Tscene::getNeighbors(vector<const Ped::Tagent *> &neighborList,
                                double x, double y, double dist) const {
-  stack<Ped::Ttree*> treestack;
+  stack<Ped::Ttree *> treestack;
 
   treestack.push(tree);
   while (!treestack.empty()) {
-    Ped::Ttree* t = treestack.top();
+    Ped::Ttree *t = treestack.top();
     treestack.pop();
     if (t->isleaf) {
       t->getAgents(neighborList);
     } else {
-      if (t->tree1->intersects(x, y, dist)) treestack.push(t->tree1);
-      if (t->tree2->intersects(x, y, dist)) treestack.push(t->tree2);
-      if (t->tree3->intersects(x, y, dist)) treestack.push(t->tree3);
-      if (t->tree4->intersects(x, y, dist)) treestack.push(t->tree4);
+      if (t->tree1->intersects(x, y, dist))
+        treestack.push(t->tree1);
+      if (t->tree2->intersects(x, y, dist))
+        treestack.push(t->tree2);
+      if (t->tree3->intersects(x, y, dist))
+        treestack.push(t->tree3);
+      if (t->tree4->intersects(x, y, dist))
+        treestack.push(t->tree4);
     }
   }
 }

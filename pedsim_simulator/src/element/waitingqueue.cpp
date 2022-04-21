@@ -1,33 +1,33 @@
 /**
-* Copyright 2014 Social Robotics Lab, University of Freiburg
-*
-* Redistribution and use in source and binary forms, with or without
-* modification, are permitted provided that the following conditions are met:
-*
-*    # Redistributions of source code must retain the above copyright
-*       notice, this list of conditions and the following disclaimer.
-*    # Redistributions in binary form must reproduce the above copyright
-*       notice, this list of conditions and the following disclaimer in the
-*       documentation and/or other materials provided with the distribution.
-*    # Neither the name of the University of Freiburg nor the names of its
-*       contributors may be used to endorse or promote products derived from
-*       this software without specific prior written permission.
-*
-* THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-* AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-* IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-* ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
-* LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-* CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-* SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-* INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-* CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-* ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-* POSSIBILITY OF SUCH DAMAGE.
-*
-* \author Billy Okal <okal@cs.uni-freiburg.de>
-* \author Sven Wehner <mail@svenwehner.de>
-*/
+ * Copyright 2014 Social Robotics Lab, University of Freiburg
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ *    # Redistributions of source code must retain the above copyright
+ *       notice, this list of conditions and the following disclaimer.
+ *    # Redistributions in binary form must reproduce the above copyright
+ *       notice, this list of conditions and the following disclaimer in the
+ *       documentation and/or other materials provided with the distribution.
+ *    # Neither the name of the University of Freiburg nor the names of its
+ *       contributors may be used to endorse or promote products derived from
+ *       this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ *
+ * \author Billy Okal <okal@cs.uni-freiburg.de>
+ * \author Sven Wehner <mail@svenwehner.de>
+ */
 
 #include <pedsim_simulator/config.hpp>
 #include <pedsim_simulator/element/agent.hpp>
@@ -35,7 +35,7 @@
 #include <pedsim_simulator/rng.hpp>
 #include <pedsim_simulator/scene.hpp>
 
-WaitingQueue::WaitingQueue(const QString& nameIn, Ped::Tvector positionIn,
+WaitingQueue::WaitingQueue(const QString &nameIn, Ped::Tvector positionIn,
                            Ped::Tangle directionIn)
     : Waypoint(nameIn, positionIn), direction(directionIn) {
   // initialize values
@@ -55,7 +55,7 @@ void WaitingQueue::onTimeChanged(double timeIn) {
     return;
   }
 
-  Agent* firstInLine = queuedAgents.first();
+  Agent *firstInLine = queuedAgents.first();
 
   // check whether waiting started
   if (std::isinf(dequeueTime)) {
@@ -79,7 +79,7 @@ void WaitingQueue::onLastAgentPositionChanged(double xIn, double yIn) {
 
 Ped::Tangle WaitingQueue::getDirection() const { return direction; }
 
-void WaitingQueue::setDirection(const Ped::Tangle& angleIn) {
+void WaitingQueue::setDirection(const Ped::Tangle &angleIn) {
   direction = angleIn;
 
   // inform users
@@ -90,7 +90,7 @@ void WaitingQueue::setDirection(double xIn, double yIn) {
   setDirection(Ped::Tvector(xIn, yIn));
 }
 
-void WaitingQueue::setDirection(const Ped::Tvector& directionIn) {
+void WaitingQueue::setDirection(const Ped::Tvector &directionIn) {
   direction = directionIn.polarAngle();
 
   // inform users
@@ -106,9 +106,9 @@ Ped::Tvector WaitingQueue::getQueueEndPosition() const {
     return queuedAgents.last()->getPosition();
 }
 
-const Agent* WaitingQueue::enqueueAgent(Agent* agentIn) {
+const Agent *WaitingQueue::enqueueAgent(Agent *agentIn) {
   // determine output
-  const Agent* aheadAgent =
+  const Agent *aheadAgent =
       (queuedAgents.isEmpty()) ? nullptr : queuedAgents.last();
 
   // add agent to queue
@@ -136,12 +136,11 @@ const Agent* WaitingQueue::enqueueAgent(Agent* agentIn) {
   return aheadAgent;
 }
 
-bool WaitingQueue::dequeueAgent(Agent* agentIn) {
+bool WaitingQueue::dequeueAgent(Agent *agentIn) {
   // sanity checks
   if (queuedAgents.isEmpty()) {
-    RCLCPP_DEBUG(
-      rclcpp::get_logger(""),
-      "Cannot dequeue agent from empty waiting queue!");
+    RCLCPP_DEBUG(rclcpp::get_logger(""),
+                 "Cannot dequeue agent from empty waiting queue!");
     return false;
   }
 
@@ -152,21 +151,19 @@ bool WaitingQueue::dequeueAgent(Agent* agentIn) {
   if (dequeuedWasFirst) {
     queuedAgents.removeFirst();
     dequeueSuccess = true;
-  } else {              
-    RCLCPP_DEBUG(
-      rclcpp::get_logger(""),
-      "Dequeueing agent from queue (%s), not in front of the queue",
-      agentIn->toString().toStdString().c_str());
+  } else {
+    RCLCPP_DEBUG(rclcpp::get_logger(""),
+                 "Dequeueing agent from queue (%s), not in front of the queue",
+                 agentIn->toString().toStdString().c_str());
 
     int removedCount = queuedAgents.removeAll(agentIn);
     dequeueSuccess = (removedCount >= 1);
 
     if (dequeueSuccess == false) {
-      RCLCPP_DEBUG(
-        rclcpp::get_logger(""),
-        "Agent isn't waiting in queue! (Agent: %s, Queue: %s)",
-        agentIn->toString().toStdString().c_str(),
-        this->toString().toStdString().c_str());
+      RCLCPP_DEBUG(rclcpp::get_logger(""),
+                   "Agent isn't waiting in queue! (Agent: %s, Queue: %s)",
+                   agentIn->toString().toStdString().c_str(),
+                   this->toString().toStdString().c_str());
       return false;
     }
   }
@@ -177,7 +174,7 @@ bool WaitingQueue::dequeueAgent(Agent* agentIn) {
   // update leading position
   if (dequeuedWasFirst) {
     // determine new first agent in line
-    const Agent* newFront =
+    const Agent *newFront =
         (queuedAgents.isEmpty()) ? nullptr : queuedAgents.first();
 
     // reset time for next agent
@@ -201,13 +198,14 @@ bool WaitingQueue::dequeueAgent(Agent* agentIn) {
 }
 
 bool WaitingQueue::hasReachedWaitingPosition() {
-  if (queuedAgents.isEmpty()) return false;
+  if (queuedAgents.isEmpty())
+    return false;
 
   // const double waitingRadius = 0.7;
   const double waitingRadius = 0.3;
 
   // compute distance from where queue starts
-  const Agent* leadingAgent = queuedAgents.first();
+  const Agent *leadingAgent = queuedAgents.first();
   Ped::Tvector diff = leadingAgent->getPosition() - position;
   return (diff.length() < waitingRadius);
 }
@@ -232,14 +230,14 @@ void WaitingQueue::informAboutEndPosition() {
   if (queuedAgents.isEmpty()) {
     emit queueEndPositionChanged(position.x, position.y);
   } else {
-    Agent* lastAgent = queuedAgents.last();
+    Agent *lastAgent = queuedAgents.last();
     Ped::Tvector endPosition = lastAgent->getPosition();
     emit queueEndPositionChanged(endPosition.x, endPosition.y);
   }
 }
 
-Ped::Tvector WaitingQueue::closestPoint(const Ped::Tvector& p,
-                                        bool* withinWaypoint) const {
+Ped::Tvector WaitingQueue::closestPoint(const Ped::Tvector &p,
+                                        bool *withinWaypoint) const {
   return getQueueEndPosition();
 }
 
@@ -247,13 +245,13 @@ QPointF WaitingQueue::getVisiblePosition() const {
   return QPointF(position.x, position.y);
 }
 
-void WaitingQueue::setVisiblePosition(const QPointF& positionIn) {
+void WaitingQueue::setVisiblePosition(const QPointF &positionIn) {
   setPosition(positionIn.x(), positionIn.y());
 }
 
 QString WaitingQueue::toString() const {
   QStringList waitingIDs;
-  foreach (const Agent* agent, queuedAgents)
+  foreach (const Agent *agent, queuedAgents)
     waitingIDs.append(QString::number(agent->getId()));
   QString waitingString = waitingIDs.join(",");
 

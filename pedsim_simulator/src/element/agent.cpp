@@ -1,33 +1,33 @@
 /**
-* Copyright 2014 Social Robotics Lab, University of Freiburg
-*
-* Redistribution and use in source and binary forms, with or without
-* modification, are permitted provided that the following conditions are met:
-*
-*    # Redistributions of source code must retain the above copyright
-*       notice, this list of conditions and the following disclaimer.
-*    # Redistributions in binary form must reproduce the above copyright
-*       notice, this list of conditions and the following disclaimer in the
-*       documentation and/or other materials provided with the distribution.
-*    # Neither the name of the University of Freiburg nor the names of its
-*       contributors may be used to endorse or promote products derived from
-*       this software without specific prior written permission.
-*
-* THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-* AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-* IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-* ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
-* LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-* CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-* SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-* INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-* CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-* ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-* POSSIBILITY OF SUCH DAMAGE.
-*
-* \author Billy Okal <okal@cs.uni-freiburg.de>
-* \author Sven Wehner <mail@svenwehner.de>
-*/
+ * Copyright 2014 Social Robotics Lab, University of Freiburg
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ *    # Redistributions of source code must retain the above copyright
+ *       notice, this list of conditions and the following disclaimer.
+ *    # Redistributions in binary form must reproduce the above copyright
+ *       notice, this list of conditions and the following disclaimer in the
+ *       documentation and/or other materials provided with the distribution.
+ *    # Neither the name of the University of Freiburg nor the names of its
+ *       contributors may be used to endorse or promote products derived from
+ *       this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ *
+ * \author Billy Okal <okal@cs.uni-freiburg.de>
+ * \author Sven Wehner <mail@svenwehner.de>
+ */
 
 #include <pedsim_simulator/agentstatemachine.hpp>
 #include <pedsim_simulator/config.hpp>
@@ -54,14 +54,15 @@ Agent::Agent() {
 
 Agent::~Agent() {
   // clean up
-  foreach (Force* currentForce, forces) { delete currentForce; }
+  foreach (Force *currentForce, forces) { delete currentForce; }
 }
 
 /// Calculates the desired force. Same as in lib, but adds graphical
 /// representation
 Ped::Tvector Agent::desiredForce() {
   Ped::Tvector force;
-  if (!disabledForces.contains("Desired")) force = Tagent::desiredForce();
+  if (!disabledForces.contains("Desired"))
+    force = Tagent::desiredForce();
 
   // inform users
   emit desiredForceChanged(force.x, force.y);
@@ -73,7 +74,8 @@ Ped::Tvector Agent::desiredForce() {
 /// representation
 Ped::Tvector Agent::socialForce() const {
   Ped::Tvector force;
-  if (!disabledForces.contains("Social")) force = Tagent::socialForce();
+  if (!disabledForces.contains("Social"))
+    force = Tagent::socialForce();
 
   // inform users
   emit socialForceChanged(force.x, force.y);
@@ -85,7 +87,8 @@ Ped::Tvector Agent::socialForce() const {
 /// representation
 Ped::Tvector Agent::obstacleForce() const {
   Ped::Tvector force;
-  if (!disabledForces.contains("Obstacle")) force = Tagent::obstacleForce();
+  if (!disabledForces.contains("Obstacle"))
+    force = Tagent::obstacleForce();
 
   // inform users
   emit obstacleForceChanged(force.x, force.y);
@@ -96,7 +99,7 @@ Ped::Tvector Agent::obstacleForce() const {
 Ped::Tvector Agent::myForce(Ped::Tvector desired) const {
   // run additional forces
   Ped::Tvector forceValue;
-  foreach (Force* force, forces) {
+  foreach (Force *force, forces) {
     // skip disabled forces
     if (disabledForces.contains(force->getName())) {
       // update graphical representation
@@ -108,10 +111,8 @@ Ped::Tvector Agent::myForce(Ped::Tvector desired) const {
     Ped::Tvector currentForce = force->getForce(desired);
     // → sanity checks
     if (!currentForce.isValid()) {
-      RCLCPP_DEBUG(
-        rclcpp::get_logger(""),
-        "Invalid Force: %s",
-        force->getName().toStdString().c_str());
+      RCLCPP_DEBUG(rclcpp::get_logger(""), "Invalid Force: %s",
+                   force->getName().toStdString().c_str());
       currentForce = Ped::Tvector();
     }
     forceValue += currentForce;
@@ -127,16 +128,16 @@ Ped::Tvector Agent::myForce(Ped::Tvector desired) const {
   return forceValue;
 }
 
-Ped::Twaypoint* Agent::getCurrentDestination() const {
+Ped::Twaypoint *Agent::getCurrentDestination() const {
   return currentDestination;
 }
 
-Ped::Twaypoint* Agent::updateDestination() {
+Ped::Twaypoint *Agent::updateDestination() {
   // assign new destination
   if (!destinations.isEmpty()) {
     if (currentDestination != nullptr) {
       // cycle through destinations
-      Waypoint* previousDestination = destinations.takeFirst();
+      Waypoint *previousDestination = destinations.takeFirst();
       destinations.append(previousDestination);
     }
     currentDestination = destinations.first();
@@ -197,19 +198,19 @@ void Agent::move(double h) {
   emit accelerationChanged(getax(), getay());
 }
 
-const QList<Waypoint*>& Agent::getWaypoints() const { return destinations; }
+const QList<Waypoint *> &Agent::getWaypoints() const { return destinations; }
 
-bool Agent::setWaypoints(const QList<Waypoint*>& waypointsIn) {
+bool Agent::setWaypoints(const QList<Waypoint *> &waypointsIn) {
   destinations = waypointsIn;
   return true;
 }
 
-bool Agent::addWaypoint(Waypoint* waypointIn) {
+bool Agent::addWaypoint(Waypoint *waypointIn) {
   destinations.append(waypointIn);
   return true;
 }
 
-bool Agent::removeWaypoint(Waypoint* waypointIn) {
+bool Agent::removeWaypoint(Waypoint *waypointIn) {
   const int removeCount = destinations.removeAll(waypointIn);
 
   return (removeCount > 0);
@@ -224,9 +225,10 @@ bool Agent::needNewDestination() const {
   }
 }
 
-Ped::Twaypoint* Agent::getCurrentWaypoint() const {
+Ped::Twaypoint *Agent::getCurrentWaypoint() const {
   // sanity checks
-  if (waypointplanner == nullptr) return nullptr;
+  if (waypointplanner == nullptr)
+    return nullptr;
 
   // ask waypoint planner
   return waypointplanner->getCurrentWaypoint();
@@ -234,11 +236,11 @@ Ped::Twaypoint* Agent::getCurrentWaypoint() const {
 
 bool Agent::isInGroup() const { return (group != nullptr); }
 
-AgentGroup* Agent::getGroup() const { return group; }
+AgentGroup *Agent::getGroup() const { return group; }
 
-void Agent::setGroup(AgentGroup* groupIn) { group = groupIn; }
+void Agent::setGroup(AgentGroup *groupIn) { group = groupIn; }
 
-bool Agent::addForce(Force* forceIn) {
+bool Agent::addForce(Force *forceIn) {
   forces.append(forceIn);
 
   // inform users
@@ -248,7 +250,7 @@ bool Agent::addForce(Force* forceIn) {
   return true;
 }
 
-bool Agent::removeForce(Force* forceIn) {
+bool Agent::removeForce(Force *forceIn) {
   int removeCount = forces.removeAll(forceIn);
 
   // inform users
@@ -258,26 +260,27 @@ bool Agent::removeForce(Force* forceIn) {
   return (removeCount >= 1);
 }
 
-AgentStateMachine* Agent::getStateMachine() const { return stateMachine; }
+AgentStateMachine *Agent::getStateMachine() const { return stateMachine; }
 
-WaypointPlanner* Agent::getWaypointPlanner() const { return waypointplanner; }
+WaypointPlanner *Agent::getWaypointPlanner() const { return waypointplanner; }
 
-void Agent::setWaypointPlanner(WaypointPlanner* plannerIn) {
+void Agent::setWaypointPlanner(WaypointPlanner *plannerIn) {
   waypointplanner = plannerIn;
 }
 
-QList<const Agent*> Agent::getNeighbors() const {
+QList<const Agent *> Agent::getNeighbors() const {
   // upcast neighbors
-  QList<const Agent*> output;
-  for (const Ped::Tagent* neighbor : neighbors) {
-    const Agent* upNeighbor = dynamic_cast<const Agent*>(neighbor);
-    if (upNeighbor != nullptr) output.append(upNeighbor);
+  QList<const Agent *> output;
+  for (const Ped::Tagent *neighbor : neighbors) {
+    const Agent *upNeighbor = dynamic_cast<const Agent *>(neighbor);
+    if (upNeighbor != nullptr)
+      output.append(upNeighbor);
   }
 
   return output;
 }
 
-void Agent::disableForce(const QString& forceNameIn) {
+void Agent::disableForce(const QString &forceNameIn) {
   // disable force by adding it to the list of disabled forces
   disabledForces.append(forceNameIn);
 }
@@ -319,7 +322,7 @@ Ped::Tvector Agent::getMyForce() const { return myforce; }
 
 QPointF Agent::getVisiblePosition() const { return QPointF(getx(), gety()); }
 
-void Agent::setVisiblePosition(const QPointF& positionIn) {
+void Agent::setVisiblePosition(const QPointF &positionIn) {
   // check and apply new position
   if (positionIn != getVisiblePosition())
     setPosition(positionIn.x(), positionIn.y());

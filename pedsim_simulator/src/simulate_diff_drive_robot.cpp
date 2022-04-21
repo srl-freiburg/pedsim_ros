@@ -1,9 +1,9 @@
 #include "rclcpp/rclcpp.hpp"
 
-#include <geometry_msgs/msgs/twist.hpp>
-#include <tf2_geometry_msgs/tf2_geometry_msgs.h>
 #include "tf2_ros/transform_broadcaster.h"
 #include "tf2_ros/transform_listener.h"
+#include <geometry_msgs/msgs/twist.hpp>
+#include <tf2_geometry_msgs/tf2_geometry_msgs.h>
 
 #include <boost/thread.hpp>
 #include <boost/thread/mutex.hpp>
@@ -12,7 +12,7 @@ double g_updateRate, g_simulationFactor;
 std::string g_worldFrame, g_robotFrame;
 geometry_msgs::Twist g_currentTwist;
 tf::Transform g_currentPose;
-std::shared_ptr<tf2_ros::TransformBroadcaster> g_transformBroadcaster;  
+std::shared_ptr<tf2_ros::TransformBroadcaster> g_transformBroadcaster;
 boost::mutex mutex;
 
 /// Simulates robot motion of a differential-drive robot with translational and
@@ -57,12 +57,12 @@ void updateLoop() {
   }
 }
 
-void onTwistReceived(const geometry_msgs::Twist::ConstPtr& twist) {
+void onTwistReceived(const geometry_msgs::Twist::ConstPtr &twist) {
   boost::mutex::scoped_lock lock(mutex);
   g_currentTwist = *twist;
 }
 
-int main(int argc, char** argv) {
+int main(int argc, char **argv) {
   auto private_node_ = rclcpp::Node::make_shared("simulate_diff_drive_robot");
 
   // Process parameters
@@ -70,9 +70,11 @@ int main(int argc, char** argv) {
   privateHandle.param<std::string>("robot_frame", g_robotFrame,
                                    "base_footprint");
 
-  privateHandle.param<double>("/pedsim_simulator/simulation_factor", g_simulationFactor,
-                              1.0);  // set to e.g. 2.0 for 2x speed
-  privateHandle.param<double>("/pedsim_simulator/update_rate", g_updateRate, 25.0);  // in Hz
+  privateHandle.param<double>("/pedsim_simulator/simulation_factor",
+                              g_simulationFactor,
+                              1.0); // set to e.g. 2.0 for 2x speed
+  privateHandle.param<double>("/pedsim_simulator/update_rate", g_updateRate,
+                              25.0); // in Hz
 
   double initialX = 0.0, initialY = 0.0, initialTheta = 0.0;
   privateHandle.param<double>("pose_initial_x", initialX, 0.0);
@@ -84,7 +86,8 @@ int main(int argc, char** argv) {
   g_currentPose.setRotation(tf::createQuaternionFromRPY(0, 0, initialTheta));
 
   // Create ROS subscriber and TF broadcaster
-  g_transformBroadcaster = std::make_shared<tf2_ros::TransformBroadcaster>(this);
+  g_transformBroadcaster =
+      std::make_shared<tf2_ros::TransformBroadcaster>(this);
   ros::Subscriber twistSubscriber =
       nodeHandle.subscribe<geometry_msgs::Twist>("cmd_vel", 3, onTwistReceived);
 
