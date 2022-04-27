@@ -34,7 +34,7 @@ def generate_launch_description():
 
     declare_scene_file_cmd = DeclareLaunchArgument(
         'scene_file', 
-        default_value=os.path.join(simulator_dir, 'scenarios', 'office.xml'),
+        default_value=os.path.join(simulator_dir, 'scenarios', 'office-cubicles.xml'),
         description='')
 
     declare_simulation_factor_cmd = DeclareLaunchArgument(
