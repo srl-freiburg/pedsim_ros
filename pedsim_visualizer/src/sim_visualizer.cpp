@@ -80,14 +80,14 @@ void SimVisualizer::publishAgentVisuals() {
 
   const auto current_states = q_people_.front();
 
-  spencer_tracking_msgs::msg::TrackedPersons tracked_people;
+  pedsim_msgs::msg::TrackedPersons tracked_people;
   tracked_people.header = current_states->header;
   tracked_people.header.frame_id = frame_id_;
   for (const auto &agent_state : current_states->agent_states) {
     if (agent_state.type == 2)
       continue;
 
-    spencer_tracking_msgs::msg::TrackedPerson person;
+    pedsim_msgs::msg::TrackedPerson person;
     person.track_id = agent_state.id;
     person.is_occluded = false;
     person.detection_id = agent_state.id;
@@ -121,12 +121,12 @@ void SimVisualizer::publishGroupVisuals() {
 
   const auto sim_groups = q_groups_.front();
 
-  spencer_tracking_msgs::msg::TrackedGroups tracked_groups;
+  pedsim_msgs::msg::TrackedGroups tracked_groups;
   tracked_groups.header = sim_groups->header;
   tracked_groups.header.frame_id = frame_id_;
 
   for (const auto &ag : sim_groups->groups) {
-    spencer_tracking_msgs::msg::TrackedGroup group;
+    pedsim_msgs::msg::TrackedGroup group;
     group.group_id = ag.group_id;
 
     // TODO - update.
@@ -181,10 +181,10 @@ void SimVisualizer::setupPublishersAndSubscribers() {
       "/pedsim_visualizer/walls",
       rclcpp::QoS(rclcpp::KeepLast(1)).transient_local().reliable());
   pub_person_visuals_ =
-      create_publisher<spencer_tracking_msgs::msg::TrackedPersons>(
+      create_publisher<pedsim_msgs::msg::TrackedPersons>(
           "/pedsim_visualizer/tracked_persons", rclcpp::SystemDefaultsQoS());
   pub_group_visuals_ =
-      create_publisher<spencer_tracking_msgs::msg::TrackedGroups>(
+      create_publisher<pedsim_msgs::msg::TrackedGroups>(
           "/pedsim_visualizer/tracked_groups", rclcpp::SystemDefaultsQoS());
 
   // TODO - get simulator node name by param.

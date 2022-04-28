@@ -13,8 +13,8 @@
 
 #include <boost/program_options.hpp>
 
-#include <nav_msgs/OccupancyGrid.h>
-#include <ros/console.h>
+#include <rclcpp/rclcpp.hpp>
+#include <nav_msgs/msg/occupancy_grid.hpp>
 
 struct Obstacle {
   double x1{0.0};
@@ -112,16 +112,16 @@ struct Obstacle {
   }
 };
 
-void saveMapPgmAndYaml(const nav_msgs::OccupancyGrid &map,
+void saveMapPgmAndYaml(const nav_msgs::msg::OccupancyGrid &map,
                        const std::string &pgmFile,
                        const std::string &yamlFile) {
-  ROS_INFO("Received a %d X %d map @ %.3f m/pix", map.info.width,
-           map.info.height, map.info.resolution);
+  printf("Received a %d X %d map @ %.3f m/pix", map.info.width,
+                       map.info.height, map.info.resolution);
 
-  ROS_INFO("Writing map occupancy data to %s", pgmFile.c_str());
+  printf("Writing map occupancy data to %s", pgmFile.c_str());
   FILE *out = fopen(pgmFile.c_str(), "w");
   if (!out) {
-    ROS_ERROR("Couldn't save map file to %s", pgmFile.c_str());
+    printf("Couldn't save map file to %s", pgmFile.c_str());
     return;
   }
 
@@ -142,7 +142,7 @@ void saveMapPgmAndYaml(const nav_msgs::OccupancyGrid &map,
 
   fclose(out);
 
-  ROS_INFO("Writing map occupancy data to %s", yamlFile.c_str());
+  printf("Writing map occupancy data to %s", yamlFile.c_str());
   FILE *yaml = fopen(yamlFile.c_str(), "w");
 
   fprintf(yaml,
@@ -153,14 +153,12 @@ void saveMapPgmAndYaml(const nav_msgs::OccupancyGrid &map,
 
   fclose(yaml);
 
-  ROS_INFO("Done\n");
+  printf("Done\n");
 }
 
 namespace po = boost::program_options;
 
 int main(int argn, char *args[]) {
-
-  ros::Time::init();
 
   std::string iFile, oYaml, oPgm;
   float resolution = 0.1f;
@@ -203,7 +201,7 @@ int main(int argn, char *args[]) {
   // open file
   QFile file(QString::fromStdString(iFile));
   if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-    ROS_ERROR("Couldn't open scenario file!");
+    printf("Couldn't open scenario file!");
     return -1;
   }
 
@@ -266,7 +264,7 @@ int main(int argn, char *args[]) {
                           this_obs_points.end());
   }
 
-  nav_msgs::OccupancyGrid grid;
+  nav_msgs::msg::OccupancyGrid grid;
   grid.info.height = (y_max - y_min) / resolution + 2;
   grid.info.width = (x_max - x_min) / resolution + 2;
   grid.info.origin.position.x = -10.0;

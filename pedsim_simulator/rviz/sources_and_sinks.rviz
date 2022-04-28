@@ -75,7 +75,7 @@ Visualization Manager:
     - Class: rviz/Group
       Displays:
         - Alpha: 1
-          Class: spencer_tracking_rviz_plugin/TrackedPersons
+          Class: pedsim_rviz_plugin/TrackedPersons
           Color: 130; 130; 130
           Color map offset: 0
           Color transform: SRL Tracking Colors
@@ -118,7 +118,7 @@ Visualization Manager:
             Use Z position from message: false
             Value: 0
         - Alpha: 1
-          Class: spencer_tracking_rviz_plugin/TrackedGroups
+          Class: pedsim_rviz_plugin/TrackedGroups
           Color: 130; 130; 130
           Color map offset: 0
           Color transform: Flat

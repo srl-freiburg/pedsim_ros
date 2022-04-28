@@ -1,0 +1,69 @@
+<library path="pedsim_rviz_plugin">
+
+  <class 
+    name="pedsim_rviz_plugin/DetectedPersons" 
+    type="pedsim_rviz_plugin::DetectedPersonsDisplay" 
+    base_class_type="rviz_common::Display"
+  >
+    <description>
+      Displays detected persons from pedsim_msgs/DetectedPersons messages.
+    </description>
+    <message_type>pedsim_msgs/msg/DetectedPersons</message_type>
+  </class>
+  
+  <class 
+    name="pedsim_rviz_plugin/TrackedPersons" 
+    type="pedsim_rviz_plugin::TrackedPersonsDisplay" 
+    base_class_type="rviz_common::Display"
+  >
+    <description>
+      Displays tracked persons from pedsim_msgs/TrackedPersons messages.
+    </description>
+    <message_type>pedsim_msgs/msg/TrackedPersons</message_type>
+  </class>
+
+  <class 
+    name="pedsim_rviz_plugin/TrackedGroups" 
+    type="pedsim_rviz_plugin::TrackedGroupsDisplay" 
+    base_class_type="rviz_common::Display"
+  >
+    <description>
+      Displays tracked groups from pedsim_msgs/TrackedGroups messages.
+    </description>
+    <message_type>pedsim_msgs/msg/TrackedGroups</message_type>
+  </class>
+
+  <class 
+    name="pedsim_rviz_plugin/SocialRelations" 
+    type="pedsim_rviz_plugin::SocialRelationsDisplay" 
+    base_class_type="rviz_common::Display"
+  >
+    <description>
+      Displays social relations from spencer_social_relation_msgs/SocialRelations messages.
+    </description>
+    <message_type>spencer_social_relation_msgs/msg/SocialRelations</message_type>
+  </class>
+
+  <class 
+    name="pedsim_rviz_plugin/SocialActivities" 
+    type="pedsim_rviz_plugin::SocialActivitiesDisplay" 
+    base_class_type="rviz_common::Display"
+  >
+    <description>
+      Displays social activities from spencer_social_relation_msgs/SocialActivities messages.
+    </description>
+    <message_type>spencer_social_relation_msgs/msg/SocialActivities</message_type>
+  </class>
+
+  <class 
+    name="pedsim_rviz_plugin/HumanAttributes" 
+    type="pedsim_rviz_plugin::HumanAttributesDisplay" 
+    base_class_type="rviz_common::Display"
+  >
+    <description>
+      Displays human attributes from spencer_human_attribute_msgs/HumanAttributes messages.
+    </description>
+    <message_type>spencer_human_attribute_msgs/msg/HumanAttributes</message_type>
+  </class>
+
+</library>

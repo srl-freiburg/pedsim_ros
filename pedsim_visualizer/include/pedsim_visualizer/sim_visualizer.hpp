@@ -49,10 +49,10 @@
 #include <pedsim_msgs/msg/social_relation.hpp>
 #include <pedsim_msgs/msg/social_relations.hpp>
 
-#include <spencer_tracking_msgs/msg/tracked_group.hpp>
-#include <spencer_tracking_msgs/msg/tracked_groups.hpp>
-#include <spencer_tracking_msgs/msg/tracked_person.hpp>
-#include <spencer_tracking_msgs/msg/tracked_persons.hpp>
+#include <pedsim_msgs/msg/tracked_group.hpp>
+#include <pedsim_msgs/msg/tracked_groups.hpp>
+#include <pedsim_msgs/msg/tracked_person.hpp>
+#include <pedsim_msgs/msg/tracked_persons.hpp>
 
 #include <geometry_msgs/msg/point.hpp>
 #include <geometry_msgs/msg/pose_stamped.hpp>
@@ -98,9 +98,9 @@ private:
   /// publishers
   rclcpp::Publisher<visualization_msgs::msg::Marker>::SharedPtr
       pub_obstacles_visuals_;
-  rclcpp::Publisher<spencer_tracking_msgs::msg::TrackedPersons>::SharedPtr
+  rclcpp::Publisher<pedsim_msgs::msg::TrackedPersons>::SharedPtr
       pub_person_visuals_;
-  rclcpp::Publisher<spencer_tracking_msgs::msg::TrackedGroups>::SharedPtr
+  rclcpp::Publisher<pedsim_msgs::msg::TrackedGroups>::SharedPtr
       pub_group_visuals_;
 
   /// Subscribers.

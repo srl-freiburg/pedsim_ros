@@ -19,8 +19,8 @@ set(PEDSIM_SIMULATOR_DEPENDENCIES
   tf2_ros
   tf2_geometry_msgs
   Qt5Widgets
-  # cmake_modules
-  # dynamic_reconfigure
+	Qt5Core
+	Boost
 )
 
 set(CMAKE_AUTOMOC ON)
@@ -41,25 +41,24 @@ find_package(nav_msgs REQUIRED)
 find_package(tf2 REQUIRED)
 find_package(tf2_ros REQUIRED)
 find_package(tf2_geometry_msgs REQUIRED)
-find_package(Boost REQUIRED)
+find_package(Boost REQUIRED COMPONENTS program_options)
 find_package(Qt5Widgets REQUIRED)
-
-# dynamic reconfigure parameters
-#generate_dynamic_reconfigure_options(config/PedsimSimulator.cfg)
+find_package(Qt5Core REQUIRED)
 
 include_directories(include)
 include_directories(${Eigen_INCLUDE_DIRS})
 include_directories(${Qt5Widgets_INCLUDES})
+include_directories(${Qt5Core_INCLUDES})
 add_definitions(${Qt5Widgets_DEFINITIONS})
 
 set(SOURCES
-  	src/simulator_node.cpp
-	src/simulator.cpp
-  	src/scene.cpp
-  	src/config.cpp
-  	src/agentstatemachine.cpp
-  	src/scenarioreader.cpp
-	src/rng.cpp
+ 	src/simulator_node.cpp
+  src/simulator.cpp
+ 	src/scene.cpp
+ 	src/config.cpp
+  src/agentstatemachine.cpp
+ 	src/scenarioreader.cpp
+  src/rng.cpp
 
 	# elements
 	src/element/agent.cpp
@@ -128,6 +127,9 @@ ament_target_dependencies(${EXECUTABLE_NAME} ${PEDSIM_SIMULATOR_DEPENDENCIES})
 #add_executable(simulate_diff_drive_robot src/simulate_diff_drive_robot.cpp)
 #ament_target_dependencies(simulate_diff_drive_robot ${PEDSIM_SIMULATOR_DEPENDENCIES})
 
+add_executable(pedsim_xml_to_occ_map src/pedsim_xml_to_occ_map.cpp)
+ament_target_dependencies(pedsim_xml_to_occ_map ${PEDSIM_SIMULATOR_DEPENDENCIES})
+
 install(DIRECTORY launch DESTINATION share/${PROJECT_NAME})
 install(DIRECTORY maps DESTINATION share/${PROJECT_NAME})
 install(DIRECTORY rviz DESTINATION share/${PROJECT_NAME})
@@ -135,7 +137,7 @@ install(DIRECTORY scenarios DESTINATION share/${PROJECT_NAME})
 
 install(TARGETS
   ${EXECUTABLE_NAME}
-  #simulate_diff_drive_robot
+  pedsim_xml_to_occ_map
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION lib/${PROJECT_NAME}

@@ -11,7 +11,6 @@ set(dependencies
   pedsim_msgs
   pedsim_utils
   visualization_msgs
-  spencer_tracking_msgs
   geometry_msgs
 )
 
@@ -24,7 +23,6 @@ find_package(pedsim_utils REQUIRED)
 find_package(std_srvs REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(visualization_msgs REQUIRED)
-find_package(spencer_tracking_msgs REQUIRED)
 find_package(Boost REQUIRED)
 
 ################################################

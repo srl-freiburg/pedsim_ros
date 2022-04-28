@@ -1,8 +1,0 @@
-[submodule "2ndparty/spencer_messages"]
-	path = 2ndparty/spencer_messages
-	url = https://github.com/ksatyaki/spencer_messages.git
-	branch = master
-[submodule "2ndparty/spencer_tracking_rviz_plugin"]
-	path = 2ndparty/spencer_tracking_rviz_plugin
-	url = https://github.com/ksatyaki/spencer_tracking_rviz_plugin.git
-	branch = master
