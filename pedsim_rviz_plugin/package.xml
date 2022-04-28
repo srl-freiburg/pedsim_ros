@@ -1,0 +1,35 @@
+<package format="2">
+  <name>pedsim_rviz_plugin</name>
+  <version>8.2.0</version>
+  <description>
+     RViz plugin for visualizing tracked and detected persons and groups
+  </description>
+  <maintainer email="jonatan.gines@urjc.es">jginesclavero</maintainer>
+  <maintainer email="linder@cs.uni-freiburg.de">Timm Linder</maintainer>
+  <author email="linder@cs.uni-freiburg.de">Timm Linder</author>
+  <license>BSD</license>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+
+  <build_depend>qtbase5-dev</build_depend>
+  <build_depend>rviz_ogre_vendor</build_depend>
+
+  <build_export_depend>rviz_ogre_vendor</build_export_depend>
+
+  <exec_depend>libqt5-core</exec_depend>
+  <exec_depend>libqt5-gui</exec_depend>
+  <exec_depend>libqt5-opengl</exec_depend>
+  <exec_depend>libqt5-widgets</exec_depend>
+  <exec_depend>rviz_ogre_vendor</exec_depend>
+
+  <depend>pluginlib</depend>
+  <depend>rclcpp</depend>
+  <depend>resource_retriever</depend>
+  <depend>rviz_common</depend>
+  <depend>rviz_rendering</depend>
+  <depend>pedsim_msgs</depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>

@@ -1,60 +1,59 @@
 /**
-* Copyright 2014-2016 Social Robotics Lab, University of Freiburg
-*
-* Redistribution and use in source and binary forms, with or without
-* modification, are permitted provided that the following conditions are met:
-*
-*    # Redistributions of source code must retain the above copyright
-*       notice, this list of conditions and the following disclaimer.
-*    # Redistributions in binary form must reproduce the above copyright
-*       notice, this list of conditions and the following disclaimer in the
-*       documentation and/or other materials provided with the distribution.
-*    # Neither the name of the University of Freiburg nor the names of its
-*       contributors may be used to endorse or promote products derived from
-*       this software without specific prior written permission.
-*
-* THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-* AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-* IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-* ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
-* LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-* CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-* SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-* INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-* CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-* ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-* POSSIBILITY OF SUCH DAMAGE.
-*
-* \author Billy Okal <okal@cs.uni-freiburg.de>
-* \author Sven Wehner <mail@svenwehner.de>
-*/
+ * Copyright 2014-2016 Social Robotics Lab, University of Freiburg
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ *    # Redistributions of source code must retain the above copyright
+ *       notice, this list of conditions and the following disclaimer.
+ *    # Redistributions in binary form must reproduce the above copyright
+ *       notice, this list of conditions and the following disclaimer in the
+ *       documentation and/or other materials provided with the distribution.
+ *    # Neither the name of the University of Freiburg nor the names of its
+ *       contributors may be used to endorse or promote products derived from
+ *       this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ *
+ * \author Billy Okal <okal@cs.uni-freiburg.de>
+ * \author Sven Wehner <mail@svenwehner.de>
+ */
 
 #include <QApplication>
 #include <algorithm>
 
-#include <pedsim_simulator/element/agentcluster.h>
-#include <pedsim_simulator/scene.h>
-#include <pedsim_simulator/simulator.h>
+#include <pedsim_simulator/element/agentcluster.hpp>
+#include <pedsim_simulator/scene.hpp>
+#include <pedsim_simulator/simulator.hpp>
 
-#include <pedsim_utils/geometry.h>
+#include <pedsim_utils/geometry.hpp>
 
 using namespace pedsim;
+using namespace pedsim_msgs::msg;
+using std::placeholders::_1;
+using std::placeholders::_2;
 
-Simulator::Simulator(const ros::NodeHandle& node) : nh_(node) {
-  dynamic_reconfigure::Server<SimConfig>::CallbackType f;
-  f = boost::bind(&Simulator::reconfigureCB, this, _1, _2);
-  server_.setCallback(f);
+Simulator::Simulator(const std::string &name) : Node(name) {
+  // dynamic_reconfigure::Server<SimConfig>::CallbackType f;
+  // f = boost::bind(&Simulator::reconfigureCB, this, _1, _2);
+  // server_.setCallback(f);
 }
 
 Simulator::~Simulator() {
-  // shutdown service servers and publishers
-  pub_obstacles_.shutdown();
-  pub_agent_states_.shutdown();
-  pub_agent_groups_.shutdown();
-  pub_robot_position_.shutdown();
+  // shutdown service servers
 
-  srv_pause_simulation_.shutdown();
-  srv_unpause_simulation_.shutdown();
+  // srv_pause_simulation_.shutdown();
+  // srv_unpause_simulation_.shutdown();
 
   delete robot_;
   QCoreApplication::exit(0);
@@ -62,99 +61,122 @@ Simulator::~Simulator() {
 
 bool Simulator::initializeSimulation() {
   int queue_size = 0;
-  nh_.param<int>("default_queue_size", queue_size, 1);
-  ROS_INFO_STREAM("Using default queue size of "
-                  << queue_size << " for publisher queues... "
-                  << (queue_size == 0
-                          ? "NOTE: This means the queues are of infinite size!"
-                          : ""));
+  std::string scene_file_param;
+  int op_mode = 1;
 
-  // setup ros publishers
-  pub_obstacles_ =
-      nh_.advertise<pedsim_msgs::LineObstacles>("simulated_walls", queue_size);
-  pub_agent_states_ =
-      nh_.advertise<pedsim_msgs::AgentStates>("simulated_agents", queue_size);
-  pub_agent_groups_ =
-      nh_.advertise<pedsim_msgs::AgentGroups>("simulated_groups", queue_size);
-  pub_robot_position_ =
-      nh_.advertise<nav_msgs::Odometry>("robot_position", queue_size);
-
-  // services
-  srv_pause_simulation_ = nh_.advertiseService(
-      "pause_simulation", &Simulator::onPauseSimulation, this);
-  srv_unpause_simulation_ = nh_.advertiseService(
-      "unpause_simulation", &Simulator::onUnpauseSimulation, this);
-
-  // setup TF listener and other pointers
-  transform_listener_.reset(new tf::TransformListener());
+  paused_ = false;
   robot_ = nullptr;
 
-  // load additional parameters
-  std::string scene_file_param;
-  nh_.param<std::string>("scene_file", scene_file_param, "");
+  declare_parameter("scene_file", rclcpp::ParameterValue(""));
+  get_parameter("scene_file", scene_file_param);
   if (scene_file_param == "") {
-    ROS_ERROR_STREAM("Invalid scene file: " << scene_file_param);
+    RCLCPP_ERROR_STREAM(get_logger(),
+                        "Invalid scene file: " << scene_file_param);
     return false;
   }
 
-  ROS_INFO_STREAM("Loading scene [" << scene_file_param << "] for simulation");
+  RCLCPP_INFO_STREAM(get_logger(), "Loading scene [" << scene_file_param
+                                                     << "] for simulation");
 
   const QString scenefile = QString::fromStdString(scene_file_param);
   ScenarioReader scenario_reader;
   if (scenario_reader.readFromFile(scenefile) == false) {
-    ROS_ERROR_STREAM(
+    RCLCPP_ERROR_STREAM(
+        get_logger(),
         "Could not load the scene file, please check the paths and param "
         "names : "
-        << scene_file_param);
+            << scene_file_param);
     return false;
   }
+  // load additional parameters
+  declare_parameter("enable_groups", rclcpp::ParameterValue(true));
+  get_parameter("enable_groups", CONFIG.groups_enabled);
+  declare_parameter("max_robot_speed", rclcpp::ParameterValue(1.5));
+  get_parameter("max_robot_speed", CONFIG.max_robot_speed);
+  declare_parameter("update_rate", rclcpp::ParameterValue(25.0));
+  get_parameter("update_rate", CONFIG.updateRate);
+  declare_parameter("simulation_factor", rclcpp::ParameterValue(1.0));
+  get_parameter("simulation_factor", CONFIG.simulationFactor);
+  declare_parameter("robot_mode", rclcpp::ParameterValue(1));
+  get_parameter("robot_mode", op_mode);
+  declare_parameter("default_queue_size", rclcpp::ParameterValue(1));
+  get_parameter("default_queue_size", queue_size);
+  declare_parameter("robot_radius", rclcpp::ParameterValue(0.35));
+  get_parameter("robot_radius", robot_radius_);
+  declare_parameter("agent_radius", rclcpp::ParameterValue(0.35));
+  get_parameter("agent_radius", agent_radius_);
+  declare_parameter("force_factor_social", rclcpp::ParameterValue(10.0));
+  get_parameter("force_factor_social", force_factor_social_);
 
-  nh_.param<bool>("enable_groups", CONFIG.groups_enabled, true);
-  nh_.param<double>("max_robot_speed", CONFIG.max_robot_speed, 1.5);
-  nh_.param<double>("update_rate", CONFIG.updateRate, 25.0);
-  nh_.param<double>("simulation_factor", CONFIG.simulationFactor, 1.0);
-
-  int op_mode = 1;
-  nh_.param<int>("robot_mode", op_mode, 1);
   CONFIG.robot_mode = static_cast<RobotMode>(op_mode);
+  RCLCPP_INFO_STREAM(
+      get_logger(),
+      "Using default queue size of "
+          << queue_size << " for publisher queues... "
+          << (queue_size == 0
+                  ? "NOTE: This means the queues are of infinite size!"
+                  : ""));
 
-  paused_ = false;
+  // setup ros2 publishers
+  pub_obstacles_ = create_publisher<LineObstacles>(
+      "pedsim_simulator/simulated_walls", queue_size);
+  pub_agent_states_ = create_publisher<AgentStates>(
+      "pedsim_simulator/simulated_agents", queue_size);
+  pub_agent_groups_ = create_publisher<AgentGroups>(
+      "pedsim_simulator/simulated_groups", queue_size);
+  pub_robot_position_ = create_publisher<nav_msgs::msg::Odometry>(
+      "pedsim_simulator/robot_position", queue_size);
+
+  // services
+  srv_pause_simulation_ = create_service<std_srvs::srv::Empty>(
+      "pedsim_simulator/pause_simulation",
+      std::bind(&Simulator::onPauseSimulation, this, _1, _2));
+  srv_unpause_simulation_ = create_service<std_srvs::srv::Empty>(
+      "pedsim_simulator/unpause_simulation",
+      std::bind(&Simulator::onUnpauseSimulation, this, _1, _2));
+  // setup TF2 listener
+  tf_buffer_ = std::make_shared<tf2_ros::Buffer>(get_clock());
+  auto timer_interface = std::make_shared<tf2_ros::CreateTimerROS>(
+      get_node_base_interface(), get_node_timers_interface());
+  tf_buffer_->setCreateTimerInterface(timer_interface);
+  tf_listener_ = std::make_shared<tf2_ros::TransformListener>(*tf_buffer_);
 
   spawn_timer_ =
-      nh_.createTimer(ros::Duration(5.0), &Simulator::spawnCallback, this);
-
+      create_wall_timer(1000ms, std::bind(&Simulator::spawnCallback, this));
   return true;
 }
 
 void Simulator::runSimulation() {
-  ros::Rate r(CONFIG.updateRate);
-
-  while (ros::ok()) {
+  rclcpp::Rate r(CONFIG.updateRate);
+  while (rclcpp::ok()) {
     if (!robot_) {
       // setup the robot
-      for (Agent* agent : SCENE.getAgents()) {
+      for (Agent *agent : SCENE.getAgents()) {
+        agent->setForceFactorSocial(force_factor_social_);
         if (agent->getType() == Ped::Tagent::ROBOT) {
           robot_ = agent;
+          agent->SetRadius(robot_radius_);
           last_robot_orientation_ =
               poseFrom2DVelocity(robot_->getvx(), robot_->getvy());
-        }
+        } else
+          agent->SetRadius(agent_radius_);
       }
     }
-
     if (!paused_) {
       updateRobotPositionFromTF();
       SCENE.moveAllAgents();
-
       publishAgents();
       publishGroups();
       publishRobotPosition();
-      publishObstacles();  // TODO - no need to do this all the time.
+      publishObstacles(); // TODO - no need to do this all the time.
     }
-    ros::spinOnce();
+
+    rclcpp::spin_some(shared_from_this());
     r.sleep();
   }
 }
 
+/*
 void Simulator::reconfigureCB(pedsim_simulator::PedsimSimulatorConfig& config,
                               uint32_t level) {
   CONFIG.updateRate = config.update_rate;
@@ -178,29 +200,28 @@ void Simulator::reconfigureCB(pedsim_simulator::PedsimSimulatorConfig& config,
   ROS_INFO_STREAM("Updated sim with live config: Rate=" << CONFIG.updateRate
                                                         << " incoming rate="
                                                         << config.update_rate);
-}
-
-bool Simulator::onPauseSimulation(std_srvs::Empty::Request& request,
-                                  std_srvs::Empty::Response& response) {
+}*/
+void Simulator::onPauseSimulation(
+    const std::shared_ptr<std_srvs::srv::Empty::Request> request,
+    std::shared_ptr<std_srvs::srv::Empty::Response> response) {
   paused_ = true;
-  return true;
 }
 
-bool Simulator::onUnpauseSimulation(std_srvs::Empty::Request& request,
-                                    std_srvs::Empty::Response& response) {
+void Simulator::onUnpauseSimulation(
+    const std::shared_ptr<std_srvs::srv::Empty::Request> request,
+    std::shared_ptr<std_srvs::srv::Empty::Response> response) {
   paused_ = false;
-  return true;
 }
 
-void Simulator::spawnCallback(const ros::TimerEvent& event) {
-  ROS_DEBUG_STREAM("Spawning new agents.");
+void Simulator::spawnCallback() {
+  RCLCPP_DEBUG(get_logger(), "Spawning new agents.");
 
-  for (const auto& sa : SCENE.getSpawnAreas()) {
-    AgentCluster* agentCluster = new AgentCluster(sa->x, sa->y, sa->n);
+  for (const auto &sa : SCENE.getSpawnAreas()) {
+    AgentCluster *agentCluster = new AgentCluster(sa->x, sa->y, sa->n);
     agentCluster->setDistribution(sa->dx, sa->dy);
     agentCluster->setType(static_cast<Ped::Tagent::AgentType>(0));
 
-    for (const auto& wp_name : sa->waypoints) {
+    for (const auto &wp_name : sa->waypoints) {
       agentCluster->addWaypoint(SCENE.getWaypointByName(wp_name));
     }
 
@@ -209,49 +230,53 @@ void Simulator::spawnCallback(const ros::TimerEvent& event) {
 }
 
 void Simulator::updateRobotPositionFromTF() {
-  if (!robot_) return;
+  if (!robot_)
+    return;
 
   if (CONFIG.robot_mode == RobotMode::TELEOPERATION ||
       CONFIG.robot_mode == RobotMode::CONTROLLED) {
     robot_->setTeleop(true);
     robot_->setVmax(CONFIG.max_robot_speed);
-
-    // Get robot position via TF
-    tf::StampedTransform tfTransform;
+    geometry_msgs::msg::TransformStamped tf_msg;
     try {
-      transform_listener_->lookupTransform("odom", "base_footprint",
-                                           ros::Time(0), tfTransform);
-    } catch (tf::TransformException& e) {
-      ROS_WARN_STREAM_THROTTLE(
-          5.0,
-          "TF lookup from base_footprint to odom failed. Reason: " << e.what());
+      // Check if the transform is available
+      tf_msg = tf_buffer_->lookupTransform("odom", "base_footprint",
+                                           tf2::TimePointZero);
+    } catch (tf2::TransformException &e) {
+      auto &clk = *this->get_clock();
+      RCLCPP_WARN_THROTTLE(get_logger(), clk, 5000, "%s", e.what());
       return;
     }
+    tf2::Transform tfTransform;
+    tf2::impl::Converter<true, false>::convert(tf_msg.transform, tfTransform);
 
     const double x = tfTransform.getOrigin().x();
     const double y = tfTransform.getOrigin().y();
-    const double dx = x - last_robot_pose_.getOrigin().x(),
-                 dy = y - last_robot_pose_.getOrigin().y();
+    const double dx = x - last_robot_pose_.transform.translation.x,
+                 dy = y - last_robot_pose_.transform.translation.y;
     const double dt =
-        tfTransform.stamp_.toSec() - last_robot_pose_.stamp_.toSec();
+        tf_msg.header.stamp.sec - last_robot_pose_.header.stamp.sec;
     double vx = dx / dt, vy = dy / dt;
 
-    if (!std::isfinite(vx)) vx = 0;
-    if (!std::isfinite(vy)) vy = 0;
+    if (!std::isfinite(vx))
+      vx = 0;
+    if (!std::isfinite(vy))
+      vy = 0;
 
     robot_->setX(x);
     robot_->setY(y);
     robot_->setvx(vx);
     robot_->setvy(vy);
 
-    last_robot_pose_ = tfTransform;
+    last_robot_pose_ = tf_msg;
   }
 }
 
 void Simulator::publishRobotPosition() {
-  if (robot_ == nullptr) return;
+  if (robot_ == nullptr)
+    return;
 
-  nav_msgs::Odometry robot_location;
+  nav_msgs::msg::Odometry robot_location;
   robot_location.header = createMsgHeader();
   robot_location.child_frame_id = "odom";
 
@@ -268,7 +293,7 @@ void Simulator::publishRobotPosition() {
   robot_location.twist.twist.linear.x = robot_->getvx();
   robot_location.twist.twist.linear.y = robot_->getvy();
 
-  pub_robot_position_.publish(robot_location);
+  pub_robot_position_->publish(robot_location);
 }
 
 void Simulator::publishAgents() {
@@ -276,19 +301,19 @@ void Simulator::publishAgents() {
     return;
   }
 
-  pedsim_msgs::AgentStates all_status;
+  AgentStates all_status;
   all_status.header = createMsgHeader();
 
-  auto VecToMsg = [](const Ped::Tvector& v) {
-    geometry_msgs::Vector3 gv;
+  auto VecToMsg = [](const Ped::Tvector &v) {
+    geometry_msgs::msg::Vector3 gv;
     gv.x = v.x;
     gv.y = v.y;
     gv.z = v.z;
     return gv;
   };
 
-  for (const Agent* a : SCENE.getAgents()) {
-    pedsim_msgs::AgentState state;
+  for (const Agent *a : SCENE.getAgents()) {
+    AgentState state;
     state.header = createMsgHeader();
 
     state.id = a->getId();
@@ -296,6 +321,8 @@ void Simulator::publishAgents() {
     state.pose.position.x = a->getx();
     state.pose.position.y = a->gety();
     state.pose.position.z = a->getz();
+    auto theta = std::atan2(a->getvy(), a->getvx());
+    state.pose.orientation = pedsim::angleToQuaternion(theta);
 
     state.twist.linear.x = a->getvx();
     state.twist.linear.y = a->getvy();
@@ -304,7 +331,7 @@ void Simulator::publishAgents() {
     AgentStateMachine::AgentState sc = a->getStateMachine()->getCurrentState();
     state.social_state = agentStateToActivity(sc);
     if (a->getType() == Ped::Tagent::ELDER) {
-      state.social_state = pedsim_msgs::AgentState::TYPE_STANDING;
+      state.social_state = AgentState::TYPE_STANDING;
     }
 
     // Skip robot.
@@ -313,7 +340,7 @@ void Simulator::publishAgents() {
     }
 
     // Forces.
-    pedsim_msgs::AgentForce agent_forces;
+    AgentForce agent_forces;
     agent_forces.desired_force = VecToMsg(a->getDesiredDirection());
     agent_forces.obstacle_force = VecToMsg(a->getObstacleForce());
     agent_forces.social_force = VecToMsg(a->getSocialForce());
@@ -327,13 +354,14 @@ void Simulator::publishAgents() {
     all_status.agent_states.push_back(state);
   }
 
-  pub_agent_states_.publish(all_status);
+  pub_agent_states_->publish(all_status);
 }
 
 void Simulator::publishGroups() {
   if (!CONFIG.groups_enabled) {
-    ROS_DEBUG_STREAM("Groups are disabled, no group data published: flag="
-                     << CONFIG.groups_enabled);
+    RCLCPP_DEBUG_STREAM(get_logger(),
+                        "Groups are disabled, no group data published: flag="
+                            << CONFIG.groups_enabled);
     return;
   }
 
@@ -341,32 +369,33 @@ void Simulator::publishGroups() {
     return;
   }
 
-  pedsim_msgs::AgentGroups sim_groups;
+  AgentGroups sim_groups;
   sim_groups.header = createMsgHeader();
 
-  for (const auto& ped_group : SCENE.getGroups()) {
-    if (ped_group->memberCount() <= 1) continue;
+  for (const auto &ped_group : SCENE.getGroups()) {
+    if (ped_group->memberCount() <= 1)
+      continue;
 
-    pedsim_msgs::AgentGroup group;
+    pedsim_msgs::msg::AgentGroup group;
     group.group_id = ped_group->getId();
     group.age = 10;
     const Ped::Tvector com = ped_group->getCenterOfMass();
     group.center_of_mass.position.x = com.x;
     group.center_of_mass.position.y = com.y;
 
-    for (const auto& member : ped_group->getMembers()) {
+    for (const auto &member : ped_group->getMembers()) {
       group.members.emplace_back(member->getId());
     }
     sim_groups.groups.emplace_back(group);
   }
-  pub_agent_groups_.publish(sim_groups);
+  pub_agent_groups_->publish(sim_groups);
 }
 
 void Simulator::publishObstacles() {
-  pedsim_msgs::LineObstacles sim_obstacles;
+  LineObstacles sim_obstacles;
   sim_obstacles.header = createMsgHeader();
-  for (const auto& obstacle : SCENE.getObstacles()) {
-    pedsim_msgs::LineObstacle line_obstacle;
+  for (const auto &obstacle : SCENE.getObstacles()) {
+    LineObstacle line_obstacle;
     line_obstacle.start.x = obstacle->getax();
     line_obstacle.start.y = obstacle->getay();
     line_obstacle.start.z = 0.0;
@@ -375,35 +404,36 @@ void Simulator::publishObstacles() {
     line_obstacle.end.z = 0.0;
     sim_obstacles.obstacles.push_back(line_obstacle);
   }
-  pub_obstacles_.publish(sim_obstacles);
+  pub_obstacles_->publish(sim_obstacles);
 }
 
 std::string Simulator::agentStateToActivity(
-    const AgentStateMachine::AgentState& state) const {
+    const AgentStateMachine::AgentState &state) const {
   std::string activity = "Unknown";
   switch (state) {
-    case AgentStateMachine::AgentState::StateWalking:
-      activity = pedsim_msgs::AgentState::TYPE_INDIVIDUAL_MOVING;
-      break;
-    case AgentStateMachine::AgentState::StateGroupWalking:
-      activity = pedsim_msgs::AgentState::TYPE_GROUP_MOVING;
-      break;
-    case AgentStateMachine::AgentState::StateQueueing:
-      activity = pedsim_msgs::AgentState::TYPE_WAITING_IN_QUEUE;
-      break;
-    case AgentStateMachine::AgentState::StateShopping:
-      break;
-    case AgentStateMachine::AgentState::StateNone:
-      break;
-    case AgentStateMachine::AgentState::StateWaiting:
-      break;
+  case AgentStateMachine::AgentState::StateWalking:
+    activity = AgentState::TYPE_INDIVIDUAL_MOVING;
+    break;
+  case AgentStateMachine::AgentState::StateGroupWalking:
+    activity = AgentState::TYPE_GROUP_MOVING;
+    break;
+  case AgentStateMachine::AgentState::StateQueueing:
+    activity = AgentState::TYPE_WAITING_IN_QUEUE;
+    break;
+  case AgentStateMachine::AgentState::StateShopping:
+    break;
+  case AgentStateMachine::AgentState::StateNone:
+    break;
+  case AgentStateMachine::AgentState::StateWaiting:
+    break;
   }
   return activity;
 }
 
-std_msgs::Header Simulator::createMsgHeader() const {
-  std_msgs::Header msg_header;
-  msg_header.stamp = ros::Time::now();
+std_msgs::msg::Header Simulator::createMsgHeader() const {
+  std_msgs::msg::Header msg_header;
+  msg_header.stamp = rclcpp::Clock().now();
+  ;
   msg_header.frame_id = "odom";
   return msg_header;
 }

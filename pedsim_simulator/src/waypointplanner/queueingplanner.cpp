@@ -1,39 +1,39 @@
 /**
-* Copyright 2014 Social Robotics Lab, University of Freiburg
-*
-* Redistribution and use in source and binary forms, with or without
-* modification, are permitted provided that the following conditions are met:
-*
-*    # Redistributions of source code must retain the above copyright
-*       notice, this list of conditions and the following disclaimer.
-*    # Redistributions in binary form must reproduce the above copyright
-*       notice, this list of conditions and the following disclaimer in the
-*       documentation and/or other materials provided with the distribution.
-*    # Neither the name of the University of Freiburg nor the names of its
-*       contributors may be used to endorse or promote products derived from
-*       this software without specific prior written permission.
-*
-* THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-* AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-* IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-* ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
-* LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-* CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-* SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-* INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-* CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-* ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-* POSSIBILITY OF SUCH DAMAGE.
-*
-* \author Billy Okal <okal@cs.uni-freiburg.de>
-* \author Sven Wehner <mail@svenwehner.de>
-*/
+ * Copyright 2014 Social Robotics Lab, University of Freiburg
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ *    # Redistributions of source code must retain the above copyright
+ *       notice, this list of conditions and the following disclaimer.
+ *    # Redistributions in binary form must reproduce the above copyright
+ *       notice, this list of conditions and the following disclaimer in the
+ *       documentation and/or other materials provided with the distribution.
+ *    # Neither the name of the University of Freiburg nor the names of its
+ *       contributors may be used to endorse or promote products derived from
+ *       this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ *
+ * \author Billy Okal <okal@cs.uni-freiburg.de>
+ * \author Sven Wehner <mail@svenwehner.de>
+ */
 
-#include <pedsim_simulator/element/agent.h>
-#include <pedsim_simulator/element/queueingwaypoint.h>
-#include <pedsim_simulator/element/waitingqueue.h>
-#include <pedsim_simulator/utilities.h>
-#include <pedsim_simulator/waypointplanner/queueingplanner.h>
+#include <pedsim_simulator/element/agent.hpp>
+#include <pedsim_simulator/element/queueingwaypoint.hpp>
+#include <pedsim_simulator/element/waitingqueue.hpp>
+#include <pedsim_simulator/utilities.hpp>
+#include <pedsim_simulator/waypointplanner/queueingplanner.hpp>
 
 QueueingWaypointPlanner::QueueingWaypointPlanner() {
   // initialize values
@@ -48,7 +48,8 @@ void QueueingWaypointPlanner::onFollowedAgentPositionChanged(double xIn,
                                                              double yIn) {
   // sanity checks
   if (currentWaypoint == nullptr) {
-    ROS_DEBUG(
+    RCLCPP_DEBUG(
+        rclcpp::get_logger(""),
         "Queued agent cannot update queueing position, because there's no "
         "waypoint set!");
     return;
@@ -61,7 +62,8 @@ void QueueingWaypointPlanner::onFollowedAgentPositionChanged(double xIn,
   // TODO: integrate update importance to waypoint (force?)
   const double minUpdateDistance = 0.7;
   Ped::Tvector diff = followedPosition - currentWaypoint->getPosition();
-  if (diff.length() < minUpdateDistance) return;
+  if (diff.length() < minUpdateDistance)
+    return;
 
   currentWaypoint->setPosition(followedPosition);
 }
@@ -100,18 +102,21 @@ void QueueingWaypointPlanner::onFollowedAgentLeftQueue() {
 void QueueingWaypointPlanner::onQueueEndPositionChanged(double xIn,
                                                         double yIn) {
   // there's nothing to do when the agent is already enqueued
-  if (status != QueueingWaypointPlanner::Approaching) return;
+  if (status != QueueingWaypointPlanner::Approaching)
+    return;
 
   if (hasReachedQueueEnd()) {
     // change mode
     activateQueueingMode();
   } else {
     // don't update if the planner hasn't determined waypoint yet
-    if (currentWaypoint == nullptr) return;
+    if (currentWaypoint == nullptr)
+      return;
 
     // update destination
     Ped::Tvector newDestination(xIn, yIn);
-    if (!waitingQueue->isEmpty()) addPrivateSpace(newDestination);
+    if (!waitingQueue->isEmpty())
+      addPrivateSpace(newDestination);
     currentWaypoint->setPosition(newDestination);
   }
 }
@@ -136,23 +141,24 @@ void QueueingWaypointPlanner::reset() {
   followedAgent = nullptr;
 }
 
-Agent* QueueingWaypointPlanner::getAgent() const { return agent; }
+Agent *QueueingWaypointPlanner::getAgent() const { return agent; }
 
-bool QueueingWaypointPlanner::setAgent(Agent* agentIn) {
+bool QueueingWaypointPlanner::setAgent(Agent *agentIn) {
   agent = agentIn;
   return true;
 }
 
-void QueueingWaypointPlanner::setDestination(Waypoint* waypointIn) {
-  WaitingQueue* queue = dynamic_cast<WaitingQueue*>(waypointIn);
+void QueueingWaypointPlanner::setDestination(Waypoint *waypointIn) {
+  WaitingQueue *queue = dynamic_cast<WaitingQueue *>(waypointIn);
 
   // sanity checks
   if (queue == nullptr) {
-    ROS_ERROR(
-        "Waypoint provided to QueueingWaypointPlanner isn't a waiting queue! "
-        "(%s)",
-        (waypointIn == nullptr) ? "null"
-                                : waypointIn->toString().toStdString().c_str());
+    RCLCPP_ERROR(rclcpp::get_logger(""),
+                 "Waypoint provided to QueueingWaypointPlanner isn't a waiting "
+                 "queue! (%s)",
+                 (waypointIn == nullptr)
+                     ? "null"
+                     : waypointIn->toString().toStdString().c_str());
     return;
   }
 
@@ -160,7 +166,7 @@ void QueueingWaypointPlanner::setDestination(Waypoint* waypointIn) {
   setWaitingQueue(queue);
 }
 
-void QueueingWaypointPlanner::setWaitingQueue(WaitingQueue* queueIn) {
+void QueueingWaypointPlanner::setWaitingQueue(WaitingQueue *queueIn) {
   // clean up old waiting queue
   reset();
 
@@ -176,7 +182,7 @@ void QueueingWaypointPlanner::setWaitingQueue(WaitingQueue* queueIn) {
   }
 }
 
-WaitingQueue* QueueingWaypointPlanner::getWaitingQueue() const {
+WaitingQueue *QueueingWaypointPlanner::getWaitingQueue() const {
   return waitingQueue;
 }
 
@@ -184,7 +190,8 @@ bool QueueingWaypointPlanner::hasReachedQueueEnd() const {
   const double endPositionRadius = 2.0;
 
   // sanity checks
-  if (waitingQueue == nullptr) return false;
+  if (waitingQueue == nullptr)
+    return false;
 
   Ped::Tvector queueEnd = waitingQueue->getQueueEndPosition();
   Ped::Tvector diff = queueEnd - agent->getPosition();
@@ -233,7 +240,7 @@ void QueueingWaypointPlanner::activateQueueingMode() {
   }
 
   // deactivate problematic forces
-  agent->disableForce("Social");  /// Uncomment to enable chaotic queues mode
+  agent->disableForce("Social"); /// Uncomment to enable chaotic queues mode
   agent->disableForce("Random");
   agent->disableForce("GroupCoherence");
   agent->disableForce("GroupGaze");
@@ -245,7 +252,7 @@ void QueueingWaypointPlanner::activateQueueingMode() {
 }
 
 /// Affects the behavior at the end of the queue and hence the shape
-void QueueingWaypointPlanner::addPrivateSpace(Ped::Tvector& queueEndIn) const {
+void QueueingWaypointPlanner::addPrivateSpace(Ped::Tvector &queueEndIn) const {
   std::uniform_real_distribution<double> spacing_range_(0.2, 0.8);
   std::uniform_real_distribution<double> heading_range_(-45.0, 45.0);
 
@@ -266,20 +273,23 @@ QString QueueingWaypointPlanner::createWaypointName() const {
       .arg(waitingQueue->getName());
 }
 
-Waypoint* QueueingWaypointPlanner::getCurrentWaypoint() {
-  if (hasCompletedWaypoint()) currentWaypoint = getNextWaypoint();
+Waypoint *QueueingWaypointPlanner::getCurrentWaypoint() {
+  if (hasCompletedWaypoint())
+    currentWaypoint = getNextWaypoint();
 
   return currentWaypoint;
 }
 
-Waypoint* QueueingWaypointPlanner::getNextWaypoint() {
+Waypoint *QueueingWaypointPlanner::getNextWaypoint() {
   // sanity checks
   if (agent == nullptr) {
-    ROS_DEBUG("Cannot determine queueing waypoint without agent!");
+    RCLCPP_DEBUG(rclcpp::get_logger(""),
+                 "Cannot determine queueing waypoint without agent!");
     return nullptr;
   }
   if (waitingQueue == nullptr) {
-    ROS_DEBUG("Cannot determine queueing waypoint without waiting queues!");
+    RCLCPP_DEBUG(rclcpp::get_logger(""),
+                 "Cannot determine queueing waypoint without waiting queues!");
     return nullptr;
   }
 
@@ -293,7 +303,8 @@ Waypoint* QueueingWaypointPlanner::getNextWaypoint() {
 }
 
 bool QueueingWaypointPlanner::hasCompletedWaypoint() const {
-  if (currentWaypoint == nullptr) return true;
+  if (currentWaypoint == nullptr)
+    return true;
 
   // update waypoint, if necessary
   if (status == QueueingWaypointPlanner::Approaching) {
@@ -308,7 +319,8 @@ bool QueueingWaypointPlanner::hasCompletedWaypoint() const {
 
 bool QueueingWaypointPlanner::hasCompletedDestination() const {
   if (waitingQueue == nullptr) {
-    ROS_DEBUG("QueueingWaypointPlanner: No waiting queue set!");
+    RCLCPP_DEBUG(rclcpp::get_logger(""),
+                 "QueueingWaypointPlanner: No waiting queue set!");
     return true;
   }
 

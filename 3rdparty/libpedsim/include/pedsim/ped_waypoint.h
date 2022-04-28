@@ -13,7 +13,7 @@
 #endif
 
 #include <cstddef>
-#include "ped_vector.h"
+#include "pedsim/ped_vector.h"
 
 using namespace std;
 

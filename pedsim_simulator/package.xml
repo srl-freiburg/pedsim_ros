@@ -1,5 +1,6 @@
 <?xml version="1.0"?>
-<package>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
   <name>pedsim_simulator</name>
   <version>0.1.1</version>
   <description>
@@ -16,34 +17,22 @@
 
   <url type="website">https://github.com/srl-freiburg/pedsim_ros</url>
 
-  <buildtool_depend>catkin</buildtool_depend>
+  <buildtool_depend>ament_cmake</buildtool_depend>
 
-  <build_depend>roscpp</build_depend>
-  <build_depend>rospy</build_depend>
-  <build_depend>pedsim</build_depend>
-  <build_depend>pedsim_msgs</build_depend>
-  <build_depend>pedsim_srvs</build_depend>
-  <build_depend>pedsim_utils</build_depend>
-  <build_depend>std_msgs</build_depend>
-  <build_depend>std_srvs</build_depend>
-  <build_depend>geometry_msgs</build_depend>
-  <build_depend>nav_msgs</build_depend>
-  <build_depend>tf</build_depend>
-  <build_depend>cmake_modules</build_depend>
-  <build_depend>dynamic_reconfigure</build_depend>
+  <depend>rclcpp</depend>
+  <depend>rclpy</depend>
+  <depend>pedsim</depend>
+  <depend>pedsim_msgs</depend>
+  <depend>pedsim_srvs</depend>
+  <depend>pedsim_utils</depend>
+  <depend>std_msgs</depend>
+  <depend>std_srvs</depend>
+  <depend>geometry_msgs</depend>
+  <depend>nav_msgs</depend>
+  <depend>tf2</depend>
 
-  <run_depend>cmake_modules</run_depend>
-  <run_depend>tf</run_depend>
-  <run_depend>roscpp</run_depend>
-  <run_depend>rospy</run_depend>
-  <run_depend>pedsim</run_depend>
-  <run_depend>pedsim_msgs</run_depend>
-  <run_depend>pedsim_srvs</run_depend>
-  <run_depend>pedsim_utils</run_depend>
-  <run_depend>std_msgs</run_depend>
-  <run_depend>std_srvs</run_depend>
-  <run_depend>geometry_msgs</run_depend>
-  <run_depend>nav_msgs</run_depend>
-  <run_depend>dynamic_reconfigure</run_depend>
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
 
 </package>

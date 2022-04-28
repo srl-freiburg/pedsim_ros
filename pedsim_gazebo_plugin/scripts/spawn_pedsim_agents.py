@@ -1,52 +1,75 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 """
-Created on Mon Dec  2 17:03:34 2019
-
 @author: mahmoud
+@mantainer: jginesclavero
+
 """
 
-import rospy
-from gazebo_msgs.srv import SpawnModel
-from geometry_msgs.msg import *
-from rospkg import RosPack
-from pedsim_msgs.msg  import AgentStates
-
-# xml file containing a gazebo model to represent agent, currently is represented by a cubic but can be changed
-global xml_file
-
-def actor_poses_callback(actors):
-    for actor in actors.agent_states:
-        actor_id = str( actor.id )
-        actor_pose = actor.pose
-        rospy.loginfo("Spawning model: actor_id = %s", actor_id)
-
-        model_pose = Pose(Point(x= actor_pose.position.x,
-                               y= actor_pose.position.y,
-                               z= actor_pose.position.z),
-                         Quaternion(actor_pose.orientation.x,
-                                    actor_pose.orientation.y,
-                                    actor_pose.orientation.z,
-                                    actor_pose.orientation.w) )
-
-        spawn_model(actor_id, xml_string, "", model_pose, "world")
-    rospy.signal_shutdown("all agents have been spawned !")
+import rclpy
+from ament_index_python.packages import get_package_share_directory
+from gazebo_msgs.srv import SpawnEntity
+from geometry_msgs.msg import Pose
+from pedsim_msgs.msg import AgentStates
+from rclpy.node import Node
+from rclpy.qos import qos_profile_sensor_data
 
 
+class AgentSpawner(Node):
 
+    def __init__(self):
+        super().__init__('agent_spawner')
+        qos_profile = qos_profile_sensor_data
+        self.sub = self.create_subscription(AgentStates, 
+                                            'pedsim_simulator/simulated_agents',
+                                            self.actor_poses_callback,
+                                            qos_profile = qos_profile)
+        self.sub  # prevent unused variable warning
+        pedsim_dir = get_package_share_directory('pedsim_gazebo_plugin')
+        file_xml = open(pedsim_dir + "/models/person_standing/model.sdf")
+        self.xml_string = file_xml.read()
+
+        self.get_logger().info("Waiting for gazebo services...")
+        self.spawn_cli = self.create_client(SpawnEntity, 'spawn_entity')
+
+        while not self.spawn_cli.wait_for_service(timeout_sec=1.0):
+            self.get_logger().warn('service not available, waiting again...')
+        self.get_logger().info("service: spawn_sdf_model is available ....")
+
+    def actor_poses_callback(self, actors):
+        req = SpawnEntity.Request()
+        for actor in actors.agent_states:
+            actor_id = str(actor.id)
+            actor_pose = actor.pose
+            print("Spawning model: actor_id = %s", actor_id)
+            model_pose = Pose()
+            model_pose.position.x = actor_pose.position.x
+            model_pose.position.y = actor_pose.position.y
+            model_pose.position.z = actor_pose.position.z
+
+            model_pose.orientation.x = actor_pose.orientation.x
+            model_pose.orientation.y = actor_pose.orientation.y
+            model_pose.orientation.z = actor_pose.orientation.z
+            model_pose.orientation.w = actor_pose.orientation.w
+            
+            req.name = actor_id
+            req.xml = self.xml_string
+            req.robot_namespace = ""
+            req.initial_pose = model_pose
+            req.reference_frame = "world"
+            
+            future = self.spawn_cli.call_async(req)
+        print("all agents have been spawned !")
+        rclpy.shutdown()
+
+
+def main(args=None):
+    rclpy.init(args=args)
+
+    agent_spawner = AgentSpawner()
+
+    rclpy.spin(agent_spawner)
+    agent_spawner.destroy_node()
+    rclpy.shutdown()
 
 if __name__ == '__main__':
-
-    rospy.init_node("spawn_pedsim_agents")
-    
-    rospack1 = RosPack()
-    pkg_path = rospack1.get_path('pedsim_gazebo_plugin')
-    file_xml = open(pkg_path + "/models/actor_model.sdf")
-    xml_string = file_xml.read()
-
-    print("Waiting for gazebo services...")
-    rospy.wait_for_service("gazebo/spawn_sdf_model")
-    spawn_model = rospy.ServiceProxy("gazebo/spawn_sdf_model", SpawnModel)
-    print("service: spawn_sdf_model is available ....")
-    rospy.Subscriber("/pedsim_simulator/simulated_agents", AgentStates, actor_poses_callback)
-
-    rospy.spin()
+    main()

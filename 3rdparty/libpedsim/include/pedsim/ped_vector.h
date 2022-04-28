@@ -13,7 +13,7 @@
 #endif
 
 #include <cmath>
-#include "ped_angle.h"
+#include "pedsim/ped_angle.h"
 
 namespace Ped {
 /// Vector helper class. This is basically a struct with some related functions

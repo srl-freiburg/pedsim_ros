@@ -1,6 +1,0 @@
-[submodule "2ndparty/spencer_messages"]
-	path = 2ndparty/spencer_messages
-	url = https://github.com/spencer-project/spencer_messages.git
-[submodule "2ndparty/spencer_tracking_rviz_plugin"]
-	path = 2ndparty/spencer_tracking_rviz_plugin
-	url = https://github.com/srl-freiburg/spencer_tracking_rviz_plugin.git

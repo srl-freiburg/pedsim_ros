@@ -1,0 +1,86 @@
+<welcome>
+
+  <waypoint id="O1" x="-15" y="15" r="2" />
+  <waypoint id="O2" x="15" y="-15" r="2" />
+  <waypoint id="O3" x="25" y="15" r="2" />
+
+  <waypoint id="I1" x="-6" y="11" r="2" />
+  <waypoint id="I2" x="2" y="11" r="2" />
+  <waypoint id="I3" x="8" y="11" r="2" />
+  <waypoint id="I4" x="14" y="11" r="2" />
+
+  <waypoint id="J1" x="-6" y="-6" r="2" />
+  <waypoint id="J2" x="2" y="-6" r="2" />
+  <waypoint id="J3" x="8" y="-6" r="2" />
+  <waypoint id="J4" x="14" y="-6" r="2" />
+
+  <agent x="25" y="15" n="5" dx="1.0" dy="1.0">
+   <addwaypoint id="O3" />
+   <addwaypoint id="I4" />
+   <addwaypoint id="J4" />
+   <addwaypoint id="O2" />
+
+   <addwaypoint id="J4" />
+   <addwaypoint id="J2" />
+   <addwaypoint id="I2" />
+   <addwaypoint id="I1" />
+   <addwaypoint id="O1" />
+  </agent>
+
+  <agent x="15" y="-15" n="3" dx="1.0" dy="1.0">   
+   <addwaypoint id="O2" />
+   <addwaypoint id="J4" />
+   <addwaypoint id="J2" />
+   <addwaypoint id="I2" />
+   <addwaypoint id="I1" />
+   <addwaypoint id="O1" />
+
+   <addwaypoint id="O3" />
+   <addwaypoint id="I4" />
+   <addwaypoint id="J4" />
+  </agent>
+
+  <agent x="-15" y="15" n="6" dx="1.0" dy="1.0">
+   <addwaypoint id="O1" />
+   <addwaypoint id="I1" />
+   <addwaypoint id="I3" />
+   <addwaypoint id="J3" />
+   <addwaypoint id="J4" />
+   <addwaypoint id="I4" />
+   <addwaypoint id="I1" />
+  </agent>
+
+
+
+  <!-- outer walls -->
+  <obstacle x1="-10" y1="-10" x2="10" y2="-10"/>
+  <obstacle x1="20" y1="-10" x2="20" y2="10"/>
+  <obstacle x1="20" y1="20" x2="-10" y2="20"/>
+  <obstacle x1="-10" y1="10" x2="-10" y2="-10"/>
+                                            
+  <!-- First corridor wall -->
+  <obstacle x1="-2" y1="-3" x2="0" y2="-3"/>
+  <obstacle x1="0" y1="-3" x2="0" y2="8"/>
+  <obstacle x1="0" y1="8" x2="-2" y2="8"/>
+  <obstacle x1="-2" y1="8" x2="-2" y2="-3"/>
+
+  <!-- Second corridor wall -->
+  <obstacle x1="4" y1="-3" x2="6" y2="-3"/>
+  <obstacle x1="6" y1="-3" x2="6" y2="8"/>
+  <obstacle x1="6" y1="8" x2="4" y2="8"/>
+  <obstacle x1="4" y1="8" x2="4" y2="-3"/>
+
+  <!-- Third corridor wall -->
+  <obstacle x1="10" y1="-3" x2="12" y2="-3"/>
+  <obstacle x1="12" y1="-3" x2="12" y2="8"/>
+  <obstacle x1="12" y1="8" x2="10" y2="8"/>
+  <obstacle x1="10" y1="8" x2="10" y2="-3"/>
+
+  <!-- Transverse corridor wall -->
+  <obstacle x1="-5" y1="12" x2="15" y2="12"/>
+  <obstacle x1="15" y1="12" x2="15" y2="14"/>
+  <obstacle x1="15" y1="14" x2="-5" y2="14"/>
+  <obstacle x1="-5" y1="14" x2="-5" y2="12"/>
+
+  
+</welcome>

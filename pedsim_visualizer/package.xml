@@ -1,5 +1,6 @@
 <?xml version="1.0"?>
-<package format="2">
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
   <name>pedsim_visualizer</name>
   <version>0.1.0</version>
   <description>The pedsim_visualizer package</description>
@@ -8,32 +9,18 @@
 
   <license>BSD</license>
 
-  <buildtool_depend>catkin</buildtool_depend>
+  <buildtool_depend>ament_cmake</buildtool_depend>
 
-  <build_depend>geometry_msgs</build_depend>
-  <build_depend>pedsim_msgs</build_depend>
-  <build_depend>pedsim_utils</build_depend>
-  <build_depend>roscpp</build_depend>
-  <build_depend>rospy</build_depend>
-  <build_depend>std_msgs</build_depend>
-  <build_depend>visualization_msgs</build_depend>
-  <build_depend>dynamic_reconfigure</build_depend>
+  <depend>pedsim_msgs</depend>
+  <depend>pedsim_utils</depend>
+  <depend>rclcpp</depend>
+  <depend>geometry_msgs</depend>
+  <depend>std_msgs</depend>
+  <depend>visualization_msgs</depend>
 
-  <build_export_depend>geometry_msgs</build_export_depend>
-  <build_export_depend>pedsim_msgs</build_export_depend>
-  <build_export_depend>pedsim_utils</build_export_depend>
-  <build_export_depend>roscpp</build_export_depend>
-  <build_export_depend>rospy</build_export_depend>
-  <build_export_depend>std_msgs</build_export_depend>
-  <build_export_depend>visualization_msgs</build_export_depend>
+  <!--<depend>dynamic_reconfigure</depend>-->
 
-  <exec_depend>geometry_msgs</exec_depend>
-  <exec_depend>pedsim_msgs</exec_depend>
-  <exec_depend>pedsim_utils</exec_depend>
-  <exec_depend>roscpp</exec_depend>
-  <exec_depend>rospy</exec_depend>
-  <exec_depend>std_msgs</exec_depend>
-  <exec_depend>visualization_msgs</exec_depend>
-  <exec_depend>dynamic_reconfigure</exec_depend>
-
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
 </package>
