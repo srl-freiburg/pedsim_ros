@@ -89,7 +89,7 @@ find_package(pedsim_msgs REQUIRED)
 find_package(Qt5 REQUIRED COMPONENTS Core Widgets)
 
 set(pedsim_rviz_plugin_headers_to_moc 
-  include/pedsim_rviz_plugin/detected_persons_display.hpp
+  #include/pedsim_rviz_plugin/detected_persons_display.hpp
   include/pedsim_rviz_plugin/tracked_persons_display.hpp
   ##include/pedsim_rviz_plugin/tracked_groups_display.hpp
   ##include/pedsim_rviz_plugin/social_relations_display.hpp
@@ -104,14 +104,8 @@ foreach(header "${pedsim_rviz_plugin_headers_to_moc}")
 endforeach()
 
 set(pedsim_rviz_plugin_source_files
-  src/detected_persons_display.cpp
   src/tracked_persons_display.cpp
-  ##src/tracked_groups_display.cpp
-  ##src/social_relations_display.cpp
-  ##src/social_activities_display.cpp
-  ##src/human_attributes_display.cpp
   src/person_display_common.cpp
-  ##src/tracked_persons_cache.cpp
   src/visuals/person_visual.cpp
 )
 

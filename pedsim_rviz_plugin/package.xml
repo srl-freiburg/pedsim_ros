@@ -27,6 +27,7 @@
   <depend>resource_retriever</depend>
   <depend>rviz_common</depend>
   <depend>rviz_rendering</depend>
+  <depend>pedsim_msgs</depend>
 
   <export>
     <build_type>ament_cmake</build_type>
