@@ -16,26 +16,24 @@
 """Test gazebo_plugins for pedsim."""
 
 import os
-
+import xacro
 from ament_index_python.packages import get_package_share_directory
 
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, ExecuteProcess
+from launch.actions import DeclareLaunchArgument, ExecuteProcess, IncludeLaunchDescription
 from launch.conditions import IfCondition
-from launch.substitutions import LaunchConfiguration, PythonExpression
+from launch.substitutions import LaunchConfiguration, PythonExpression, Command
 from launch_ros.actions import Node
-
+from launch_ros.substitutions import FindPackageShare
+from launch.launch_description_sources import PythonLaunchDescriptionSource
 
 def generate_launch_description():
     # Get the launch directory
-    pedsim_dir = get_package_share_directory('pedsim_gazebo_plugin')
-
-    #bringup_dir = get_package_share_directory('nav2_bringup')
-
-    launch_dir = os.path.join(pedsim_dir, 'launch')
-    gazebo_dir = get_package_share_directory('gazebo_ros')
-    gazebo_launch_dir = os.path.join(gazebo_dir, 'launch')
-
+    pedsim_dir = FindPackageShare(package='pedsim_gazebo_plugin').find('pedsim_gazebo_plugin')
+    bringup_dir = FindPackageShare(package='nav2_bringup').find('nav2_bringup')
+    pkg_gazebo_ros = FindPackageShare(package='gazebo_ros').find('gazebo_ros')
+    urdf_model_path = os.path.join(bringup_dir, 'urdf', 'turtlebot3_waffle.urdf')
+    world_model_path = os.path.join(pedsim_dir, 'worlds', 'house.world')
 
     # Create the launch configuration variables
     namespace = LaunchConfiguration('namespace')
@@ -47,6 +45,8 @@ def generate_launch_description():
     use_robot_state_pub = LaunchConfiguration('use_robot_state_pub')
     headless = LaunchConfiguration('headless')
     world = LaunchConfiguration('world')
+    urdf_model = LaunchConfiguration('urdf_model')
+    
     remappings = [('/tf', 'tf'),
                   ('/tf_static', 'tf_static')]
 
@@ -81,45 +81,51 @@ def generate_launch_description():
         default_value='False',
         description='Whether to execute gzclient)')
 
+    declare_urdf_cmd = DeclareLaunchArgument(
+        name='urdf_model',
+        default_value=urdf_model_path,
+        description='Absolute path to robot urdf file')
+
     declare_world_cmd = DeclareLaunchArgument(
         'world',
-        default_value=os.path.join(pedsim_dir, 'worlds', 'house.world'),
+        default_value=world_model_path,
         description='Full path to world model file to load')
 
-    # Specify the actions
-    start_gazebo_server_cmd = ExecuteProcess(
-        condition=IfCondition(use_simulator),
-        cmd=['gzserver', 
-        '-s', 'libgazebo_ros_init.so',
-        '-s', 'libgazebo_ros_factory.so',
-        world],
-        cwd=[launch_dir], output='screen')
-
-
-    start_gazebo_client_cmd = ExecuteProcess(
-        condition=IfCondition(PythonExpression([use_simulator, ' and not ', headless])),
-        cmd=['gzclient'],
-        cwd=[launch_dir], output='screen')
+    # Start Gazebo server
+    start_gazebo_server_cmd = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(os.path.join(pkg_gazebo_ros, 'launch', 'gzserver.launch.py')),
+        launch_arguments={'world': world}.items())
+    # Start Gazebo client
+    start_gazebo_client_cmd = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(os.path.join(pkg_gazebo_ros, 'launch', 'gzclient.launch.py')),
+            condition=IfCondition(PythonExpression([' not ', headless]))
+            )
     
     agent_spawner_cmd = Node(
         package='pedsim_gazebo_plugin',
-        node_executable='spawn_pedsim_agents.py',
-        node_name='spawn_pedsim_agents',
+        executable='spawn_pedsim_agents.py',
+        name='spawn_pedsim_agents',
         output='screen')
 
-    # urdf = os.path.join(bringup_dir, 'urdf', 'turtlebot3_waffle.urdf')
+    start_robot_state_publisher_cmd = Node(
+        condition=IfCondition(use_robot_state_pub),
+        package='robot_state_publisher', 
+        executable='robot_state_publisher',
+        namespace=namespace, 
+        parameters=[{'use_sim_time': use_sim_time,
+                    'robot_description': Command(['xacro ', urdf_model])}], 
+        remappings=remappings,
+        arguments=[urdf_model])
 
-    #start_robot_state_publisher_cmd = Node(
-    #    condition=IfCondition(use_robot_state_pub),
-    #    package='robot_state_publisher',
-    #    node_executable='robot_state_publisher',
-    #    node_name='robot_state_publisher',
-    #    node_namespace=namespace,
-    #    output='screen',
-    #    parameters=[{'use_sim_time': use_sim_time}],
-    #    remappings=remappings,
-    #    arguments=[urdf])
-
+   # robot join state publisher node
+    start_joint_state_publisher_cmd = Node(
+            condition=IfCondition(use_robot_state_pub),
+            package='joint_state_publisher',
+            executable='joint_state_publisher',
+            name='joint_state_publisher',
+            arguments=[urdf_model],
+            parameters=[{'source_list': ['joint_states']},{'use_gui': 'true'}]
+           )
 
     # Create the launch description and populate
     ld = LaunchDescription()
@@ -132,13 +138,14 @@ def generate_launch_description():
     ld.add_action(declare_use_simulator_cmd)
     ld.add_action(declare_use_robot_state_pub_cmd)
     ld.add_action(declare_simulator_cmd)
+    ld.add_action(declare_urdf_cmd)
     ld.add_action(declare_world_cmd)
 
     # Add any conditioned actions
     ld.add_action(start_gazebo_server_cmd)
     ld.add_action(start_gazebo_client_cmd)
-    ld.add_action(agent_spawner_cmd)
-    # Add the actions to launch all of the navigation nodes
-    #ld.add_action(start_robot_state_publisher_cmd)
+    # ld.add_action(agent_spawner_cmd)
+    ld.add_action(start_robot_state_publisher_cmd)
+    ld.add_action(start_joint_state_publisher_cmd)
 
     return ld
