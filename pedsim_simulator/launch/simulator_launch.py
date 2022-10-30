@@ -42,7 +42,7 @@ def generate_launch_description():
 
         DeclareLaunchArgument(
             'scene_file', 
-            default_value=os.path.join(simulator_dir, 'scenarios', 'social_context.xml'),
+            default_value=os.path.join(simulator_dir, 'scenarios', 'social_contexts.xml'),
             description=''),
         
         DeclareLaunchArgument(
