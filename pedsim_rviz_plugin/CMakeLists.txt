@@ -143,7 +143,7 @@ ament_target_dependencies(pedsim_rviz_plugin
 )
 
 ament_export_include_directories(include)
-ament_export_interfaces(pedsim_rviz_plugin HAS_LIBRARY_TARGET)
+ament_export_targets(pedsim_rviz_plugin HAS_LIBRARY_TARGET)
 ament_export_dependencies(
   Qt5
   rviz_common
