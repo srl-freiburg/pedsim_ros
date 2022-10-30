@@ -82,6 +82,7 @@ class Simulator : public rclcpp::Node {
 public:
   explicit Simulator(const std::string &name);
   virtual ~Simulator();
+  void initializeParams();
   bool initializeSimulation();
   void runSimulation();
 
@@ -126,7 +127,7 @@ private:
 
   geometry_msgs::msg::TransformStamped last_robot_pose_;
   geometry_msgs::msg::Quaternion last_robot_orientation_;
-  float robot_radius_, agent_radius_, force_factor_social_;
+
   inline std::string
   agentStateToActivity(const AgentStateMachine::AgentState &state) const;
 

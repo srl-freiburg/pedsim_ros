@@ -22,19 +22,15 @@ from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
 
 def generate_launch_description():
-    # Get the launch directory
+    # Get package directory
     simulator_dir = get_package_share_directory('pedsim_simulator')
+    # Get config file
+    config_file_path = os.path.join(simulator_dir, 'config', 'params.yaml')
 
+    # Launch configuration
     scene_file = LaunchConfiguration('scene_file')
-    default_queue_size = LaunchConfiguration('default_queue_size')
-    max_robot_speed = LaunchConfiguration('max_robot_speed')
-    robot_mode = LaunchConfiguration('robot_mode')
-    robot_radius = LaunchConfiguration('robot_radius')
-    agent_radius = LaunchConfiguration('agent_radius')
-    force_factor_social = LaunchConfiguration('force_factor_social')
-    enable_groups = LaunchConfiguration('enable_groups')
-    simulation_factor = LaunchConfiguration('simulation_factor')
-    update_rate = LaunchConfiguration('update_rate')
+    config_file = LaunchConfiguration('config_file')
+
 
     return LaunchDescription([
         # Set env var to print messages to stdout immediately
@@ -44,55 +40,16 @@ def generate_launch_description():
             'scene_file', 
             default_value=os.path.join(simulator_dir, 'scenarios', 'social_contexts.xml'),
             description=''),
-        
         DeclareLaunchArgument(
-            'default_queue_size', default_value='1',
-            description=''),
-
-        DeclareLaunchArgument(
-            'max_robot_speed', default_value='1.5',
-            description=''),
-
-        DeclareLaunchArgument(
-            'robot_mode', default_value='0',
-            description=''),
-        DeclareLaunchArgument(
-            'robot_radius', default_value='0.35',
-            description=''),
-        DeclareLaunchArgument(
-            'agent_radius', default_value='0.4',
-            description=''),
-        DeclareLaunchArgument(
-            'force_factor_social', default_value='12.0',
-            description=''),
-
-        DeclareLaunchArgument(
-            'enable_groups', default_value='true',
-            description=''),
-
-        DeclareLaunchArgument(
-            'simulation_factor', default_value='1.0',
-            description='Top-level namespace'),
-
-        DeclareLaunchArgument(
-            'update_rate', default_value='25.0',
-            description=''),
-
+            'config_file', 
+            default_value=config_file_path,
+            description=''),        
         Node(
             package='pedsim_simulator',
             executable='pedsim_simulator',
             name='pedsim_simulator',
             output='screen',
-            parameters=[{'scene_file': scene_file},
-                        {'default_queue_size': default_queue_size},
-                        {'max_robot_speed': max_robot_speed},
-                        {'robot_mode': robot_mode},
-                        {'robot_radius': robot_radius},
-                        {'agent_radius': agent_radius},
-                        {'force_factor_social': force_factor_social},
-                        {'enable_groups': enable_groups},
-                        {'simulation_factor': simulation_factor},
-                        {'update_rate': update_rate}]),
+            parameters=[{'scene_file': scene_file}, config_file]),
         Node(
             package='pedsim_tf2',
             executable='pedsim_tf2_node',

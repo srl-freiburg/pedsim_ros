@@ -35,8 +35,8 @@
 Config *Config::Config::instance = nullptr;
 
 Config::Config(QObject *parent) {
-  updateRate = 25.0;
-  simulationFactor = 1.0;
+  update_rate = 25.0;
+  simulation_factor = 1.0;
 
   forceObstacle = 10.0;
   sigmaObstacle = 0.2;

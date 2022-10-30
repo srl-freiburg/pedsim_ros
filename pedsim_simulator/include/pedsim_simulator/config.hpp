@@ -81,13 +81,15 @@ public:
   // TODO - change to std::unordered_map
   QMap<QString, double> getForceMap() const;
 
-  double getTimeStepSize() { return simulationFactor / updateRate; }
+  double getTimeStepSize() { return simulation_factor / update_rate; }
 
   // Attributes
 public:
   // Simulation
-  double updateRate;
-  double simulationFactor;
+  double update_rate;
+  double simulation_factor;
+  double robot_radius;
+  double agent_radius;
 
   // Forces
   double forceObstacle;
@@ -117,6 +119,9 @@ public:
 
   // simulation visualization mode
   VisualMode visual_mode;
+
+  // publisher queue size
+  int queue_size;
 };
 
 #endif

@@ -32,11 +32,11 @@
 #include <QApplication>
 #include <algorithm>
 
-#include <pedsim_simulator/element/agentcluster.hpp>
-#include <pedsim_simulator/scene.hpp>
-#include <pedsim_simulator/simulator.hpp>
+#include "pedsim_simulator/element/agentcluster.hpp"
+#include "pedsim_simulator/scene.hpp"
+#include "pedsim_simulator/simulator.hpp"
 
-#include <pedsim_utils/geometry.hpp>
+#include "pedsim_utils/geometry.hpp"
 
 using namespace pedsim;
 using namespace pedsim_msgs::msg;
@@ -47,6 +47,7 @@ Simulator::Simulator(const std::string &name) : Node(name) {
   // dynamic_reconfigure::Server<SimConfig>::CallbackType f;
   // f = boost::bind(&Simulator::reconfigureCB, this, _1, _2);
   // server_.setCallback(f);
+  this->initializeParams();
 }
 
 Simulator::~Simulator() {
@@ -59,15 +60,36 @@ Simulator::~Simulator() {
   QCoreApplication::exit(0);
 }
 
-bool Simulator::initializeSimulation() {
-  int queue_size = 0;
-  std::string scene_file_param;
-  int op_mode = 1;
+void Simulator::initializeParams() {
+  // load additional parameters
+  this->declare_parameter("groups_enabled", true);
+  this->declare_parameter("max_robot_speed", 1.5);
+  this->declare_parameter("update_rate", 25.0);
+  this->declare_parameter("simulation_factor", 1.0);
+  this->declare_parameter("op_mode", 1);
+  this->declare_parameter("queue_size", 10);
+  this->declare_parameter("robot_radius", 0.35);
+  this->declare_parameter("agent_radius", 0.35);
+  this->declare_parameter("force_social", 10.0);
 
+  CONFIG.groups_enabled = get_parameter("groups_enabled").as_bool();
+  CONFIG.max_robot_speed = get_parameter("max_robot_speed").as_double();
+  CONFIG.update_rate = get_parameter("update_rate").as_double();
+  CONFIG.simulation_factor = get_parameter("simulation_factor").as_double();
+  int op_mode = get_parameter("op_mode").as_int();
+  CONFIG.robot_mode = static_cast<RobotMode>(op_mode);
+  CONFIG.queue_size = get_parameter("queue_size").as_int();
+  CONFIG.robot_radius = get_parameter("robot_radius").as_double();
+  CONFIG.agent_radius = get_parameter("agent_radius").as_double();
+  CONFIG.forceSocial = get_parameter("force_social").as_double();
+}
+
+bool Simulator::initializeSimulation() {
+  std::string scene_file_param;
   paused_ = false;
   robot_ = nullptr;
 
-  declare_parameter("scene_file", rclcpp::ParameterValue(""));
+   this->declare_parameter("scene_file", rclcpp::ParameterValue(""));
   get_parameter("scene_file", scene_file_param);
   if (scene_file_param == "") {
     RCLCPP_ERROR_STREAM(get_logger(),
@@ -88,44 +110,24 @@ bool Simulator::initializeSimulation() {
             << scene_file_param);
     return false;
   }
-  // load additional parameters
-  declare_parameter("enable_groups", rclcpp::ParameterValue(true));
-  get_parameter("enable_groups", CONFIG.groups_enabled);
-  declare_parameter("max_robot_speed", rclcpp::ParameterValue(1.5));
-  get_parameter("max_robot_speed", CONFIG.max_robot_speed);
-  declare_parameter("update_rate", rclcpp::ParameterValue(25.0));
-  get_parameter("update_rate", CONFIG.updateRate);
-  declare_parameter("simulation_factor", rclcpp::ParameterValue(1.0));
-  get_parameter("simulation_factor", CONFIG.simulationFactor);
-  declare_parameter("robot_mode", rclcpp::ParameterValue(1));
-  get_parameter("robot_mode", op_mode);
-  declare_parameter("default_queue_size", rclcpp::ParameterValue(1));
-  get_parameter("default_queue_size", queue_size);
-  declare_parameter("robot_radius", rclcpp::ParameterValue(0.35));
-  get_parameter("robot_radius", robot_radius_);
-  declare_parameter("agent_radius", rclcpp::ParameterValue(0.35));
-  get_parameter("agent_radius", agent_radius_);
-  declare_parameter("force_factor_social", rclcpp::ParameterValue(10.0));
-  get_parameter("force_factor_social", force_factor_social_);
 
-  CONFIG.robot_mode = static_cast<RobotMode>(op_mode);
   RCLCPP_INFO_STREAM(
       get_logger(),
       "Using default queue size of "
-          << queue_size << " for publisher queues... "
-          << (queue_size == 0
+          << CONFIG.queue_size << " for publisher queues... "
+          << (CONFIG.queue_size == 0
                   ? "NOTE: This means the queues are of infinite size!"
                   : ""));
 
   // setup ros2 publishers
   pub_obstacles_ = create_publisher<LineObstacles>(
-      "pedsim_simulator/simulated_walls", queue_size);
+      "pedsim_simulator/simulated_walls", CONFIG.queue_size);
   pub_agent_states_ = create_publisher<AgentStates>(
-      "pedsim_simulator/simulated_agents", queue_size);
+      "pedsim_simulator/simulated_agents", CONFIG.queue_size);
   pub_agent_groups_ = create_publisher<AgentGroups>(
-      "pedsim_simulator/simulated_groups", queue_size);
+      "pedsim_simulator/simulated_groups", CONFIG.queue_size);
   pub_robot_position_ = create_publisher<nav_msgs::msg::Odometry>(
-      "pedsim_simulator/robot_position", queue_size);
+      "pedsim_simulator/robot_position", CONFIG.queue_size);
 
   // services
   srv_pause_simulation_ = create_service<std_srvs::srv::Empty>(
@@ -147,19 +149,19 @@ bool Simulator::initializeSimulation() {
 }
 
 void Simulator::runSimulation() {
-  rclcpp::Rate r(CONFIG.updateRate);
+  rclcpp::Rate r(CONFIG.update_rate);
   while (rclcpp::ok()) {
     if (!robot_) {
       // setup the robot
       for (Agent *agent : SCENE.getAgents()) {
-        agent->setForceFactorSocial(force_factor_social_);
+        agent->setForceFactorSocial(CONFIG.forceSocial);
         if (agent->getType() == Ped::Tagent::ROBOT) {
           robot_ = agent;
-          agent->SetRadius(robot_radius_);
+          agent->SetRadius(CONFIG.robot_radius);
           last_robot_orientation_ =
               poseFrom2DVelocity(robot_->getvx(), robot_->getvy());
         } else
-          agent->SetRadius(agent_radius_);
+          agent->SetRadius(CONFIG.agent_radius);
       }
     }
     if (!paused_) {
