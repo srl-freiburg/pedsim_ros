@@ -34,7 +34,7 @@ include_directories(include
 link_directories(${gazebo_dev_LIBRARY_DIRS})
 
 
-ament_python_install_package(scripts/)
+ament_python_install_package(scripts)
 
 # ActorPosesPlugin
 add_library(gazebo_ros_actor_poses SHARED
