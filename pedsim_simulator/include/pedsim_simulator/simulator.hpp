@@ -40,7 +40,7 @@
 #include "tf2_ros/transform_listener.h"
 #include <functional>
 #include <memory>
-#include <tf2_geometry_msgs/tf2_geometry_msgs.h>
+#include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
 
 #include <pedsim_msgs/msg/agent_force.hpp>
 #include <pedsim_msgs/msg/agent_group.hpp>
