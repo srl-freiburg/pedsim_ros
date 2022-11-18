@@ -101,6 +101,21 @@ def generate_launch_description():
             condition=IfCondition(PythonExpression([' not ', headless]))
             )
     
+    robot_spawner_cmd = Node(
+        package='gazebo_ros',
+        executable='spawn_entity.py',
+        name='spawn_robot',
+        arguments=[
+            '-entity', 'robot_description',
+            '-topic', 'robot_description',
+            '-x', '0.0',
+            '-y', '0.0',
+            '-z', '0.0',
+            '-Y', '0.0',
+        ],
+        output={'both': 'log'},
+    )
+
     agent_spawner_cmd = Node(
         package='pedsim_gazebo_plugin',
         executable='spawn_pedsim_agents.py',
@@ -144,7 +159,8 @@ def generate_launch_description():
     # Add any conditioned actions
     ld.add_action(start_gazebo_server_cmd)
     ld.add_action(start_gazebo_client_cmd)
-    # ld.add_action(agent_spawner_cmd)
+    ld.add_action(robot_spawner_cmd)
+    ld.add_action(agent_spawner_cmd)
     ld.add_action(start_robot_state_publisher_cmd)
     ld.add_action(start_joint_state_publisher_cmd)
 
