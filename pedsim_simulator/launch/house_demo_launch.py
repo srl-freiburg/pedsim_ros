@@ -16,45 +16,77 @@ import os
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, SetEnvironmentVariable, IncludeLaunchDescription
+from launch_ros.actions import Node
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch.substitutions import LaunchConfiguration
-
+from launch.substitutions import LaunchConfiguration, PythonExpression
+from launch.conditions import IfCondition
 
 def generate_launch_description():
-    # Get the launch directory
+    # Get directories
     simulator_dir = get_package_share_directory('pedsim_simulator')
     launch_dir = os.path.join(simulator_dir, 'launch')
-    
-    scene_file = LaunchConfiguration('scene_file')
-    simulation_factor = LaunchConfiguration('simulation_factor')
+    default_rviz_config_path = os.path.join(simulator_dir, 'rviz', 'pedsim.rviz')
+    default_config_file_path = os.path.join(simulator_dir, 'config', 'params.yaml')
 
+    scene_file = LaunchConfiguration('scene_file')
+    config_file = LaunchConfiguration('config_file')
+    frame_id = LaunchConfiguration('frame_id')
+    rviz = LaunchConfiguration('rviz')
+    use_rviz = LaunchConfiguration('use_rviz')
 
     # Set env var to print messages to stdout immediately
     SetEnvironmentVariable('RCUTILS_CONSOLE_STDOUT_LINE_BUFFERED', '1')
+
+    declare_rvizconfig_cmd = DeclareLaunchArgument(
+        name='rviz', default_value=default_rviz_config_path,
+        description='Absolute path to rviz config file')
+
+    declare_use_rviz_cmd = DeclareLaunchArgument(
+        name='use_rviz', default_value='True',
+        description='Whether to use rviz')
 
     declare_scene_file_cmd = DeclareLaunchArgument(
         'scene_file', 
         default_value=os.path.join(simulator_dir, 'scenarios', 'scene1.xml'),
         description='')
 
-    declare_simulation_factor_cmd = DeclareLaunchArgument(
-        'simulation_factor', default_value='0.05',
-        description='Top-level namespace')
-    
+    declare_config_file_cmd = DeclareLaunchArgument(
+        'config_file', 
+        default_value=default_config_file_path,
+        description='')
+
     pedsim_simulator_cmd = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(os.path.join(launch_dir, 'simulator_launch.py')),
         launch_arguments={'scene_file': scene_file,
-                          'simulation_factor': simulation_factor}.items())    
+                          'config_file': config_file}.items())    
 
+    frame_id_cmd = DeclareLaunchArgument(
+        'frame_id', default_value='map', description='Reference frame')
+
+    pedsim_visualizer_cmd = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(get_package_share_directory('pedsim_visualizer'), 'launch', 'visualizer_launch.py')),
+        launch_arguments={'frame_id': frame_id}.items())  
+    
+    rviz_node_cmd = Node(package='rviz2',
+                     executable='rviz2',
+                     name='rviz2',
+                     output='screen',
+                     arguments=['-d', rviz],
+                     condition=IfCondition(PythonExpression([use_rviz])))
 
     # Create the launch description and populate
     ld = LaunchDescription()
 
     # Declare the launch options
     ld.add_action(declare_scene_file_cmd)
-    ld.add_action(declare_simulation_factor_cmd)
+    ld.add_action(declare_config_file_cmd)
+    ld.add_action(frame_id_cmd)
+    ld.add_action(declare_use_rviz_cmd)
+    ld.add_action(declare_rvizconfig_cmd)
 
     # Add any conditioned actions
     ld.add_action(pedsim_simulator_cmd)
-
+    ld.add_action(pedsim_visualizer_cmd)
+    ld.add_action(rviz_node_cmd)
     return ld
