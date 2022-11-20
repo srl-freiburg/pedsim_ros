@@ -27,6 +27,7 @@ def generate_launch_description():
     launch_dir = os.path.join(simulator_dir, 'launch')
     default_rviz_config_path = os.path.join(simulator_dir, 'rviz', 'pedsim.rviz')
     default_config_file_path = os.path.join(simulator_dir, 'config', 'params.yaml')
+    default_scene_file_path = os.path.join(simulator_dir, 'scenarios', 'tb3_house_demo_crowd.xml')
 
     scene_file = LaunchConfiguration('scene_file')
     config_file = LaunchConfiguration('config_file')
@@ -47,7 +48,7 @@ def generate_launch_description():
 
     declare_scene_file_cmd = DeclareLaunchArgument(
         'scene_file', 
-        default_value=os.path.join(simulator_dir, 'scenarios', 'scene1.xml'),
+        default_value=default_scene_file_path,
         description='')
 
     declare_config_file_cmd = DeclareLaunchArgument(
