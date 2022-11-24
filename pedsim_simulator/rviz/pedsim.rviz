@@ -8,7 +8,6 @@ Panels:
         - /Status1
         - /Map1/Status1
         - /Map1/Topic1
-        - /Camera1/Topic1
       Splitter Ratio: 0.5352941155433655
     Tree Height: 490
   - Class: rviz_common/Selection
@@ -42,70 +41,8 @@ Visualization Manager:
         Y: 0
         Z: 0
       Plane: XY
-      Plane Cell Count: 10
+      Plane Cell Count: 40
       Reference Frame: <Fixed Frame>
-      Value: true
-    - Class: rviz_default_plugins/TF
-      Enabled: true
-      Frame Timeout: 15
-      Frames:
-        All Enabled: true
-        agent_0:
-          Value: true
-        base_footprint:
-          Value: true
-        base_link:
-          Value: true
-        camera_color_frame:
-          Value: true
-        camera_color_optical_frame:
-          Value: true
-        camera_depth_frame:
-          Value: true
-        camera_depth_optical_frame:
-          Value: true
-        camera_link:
-          Value: true
-        imu_link:
-          Value: true
-        laser_frame:
-          Value: true
-        map:
-          Value: true
-        odom:
-          Value: true
-        wheel_left_link:
-          Value: true
-        wheel_right_link:
-          Value: true
-      Marker Scale: 1
-      Name: TF
-      Show Arrows: true
-      Show Axes: true
-      Show Names: true
-      Tree:
-        map:
-          agent_0:
-            {}
-          odom:
-            base_footprint:
-              base_link:
-                camera_link:
-                  camera_color_frame:
-                    camera_color_optical_frame:
-                      {}
-                  camera_depth_frame:
-                    camera_depth_optical_frame:
-                      {}
-                imu_link:
-                  {}
-                laser_frame:
-                  {}
-                wheel_left_link:
-                  {}
-                wheel_right_link:
-                  {}
-      Update Interval: 0
       Value: true
     - Alpha: 0.699999988079071
       Class: rviz_default_plugins/Map
@@ -128,7 +65,7 @@ Visualization Manager:
       Use Timestamp: false
       Value: true
     - Alpha: 1
-      Class: spencer_tracking_rviz_plugin/TrackedPersons
+      Class: pedsim_rviz_plugin/TrackedPersons
       Color: 130; 130; 130
       Color map offset: 0
       Color transform: Rainbow
@@ -141,7 +78,7 @@ Visualization Manager:
       History as line:
         Line width: 0.05000000074505806
         Value: true
-      History size: 100
+      History size: 10
       Included person IDs: ""
       Min. history point distance: 0.4000000059604645
       Missed alpha: 0.5
@@ -174,20 +111,22 @@ Visualization Manager:
       Z offset:
         Use Z position from message: false
         Value: 0
-    - Class: rviz_default_plugins/Image
+    - Class: rviz_common/Group
+      Displays:
+        - Class: rviz_default_plugins/Marker
+          Enabled: true
+          Name: Walls
+          Namespaces:
+            {}
+          Topic:
+            Depth: 10
+            Durability Policy: Volatile
+            History Policy: Keep Last
+            Reliability Policy: Reliable
+            Value: /pedsim_visualizer/walls
+          Value: true
+      Name: Pedsim-Visuals
       Enabled: true
-      Max Value: 1
-      Median window: 5
-      Min Value: 0
-      Name: Camera
-      Normalize Range: true
-      Topic:
-        Depth: 5
-        Durability Policy: Volatile
-        History Policy: Keep Last
-        Reliability Policy: Best Effort
-        Value: /camera_color_frame/image_raw
-      Value: true
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
