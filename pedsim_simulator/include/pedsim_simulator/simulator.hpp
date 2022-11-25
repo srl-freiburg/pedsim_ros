@@ -131,6 +131,18 @@ private:
   agentStateToActivity(const AgentStateMachine::AgentState &state) const;
 
   inline std_msgs::msg::Header createMsgHeader() const;
+
+  // Parameters
+    bool groups_enabled;
+  double max_robot_speed;
+  double update_rate;
+  double simulation_factor;
+  int op_mode;
+  RobotMode robot_mode;
+  int queue_size;
+  double robot_radius;
+  double agent_radius;
+  double forceSocial;
 };
 
 #endif

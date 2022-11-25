@@ -53,7 +53,7 @@ void Simulator::initializeParams() {
   // load additional parameters
   this->declare_parameter("groups_enabled", true);
   this->declare_parameter("max_robot_speed", 1.5);
-  this->declare_parameter("update_rate", 1.0);
+  this->declare_parameter("update_rate", 25.0);
   this->declare_parameter("simulation_factor", 1.0);
   this->declare_parameter("op_mode", 1);
   this->declare_parameter("queue_size", 10);
@@ -61,16 +61,16 @@ void Simulator::initializeParams() {
   this->declare_parameter("agent_radius", 0.35);
   this->declare_parameter("force_social", 10.0);
 
-  CONFIG.groups_enabled = get_parameter("groups_enabled").as_bool();
-  CONFIG.max_robot_speed = get_parameter("max_robot_speed").as_double();
-  CONFIG.update_rate = get_parameter("update_rate").as_double();
-  CONFIG.simulation_factor = get_parameter("simulation_factor").as_double();
-  int op_mode = get_parameter("op_mode").as_int();
-  CONFIG.robot_mode = static_cast<RobotMode>(op_mode);
-  CONFIG.queue_size = get_parameter("queue_size").as_int();
-  CONFIG.robot_radius = get_parameter("robot_radius").as_double();
-  CONFIG.agent_radius = get_parameter("agent_radius").as_double();
-  CONFIG.forceSocial = get_parameter("force_social").as_double();
+  groups_enabled = this->get_parameter("groups_enabled").as_bool();
+  max_robot_speed = this->get_parameter("max_robot_speed").as_double();
+  update_rate = this->get_parameter("update_rate").as_double();
+  simulation_factor = this->get_parameter("simulation_factor").as_double();
+  op_mode = this->get_parameter("op_mode").as_int();
+  robot_mode = static_cast<RobotMode>(op_mode);
+  queue_size = this->get_parameter("queue_size").as_int();
+  robot_radius = this->get_parameter("robot_radius").as_double();
+  agent_radius = this->get_parameter("agent_radius").as_double();
+  forceSocial = this->get_parameter("force_social").as_double();
 }
 
 bool Simulator::initializeSimulation() {
@@ -103,20 +103,20 @@ bool Simulator::initializeSimulation() {
   RCLCPP_INFO_STREAM(
       get_logger(),
       "Using default queue size of "
-          << CONFIG.queue_size << " for publisher queues... "
-          << (CONFIG.queue_size == 0
+          << queue_size << " for publisher queues... "
+          << (queue_size == 0
                   ? "NOTE: This means the queues are of infinite size!"
                   : ""));
 
   // setup ros2 publishers
   pub_obstacles_ = create_publisher<LineObstacles>(
-      "pedsim_simulator/simulated_walls", CONFIG.queue_size);
+      "pedsim_simulator/simulated_walls", queue_size);
   pub_agent_states_ = create_publisher<AgentStates>(
-      "pedsim_simulator/simulated_agents", CONFIG.queue_size);
+      "pedsim_simulator/simulated_agents", queue_size);
   pub_agent_groups_ = create_publisher<AgentGroups>(
-      "pedsim_simulator/simulated_groups", CONFIG.queue_size);
+      "pedsim_simulator/simulated_groups", queue_size);
   pub_robot_position_ = create_publisher<nav_msgs::msg::Odometry>(
-      "pedsim_simulator/robot_position", CONFIG.queue_size);
+      "pedsim_simulator/robot_position", queue_size);
 
   // services
   srv_pause_simulation_ = create_service<std_srvs::srv::Empty>(
@@ -138,19 +138,19 @@ bool Simulator::initializeSimulation() {
 }
 
 void Simulator::runSimulation() {
-  rclcpp::Rate r(CONFIG.update_rate);
+  rclcpp::Rate r(update_rate);
   while (rclcpp::ok()) {
     if (!robot_) {
       // setup the robot
       for (Agent *agent : SCENE.getAgents()) {
-        agent->setForceFactorSocial(CONFIG.forceSocial);
+        agent->setForceFactorSocial(forceSocial);
         if (agent->getType() == Ped::Tagent::ROBOT) {
           robot_ = agent;
-          agent->SetRadius(CONFIG.robot_radius);
+          agent->SetRadius(robot_radius);
           last_robot_orientation_ =
               poseFrom2DVelocity(robot_->getvx(), robot_->getvy());
         } else
-          agent->SetRadius(CONFIG.agent_radius);
+          agent->SetRadius(agent_radius);
       }
     }
     if (!paused_) {
@@ -167,31 +167,6 @@ void Simulator::runSimulation() {
   }
 }
 
-/*
-void Simulator::reconfigureCB(pedsim_simulator::PedsimSimulatorConfig& config,
-                              uint32_t level) {
-  CONFIG.updateRate = config.update_rate;
-  CONFIG.simulationFactor = config.simulation_factor;
-
-  // update force scaling factors
-  CONFIG.setObstacleForce(config.force_obstacle);
-  CONFIG.setObstacleSigma(config.sigma_obstacle);
-  CONFIG.setSocialForce(config.force_social);
-  CONFIG.setGroupGazeForce(config.force_group_gaze);
-  CONFIG.setGroupCoherenceForce(config.force_group_coherence);
-  CONFIG.setGroupRepulsionForce(config.force_group_repulsion);
-  CONFIG.setRandomForce(config.force_random);
-  CONFIG.setAlongWallForce(config.force_wall);
-
-  // puase or unpause the simulation
-  if (paused_ != config.paused) {
-    paused_ = config.paused;
-  }
-
-  ROS_INFO_STREAM("Updated sim with live config: Rate=" << CONFIG.updateRate
-                                                        << " incoming rate="
-                                                        << config.update_rate);
-}*/
 void Simulator::onPauseSimulation(
     const std::shared_ptr<std_srvs::srv::Empty::Request> request,
     std::shared_ptr<std_srvs::srv::Empty::Response> response) {
@@ -224,10 +199,10 @@ void Simulator::updateRobotPositionFromTF() {
   if (!robot_)
     return;
 
-  if (CONFIG.robot_mode == RobotMode::TELEOPERATION ||
-      CONFIG.robot_mode == RobotMode::CONTROLLED) {
+  if (robot_mode == RobotMode::TELEOPERATION ||
+      robot_mode == RobotMode::CONTROLLED) {
     robot_->setTeleop(true);
-    robot_->setVmax(CONFIG.max_robot_speed);
+    robot_->setVmax(max_robot_speed);
     geometry_msgs::msg::TransformStamped tf_msg;
     try {
       // Check if the transform is available
@@ -349,10 +324,10 @@ void Simulator::publishAgents() {
 }
 
 void Simulator::publishGroups() {
-  if (!CONFIG.groups_enabled) {
+  if (!groups_enabled) {
     RCLCPP_DEBUG_STREAM(get_logger(),
                         "Groups are disabled, no group data published: flag="
-                            << CONFIG.groups_enabled);
+                            << groups_enabled);
     return;
   }
 
