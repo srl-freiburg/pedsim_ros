@@ -29,8 +29,6 @@
  * \author Sven Wehner <mail@svenwehner.de>
  */
 
-#include <QApplication>
-#include <algorithm>
 
 #include "pedsim_simulator/element/agentcluster.hpp"
 #include "pedsim_simulator/scene.hpp"
@@ -43,28 +41,19 @@ using namespace pedsim_msgs::msg;
 using std::placeholders::_1;
 using std::placeholders::_2;
 
-Simulator::Simulator(const std::string &name) : Node(name) {
-  // dynamic_reconfigure::Server<SimConfig>::CallbackType f;
-  // f = boost::bind(&Simulator::reconfigureCB, this, _1, _2);
-  // server_.setCallback(f);
+
+Simulator::Simulator() : Node("pedsim_simulator") {
+
   this->initializeParams();
-}
-
-Simulator::~Simulator() {
-  // shutdown service servers
-
-  // srv_pause_simulation_.shutdown();
-  // srv_unpause_simulation_.shutdown();
-
-  delete robot_;
-  QCoreApplication::exit(0);
+  this->initializeSimulation();
+  this->runSimulation();
 }
 
 void Simulator::initializeParams() {
   // load additional parameters
   this->declare_parameter("groups_enabled", true);
   this->declare_parameter("max_robot_speed", 1.5);
-  this->declare_parameter("update_rate", 25.0);
+  this->declare_parameter("update_rate", 1.0);
   this->declare_parameter("simulation_factor", 1.0);
   this->declare_parameter("op_mode", 1);
   this->declare_parameter("queue_size", 10);
@@ -435,7 +424,6 @@ std::string Simulator::agentStateToActivity(
 std_msgs::msg::Header Simulator::createMsgHeader() const {
   std_msgs::msg::Header msg_header;
   msg_header.stamp = rclcpp::Clock().now();
-  ;
   msg_header.frame_id = "odom";
   return msg_header;
 }

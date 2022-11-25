@@ -28,28 +28,13 @@
  * \author Billy Okal <okal@cs.uni-freiburg.de>
  */
 
-#include <QApplication>
-#include <signal.h>
-
+#include "rclcpp/rclcpp.hpp"
 #include <pedsim_simulator/simulator.hpp>
 
-int main(int argc, char *argv[]) {
-  QApplication app(argc, argv);
+int main(int argc, char * argv[])
+{
   rclcpp::init(argc, argv);
-
-  // initialize resources
-  auto sm = std::make_shared<Simulator>("pedsim_simulator");
-
-  // use default SIGINT handler so CTRL+C works
-  signal(SIGINT, SIG_DFL);
-
-  if (sm->initializeSimulation()) {
-    RCLCPP_INFO(sm->get_logger(), "node initialized, now running");
-    sm->runSimulation();
-  } else {
-    RCLCPP_WARN(sm->get_logger(), "Could not initialize simulation, aborting");
-    return EXIT_FAILURE;
-  }
-
-  return app.exec();
+  auto node = std::make_shared<Simulator>();
+  rclcpp::spin(node);
+  rclcpp::shutdown();
 }

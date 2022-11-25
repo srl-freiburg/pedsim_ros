@@ -80,8 +80,7 @@ using namespace pedsim_msgs::msg;
 /// \details ROS interface to the scene object provided by pedsim
 class Simulator : public rclcpp::Node {
 public:
-  explicit Simulator(const std::string &name);
-  virtual ~Simulator();
+  Simulator();
   void initializeParams();
   bool initializeSimulation();
   void runSimulation();
