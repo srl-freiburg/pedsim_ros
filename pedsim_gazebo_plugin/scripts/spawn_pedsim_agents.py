@@ -21,8 +21,7 @@ class AgentSpawner(Node):
         qos_profile = qos_profile_sensor_data
         self.sub = self.create_subscription(AgentStates, 
                                             'pedsim_simulator/simulated_agents',
-                                            self.actor_poses_callback,
-                                            qos_profile = qos_profile)
+                                            self.actor_poses_callback, qos_profile)
         self.sub  # prevent unused variable warning
         pedsim_dir = get_package_share_directory('pedsim_gazebo_plugin')
         file_xml = open(pedsim_dir + "/models/person_standing/model.sdf")
@@ -40,7 +39,7 @@ class AgentSpawner(Node):
         for actor in actors.agent_states:
             actor_id = str(actor.id)
             actor_pose = actor.pose
-            print("Spawning model: actor_id = %s", actor_id)
+            # self.get_logger().info("Spawning model: actor_id = %s", actor_id)
             model_pose = Pose()
             model_pose.position.x = actor_pose.position.x
             model_pose.position.y = actor_pose.position.y
@@ -58,7 +57,7 @@ class AgentSpawner(Node):
             req.reference_frame = "world"
             
             future = self.spawn_cli.call_async(req)
-        print("all agents have been spawned !")
+        self.get_logger().info("all spawned agents have been updated !")
         rclpy.shutdown()
 
 
