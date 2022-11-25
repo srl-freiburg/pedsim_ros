@@ -33,7 +33,8 @@ def generate_launch_description():
     bringup_dir = FindPackageShare(package='nav2_bringup').find('nav2_bringup')
     pkg_gazebo_ros = FindPackageShare(package='gazebo_ros').find('gazebo_ros')
     urdf_model_path = os.path.join(bringup_dir, 'urdf', 'turtlebot3_waffle.urdf')
-    world_model_path = os.path.join(pedsim_dir, 'worlds', 'house.world')
+    sdf_model_path = os.path.join(bringup_dir, 'worlds', 'waffle.model')
+    world_model_path = os.path.join(pedsim_dir, 'worlds', 'empty_world')
 
     # Create the launch configuration variables
     namespace = LaunchConfiguration('namespace')
@@ -46,7 +47,8 @@ def generate_launch_description():
     headless = LaunchConfiguration('headless')
     world = LaunchConfiguration('world')
     urdf_model = LaunchConfiguration('urdf_model')
-    
+    robot_sdf = LaunchConfiguration('robot_sdf')
+
     remappings = [('/tf', 'tf'),
                   ('/tf_static', 'tf_static')]
 
@@ -73,13 +75,18 @@ def generate_launch_description():
 
     declare_use_robot_state_pub_cmd = DeclareLaunchArgument(
         'use_robot_state_pub',
-        default_value='True',
+        default_value='False',
         description='Whether to start the robot state publisher')
 
     declare_simulator_cmd = DeclareLaunchArgument(
         'headless',
         default_value='False',
         description='Whether to execute gzclient)')
+
+    declare_robot_sdf_cmd = DeclareLaunchArgument(
+        'robot_sdf',
+        default_value=sdf_model_path,
+        description='Full path to robot sdf file to spawn the robot in gazebo')
 
     declare_urdf_cmd = DeclareLaunchArgument(
         name='urdf_model',
@@ -93,27 +100,28 @@ def generate_launch_description():
 
     # Start Gazebo server
     start_gazebo_server_cmd = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(os.path.join(pkg_gazebo_ros, 'launch', 'gzserver.launch.py')),
-        launch_arguments={'world': world}.items())
+            PythonLaunchDescriptionSource(os.path.join(pkg_gazebo_ros, 'launch', 'gzserver.launch.py')),
+            condition=IfCondition(use_simulator),
+            launch_arguments={'world': world}.items())
     # Start Gazebo client
     start_gazebo_client_cmd = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(os.path.join(pkg_gazebo_ros, 'launch', 'gzclient.launch.py')),
-            condition=IfCondition(PythonExpression([' not ', headless]))
-            )
-    
+            PythonLaunchDescriptionSource(os.path.join(pkg_gazebo_ros, 'launch', 'gzclient.launch.py')),
+            condition=IfCondition(PythonExpression([use_simulator, ' and not ', headless])))
+
     robot_spawner_cmd = Node(
         package='gazebo_ros',
         executable='spawn_entity.py',
-        name='spawn_robot',
+        output='screen',
         arguments=[
-            '-entity', 'robot_description',
-            '-topic', 'robot_description',
+            '-entity', 'robot_test',
+            '-file', robot_sdf,
             '-x', '0.0',
             '-y', '0.0',
             '-z', '0.0',
+            '-R', '0.0',
+            '-P', '0.0',
             '-Y', '0.0',
         ],
-        output={'both': 'log'},
     )
 
     agent_spawner_cmd = Node(
@@ -153,13 +161,14 @@ def generate_launch_description():
     ld.add_action(declare_use_simulator_cmd)
     ld.add_action(declare_use_robot_state_pub_cmd)
     ld.add_action(declare_simulator_cmd)
+    ld.add_action(declare_robot_sdf_cmd)
     ld.add_action(declare_urdf_cmd)
     ld.add_action(declare_world_cmd)
 
     # Add any conditioned actions
     ld.add_action(start_gazebo_server_cmd)
     ld.add_action(start_gazebo_client_cmd)
-    ld.add_action(robot_spawner_cmd)
+    # ld.add_action(robot_spawner_cmd)
     ld.add_action(agent_spawner_cmd)
     ld.add_action(start_robot_state_publisher_cmd)
     ld.add_action(start_joint_state_publisher_cmd)
