@@ -78,8 +78,8 @@ bool Simulator::initializeSimulation() {
   paused_ = false;
   robot_ = nullptr;
 
-   this->declare_parameter("scene_file", rclcpp::ParameterValue(""));
-  get_parameter("scene_file", scene_file_param);
+  this->declare_parameter("scene_file", "");
+  scene_file_param = this->get_parameter("scene_file").as_string();
   if (scene_file_param == "") {
     RCLCPP_ERROR_STREAM(get_logger(),
                         "Invalid scene file: " << scene_file_param);
@@ -162,7 +162,6 @@ void Simulator::runSimulation() {
       publishObstacles(); // TODO - no need to do this all the time.
     }
 
-    rclcpp::spin_some(shared_from_this());
     r.sleep();
   }
 }
