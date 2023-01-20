@@ -267,8 +267,8 @@ int main(int argn, char *args[]) {
   nav_msgs::msg::OccupancyGrid grid;
   grid.info.height = (y_max - y_min) / resolution + 2;
   grid.info.width = (x_max - x_min) / resolution + 2;
-  grid.info.origin.position.x = -10.0;
-  grid.info.origin.position.y = -10.0;
+  grid.info.origin.position.x = x_min;
+  grid.info.origin.position.y = y_min;
   grid.info.resolution = resolution;
 
   grid.data.resize(grid.info.height * grid.info.width);
