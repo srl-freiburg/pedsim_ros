@@ -19,8 +19,11 @@ from launch_ros.actions import Node
 
 
 def generate_launch_description():
-    # Get the launch directory    
-
+    namespace = LaunchConfiguration('namespace')  
+    declare_namespace_cmd = DeclareLaunchArgument(
+        'namespace',
+        default_value='',
+        description='Top-level namespace')
     # Set env var to print messages to stdout immediately
     SetEnvironmentVariable('RCUTILS_CONSOLE_STDOUT_LINE_BUFFERED', '1')
     frame_id = LaunchConfiguration('frame_id')
@@ -36,6 +39,7 @@ def generate_launch_description():
         package='pedsim_visualizer',
         executable='pedsim_visualizer_node',
         name='pedsim_visualizer_node',
+        namespace=namespace,
         output='screen',
         parameters=[{
             "frame_id": frame_id,
@@ -45,7 +49,7 @@ def generate_launch_description():
 
     # Create the launch description and populate
     ld = LaunchDescription()
-
+    ld.add_action(declare_namespace_cmd)
     ld.add_action(frame_id_cmd)
     ld.add_action(walls_resolution_cmd)
 

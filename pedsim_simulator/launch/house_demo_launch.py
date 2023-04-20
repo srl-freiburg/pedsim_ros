@@ -29,6 +29,7 @@ def generate_launch_description():
     default_config_file_path = os.path.join(simulator_dir, 'config', 'params.yaml')
     default_scene_file_path = os.path.join(simulator_dir, 'scenarios', 'tb3_house_demo_crowd.xml')
 
+    namespace = LaunchConfiguration('namespace')
     scene_file = LaunchConfiguration('scene_file')
     config_file = LaunchConfiguration('config_file')
     frame_id = LaunchConfiguration('frame_id')
@@ -38,12 +39,17 @@ def generate_launch_description():
     # Set env var to print messages to stdout immediately
     SetEnvironmentVariable('RCUTILS_CONSOLE_STDOUT_LINE_BUFFERED', '1')
 
+    declare_namespace_cmd = DeclareLaunchArgument(
+        'namespace',
+        default_value='',
+        description='Top-level namespace')
+
     declare_rvizconfig_cmd = DeclareLaunchArgument(
         name='rviz', default_value=default_rviz_config_path,
         description='Absolute path to rviz config file')
 
     declare_use_rviz_cmd = DeclareLaunchArgument(
-        name='use_rviz', default_value='True',
+        name='use_rviz', default_value='False',
         description='Whether to use rviz')
 
     declare_scene_file_cmd = DeclareLaunchArgument(
@@ -59,7 +65,8 @@ def generate_launch_description():
     pedsim_simulator_cmd = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(os.path.join(launch_dir, 'simulator_launch.py')),
         launch_arguments={'scene_file': scene_file,
-                          'config_file': config_file}.items())    
+                          'config_file': config_file,
+                          'namespace': namespace}.items())    
 
     frame_id_cmd = DeclareLaunchArgument(
         'frame_id', default_value='map', description='Reference frame')
@@ -67,19 +74,22 @@ def generate_launch_description():
     pedsim_visualizer_cmd = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             os.path.join(get_package_share_directory('pedsim_visualizer'), 'launch', 'visualizer_launch.py')),
-        launch_arguments={'frame_id': frame_id}.items())  
+        launch_arguments={'frame_id': frame_id,
+                          'namespace': namespace}.items())  
     
     rviz_node_cmd = Node(package='rviz2',
                      executable='rviz2',
                      name='rviz2',
                      output='screen',
                      arguments=['-d', rviz],
+                     namespace=namespace,
                      condition=IfCondition(PythonExpression([use_rviz])))
 
     # Create the launch description and populate
     ld = LaunchDescription()
 
     # Declare the launch options
+    ld.add_action(declare_namespace_cmd)
     ld.add_action(declare_scene_file_cmd)
     ld.add_action(declare_config_file_cmd)
     ld.add_action(frame_id_cmd)

@@ -22,6 +22,7 @@ from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
 
 def generate_launch_description():
+    namespace = LaunchConfiguration('namespace')
     # Get package directory
     simulator_dir = get_package_share_directory('pedsim_simulator')
     # Get config file
@@ -35,7 +36,10 @@ def generate_launch_description():
     return LaunchDescription([
         # Set env var to print messages to stdout immediately
         SetEnvironmentVariable('RCUTILS_CONSOLE_STDOUT_LINE_BUFFERED', '1'),
-
+        DeclareLaunchArgument(
+            'namespace',
+            default_value='damn',
+            description='Top-level namespace'),
         DeclareLaunchArgument(
             'scene_file', 
             default_value=os.path.join(simulator_dir, 'scenarios', 'social_contexts.xml'),
@@ -49,12 +53,12 @@ def generate_launch_description():
             executable='pedsim_simulator',
             name='pedsim_simulator',
             output='screen',
+            namespace=namespace,
             parameters=[{'scene_file': scene_file}, config_file]),
         Node(
             package='pedsim_tf2',
             executable='pedsim_tf2_node',
             name='pedsim_tf2_node',
-            output='screen'),
-        
-
+            output='screen',
+            namespace=namespace)
     ])
