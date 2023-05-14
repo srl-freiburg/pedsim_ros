@@ -38,11 +38,11 @@ def generate_launch_description():
         SetEnvironmentVariable('RCUTILS_CONSOLE_STDOUT_LINE_BUFFERED', '1'),
         DeclareLaunchArgument(
             'namespace',
-            default_value='damn',
+            default_value='',
             description='Top-level namespace'),
         DeclareLaunchArgument(
             'scene_file', 
-            default_value=os.path.join(simulator_dir, 'scenarios', 'social_contexts.xml'),
+            default_value=os.path.join(simulator_dir, 'scenarios', 'office-cubicles.xml'),
             description=''),
         DeclareLaunchArgument(
             'config_file', 
