@@ -8,16 +8,20 @@ This package integrates the Pedestrian Simulator pedsim_simulator into Gazebo.
 - it continously updates the poses of the spawned agents
 
 ### Sample usage
-#### Step 1. Generate gazebo world + launch file for the corresponding pedsim_scenario (scenario_file should be stored in `pedsim_simulator/scenarios/` directory)
+#### Step 1. Generate gazebo world for the corresponding pedsim_scenario (scenario_file should be stored in `pedsim_simulator/scenarios/` directory)
+
 ====
 ```
-$ rosrun pedsim_gazebo_plugin spawn_pedsim_agents.py
+cd pedsim_gazebo_plugin/scripts
+python3 pedsim_to_gazebo_world.py 
 ```
-#### Step 2. After running the pedsim simulator, use the launch file generated from step 1   
+====
+#### Step 2. Launch gazebo world and spawn pedsim agents using the launch file.
 ```
-$ roslaunch pedsim_gazebo_plugin <scenario_name>.launch
+$ ros2 launch pedsim_gazebo_plugin gazebo_demo_launch.py 
 ```
-#### Step 3. To synchronize your own robot with the diff_robot that is included in the pedsim package: 
-##### 1. Spawn your own robot (diff_drive_robot), consider the same coordinates in the scenario file.
+#### Step 3. Customization: to synchronize your own robot with the diff_robot that in the pedsim_simulator: 
+====
+##### 1. Edit launch  to spawn your own diff_drive_robot, consider the same coordinates in the scenario file.
 ##### 2. Remap `/pedbot/control/cmd_vel` to the topic you are using to control your own robot 
 
