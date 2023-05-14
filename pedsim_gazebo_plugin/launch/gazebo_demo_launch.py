@@ -34,7 +34,7 @@ def generate_launch_description():
     pkg_gazebo_ros = FindPackageShare(package='gazebo_ros').find('gazebo_ros')
     urdf_model_path = os.path.join(bringup_dir, 'urdf', 'turtlebot3_waffle.urdf')
     sdf_model_path = os.path.join(bringup_dir, 'worlds', 'waffle.model')
-    world_model_path = os.path.join(pedsim_dir, 'worlds', 'empty_world')
+    world_model_path = os.path.join(pedsim_dir, 'worlds', 'office-cubicles.world')
 
     # Create the launch configuration variables
     namespace = LaunchConfiguration('namespace')
@@ -170,7 +170,7 @@ def generate_launch_description():
     ld.add_action(start_gazebo_client_cmd)
     # ld.add_action(robot_spawner_cmd)
     ld.add_action(agent_spawner_cmd)
-    ld.add_action(start_robot_state_publisher_cmd)
-    ld.add_action(start_joint_state_publisher_cmd)
+    # ld.add_action(start_robot_state_publisher_cmd)
+    # ld.add_action(start_joint_state_publisher_cmd)
 
     return ld
