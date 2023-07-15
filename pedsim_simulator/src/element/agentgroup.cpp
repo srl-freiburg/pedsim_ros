@@ -101,7 +101,7 @@ void AgentGroup::onPositionChanged(double x, double y) {
   // mark center of mass as dirty (needs to be re-calculated)
   dirty = true;
   dirtyMaxDistance = true;
-  comUpdateTimer.start();
+//   comUpdateTimer.start();
 }
 
 QList<AgentGroup *> AgentGroup::divideAgents(const QList<Agent *> &agentsIn) {
@@ -207,7 +207,7 @@ bool AgentGroup::addMember(Agent *agentIn) {
   members.append(agentIn);
   dirty = true;
   dirtyMaxDistance = true;
-  comUpdateTimer.start();
+//   comUpdateTimer.start();
 
   // connect signals
   connect(agentIn, SIGNAL(positionChanged(double, double)), this,
@@ -231,7 +231,7 @@ bool AgentGroup::removeMember(Agent *agentIn) {
     // invalidate cache and schedule update
     dirty = true;
     dirtyMaxDistance = true;
-    comUpdateTimer.start();
+    // comUpdateTimer.start();
 
     // inform users
     emit memberRemoved(agentIn->getId());
@@ -247,7 +247,7 @@ bool AgentGroup::setMembers(const QList<Agent *> &agentsIn) {
   members = agentsIn;
   dirty = true;
   dirtyMaxDistance = true;
-  comUpdateTimer.start();
+//   comUpdateTimer.start();
 
   // connect signals
   for (Agent *agent : members)
