@@ -20,6 +20,7 @@ from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, SetEnvironmentVariable
 from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
+from launch.conditions import IfCondition
 
 def generate_launch_description():
     namespace = LaunchConfiguration('namespace')
@@ -31,6 +32,7 @@ def generate_launch_description():
     # Launch configuration
     scene_file = LaunchConfiguration('scene_file')
     config_file = LaunchConfiguration('config_file')
+    run_pedsim_tf2 = LaunchConfiguration('run_pedsim_tf2')
 
 
     return LaunchDescription([
@@ -43,11 +45,15 @@ def generate_launch_description():
         DeclareLaunchArgument(
             'scene_file', 
             default_value=os.path.join(simulator_dir, 'scenarios', 'office-cubicles.xml'),
-            description=''),
+            description='Path to the cenario file'),
         DeclareLaunchArgument(
             'config_file', 
             default_value=config_file_path,
-            description=''),        
+            description='Path to the simulator config file'),  
+        DeclareLaunchArgument(
+            'run_pedsim_tf2', 
+            default_value='False',
+            description='Whether to launch pedestrian tf2 node'),        
         Node(
             package='pedsim_simulator',
             executable='pedsim_simulator',
@@ -60,5 +66,6 @@ def generate_launch_description():
             executable='pedsim_tf2_node',
             name='pedsim_tf2_node',
             output='screen',
-            namespace=namespace)
+            namespace=namespace,
+            condition=IfCondition(run_pedsim_tf2))
     ])
