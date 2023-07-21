@@ -51,6 +51,8 @@ Simulator::Simulator() : Node("pedsim_simulator") {
 
 void Simulator::initializeParams() {
   // load additional parameters
+  this->declare_parameter("odom_frame_id", "odom");
+  this->declare_parameter("base_frame_id", "base_footprint");
   this->declare_parameter("groups_enabled", true);
   this->declare_parameter("max_robot_speed", 1.5);
   this->declare_parameter("update_rate", 25.0);
@@ -61,6 +63,8 @@ void Simulator::initializeParams() {
   this->declare_parameter("agent_radius", 0.35);
   this->declare_parameter("force_social", 10.0);
 
+  odom_frame_id =this->get_parameter("odom_frame_id").as_string();
+  base_frame_id =this->get_parameter("base_frame_id").as_string();
   groups_enabled = this->get_parameter("groups_enabled").as_bool();
   max_robot_speed = this->get_parameter("max_robot_speed").as_double();
   update_rate = this->get_parameter("update_rate").as_double();
@@ -205,7 +209,7 @@ void Simulator::updateRobotPositionFromTF() {
     geometry_msgs::msg::TransformStamped tf_msg;
     try {
       // Check if the transform is available
-      tf_msg = tf_buffer_->lookupTransform("odom", "base_footprint",
+      tf_msg = tf_buffer_->lookupTransform(odom_frame_id, base_frame_id,
                                            tf2::TimePointZero);
     } catch (tf2::TransformException &e) {
       auto &clk = *this->get_clock();
@@ -243,7 +247,7 @@ void Simulator::publishRobotPosition() {
 
   nav_msgs::msg::Odometry robot_location;
   robot_location.header = createMsgHeader();
-  robot_location.child_frame_id = "odom";
+  robot_location.child_frame_id = base_frame_id;
 
   robot_location.pose.pose.position.x = robot_->getx();
   robot_location.pose.pose.position.y = robot_->gety();
@@ -398,6 +402,6 @@ std::string Simulator::agentStateToActivity(
 std_msgs::msg::Header Simulator::createMsgHeader() const {
   std_msgs::msg::Header msg_header;
   msg_header.stamp = rclcpp::Clock().now();
-  msg_header.frame_id = "odom";
+  msg_header.frame_id = odom_frame_id;
   return msg_header;
 }

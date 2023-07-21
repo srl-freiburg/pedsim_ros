@@ -133,7 +133,9 @@ private:
   inline std_msgs::msg::Header createMsgHeader() const;
 
   // Parameters
-    bool groups_enabled;
+  string odom_frame_id;
+  string base_frame_id;
+  bool groups_enabled;
   double max_robot_speed;
   double update_rate;
   double simulation_factor;

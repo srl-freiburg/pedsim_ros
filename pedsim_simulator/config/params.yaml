@@ -1,5 +1,7 @@
 pedsim_simulator:
   ros__parameters:
+    odom_frame_id:        "odom"
+    base_frame_id:        "base_footprint"
     groups_enabled:       true
     max_robot_speed:      1.5
     update_rate:          25.0
