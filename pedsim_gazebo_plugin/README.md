@@ -12,13 +12,12 @@ This package integrates the Pedestrian Simulator pedsim_simulator into Gazebo.
 
 ====
 ```
-cd pedsim_gazebo_plugin/scripts
-python3 pedsim_to_gazebo_world.py 
+python3 scripts/pedsim_to_gazebo_world.py 
 ```
 ====
 #### Step 2. Launch gazebo world and spawn pedsim agents using the launch file.
 ```
-$ ros2 launch pedsim_gazebo_plugin gazebo_demo_launch.py 
+ros2 launch pedsim_gazebo_plugin gazebo_demo_launch.py 
 ```
 #### Step 3. Customization: to synchronize your own robot with the diff_robot that in the pedsim_simulator: 
 ====
