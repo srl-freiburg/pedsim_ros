@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
 """
-@author: mahmoud
-@mantainer: jginesclavero
+@mantainer: stephenadhi
 
 """
-
+import functools
 import rclpy
 from ament_index_python.packages import get_package_share_directory
 from gazebo_msgs.srv import SpawnEntity, SetEntityState
@@ -40,43 +39,42 @@ class AgentSpawner(Node):
     def actor_poses_callback(self, actors):
         for idx, actor in enumerate(actors.agent_states):
             actor_id = str(actor.id)
-            actor_pose = actor.pose
-            model_pose = Pose()
-            model_pose.position.x = actor_pose.position.x
-            model_pose.position.y = actor_pose.position.y
-            model_pose.position.z = actor_pose.position.z
-            model_pose.orientation.x = actor_pose.orientation.x
-            model_pose.orientation.y = actor_pose.orientation.y
-            model_pose.orientation.z = actor_pose.orientation.z
-            model_pose.orientation.w = actor_pose.orientation.w
-        
-            if not self.is_spawned[idx]:
-                self.spawn_entity(actor_id=actor_id, model_pose=model_pose, idx=idx)
-                self.is_spawned[idx] = True
-            else:
-                self.set_entity_state(actor_id=actor_id, model_pose=model_pose)
 
-    def set_entity_state(self, actor_id, model_pose):
-        # Wait for the service to be available
-        while not self.set_state_client.wait_for_service(timeout_sec=1.0):
-            self.get_logger().info('Waiting for /set_entity_state service...')
-        req = SetEntityState.Request()
-        req.state.name = actor_id
-        req.state.pose = model_pose
-        set_future = self.set_state_client.call_async(req)
-        # self.get_logger().info("The spawned agent have been updated !")
+            if not self.is_spawned[idx]:
+                spawn_future = self.spawn_entity(actor_id=actor_id, model_pose=actor.pose, idx=idx)
+                if spawn_future:
+                    callback = functools.partial(self.callback, actor_id, actor.pose, idx)
+                    spawn_future.add_done_callback(callback)
+            else:
+                self.set_entity_state(actor_id=actor_id, model_pose=actor.pose)
+
+    def callback(self, actor_id, model_pose, idx, future):
+        if future.exception() is None:
+            self.is_spawned[idx] = True
+            self.set_entity_state(actor_id=actor_id, model_pose=model_pose)
 
     def spawn_entity(self, actor_id, model_pose, idx):
-        # Wait for the service to be available
-        while not self.spawn_client.wait_for_service(timeout_sec=1.0):
-            self.get_logger().info('Waiting for /spawn_entity service...')
-        req = SpawnEntity.Request()
-        req.name = actor_id
-        req.xml = self.xml_string
-        req.robot_namespace = ""
-        req.initial_pose = model_pose
-        req.reference_frame = "world"
-        spawn_future = self.spawn_client.call_async(req)
+        try:
+            req = SpawnEntity.Request()
+            req.name = actor_id
+            req.xml = self.xml_string
+            req.robot_namespace = ""
+            req.initial_pose = model_pose
+            req.reference_frame = "world"
+            self.spawn_client.call_async(req)
+            return self.spawn_client.call_async(req)  # return the Future object
+        except Exception as e:
+            self.get_logger().warn(f"Failed to spawn entity: {e}")
+            return None
+
+    def set_entity_state(self, actor_id, model_pose):
+        try:
+            req = SetEntityState.Request()
+            req.state.name = actor_id
+            req.state.pose = model_pose
+            self.set_state_client.call_async(req)
+        except Exception as e:
+            self.get_logger().warn(f"Failed to update agent state: {e}")
 
 def main(args=None):
     rclpy.init(args=args)
