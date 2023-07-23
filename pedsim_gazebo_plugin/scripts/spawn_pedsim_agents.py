@@ -41,7 +41,7 @@ class AgentSpawner(Node):
             actor_id = str(actor.id)
 
             if not self.is_spawned[idx]:
-                spawn_future = self.spawn_entity(actor_id=actor_id, model_pose=actor.pose, idx=idx)
+                spawn_future = self.spawn_entity(actor_id=actor_id, model_pose=actor.pose)
                 if spawn_future:
                     callback = functools.partial(self.callback, actor_id, actor.pose, idx)
                     spawn_future.add_done_callback(callback)
@@ -53,7 +53,7 @@ class AgentSpawner(Node):
             self.is_spawned[idx] = True
             self.set_entity_state(actor_id=actor_id, model_pose=model_pose)
 
-    def spawn_entity(self, actor_id, model_pose, idx):
+    def spawn_entity(self, actor_id, model_pose):
         try:
             req = SpawnEntity.Request()
             req.name = actor_id

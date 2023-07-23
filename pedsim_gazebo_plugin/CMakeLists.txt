@@ -28,6 +28,26 @@ include_directories(include
   ${tf2_INCLUDE_DIRS}
 )
 
+set(dependencies
+    rclcpp
+    pedsim_msgs
+    tf2_geometry_msgs
+    tf2_ros
+    tf2
+    gazebo_msgs
+    ament_index_cpp
+)
+
+add_executable(spawn_pedsim_agents src/spawn_pedsim_agents.cpp)
+ament_target_dependencies(spawn_pedsim_agents ${dependencies})
+
+install(TARGETS
+spawn_pedsim_agents
+  ARCHIVE DESTINATION lib
+  LIBRARY DESTINATION lib
+  RUNTIME DESTINATION lib/${PROJECT_NAME}
+)
+
 # ActorPosesPlugin
 add_library(gazebo_ros_actor_poses SHARED
   src/actor_poses_plugin.cpp
