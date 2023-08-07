@@ -3,10 +3,10 @@
 // Copyright (c) 2003 - 20012 by Christian Gloor
 //
 
-#include "ped_agent.h"
-#include "ped_obstacle.h"
-#include "ped_scene.h"
-#include "ped_waypoint.h"
+#include "pedsim/ped_agent.h"
+#include "pedsim/ped_obstacle.h"
+#include "pedsim/ped_scene.h"
+#include "pedsim/ped_waypoint.h"
 
 #include <algorithm>
 #include <cmath>
@@ -52,12 +52,13 @@ Ped::Tagent::~Tagent() {}
 /// \warning Bad things will happen if the agent is not assigned to a scene. But
 /// usually, Tscene takes care of that.
 /// \param   *s A valid Tscene initialized earlier.
-void Ped::Tagent::assignScene(Ped::Tscene* sceneIn) { scene = sceneIn; }
+void Ped::Tagent::assignScene(Ped::Tscene *sceneIn) { scene = sceneIn; }
 
-void Ped::Tagent::removeAgentFromNeighbors(const Ped::Tagent* agentIn) {
+void Ped::Tagent::removeAgentFromNeighbors(const Ped::Tagent *agentIn) {
   // search agent in neighbors, and remove him
-  set<const Ped::Tagent*>::iterator foundNeighbor = neighbors.find(agentIn);
-  if (foundNeighbor != neighbors.end()) neighbors.erase(foundNeighbor);
+  set<const Ped::Tagent *>::iterator foundNeighbor = neighbors.find(agentIn);
+  if (foundNeighbor != neighbors.end())
+    neighbors.erase(foundNeighbor);
 }
 
 /// Sets the maximum velocity of an agent (vmax). Even if pushed by other
@@ -99,7 +100,7 @@ void Ped::Tagent::setForceFactorObstacle(double f) { forceFactorObstacle = f; }
 /// \return  Tvector: the calculated force
 Ped::Tvector Ped::Tagent::desiredForce() {
   // get destination
-  Twaypoint* waypoint = getCurrentWaypoint();
+  Twaypoint *waypoint = getCurrentWaypoint();
 
   // if there is no destination, don't move
   if (waypoint == NULL) {
@@ -140,9 +141,10 @@ Ped::Tvector Ped::Tagent::socialForce() const {
   const double n_prime = 3;
 
   Tvector force;
-  for (const Ped::Tagent* other : neighbors) {
+  for (const Ped::Tagent *other : neighbors) {
     // don't compute social force to yourself
-    if (other->id == id) continue;
+    if (other->id == id)
+      continue;
 
     // compute difference between both agents' positions
     Tvector diff = other->p - p;
@@ -193,10 +195,10 @@ Ped::Tvector Ped::Tagent::obstacleForce() const {
   Ped::Tvector minDiff;
   double minDistanceSquared = INFINITY;
 
-  for (const Tobstacle* obstacle : scene->obstacles) {
+  for (const Tobstacle *obstacle : scene->obstacles) {
     Ped::Tvector closestPoint = obstacle->closestPoint(p);
     Ped::Tvector diff = p - closestPoint;
-    double distanceSquared = diff.lengthSquared();  // use squared distance to
+    double distanceSquared = diff.lengthSquared(); // use squared distance to
     // avoid computing square
     // root
     if (distanceSquared < minDistanceSquared) {
@@ -229,8 +231,10 @@ void Ped::Tagent::computeForces() {
 
   // update forces
   desiredforce = desiredForce();
-  if (forceFactorSocial > 0) socialforce = socialForce();
-  if (forceFactorObstacle > 0) obstacleforce = obstacleForce();
+  if (forceFactorSocial > 0)
+    socialforce = socialForce();
+  if (forceFactorObstacle > 0)
+    obstacleforce = obstacleForce();
   myforce = myForce(desiredDirection);
 }
 
@@ -253,7 +257,8 @@ void Ped::Tagent::move(double stepSizeIn) {
 
   // don't exceed maximal speed
   double speed = v.length();
-  if (speed > vmax) v = v.normalized() * vmax;
+  if (speed > vmax)
+    v = v.normalized() * vmax;
 
   // internal position update = actual move
   p += stepSizeIn * v;

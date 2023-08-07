@@ -1,14 +1,12 @@
 #!/usr/bin/env python
 from __future__ import division
 
+import numpy as np
 import rospy
 import tf
-
-import numpy as np
-
-from std_msgs.msg import Header
-from pedsim_msgs.msg import AgentState, AgentStates
 from pedsim_msgs.msg import AgentGroup, AgentGroups
+from pedsim_msgs.msg import AgentState, AgentStates
+from std_msgs.msg import Header
 
 
 def create_header():

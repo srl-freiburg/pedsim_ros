@@ -1,5 +1,0 @@
-<launch>
-
-  <node name="pedsim_visualizer" type="pedsim_visualizer_node" pkg="pedsim_visualizer" output="screen"/>
-  
-</launch>

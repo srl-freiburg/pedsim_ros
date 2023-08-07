@@ -1,4 +1,4 @@
-Header header
+std_msgs/Header header
 uint16 group_id
 float64 age
 uint64[] members

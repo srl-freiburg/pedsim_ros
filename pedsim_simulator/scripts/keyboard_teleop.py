@@ -31,13 +31,11 @@
 # all turtlebot software for simple keyboard teleop
 
 import rospy
-
-from geometry_msgs.msg import Twist
-
-import sys
 import select
+import sys
 import termios
 import tty
+from geometry_msgs.msg import Twist
 
 msg = """
 Control the PedSim robot!

@@ -2,7 +2,7 @@
 <sdf version="1.5">
 
 
-<model name="actor_model">
+<!--<model name="actor_model">
   <pose>0 0 0 0 0 0</pose>
   <link name="link">
     <collision name="collision">
@@ -22,10 +22,10 @@
     </visual>
 
   </link>
-</model>
+</model>-->
 
 
-<!--<model name="actor_model">
+<model name="actor_model">
   <link name="link">
     <collision name="collision">
       <pose>0 0 0 1.5708 0 0</pose>
@@ -45,7 +45,7 @@
       </geometry>
     </visual>
   </link>
-</model>-->
+</model>
 
 
 

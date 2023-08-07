@@ -26,13 +26,13 @@
         <addwaypoint id="robot_goal"/>
     </agent>
     <!--AgentClusters-->
-    <agent x="6" y="5" n="10" dx="3" dy="3" type="0">
+    <agent x="6" y="5" n="1" dx="3" dy="3" type="0">
         <addwaypoint id="bookshop_entry"/>
         <addwaypoint id="bookshop_exit"/>
         <addwaypoint id="coffee_entry"/>
         <addwaypoint id="coffee_exit"/>
     </agent>
-    <agent x="7" y="5" n="5" dx="3" dy="3" type="1">
+    <!--<agent x="7" y="5" n="5" dx="3" dy="3" type="1">
         <addqueue id="info_desk"/>
         <addwaypoint id="bookshop_exit"/>
         <addwaypoint id="coffee_entry"/>
@@ -48,5 +48,5 @@
         <addwaypoint id="coffee_entry"/>
         <addqueue id="info_desk"/>
         <addwaypoint id="bookshop_exit"/>
-    </agent>
+    </agent>-->
 </scenario>

@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8.3)
+cmake_minimum_required(VERSION 3.5)
 project(pedsim)
 
 #------------------ Configuration ------------------#
@@ -15,27 +15,21 @@ if(SHALL_DEBUG)
   message("Debugging activated")
   add_definitions(-O0 -DDEBUG -ggdb -g3 -rdynamic)
 else(SHALL_DEBUG)
-  message("Debugging deactivated")
+  # message("Debugging deactivated")
   add_definitions(-Os)
 endif(SHALL_DEBUG)
 
 
-find_package(catkin REQUIRED COMPONENTS
-  roscpp
-)
+find_package(ament_cmake REQUIRED)
+find_package(rclcpp REQUIRED)
+
 find_package(Boost REQUIRED)
 
-catkin_package(
-  CATKIN_DEPENDS  roscpp
-  INCLUDE_DIRS ${PROJECT_SOURCE_DIR}/include/
-  LIBRARIES pedsim
+set(dependencies
+  rclcpp
 )
 
-include_directories(
-  ${catkin_INCLUDE_DIRS}
-  ${PROJECT_SOURCE_DIR}/include/pedsim/
-  ${roscpp_INCLUDE_DIRS}
-)
+include_directories(include)
 
 set(SOURCES
   src/ped_agent.cpp
@@ -52,3 +46,20 @@ add_library(pedsim ${SOURCES})
 target_link_libraries(pedsim
   ${BOOST_LIBRARIES}
 )
+
+install(DIRECTORY include/
+  DESTINATION include/
+)
+
+install(TARGETS
+  pedsim
+  ARCHIVE DESTINATION lib
+  LIBRARY DESTINATION lib
+  RUNTIME DESTINATION lib/${PROJECT_NAME}
+)
+
+ament_export_include_directories(include)
+ament_export_libraries(pedsim)
+ament_export_dependencies(${dependencies})
+ament_package()
+

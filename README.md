@@ -14,25 +14,22 @@ model of [Helbing et. al](http://arxiv.org/pdf/cond-mat/9805244.pdf). The implem
 - Option to connect with gazebo for physics reasoning
 
 ### Requirements
-- ROS with the visualization stack (currently tested on `hydro`, `indigo`, `kinetic` ). For melodic, see the branch `melodic-dev`
-- C++11 compiler
+- ROS2 (currently tested on `humble`). `
+- C++14 compiler
 
 ### Installation
 
-The default version is now `melodic`. For kinetic please check out the branch `kinetic` which still depends on Qt4.
+This installation guide is for ROS2. For ROS1 please check out the ROS1 branches in the official repo.
 
 ```
 cd [workspace]/src
-git clone https://github.com/srl-freiburg/pedsim_ros.git  
-cd pedsim_ros
-git submodule update --init --recursive
-cd ../..
-catkin build -c  # or catkin_make
+git clone -b ros2 https://github.com/srl-freiburg/
+colcon build
 ```
 
-### Sample usage
+### Sample usage with Turtlebot3
 ```
-roslaunch pedsim_simulator simple_pedestrians.launch
+ros2 launch pedsim_gazebo_plugin gazebo_tb3_house_demo_launch.py
 ```
 ### Licence
 The core `libpedsim` is licensed under LGPL. The ROS integration and extensions are licensed under BSD.
@@ -47,6 +44,9 @@ The core `libpedsim` is licensed under LGPL. The ROS integration and extensions 
 * Sven Wehner
 * Omar Islas
 * Luigi Palmieri
+* Jonatan Gines Clavero
+* Chittaranjan Srinivas Swaminathan
+* Stephen Adhisaputra
 
 The package is a **work in progress** mainly used in research prototyping. Pull requests and/or issues are highly encouraged.
 
