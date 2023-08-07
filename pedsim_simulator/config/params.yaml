@@ -3,11 +3,11 @@ pedsim_simulator:
     odom_frame_id:        "odom"
     base_frame_id:        "base_footprint"
     groups_enabled:       true
-    max_robot_speed:      1.5
+    max_robot_speed:      0.3
     update_rate:          25.0
     simulation_factor:    1.0
     op_mode:              1
     queue_size:           10
-    robot_radius:         0.35
-    agent_radius:         0.35
+    robot_radius:         0.2
+    agent_radius:         0.25
     force_social:         10.0
