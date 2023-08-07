@@ -27,9 +27,9 @@ git clone -b ros2 https://github.com/srl-freiburg/
 colcon build
 ```
 
-### Sample usage
+### Sample usage with Turtlebot3
 ```
-ros2 launch pedsim_simulator house_demo_launch.py
+ros2 launch pedsim_gazebo_plugin gazebo_tb3_house_demo_launch.py
 ```
 ### Licence
 The core `libpedsim` is licensed under LGPL. The ROS integration and extensions are licensed under BSD.
